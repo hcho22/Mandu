@@ -11,6 +11,7 @@ Build skills organically: when you notice you are repeating the same request, tu
 ## Active skills
 
 - **job-hunter:** scans target company career pages and ranks roles by fit against the resume. Assets: `job-hunter/assets/companies.yaml` (Tier A/B/C company list). References: scoring rubric, ATS patterns, company-list buckets.
+- **daily-log:** creates or opens today's daily log for a tracked project (defaults to HabitLoop) at `projects/<Project>/log/<date>.md`, carrying forward the previous day's "Next" items. Asset: `daily-log/assets/daily-log-template.md`.
 
 ## Skills to build (backlog)
 
