@@ -51,7 +51,7 @@ Memory plus context files plus the decision log means your assistant gets smarte
 
 ## Projects
 
-Active workstreams live in `projects/`. Each project is a folder with its own `README.md` (description, status, key dates). Current: `projects/job-search/`, `projects/HabitLoop/`, `projects/Agentic_RAG/`.
+Active workstreams live in `projects/`. Each project is a folder with its own `README.md` (description, status, key dates). Current: `projects/job-search/`, `projects/HabitLoop/`, `projects/Agentic_RAG/`, `projects/CreativeBridge/`.
 
 ## Templates
 
