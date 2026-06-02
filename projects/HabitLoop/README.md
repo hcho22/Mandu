@@ -4,7 +4,7 @@
 
 **Repo:** https://github.com/hcho22/HabitLoop (private)
 
-**Status:** Active, currently prioritized. Early build: repo has an Express server, a `pg` connection pool (`db.js`), and auth dependencies (`bcrypt`, `jsonwebtoken`) installed. Working through the early milestones (Postgres + first table through auth).
+**Status:** Active, currently prioritized. Backend complete through **M8**: auth (signup/login/JWT/middleware), habits CRUD scoped to user, completions with a composite unique constraint, and the streaks endpoint. Next up: **M9** (minimal vanilla JS frontend), then **M10** (hardening). Last progress logged 2026-06-01.
 
 ## Why this project / how it fits
 
