@@ -57,3 +57,12 @@ Trigger when the user wants to:
 ## Reference files
 
 - `assets/daily-log-template.md` — the canonical daily entry format with `{{PROJECT}}` and `{{DATE}}` placeholders.
+
+## Memory
+
+This skill keeps a free-form `MEMORY.md` in its own folder.
+
+- **Start of every run:** read `MEMORY.md` and apply anything relevant before doing the work.
+- **Writing is feedback-gated:** append only when hcho explicitly says to remember something for this skill (a "remember this", a correction, or a stated preference). Do not log routine runs.
+- **How to append:** add a dated bullet under `## Notes` in the form `- [YYYY-MM-DD] <note>`, using the real date from `date +%Y-%m-%d`.
+- **Cap:** keep `MEMORY.md` under 100 lines. When it nears the cap, tell hcho and ask which entries to prune. Never delete entries silently.
