@@ -24,7 +24,7 @@ This PRD assumes the design decisions resolved in the prior grilling session (se
 
 ## Goals
 
-- Stand up a self-contained evals wiki under `projects/Learning/AI Engineer/evals/` with a
+- Stand up a self-contained evals wiki under `projects/Learning/AI_Engineer/evals/` with a
   `raw/` inbox and an LLM-maintained `wiki/` directory.
 - Ship an `ingest` skill that turns one raw source into updated wiki pages in a single pass,
   mirroring the existing `daily-log` skill's structure and safety discipline.
@@ -43,8 +43,8 @@ track so sources have a home and the assistant has a place to write maintained p
 
 **Acceptance Criteria:**
 
-- [x] Create `projects/Learning/AI Engineer/evals/raw/` with a `.gitkeep`.
-- [x] Create `projects/Learning/AI Engineer/evals/wiki/` containing `README.md`, `index.md`,
+- [x] Create `projects/Learning/AI_Engineer/evals/raw/` with a `.gitkeep`.
+- [x] Create `projects/Learning/AI_Engineer/evals/wiki/` containing `README.md`, `index.md`,
       `log.md`, `synthesis.md`, and the subdirectories `sources/` and `concepts/` (each with a
       `.gitkeep`).
 - [x] `wiki/README.md` documents: `mode: split`, the page types, the conventions (kebab-case,
@@ -63,7 +63,7 @@ track so sources have a home and the assistant has a place to write maintained p
 
 - **Setup:** Repo on a feature branch, evals folder present.
 - **Steps:**
-  1. Run `ls -R "projects/Learning/AI Engineer/evals"`.
+  1. Run `ls -R "projects/Learning/AI_Engineer/evals"`.
   2. Open `wiki/README.md` and `wiki/synthesis.md`.
 - **Expected Result:** `raw/` and `wiki/` (with the five files + two subdirs) exist; README states
   `mode: split`; `synthesis.md` has the four headers and no body text.
@@ -92,7 +92,7 @@ so the wiki mirrors my learning-plan curriculum and gives ingestion a target to 
 
 - **Setup:** US-001 complete.
 - **Steps:**
-  1. Run `ls "projects/Learning/AI Engineer/evals/wiki/concepts"` and count files.
+  1. Run `ls "projects/Learning/AI_Engineer/evals/wiki/concepts"` and count files.
   2. Open `concepts/llm-as-judge.md`.
   3. Open `wiki/index.md`.
 - **Expected Result:** 10 concept files plus `.gitkeep`; each has the frontmatter fields and an
@@ -151,7 +151,7 @@ the assistant maintains the wiki consistently and does not duplicate existing me
       `decisions/log.md` owns hard-to-reverse decisions (wiki events go to `wiki/log.md`); daily
       `log/` owns what-was-done-today (durable knowledge goes to the wiki; daily log only points);
       `learning-plan.md` owns the curriculum (the wiki is accumulated knowledge; cross-link).
-- [x] Include an **Active wikis** list: evals pilot at `projects/Learning/AI Engineer/evals/wiki/`,
+- [x] Include an **Active wikis** list: evals pilot at `projects/Learning/AI_Engineer/evals/wiki/`,
       mode split.
 - [x] The addition mirrors the style of the existing `## Projects` and `## Skills` sections (concise,
       no new tooling claims).
@@ -278,8 +278,8 @@ wiki compound, with my synthesis left for me to write.
 
 ## Technical Considerations
 
-- **Folder path contains a space** (`projects/Learning/AI Engineer/evals/`). All scripts and skill
-  steps must quote paths.
+- **Folder path was renamed to drop its space** (now `projects/Learning/AI_Engineer/evals/`, formerly
+  `.../AI Engineer/...`). Paths no longer need quoting for a space, though quoting stays harmless.
 - **Manual step for hcho (not done by the implementation):** open `/Users/hcho/Mandu` as an Obsidian
   vault; optionally point Web Clipper's save + attachment paths at the target wiki's `raw/`.
 - **De-dup discipline is the main risk.** Without the FR-10 boundaries, the wiki will duplicate

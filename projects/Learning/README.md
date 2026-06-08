@@ -10,11 +10,11 @@ Directly serves the #1 goal: land an AI evals / quality engineering role at an A
 
 ## Structure
 
-Learning is organized as **career track → topic**. A career track is a role-oriented folder (e.g., `AI Engineer/`); inside it, each topic is a subfolder with its own README (plan, progress, resources) and a `log/` of study sessions.
+Learning is organized as **career track → topic**. A career track is a role-oriented folder (e.g., `AI_Engineer/`); inside it, each topic is a subfolder with its own README (plan, progress, resources) and a `log/` of study sessions.
 
 | Career track | Topic | Status | Folder |
 | --- | --- | --- | --- |
-| AI Engineer | Evals — AI Eval / QA: offline+online evals, LLM-as-judge, RAG metrics, CI gates, red-teaming | In progress | `AI Engineer/evals/` |
+| AI Engineer | Evals — AI Eval / QA: offline+online evals, LLM-as-judge, RAG metrics, CI gates, red-teaming | In progress | `AI_Engineer/evals/` |
 
 Future topics under AI Engineer: agent evaluation, fine-tuning, RAG architecture, LLMOps, model serving. Add a new subfolder when a topic begins, and add a row to the table above.
 

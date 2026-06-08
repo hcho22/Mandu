@@ -62,7 +62,7 @@ Memory plus context files plus the decision log means your assistant gets smarte
 
 Active workstreams live in `projects/`. Each project is a folder with its own `README.md` (description, status, key dates). Current: `projects/job-search/`, `projects/HabitLoop/`, `projects/Agentic_RAG/`, `projects/CreativeBridge/`, `projects/Learning/`.
 
-`projects/Learning/` is a continuous learning-tracking project organized as career track → topic (e.g., `AI Engineer/evals/`), each with its own README, plan, and `log/`. Current track: `projects/Learning/AI Engineer/evals/`. Here Claude acts as a study partner (explain, quiz, review), not a doer.
+`projects/Learning/` is a continuous learning-tracking project organized as career track → topic (e.g., `AI_Engineer/evals/`), each with its own README, plan, and `log/`. Current track: `projects/Learning/AI_Engineer/evals/`. Here Claude acts as a study partner (explain, quiz, review), not a doer.
 
 ## Wikis
 
@@ -87,7 +87,7 @@ De-duplication, so the wiki does not become a fifth redundant memory layer:
 | `learning-plan.md` | the curriculum | the wiki is the accumulated knowledge; the two cross-link |
 
 Active wikis:
-- Evals pilot: `projects/Learning/AI Engineer/evals/wiki/` (mode: split).
+- Evals pilot: `projects/Learning/AI_Engineer/evals/wiki/` (mode: split).
 
 ## Templates
 

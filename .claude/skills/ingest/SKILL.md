@@ -19,12 +19,12 @@ Trigger when hcho wants to:
 ## Inputs needed
 
 1. **Source** - a URL, a pasted block of text, or a path to a file already saved under the wiki's `raw/`. If none is given, ask for it.
-2. **Target wiki** - defaults to the **evals pilot** at `projects/Learning/AI Engineer/evals/`. If hcho names another wiki, resolve it from the **Active wikis** list in the `## Wikis` section of `CLAUDE.md`.
+2. **Target wiki** - defaults to the **evals pilot** at `projects/Learning/AI_Engineer/evals/`. If hcho names another wiki, resolve it from the **Active wikis** list in the `## Wikis` section of `CLAUDE.md`.
 
 ## Workflow
 
 ### Step 1: Resolve the target wiki and read its mode
-- Default target: the evals pilot wiki (`projects/Learning/AI Engineer/evals/`). Otherwise resolve from the Active wikis list in `CLAUDE.md`.
+- Default target: the evals pilot wiki (`projects/Learning/AI_Engineer/evals/`). Otherwise resolve from the Active wikis list in `CLAUDE.md`.
 - Read the wiki's `wiki/README.md` and note its `mode:` (`split` or `full`). This governs Step 5.
 - Quote all paths: the evals wiki path contains a space.
 
