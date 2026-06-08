@@ -98,3 +98,12 @@ Read these only when you need to resolve ambiguity (e.g., a borderline fit score
 - **Respect the resume.** If the resume emphasizes specific domains (e.g., AI engineering, edtech), weight those heavily. Don't surface unrelated roles just because the company is on the list.
 - **Enforce the seniority/AI-builder filter.** Senior/Staff/Principal roles and Junior/Entry-level roles should be excluded unless they explicitly fall under the AI Builder umbrella. When in doubt about seniority, check years-of-experience requirements: 2–5 yrs = mid-level (keep), 0–1 yrs = junior (drop), 6+ yrs = senior (drop unless AI-builder-titled).
 - **Note when a company has no relevant openings.** It's useful for the user to know "Company X had nothing mid-level or AI-builder" rather than silently omitting them.
+
+## Memory
+
+This skill keeps a free-form `MEMORY.md` in its own folder.
+
+- **Start of every run:** read `MEMORY.md` and apply anything relevant before doing the work.
+- **Writing is feedback-gated:** append only when hcho explicitly says to remember something for this skill (a "remember this", a correction, or a stated preference). Do not log routine runs.
+- **How to append:** add a dated bullet under `## Notes` in the form `- [YYYY-MM-DD] <note>`, using the real date from `date +%Y-%m-%d`.
+- **Cap:** keep `MEMORY.md` under 100 lines. When it nears the cap, tell hcho and ask which entries to prune. Never delete entries silently.
