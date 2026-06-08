@@ -4,7 +4,7 @@
 
 **Repo:** https://github.com/hcho22/HabitLoop (private)
 
-**Status:** Active, currently prioritized. Backend complete through **M8**: auth (signup/login/JWT/middleware), habits CRUD scoped to user, completions with a composite unique constraint, and the streaks endpoint. Next up: **M9** (minimal vanilla JS frontend), then **M10** (hardening). Last progress logged 2026-06-01.
+**Status:** Complete. All milestones **M0–M10** done: backend through **M8** (auth, habits CRUD scoped to user, completions with a composite unique constraint, streaks endpoint), **M9** (minimal vanilla JS frontend: static pages + `fetch()` with bearer-token auth), and **M10** hardening (validation, error handling, rate limiting, migration tool, tests). Roadmap finished 2026-06-05.
 
 ## Why this project / how it fits
 
