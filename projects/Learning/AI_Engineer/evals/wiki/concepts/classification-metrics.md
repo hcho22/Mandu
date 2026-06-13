@@ -2,7 +2,7 @@
 type: concept
 tags: [evals, metrics, classification]
 date: 2026-06-08
-source-count: 3
+source-count: 4
 status: seeded
 session: "S2 - Classical ML metric foundations"
 ---
@@ -38,5 +38,12 @@ The Google Machine Learning Crash Course, [[classification-roc-and-auc]], extend
 - **AUC compares whole models** (higher is generally better) when classes are roughly balanced.
 - **PR curve / PR-AUC:** on **imbalanced** data, a precision-recall curve (precision on y, recall on x) and its area compare models better than ROC/AUC.
 - **Threshold selection:** the ROC points closest to (0, 1) are the best thresholds; pick among them by cost - lower-FPR when false positives hurt, higher-TPR when false negatives hurt, balanced otherwise.
+
+Chip Huyen, [[evaluate-ai-systems]], places these metrics inside AI-system evaluation:
+
+- Multiple-choice questions are common in LLM benchmarks because they are easy to create, verify, reproduce, and compare against a random baseline. Classification is the special case where every example shares the same choice set.
+- MCQ and classification metrics are useful for knowledge, reasoning, intent classification, sentiment analysis, next-action prediction, and other close-ended tasks, but they do not directly test the model's ability to generate good open-ended responses.
+- MCQ scores can shift under small prompt-format changes, such as option wording, extra spaces, or an added "Choices:" prefix, so benchmark scores should not be treated as exact measures of model capability.
+- When logprobs are available, they can expose classification confidence: a model whose class probabilities are evenly spread is less reliable than one assigning high probability to a single class.
 
 ## In my own words (hcho)

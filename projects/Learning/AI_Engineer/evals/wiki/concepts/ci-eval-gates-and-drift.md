@@ -2,7 +2,7 @@
 type: concept
 tags: [evals, ci, drift, llmops]
 date: 2026-06-08
-source-count: 2
+source-count: 4
 status: seeded
 session: "S10 - CI/CD evals, drift monitoring, putting it all together"
 ---
@@ -24,5 +24,20 @@ Eugene Yan, [[patterns-for-building-llm-based-systems-and-products]], frames the
 - Evals exist to **measure system changes at scale and detect regressions**; without them you visually inspect outputs on every change. Maintain a set of task-specific evals and run them on each change ("Eval-Driven Development"; see [[offline-vs-online-evals]]).
 - The **data flywheel:** user feedback feeds evals, fine-tuning, and guardrails, which improve the product, which drives more usage and more data - a virtuous cycle and a moat.
 - **Drift/monitoring** is the production complement to offline gates: it demonstrates value added or lost. One team ran an LLM support bot for two weeks before an A/B test showed 12x more losses, then discontinued it.
+
+Chip Huyen, [[evaluate-ai-systems]], connects CI-style gates to model selection and production iteration:
+
+- Evaluation criteria should be defined before development, including **hard requirements** and **ideal targets** for cost, scale, latency, quality, and task-specific capabilities. Those targets become the gates that decide whether a model or system variant is useful.
+- Model selection is iterative: filter impossible models by hard attributes, use public data to narrow the pool, run private evals on the survivors, and then monitor production to detect failure and collect feedback.
+- Production monitoring should test whether evaluation scores map to business outcomes. For example, a factual-consistency threshold should correspond to what share of support requests can safely be automated.
+- Evaluation should include human review when necessary, even in production. A sampled daily review process can serve as a North Star when automated metrics are weak.
+- Iteration is expected, but evaluation changes must be tracked. Log the eval data, rubric, judge prompt, sampling configuration, and model/system version so score changes are attributable.
+
+Jonathan Chavez, [[what-is-a-contaminated-llm-detection-famous-cases-2026-guide]], explains why CI gates need fresh and protected eval data:
+
+- A stale public benchmark is a weak regression gate if the model or provider may have seen the test set. The gate can pass memorization rather than the behavior the product needs.
+- Gate quality improves when eval sets are private, versioned, post-cutoff where relevant, and rotated over time. LiveCodeBench/LiveBench-style freshness and GSM1K/FrontierMath-style private holdouts are the pattern.
+- Saturated benchmarks should not be treated as hard gates for frontier work. When top models cluster near the ceiling, small score changes may be contamination, noise, or formatting sensitivity rather than capability movement.
+- Regression dashboards should distinguish public benchmark orientation from private product gates, and should track benchmark provenance, release dates, model cutoffs, and eval-set versions alongside scores.
 
 ## In my own words (hcho)

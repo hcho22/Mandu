@@ -1,11 +1,11 @@
 ---
 name: daily-log
-description: Create or open today's daily log entry for a tracked project (defaults to HabitLoop). Use when the user says "start today's log", "log today's progress", "new daily log", "log my HabitLoop progress", "open today's log", or wants to record what they did today on a project. Scaffolds the day's file from a template, carries forward yesterday's "Next" items, and never overwrites an existing entry.
+description: Create or open today's daily log entry for a tracked project. Use when the user says "start today's log", "log today's progress", "new daily log", "log my HabitLoop progress", "log my F2F progress", names a project path such as `projects/Learning/AI_Engineer/evals`, or wants to record what they did today on a project. Scaffolds the day's file from a template, carries forward the previous log's "Next" items, and never overwrites an existing entry.
 ---
 
 # Daily Log
 
-Creates or opens the day's daily log file for a tracked project under `projects/<Project>/log/<YYYY-MM-DD>.md`. Default project is **HabitLoop** (the one tracked daily). The skill scaffolds a consistent entry from a template and pulls forward unfinished items from the previous log so each day starts where the last one ended.
+Creates or opens the day's daily log file for a tracked project under `<project-root>/log/<YYYY-MM-DD>.md`. Default project is **HabitLoop** when the user does not name a project. The skill scaffolds a consistent entry from a template and pulls forward unfinished items from the previous log so each day starts where the last one ended.
 
 ## When to use this skill
 
@@ -16,22 +16,22 @@ Trigger when the user wants to:
 
 ## Inputs needed
 
-1. **Project** — defaults to `HabitLoop`. If the user names another project, use `projects/<that-project>/` (it must already exist under `projects/`). If the named project has no `log/` folder yet, create one.
+1. **Project** - defaults to `projects/HabitLoop/`. If the user gives a path beginning with `projects/`, use that path exactly as the project root. If the user names a project without a path, resolve it as `projects/<that-project>/`. The project root must already exist under `projects/`. If it has no `log/` folder yet, create one.
 2. **Content (optional)** — if the user describes what they did, fill it into the entry. If they just want the scaffold, create it empty and tell them it's ready.
 
 ## Workflow
 
 ### Step 1: Resolve project and date
-- Project: default `HabitLoop` unless the user names another. Path root is `projects/<Project>/`.
+- Project: default `projects/HabitLoop/` unless the user names another. Preserve explicit nested paths like `projects/Learning/AI_Engineer/evals`.
 - Date: run `date +%Y-%m-%d` to get today's date. Do not hardcode or guess the date.
-- Target file: `projects/<Project>/log/<DATE>.md`.
+- Target file: `<project-root>/log/<DATE>.md`.
 
 ### Step 2: Check if today's log already exists
-- If `projects/<Project>/log/<DATE>.md` already exists, **do not overwrite it.** Read it, show its current contents, and offer to append/update. Stop here unless the user wants edits.
+- If `<project-root>/log/<DATE>.md` already exists, **do not overwrite it.** Read it, show its current contents, and offer to append/update. Stop here unless the user wants edits.
 - Only proceed to create when the file does not exist.
 
 ### Step 3: Carry forward from the previous log
-- List `projects/<Project>/log/` and find the most recent prior entry (highest date filename before today).
+- List `<project-root>/log/` and find the most recent prior entry (highest date filename before today).
 - If one exists, read its `## Next` section. Pre-fill today's `**Today's goal:**` and `## Next` placeholder context from those items so unfinished work carries over. Keep it short; this is a starting point the user will edit.
 - If no prior log exists, leave the goal blank.
 
@@ -39,7 +39,7 @@ Trigger when the user wants to:
 - Read `assets/daily-log-template.md`.
 - Replace `{{PROJECT}}` with the project name and `{{DATE}}` with the resolved date.
 - For HabitLoop specifically, `**Milestone focus:**` maps to a milestone in the repo's `ROADMAP.md` (M0–M10). If you know the current milestone from the carried-forward "Next", suggest it.
-- Write the file to `projects/<Project>/log/<DATE>.md`.
+- Write the file to `<project-root>/log/<DATE>.md`.
 - If the user provided content, fill the `## Done`, `## Notes / Learnings`, `## Blockers`, and `## Next` sections accordingly.
 
 ### Step 5: Confirm

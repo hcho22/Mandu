@@ -2,7 +2,7 @@
 type: concept
 tags: [evals, offline-evals, online-evals, fundamentals]
 date: 2026-06-08
-source-count: 3
+source-count: 5
 status: seeded
 session: "S1 - What evals are and why they matter"
 ---
@@ -31,5 +31,19 @@ Eugene Yan, [[patterns-for-building-llm-based-systems-and-products]], adds the p
 
 - **Offline starting point - "Eval-Driven Development":** build a set of task-specific evals (prompt, context, expected output) and run them on every change to measure improvements or regressions, rather than relying on off-the-shelf benchmarks. Sometimes the most useful offline check is still a human "vibe check."
 - **Online signal - user feedback and monitoring:** explicit (thumbs up/down) and implicit (accept/edit/ignore) feedback give a direct measure of user satisfaction that offline evals cannot, and feed the data flywheel (see [[ci-eval-gates-and-drift]]). Production monitoring is the real test - one team found an LLM support bot caused 12x more losses in an A/B test.
+
+Chip Huyen, [[evaluate-ai-systems]], turns the same split into an end-to-end application workflow:
+
+- **Evaluation-driven development** means defining evaluation criteria before building. The criteria should be specific to the application: domain capability, generation quality, instruction following, cost, latency, scale, safety, factual consistency, and business impact.
+- Public benchmarks and leaderboards are useful only as an **offline filter** for model candidates. The decisive step is running the candidates through your own evaluation pipeline with your own prompts, metrics, rubrics, and data.
+- Production monitoring closes the loop: after deployment, the system should collect actual user feedback, detect failures, and test whether offline metrics correspond to business metrics. A/B testing is necessary when business outcomes can be confounded by promotions, product launches, or other external changes.
+- The same application may need evaluation at multiple levels: component, turn, task, and end-to-end. Task-level evaluation matters most to users, while component and turn-level evaluation explain where a failure came from.
+
+Jonathan Chavez, [[what-is-a-contaminated-llm-detection-famous-cases-2026-guide]], sharpens the caution around public offline benchmarks:
+
+- Public benchmark scores are only trustworthy when the benchmark is still discriminative and plausibly unseen. Saturated tests such as original MMLU, HumanEval, HellaSwag, and GSM8K lose value when top models cluster near the ceiling or when contamination evidence accumulates.
+- Contamination-resistant offline evals use post-cutoff items, rotating fresh questions, private holdouts, or harder answer formats. Examples in the article include LiveCodeBench/LiveBench, FrontierMath, GSM1K-style private replacement sets, and MMLU-Pro.
+- For product work, the practical answer is the same as in the broader evals workflow: use public benchmarks to orient, but evaluate model candidates on private application data, prompts, and failure modes that providers could not have seen.
+- Online monitoring remains necessary because even a clean offline benchmark measures abstract capability, not whether the model handles the product's users, codebase, tone, edge cases, or business outcomes.
 
 ## In my own words (hcho)

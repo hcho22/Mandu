@@ -2,7 +2,7 @@
 type: concept
 tags: [evals, llm-as-judge, bias]
 date: 2026-06-08
-source-count: 3
+source-count: 4
 status: seeded
 session: "S5 - LLM-as-judge: the workhorse method"
 ---
@@ -34,5 +34,13 @@ Eugene Yan, [[patterns-for-building-llm-based-systems-and-products]], gives the 
 - **Verbosity bias:** judges favor longer answers even when a shorter one is better. Mitigation: keep compared responses similar in length.
 - **Self-enhancement bias:** judges favor their own outputs (GPT-4 +10% win rate, Claude-v1 +25%). Mitigation: don't judge a model with itself.
 - Prefer giving the judge a **reference and asking for a comparison** over asking for a raw absolute score; it reduces noise (consistent with Fourrier's reason-before-score point above).
+
+Chip Huyen, [[evaluate-ai-systems]], shows how broadly LLM judges appear inside application evaluation:
+
+- For factual consistency, a judge can compare a generated answer against source context and decide whether the answer is supported. Prior work cited in the chapter found GPT-3.5 and GPT-4 stronger than previous factual-consistency methods.
+- Factuality pipelines can combine judges with structure: **self-verification** samples multiple model outputs and checks agreement; **SAFE** decomposes long-form answers into self-contained claims, searches for evidence, and uses AI to decide whether each claim is supported.
+- Textual entailment/NLI can be treated as a specialized judge: given a premise and a hypothesis, classify the relation as entailment, contradiction, or neutral. Entailment implies local factual consistency; contradiction implies inconsistency.
+- Judges also appear in safety, instruction following, and roleplaying evals. INFOBench converts broad instruction-following requirements into yes/no criteria; RoleLLM uses a judge prompt to compare role style and role-specific knowledge.
+- Judge reliability must be evaluated as part of the evaluation pipeline: use clear rubrics and examples, check whether better responses get higher scores, set judge temperature to 0 for reproducibility, and measure whether judge metrics correlate with human or business outcomes.
 
 ## In my own words (hcho)

@@ -13,7 +13,7 @@ Every skill folder also carries a `MEMORY.md`: a free-form file the skill reads 
 ## Active skills
 
 - **job-hunter:** scans target company career pages and ranks roles by fit against the resume. Assets: `job-hunter/assets/companies.yaml` (Tier A/B/C company list). References: scoring rubric, ATS patterns, company-list buckets.
-- **daily-log:** creates or opens today's daily log for a tracked project (defaults to HabitLoop) at `projects/<Project>/log/<date>.md`, carrying forward the previous day's "Next" items. Asset: `daily-log/assets/daily-log-template.md`.
+- **daily-log:** creates or opens today's daily log for a tracked project path such as `projects/HabitLoop`, `projects/F2F`, or `projects/Learning/AI_Engineer/evals`, carrying forward the previous log's "Next" items. Asset: `daily-log/assets/daily-log-template.md`.
 - **prd:** generates a Product Requirements Document for a new feature (clarifying questions, then a structured PRD with user stories and validation tests). Output: `.claude/agent/tasks/prd-[feature-name].md`.
 - **ingest:** files one raw source into a wiki, updating the source summary, affected concept pages, index, and log in a single pass. Asset: `ingest/assets/source-summary-template.md`.
 

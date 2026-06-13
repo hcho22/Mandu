@@ -2,6 +2,28 @@
 
 Event log for this wiki. Each entry begins with `## [YYYY-MM-DD] <op> | <title>` (op is `ingest`, `query`, `lint`, etc.) so entries are greppable and sort by date.
 
+## [2026-06-10] ingest | What Is a Contaminated LLM? Detection, Famous Cases, 2026 Guide
+
+- Source already in `raw/What Is a Contaminated LLM? Detection, Famous Cases, 2026 Guide.md` (clipped markdown copy of https://llm-stats.com/blog/research/what-is-a-contaminated-llm, immutable); used as-is.
+- Created `sources/what-is-a-contaminated-llm-detection-famous-cases-2026-guide.md` (summary, key claims, connections, provenance).
+- Extended `[[llm-benchmarks-contamination]]` (source-count 3 to 4): direct/indirect/latent contamination, detection methods, famous cases, dose-response effects, and contamination-resistant benchmark design.
+- Extended `[[data-leakage-and-splits]]` (source-count 1 to 2): cutoff splits, membership inference, Time Travel, ConStat, canaries, and private/rotating holdout discipline.
+- Extended `[[offline-vs-online-evals]]` (source-count 4 to 5): public offline benchmarks as bounded signals and private/application-specific evals as the product-selection path.
+- Extended `[[production-eval-tooling]]` (source-count 1 to 2): benchmark provenance, private holdouts, rotating evals, and contamination checks as pipeline/tooling concerns.
+- Extended `[[ci-eval-gates-and-drift]]` (source-count 3 to 4): stale public benchmarks as weak gates, with fresh/private/versioned eval sets as stronger regression signal.
+- Updated `index.md` (added the source; bumped five concept counts).
+- `## In my own words (hcho)` sections left for hcho on all concept pages (mode: split). No daily-log pointer added because `log/2026-06-10.md` does not exist.
+
+## [2026-06-09] ingest | Evaluate AI Systems
+
+- Source already in `raw/Evaluate AI Systems.md` (raw chapter markdown, immutable); used as-is.
+- Created `sources/evaluate-ai-systems.md` (summary, key claims, connections, provenance).
+- Seeded `[[data-leakage-and-splits]]` (source-count 0 to 1, stub to seeded): benchmark contamination as leakage, n-gram/perplexity checks, clean-sample reporting, slicing, and bootstrap checks.
+- Seeded `[[production-eval-tooling]]` (source-count 0 to 1, stub to seeded): component/turn/task evals, guidelines, rubrics, annotated data, slices, sampled human review, and experiment tracking.
+- Extended `[[offline-vs-online-evals]]`, `[[classification-metrics]]`, `[[llm-benchmarks-contamination]]`, `[[llm-as-judge]]`, `[[rag-evaluation]]`, `[[hallucination-safety-redteam]]`, `[[agent-eval-and-stats]]`, and `[[ci-eval-gates-and-drift]]`.
+- Updated `index.md` (added the source; bumped all ten concept counts; dropped `(stub)` on S3 and S7).
+- `## In my own words (hcho)` sections left for hcho on all concept pages (mode: split). No daily-log pointer added because `log/2026-06-09.md` does not exist.
+
 ## [2026-06-06] ingest | Your AI Product Needs Evals
 
 - Saved `raw/your-ai-product-needs-evals.md` (clipped markdown copy of https://hamel.dev/blog/posts/evals/, immutable).
