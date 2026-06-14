@@ -1,10 +1,12 @@
 # Fridge to Fork (F2F)
 
+> **Archived 2026-06-14.** Shipped — submitted to the Hugging Face "Build Small / Backyard AI" hackathon and moved to `archives/F2F/`. Preserved read-only; no further work tracked.
+
 **One-liner:** The weeknight "what's for dinner?" decider. Snap 1-3 photos of your fridge/pantry, confirm what the app detected, set a few controls, and get 2-3 dinners built mostly from what is on hand — each with a time estimate, servings, a "from your fridge / you'll also need" split, and short numbered steps. Goal: photo to committed dinner plan in under a minute.
 
 **Repo:** https://github.com/hcho22/F2F (private)
 
-**Status:** In active development for the Hugging Face **Build Small / Backyard AI** hackathon. **Hard deadline 2026-06-15.** Build order: Modal + vLLM backend -> end-to-end loop -> controls and honesty mechanics -> Off-Brand UI polish -> "I made this" logging -> 5+ real weeknights of usage -> demo video + social post.
+**Status:** Shipped (archived 2026-06-14). Submitted to the Hugging Face **Build Small / Backyard AI** hackathon by the 2026-06-15 deadline. Completed build order: Modal + vLLM backend -> end-to-end loop -> controls and honesty mechanics -> Off-Brand UI polish -> "I made this" logging -> 5+ real weeknights of usage -> demo video + social post.
 
 ## Why this project / how it fits
 
