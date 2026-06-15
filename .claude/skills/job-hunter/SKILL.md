@@ -22,7 +22,7 @@ Before searching, confirm:
 2. **Target companies** — a list. May come as: a typed list, an uploaded image/screenshot, a CSV, or a category ("5 AI-native companies"). If only a category is given, ask the user to specify names OR confirm they want you to propose the list.
 3. **Role preferences** — **HARD FILTER**: only surface roles that meet at least one of:
    - **Mid-level seniority** (typically 2–5 years experience; titles like "Mid-level Engineer", "Engineer II", "Software Engineer" without Senior/Staff/Principal prefix, or explicitly tagged mid-level). Exclude Junior/Entry-level and Senior/Staff/Principal/Lead roles.
-   - **AI Builder–related** (titles or descriptions containing: "AI Builder", "AI Engineer", "Agentic Engineer", "Applied AI", "AI Solutions Engineer", "Forward Deployed AI Engineer", "LLM Engineer", "GenAI Engineer", or roles whose core responsibility is building with LLMs/agents/RAG/prompt engineering).
+   - **AI Builder–related** (titles or descriptions containing: "AI Builder", "AI Engineer", "Agentic Engineer", "Applied AI", "AI Solutions Engineer", "Forward Deployed AI Engineer", "LLM Engineer", "GenAI Engineer", "AI Product Engineer", or roles whose core responsibility is building with LLMs/agents/RAG/prompt engineering).
    
    A role qualifies if it matches **either** criterion. Drop everything else before scoring.
 4. **Location / remote preferences** — remote or 25miles radius of Burbank, CA.
