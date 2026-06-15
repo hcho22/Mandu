@@ -2,7 +2,7 @@
 type: concept
 tags: [evals, data-splits, leakage, cross-validation]
 date: 2026-06-06
-source-count: 2
+source-count: 3
 status: seeded
 session: "S3 - Data splits, leakage, baselines, cross-validation"
 ---
@@ -30,5 +30,12 @@ Jonathan Chavez, [[what-is-a-contaminated-llm-detection-famous-cases-2026-guide]
 - **Time Travel** probes leakage by giving a model dataset metadata plus the first half of an instance and measuring whether it reconstructs the held-out remainder better than a generic completion baseline.
 - **ConStat** treats leakage as an unusual benchmark-specific lift relative to matched/rephrased samples and reference models, producing both a significance test and an estimated contamination effect size.
 - Canary strings can identify exact leakage, but the BIG-Bench canary story shows that canaries are not a process guarantee. Private or gated holdouts and post-cutoff/rotating data are stronger split controls.
+
+Clémentine Fourrier, Thibaud Frere, Guilherme Penedo & Thomas Wolf, [[evaluation-guidebook]], give the contamination-management playbook for someone *building* an eval:
+
+- **Assume any public-internet dataset is or will be contaminated.** Mitigations: a **canary string** (BigBench) creators can grep for in training sets; **encrypted or gated** release so crawlers cannot parse it (GPQA); **dynamic/rotating** benchmarks refreshed over time; and post-hoc **detection** (generation perplexity, adversarial prompt variants) - but no detector is foolproof.
+- **Procedural generation is the strongest defense:** rule-based generators (NPHardEval, MuSR, ZebraLogic via SAT solvers, GSM-Symbolic templates, IFEval) yield virtually infinite fresh test cases with automatic verification, so models cannot have seen them. Best suited to math/logic/code.
+- **Generalization vs overfitting** is the underlying contract: a model that only predicts its training data is overfitting; a good eval tests transfer to patterns *outside* the training distribution. Contamination is just the leakage mechanism that breaks this contract.
+- For **synthetic-with-models** datasets, seed from trusted ground-truth documents, have a frontier model write questions (citing its source), then validate with a *different model family* as judge - and always manually inspect the data at every step.
 
 ## In my own words (hcho)

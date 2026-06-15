@@ -2,7 +2,7 @@
 type: concept
 tags: [evals, rag, ragas]
 date: 2026-06-08
-source-count: 2
+source-count: 3
 status: seeded
 session: "S6 - RAG evaluation"
 ---
@@ -26,5 +26,10 @@ Chip Huyen, [[evaluate-ai-systems]], focuses on the generation-side factuality c
 - RAG systems retrieve external context, and the generated response should be factually consistent with that retrieved context. This is **local factual consistency**, which is easier to evaluate than open-world factuality because the evidence is explicit.
 - A RAG eval should separate component failures. If the final answer is wrong, the failure may come from retrieval, context preparation, generation, or post-processing; each intermediate output should be evaluated independently before relying only on the end-to-end score.
 - Factual-consistency checks can be implemented with an LLM judge, textual entailment/NLI scorer, or knowledge-augmented verification pipeline. The evaluation should focus on query slices where hallucination is likely, such as niche knowledge and questions about nonexistent facts.
+
+Clémentine Fourrier, Thibaud Frere, Guilherme Penedo & Thomas Wolf, [[evaluation-guidebook]], add the long-context benchmark lineage that underpins retrieval evaluation:
+
+- **Long-context eval evolved** from **NIAH** (Needle in a Haystack - plant a fact in long text, retrieve it; near-solved by 2025) to **RULER** (multi-hop tracing, variable tracking) and **Michelangelo/MRCR**, up to **HELMET**, which bundles RAG/QA datasets (Natural Questions, TriviaQA, PopQA, HotpotQA, NarrativeQA), recall (RULER/JSONKV), generation-with-citation (ALCE), summarization, and reranking (MS MARCO) into one higher-signal suite. Caution against aggregating overlapping suites (HELMET already includes InfinityBench).
+- Retrieval-heavy assistant tasks like **GAIA** turn retrieval into an end-to-end agentic eval (combine tools + reasoning + retrieval to answer real queries - see [[agent-eval-and-stats]]), and knowledge benchmarks are shifting from closed-book to **open-book/retrieval** as models gain web access - making retrieval quality central to what "knowledge" evals now measure (see [[llm-benchmarks-contamination]]).
 
 ## In my own words (hcho)

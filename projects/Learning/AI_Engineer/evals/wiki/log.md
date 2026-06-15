@@ -2,6 +2,24 @@
 
 Event log for this wiki. Each entry begins with `## [YYYY-MM-DD] <op> | <title>` (op is `ingest`, `query`, `lint`, etc.) so entries are greppable and sort by date.
 
+## [2026-06-15] ingest | The LLM Evaluation Guidebook
+
+- Source re-clipped into `raw/Evaluation Guidebook - a Hugging Face Space by OpenEvals.md` (full 1,555-line guidebook text; the prior clip captured only the iframe shell and was never ingested). Used as-is, immutable.
+- Created `sources/evaluation-guidebook.md` (summary, key claims, connections, provenance). Author: Clémentine Fourrier, Thibaud Frere, Guilherme Penedo, Thomas Wolf (Hugging Face / OpenEvals, Dec 2025).
+- Foundational survey - extended all ten concept pages (each source-count +1):
+  - `[[llm-benchmarks-contamination]]` (4 to 5): 2025 benchmark tour by capability, saturation vs contamination, integrated assistant tasks, Nov-2025 recommendation set.
+  - `[[llm-as-judge]]` (4 to 5): judge definition/uses, getting a judge, the seven biases + mitigations, evaluating your evaluator, reward models.
+  - `[[classification-metrics]]` (4 to 5): automatic match metrics (exact/BLEU/ROUGE/TER/BLEURT), aggregation, accuracy normalization, sampling metrics, functional scorers.
+  - `[[offline-vs-online-evals]]` (5 to 6): builder vs user perspectives, log-likelihood vs generative methods, MCF/CF/FG formulations.
+  - `[[data-leakage-and-splits]]` (2 to 3): contamination management - canary/gating/procedural generation, overfitting vs generalization.
+  - `[[agent-eval-and-stats]]` (2 to 3): tool-calling/agent benchmarks (TauBench, BFCL, MCP-Universe) and statistical validity (confidence intervals, bootstrapping).
+  - `[[ci-eval-gates-and-drift]]` (4 to 5): ablations/checkpoint evals and the FineWeb benchmark-selection criteria (monotonicity, SNR, non-random, Kendall's tau).
+  - `[[production-eval-tooling]]` (2 to 3): standard harnesses + reproducibility factors, structured generation, annotation tooling, cost/efficiency reporting.
+  - `[[rag-evaluation]]` (2 to 3): long-context benchmark lineage (NIAH, RULER, HELMET) and the closed-book to open-book shift.
+  - `[[hallucination-safety-redteam]]` (2 to 3): non-compliance (CoCoNot), judges as weak hallucination detectors, calibration, games as safety probes, human-eval biases.
+- Updated `index.md` (added the source; bumped all ten concept counts).
+- `## In my own words (hcho)` sections left for hcho on all ten concept pages (mode: split). No daily-log pointer added because `log/2026-06-15.md` does not exist.
+
 ## [2026-06-10] ingest | What Is a Contaminated LLM? Detection, Famous Cases, 2026 Guide
 
 - Source already in `raw/What Is a Contaminated LLM? Detection, Famous Cases, 2026 Guide.md` (clipped markdown copy of https://llm-stats.com/blog/research/what-is-a-contaminated-llm, immutable); used as-is.

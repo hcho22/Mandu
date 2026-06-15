@@ -2,7 +2,7 @@
 type: concept
 tags: [evals, tooling, ci, observability]
 date: 2026-06-06
-source-count: 2
+source-count: 3
 status: seeded
 session: "S7 - Production tooling: Promptfoo, DeepEval, Phoenix"
 ---
@@ -30,5 +30,12 @@ Jonathan Chavez, [[what-is-a-contaminated-llm-detection-famous-cases-2026-guide]
 - For benchmark-style suites, tools should preserve private holdouts, version public releases, and avoid accidentally leaking answer keys or test examples into prompts, logs, fine-tuning data, or vendor training channels.
 - Contamination checks can become pipeline checks: time-split reporting where timestamps exist, duplicate or near-duplicate search where corpora are available, membership-inference/perplexity-style checks where logprobs are available, and rephrased/reference-sample comparisons where matched data exists.
 - The article reinforces that application evals are part of production tooling, not just research benchmarking: teams should measure on their own codebase, tone, edge cases, and user data because benchmark contamination cannot answer those product-specific questions.
+
+Clémentine Fourrier, Thibaud Frere, Guilherme Penedo & Thomas Wolf, [[evaluation-guidebook]], add the tooling and reproducibility concerns of running evals at scale:
+
+- **Use a standard harness** to reproduce scores: EleutherAI **lm_eval** or Hugging Face **lighteval** (or HELM). The same MMLU gets different scores across implementations, so reproduction requires the *exact* code, prompt, and tokenization. Beyond code, results move with **hardware, inference library (transformers/vLLM/sglang), batch size, loading precision/quantization, and random seed** - fix all of these for reproducibility.
+- **Structured/constrained generation** (the `outlines` library, finite-state machines over a grammar/regex) reduces prompt variance and makes rankings more stable - though some research shows it can lower reasoning performance by moving the output distribution off the model's prior.
+- **Annotation tooling:** Argilla for building high-quality annotated datasets; distilabel for synthetic-data generation and judge pipelines.
+- **Report cost and efficiency** as first-class eval outputs: total **output tokens**, **monetary cost**, **wall-clock/inference time** (including rate-limit overhead), and increasingly the **environmental footprint**. Cost is decisive when choosing methods - an LLM judge may give better signal than automatic metrics but at ~100x cost, and pass@k/maj@n multiply cost by k (see [[classification-metrics]]).
 
 ## In my own words (hcho)

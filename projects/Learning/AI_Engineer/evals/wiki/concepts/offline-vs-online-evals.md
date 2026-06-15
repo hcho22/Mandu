@@ -2,7 +2,7 @@
 type: concept
 tags: [evals, offline-evals, online-evals, fundamentals]
 date: 2026-06-08
-source-count: 5
+source-count: 6
 status: seeded
 session: "S1 - What evals are and why they matter"
 ---
@@ -45,5 +45,12 @@ Jonathan Chavez, [[what-is-a-contaminated-llm-detection-famous-cases-2026-guide]
 - Contamination-resistant offline evals use post-cutoff items, rotating fresh questions, private holdouts, or harder answer formats. Examples in the article include LiveCodeBench/LiveBench, FrontierMath, GSM1K-style private replacement sets, and MMLU-Pro.
 - For product work, the practical answer is the same as in the broader evals workflow: use public benchmarks to orient, but evaluate model candidates on private application data, prompts, and failure modes that providers could not have seen.
 - Online monitoring remains necessary because even a clean offline benchmark measures abstract capability, not whether the model handles the product's users, codebase, tone, edge cases, or business outcomes.
+
+Clémentine Fourrier, Thibaud Frere, Guilherme Penedo & Thomas Wolf, [[evaluation-guidebook]], add the *who* and *how* of (mostly offline) benchmark evaluation:
+
+- **Two reasons to evaluate** shape which evals you need: the **model-builder** ("am I building a strong model?") runs fast, high-signal benchmarks during ablations and on training checkpoints (see [[ci-eval-gates-and-drift]]); the **model-user** ("which model is best for my task?") tests the top leaderboard contenders or builds a custom eval for an uncommon task.
+- **Two inference methods for offline benchmarks:** **log-likelihood** eval (score the probability of candidate answers - fast, gives small-model signal and a calibration proxy, ideal for multiple-choice, but slightly over-scores models that would have generated something off-list) and **generative** eval (let the model produce text - correlates with real fluency/reasoning, the only option for closed APIs that hide logprobs, but costlier and harder to score). Most 2025 evals are generative.
+- **Three task formulations** trade signal for difficulty: **MCF** (multiple-choice, compare A/B/C/D indices), **CF** (cloze, compare choice likelihoods without showing them), and **FG** (free-form generation). Recommendation: CF for small ablations (better early-training signal), MCF for the main run, FG for post-trained models.
+- These are all *offline* methods; online user feedback and monitoring (covered by the other sources here) remain a separate, later signal.
 
 ## In my own words (hcho)

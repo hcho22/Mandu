@@ -2,7 +2,7 @@
 type: concept
 tags: [evals, metrics, classification]
 date: 2026-06-08
-source-count: 4
+source-count: 5
 status: seeded
 session: "S2 - Classical ML metric foundations"
 ---
@@ -45,5 +45,13 @@ Chip Huyen, [[evaluate-ai-systems]], places these metrics inside AI-system evalu
 - MCQ and classification metrics are useful for knowledge, reasoning, intent classification, sentiment analysis, next-action prediction, and other close-ended tasks, but they do not directly test the model's ability to generate good open-ended responses.
 - MCQ scores can shift under small prompt-format changes, such as option wording, extra spaces, or an added "Choices:" prefix, so benchmark scores should not be treated as exact measures of model capability.
 - When logprobs are available, they can expose classification confidence: a model whose class probabilities are evenly spread is less reliable than one assigning high probability to a single class.
+
+Clémentine Fourrier, Thibaud Frere, Guilherme Penedo & Thomas Wolf, [[evaluation-guidebook]], catalog the automatic metrics for scoring free-form text and how to aggregate them:
+
+- **Match-based string metrics** sit on a flexibility ladder: **exact match** (and its fuzzy variants - prefix/suffix/quasi-exact, often hidden behind the same name), n-gram overlap **BLEU** (precision, length-biased, weak human correlation) and **ROUGE** (recall), edit-distance **TER**, and embedding-based **BLEURT** (BERT trained on human judgments). The metric *name* alone is unreliable - you must read the code to know what it computes.
+- **Aggregating per-sample scores:** for **binary** scores use precision (FP-costly), recall (FN-costly), **F1**, or **MCC** (robust to imbalance); for **continuous** scores use MSE/MAE; for calibration studies use R^2 / Pearson / Spearman. For high-stakes domains (medical, toxicity) report **worst-case**, not average, performance.
+- **Accuracy needs length normalization** in multiple-choice log-likelihood eval, or the model just prefers shorter answers: `acc_char`, `acc_token`, and `acc_pmi` (normalizes by the answer's unconditional probability - best for hard reasoning/knowledge tasks, ~2x costlier). Recommended default is max(acc_char, acc_token); F1 for generative tasks unless exact match is required.
+- **Sampling-based metrics** trade cost for robustness: **pass@k over n** (unbiased estimator), **maj@n** (majority vote, good for math/reasoning), **cot@n**, and **avg@n** (stable average). Always report temperature/top-p/k; avoid sampling in cheap ablations (use greedy + fixed seed), reserve it for post-training and inference-time-compute studies.
+- **Functional scorers** are the authors' favorite: instead of fuzzy-matching a reference, check whether output satisfies verifiable constraints (IFEval-style: "exactly 3 bullets", valid JSON), as unit tests do for code. They are unambiguous, fast, cheap, and contamination-resistant - preferred over model judges (see [[llm-as-judge]]) when feasible.
 
 ## In my own words (hcho)
