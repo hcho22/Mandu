@@ -2,7 +2,7 @@
 type: concept
 tags: [evals, ci, drift, llmops]
 date: 2026-06-08
-source-count: 4
+source-count: 5
 status: seeded
 session: "S10 - CI/CD evals, drift monitoring, putting it all together"
 ---
@@ -39,5 +39,11 @@ Jonathan Chavez, [[what-is-a-contaminated-llm-detection-famous-cases-2026-guide]
 - Gate quality improves when eval sets are private, versioned, post-cutoff where relevant, and rotated over time. LiveCodeBench/LiveBench-style freshness and GSM1K/FrontierMath-style private holdouts are the pattern.
 - Saturated benchmarks should not be treated as hard gates for frontier work. When top models cluster near the ceiling, small score changes may be contamination, noise, or formatting sensitivity rather than capability movement.
 - Regression dashboards should distinguish public benchmark orientation from private product gates, and should track benchmark provenance, release dates, model cutoffs, and eval-set versions alongside scores.
+
+Clémentine Fourrier, Thibaud Frere, Guilherme Penedo & Thomas Wolf, [[evaluation-guidebook]], formalize what makes a benchmark a good *training-time* regression signal (the model-builder's CI):
+
+- **Ablations** are the builder's non-regression test: train under a setup, evaluate on chosen tasks, compare to a baseline to confirm a change (data, architecture, params) did not break - or improved - expected performance. Evals also run on intermediate **checkpoints** to catch regressions/spikes during training.
+- **The FineWeb team's four criteria** for selecting tasks that give signal even on weak mid-training models (derived from training 49 models, 73k GPU-hours): **monotonicity** (Spearman score-vs-steps >= 0.5 - does the task improve as training progresses?), **low noise** (signal-to-noise ratio > 20, measured across seeds), **non-random performance** (max score sits >= 3 std above the random baseline), and **model-ordering consistency** (Kendall's tau - do rankings at 30B tokens predict rankings at 300B?).
+- These properties sharpen Fourrier's high-SNR / watch-trajectories-and-ranges guidance already on this page, and connect to reward-model practice: tracking **win-rate or win-probability over training** can detect model degradation and select the optimal checkpoint (see [[llm-as-judge]]).
 
 ## In my own words (hcho)

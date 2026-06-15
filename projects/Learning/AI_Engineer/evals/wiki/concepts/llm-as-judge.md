@@ -2,7 +2,7 @@
 type: concept
 tags: [evals, llm-as-judge, bias]
 date: 2026-06-08
-source-count: 4
+source-count: 5
 status: seeded
 session: "S5 - LLM-as-judge: the workhorse method"
 ---
@@ -42,5 +42,14 @@ Chip Huyen, [[evaluate-ai-systems]], shows how broadly LLM judges appear inside 
 - Textual entailment/NLI can be treated as a specialized judge: given a premise and a hypothesis, classify the relation as entailment, contradiction, or neutral. Entailment implies local factual consistency; contradiction implies inconsistency.
 - Judges also appear in safety, instruction following, and roleplaying evals. INFOBench converts broad instruction-following requirements into yes/no criteria; RoleLLM uses a judge prompt to compare role style and role-specific knowledge.
 - Judge reliability must be evaluated as part of the evaluation pipeline: use clear rubrics and examples, check whether better responses get higher scores, set judge temperature to 0 for reproducibility, and measure whether judge metrics correlate with human or business outcomes.
+
+Clémentine Fourrier, Thibaud Frere, Guilherme Penedo & Thomas Wolf, [[evaluation-guidebook]], give the most complete judge treatment in the wiki so far:
+
+- **Definition and three uses:** a judge model is a neural net used to evaluate another model's output - for *scoring* a generation on a scale, *pairwise* comparison of two outputs, or *similarity* to a reference. Judges shine on nuanced properties (fluency, faithfulness, coherence) that exact-match cannot capture.
+- **Where to get one:** a generalist high-capability LLM (easy, but closed judges are non-reproducible black boxes with privacy risk; open models like DeepSeek-R1/Qwen are closing the gap), a *tiny specialist* judge (Prometheus 13B, JudgeLM, Flow-Judge - run locally, need their prompt format), or train/fine-tune your own from preference data (avoid unless niche; starting from a reward model beats an instruct model).
+- **Seven catalogued biases + mitigations:** no internal consistency (self-consistency prompting), inconsistent score ranges, self-preference (use a jury), blindness to input perturbation (reason-before-score), position bias (swap order / normalize logprobs), verbosity bias (length-correct), and format bias (match the training prompt format).
+- **Design rules:** pairwise comparison correlates with human preference better than absolute scoring; if scoring, use an integer scale with per-point descriptions or an additive rubric; emit reasoning *before* the score; one prompt per capability; a **jury** of several smaller judges beats one big judge.
+- **Evaluate your evaluator** before trusting it: pick a small (~50) representative + discriminative + high-quality baseline, pick a metric (accuracy/precision/recall are easy for binary or pairwise; score-correlation is hard), and set a threshold (80-95% pairwise accuracy, ~0.8 Pearson). Judges are notably **bad at detecting hallucinations**, especially partial ones, and correlate only weakly on summarization/faithfulness (see [[hallucination-safety-redteam]]).
+- **Reward models** as an alternative judge: Bradley-Terry pairwise models output sigmoid(score_b - score_a); they are fast, deterministic, position-bias-resistant, and need no prompt engineering, but require fine-tuning. For relative-score RMs use **win rates / win probabilities** against a reference rather than averaging raw rewards; tracking win-rate over training can flag degradation and select checkpoints (see [[ci-eval-gates-and-drift]]).
 
 ## In my own words (hcho)

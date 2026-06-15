@@ -86,8 +86,11 @@ De-duplication, so the wiki does not become a fifth redundant memory layer:
 | daily `log/<date>.md` | what was done today | durable knowledge goes to the wiki; the daily log only points to it |
 | `learning-plan.md` | the curriculum | the wiki is the accumulated knowledge; the two cross-link |
 
+Interview talking points from wiki work consolidate to `projects/job-search/interview-prep.md`, not per-wiki duplicate lists.
+
 Active wikis:
 - Evals pilot: `projects/Learning/AI_Engineer/evals/wiki/` (mode: split).
+- Agentic RAG: `projects/Agentic_RAG/wiki/` (mode: full).
 
 ## Templates
 

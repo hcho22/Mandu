@@ -2,7 +2,7 @@
 type: concept
 tags: [evals, benchmarks, contamination]
 date: 2026-06-08
-source-count: 4
+source-count: 5
 status: seeded
 session: "S4 - LLM benchmarks: what they measure and what they don't"
 ---
@@ -45,6 +45,13 @@ Jonathan Chavez, [[what-is-a-contaminated-llm-detection-famous-cases-2026-guide]
 - Concrete cases include GSM8K-vs-GSM1K overfitting for Phi and Mistral families, ConStat detections on Mistral/Llama/Open LLM Leaderboard models, Time Travel findings on GPT-4 and datasets such as AG News/WNLI/XSum, and BIG-Bench canary reproduction by several frontier models.
 - Contamination effects are regime-dependent. The dose-response view says capacity, contaminated-token dose, and the incentive to memorize determine how much test-set inclusion affects scores; long generative solutions can be harder to memorize than short discriminative answers.
 - The 2026-style replacement stack relies on post-cutoff or rotating tests (LiveCodeBench/LiveBench), private unpublished holdouts (FrontierMath/GSM1K-style practice), harder answer formats (MMLU-Pro), and application-specific evals on data the labs could not have seen.
+
+Clémentine Fourrier, Thibaud Frere, Guilherme Penedo & Thomas Wolf, [[evaluation-guidebook]], give a 2025 tour of the benchmark landscape and sharpen the two failure modes:
+
+- **Saturation vs contamination** are distinct. *Saturation* is when models cluster near the ceiling so a benchmark loses discriminative power (the guidebook's banner chart tracks top scores stepping upward over three HF leaderboards through time). *Contamination* is eval data leaking into training, inflating scores without real capability (see [[data-leakage-and-splits]]). A contaminated benchmark can still give useful *training* signal even when it is useless for final model comparison.
+- **Benchmarks by capability (2025):** reasoning/commonsense (ARC, HellaSwag, WinoGrande - now saturated, ablation-only), knowledge (MMLU -> MMLU-Pro/-Redux/Global-MMLU; GPQA-diamond; Humanity's Last Exam), math (GSM8K/MATH saturated -> MATH-500, AIME, Math-Arena, FrontierMath), code (HumanEval/MBPP -> LiveCodeBench, SWE-Bench verified, Aider), long context (NIAH -> RULER, HELMET - see [[rag-evaluation]]), instruction following (IFEval/IFBench, checkable with rule-based verifiers), and tool-calling (TauBench, BFCL, MCP-Universe - see [[agent-eval-and-stats]]).
+- **The trend is toward integrated "assistant tasks"** (GAIA/GAIA2, GDPval, DABStep) and **game-based** evals (ARC-AGI, TextQuests, Town of Salem) that test capability *orchestration* with a single unambiguous pass/fail, plus **forecasters** (FutureBench, FutureX) as inherently un-contaminable.
+- **Knowledge benchmarks are predicted to fade** as tool-connected models turn latent-knowledge tests into web-retrieval tests (closed-book -> open-book). The authors' Nov-2025 recommendation set: GPQA / IFEval / SWE-Bench / HELMET-or-TauBench for builders; IFBench / HLE / Math-Arena / LiveCodeBench / MCP-Universe for comparing models.
 
 ## In my own words (hcho)
 Why this matters for LLMs: contamination

@@ -16,19 +16,20 @@ Catalog of every page in this wiki, grouped by category. Updated on each ingest.
 - [[patterns-for-building-llm-based-systems-and-products]] (Eugene Yan, 2023)
 - [[classification-accuracy-precision-recall]] (Google ML Crash Course)
 - [[classification-roc-and-auc]] (Google ML Crash Course)
+- [[evaluation-guidebook]] (Clémentine Fourrier et al., Hugging Face, 2025)
 
 ## Concepts
 
-- S1: [[offline-vs-online-evals]] (5 sources)
-- S2: [[classification-metrics]] (4 sources)
-- S3: [[data-leakage-and-splits]] (2 sources)
-- S4: [[llm-benchmarks-contamination]] (4 sources)
-- S5: [[llm-as-judge]] (4 sources)
-- S6: [[rag-evaluation]] (2 sources)
-- S7: [[production-eval-tooling]] (2 sources)
-- S8: [[hallucination-safety-redteam]] (2 sources)
-- S9: [[agent-eval-and-stats]] (2 sources)
-- S10: [[ci-eval-gates-and-drift]] (4 sources)
+- S1: [[offline-vs-online-evals]] (6 sources)
+- S2: [[classification-metrics]] (5 sources)
+- S3: [[data-leakage-and-splits]] (3 sources)
+- S4: [[llm-benchmarks-contamination]] (5 sources)
+- S5: [[llm-as-judge]] (5 sources)
+- S6: [[rag-evaluation]] (3 sources)
+- S7: [[production-eval-tooling]] (3 sources)
+- S8: [[hallucination-safety-redteam]] (3 sources)
+- S9: [[agent-eval-and-stats]] (3 sources)
+- S10: [[ci-eval-gates-and-drift]] (5 sources)
 
 ## Synthesis
 

@@ -2,7 +2,7 @@
 type: concept
 tags: [evals, hallucination, safety, red-team]
 date: 2026-06-08
-source-count: 2
+source-count: 3
 status: seeded
 session: "S8 - Hallucination, safety, red-teaming, guardrails"
 ---
@@ -28,5 +28,12 @@ Chip Huyen, [[evaluate-ai-systems]], expands the factuality and safety measureme
 - Factuality methods include LLM judges, **SelfCheckGPT**-style self-verification, **SAFE** search-augmented verification, textual entailment/NLI, specialized factual-consistency scorers, and benchmarks such as **TruthfulQA**.
 - Safety categories include inappropriate language, harmful recommendations or tutorials, hate speech, violence, stereotypes, and political or religious bias.
 - Safety evaluation can use general-purpose judges, provider moderation tools, smaller specialized classifiers, and benchmarks such as **RealToxicityPrompts** and **BOLD**. Smaller classifiers may be cheaper and faster than general-purpose judges for narrow safety tasks.
+
+Clémentine Fourrier, Thibaud Frere, Guilherme Penedo & Thomas Wolf, [[evaluation-guidebook]], add several safety- and hallucination-measurement points:
+
+- **Non-compliance is its own axis:** **CoCoNot** tests whether models correctly *refuse* incomplete, unanswerable, or unsafe requests - framed as a classification problem, the complement of instruction following.
+- **Model judges are weak hallucination detectors,** especially of *partial* hallucinations that look close to the ground truth; safety/factuality tasks should not lean on a judge alone (see [[llm-as-judge]]). **Calibration** (do correct answers get the highest probability?) is measurable via log-likelihood eval and is a useful honesty signal.
+- **Games as safety probes:** deception games like **Town of Salem** / Werewolf test a model's deceptive vs honest behavior (e.g. Claude Opus 4 reportedly cannot win as a deceptive role but does fine as an honest one) - an adversarial, un-contaminable behavior eval.
+- **Vibe-checks** (and Elo arenas) are a cheap way to surface safety edge cases by leveraging user creativity, but carry confirmation bias; **human evaluation itself has documented biases** (first-impression/formatting, assertive-wrong-over-neutral-correct tone bias, self-preference, identity-based toxicity-rating differences) that any safety eval relying on human labels must account for.
 
 ## In my own words (hcho)
