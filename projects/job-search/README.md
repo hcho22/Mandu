@@ -27,4 +27,5 @@ Two framings coexist on the target list:
 - **Target list:** `.claude/skills/job-hunter/assets/companies.yaml` (the company list with tiers).
 - **Buckets reference:** `.claude/skills/job-hunter/references/company-list.md`.
 - **Resume:** `Hyung_Cho_Resume.docx` (in this folder).
+- **Interview prep:** `interview-prep.md` consolidates talking points across projects and wikis.
 - **Archive:** `archive/` holds the legacy daily notes (2026-05-12, 05-29, 05-30) and the old long-term `MEMORY.md`, kept read-only for history.
