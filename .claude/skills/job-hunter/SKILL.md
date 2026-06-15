@@ -82,6 +82,14 @@ Optionally offer follow-ups:
 - "Want to expand the search to similar companies?"
 - "Any of these you want me to dig deeper on?"
 
+### Step 5: Save the scan as a dated tracking note (always)
+After presenting, persist the scan to `projects/job-search/scans/<YYYY-MM-DD>.md` (create the `scans/` folder if it does not exist; get the real date from `date +%Y-%m-%d`). This is the durable record hcho uses to track applications, so it always gets written, not just on request.
+
+- One row per role that scored 3+, with a **Status** column hcho edits over time. Status legend: `To apply` (default) / `Applied` / `Interviewing` / `Offer` / `Rejected` / `Passed` (declined).
+- Columns: `Status | Company | Role | Location | Fit | Apply | Notes`. Group remote-eligible vs onsite/relocation, sorted by fit within each group (mirrors the shortlist).
+- Also record the "no openings / unreachable" companies and the list of companies skipped this run, so the note is a complete record of what was and was not covered.
+- **Never overwrite an existing same-day file** — it may already hold hcho's Status edits. If `<YYYY-MM-DD>.md` exists, write `<YYYY-MM-DD>-2.md` (incrementing) instead, and tell hcho.
+
 ## Reference files
 
 - `references/scoring-rubric.md` — Detailed scoring criteria with examples, for borderline cases.
@@ -89,6 +97,11 @@ Optionally offer follow-ups:
 - `references/ats-patterns.md` — Common ATS URL patterns and how to find them.
 
 Read these only when you need to resolve ambiguity (e.g., a borderline fit score, or a company whose careers page you can't find).
+
+## Output location
+
+- **Target list (input):** `.claude/skills/job-hunter/assets/companies.yaml`.
+- **Scan tracking notes (output):** `projects/job-search/scans/<YYYY-MM-DD>.md` — one dated note per scan (see Step 5), with a Status column hcho updates to track applied/passed. This is the canonical record of every scan; do not overwrite prior days.
 
 ## Important guidance
 

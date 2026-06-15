@@ -1,5 +1,7 @@
 # HabitLoop
 
+> **Archived 2026-06-14.** Project complete (M0–M10, finished 2026-06-05) and moved to `archives/HabitLoop/`. Preserved read-only; no further work tracked.
+
 **One-liner:** A personal habit tracker built from scratch as a backend-fundamentals learning project. Node.js + Express + Postgres, vanilla JS frontend, hand-rolled JWT auth.
 
 **Repo:** https://github.com/hcho22/HabitLoop (private)

@@ -60,7 +60,7 @@ Memory plus context files plus the decision log means your assistant gets smarte
 
 ## Projects
 
-Active workstreams live in `projects/`. Each project is a folder with its own `README.md` (description, status, key dates). Current: `projects/job-search/`, `projects/HabitLoop/`, `projects/Agentic_RAG/`, `projects/CompeteIntel/`, `projects/F2F/`, `projects/CreativeBridge/`, `projects/Learning/`.
+Active workstreams live in `projects/`. Each project is a folder with its own `README.md` (description, status, key dates). Current: `projects/job-search/`, `projects/Agentic_RAG/`, `projects/CompeteIntel/`, `projects/CreativeBridge/`, `projects/Learning/`. Completed and archived: `archives/HabitLoop/`, `archives/F2F/`.
 
 `projects/Learning/` is a continuous learning-tracking project organized as career track → topic (e.g., `AI_Engineer/evals/`), each with its own README, plan, and `log/`. Current track: `projects/Learning/AI_Engineer/evals/`. Here Claude acts as a study partner (explain, quiz, review), not a doer.
 
