@@ -2,7 +2,7 @@
 type: concept
 tags: [agentic-rag, evals, retrieval, golden-set]
 date: 2026-06-15
-source-count: 1
+source-count: 2
 status: seeded
 component: "docs/evals.md"
 ---
@@ -22,6 +22,14 @@ An evaluation harness for retrieval quality over a fixed corpus and golden set u
 - Core metrics are `recall@k` for k in 1, 3, 5, and 10, MRR for first-correct rank, and nDCG@5 for ranked relevance. Multi-hop questions receive partial credit when only some gold chunks appear.
 - The runner writes full JSON detail and a markdown summary. The source explicitly limits the suite: retrieval-only metrics do not prove answer correctness, tool routing, latency/cost, or generalization to other corpora.
 
+[[permissions-aware-rag]] extends the suite into permission-aware retrieval:
+
+- The correctness eval adds viewer setups and filter strategies: full access, partial access, and no access across pre-filter and post-filter retrieval.
+- It keeps the same retrieval quality vocabulary from [[agentic-rag-evals]] while adding security and permissions-specific slices.
+- The small 14-chunk corpus makes recall trade-offs invisible in v0, so the source treats the security table as the load-bearing result and the recall tables as scaffolding.
+- The permission-scale benchmark seeds 10k chunks, creates viewers at 50%, 10%, and 1% selectivity, and sweeps `ef_search` values of 40, 80, 200, and 500.
+- At 10k chunks every scale cell is 1.000 because Postgres chooses exact nearest-neighbor sorting over the filtered visible set; this is a correct planner choice and means a 100k+ corpus is the natural next benchmark.
+
 ## Synthesis
 
-The suite is strongest as a delta detector, not as a universal retrieval benchmark. Its small fixed corpus and hand-authored labels make absolute scores narrow, but the same narrowness is what makes PR-vs-main comparison practical: the biases are shared on both sides, so regressions in chunking, retrieval mode, or reranking become visible.
+The suite is strongest as a delta detector, not as a universal retrieval benchmark. Its small fixed corpus and hand-authored labels make absolute scores narrow, but the same narrowness is what makes PR-vs-main comparison practical: the biases are shared on both sides, so regressions in chunking, retrieval mode, reranking, or permission filtering become visible. The permission extension also shows where evals must distinguish "security property holds" from "recall curve is informative at this scale."

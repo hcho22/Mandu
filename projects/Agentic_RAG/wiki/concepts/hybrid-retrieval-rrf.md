@@ -2,7 +2,7 @@
 type: concept
 tags: [agentic-rag, retrieval, hybrid-search, rrf]
 date: 2026-06-15
-source-count: 1
+source-count: 2
 status: seeded
 component: "retrieval stack (pgvector HNSW + Postgres full-text + Reciprocal Rank Fusion)"
 ---
@@ -21,6 +21,13 @@ A retrieval stack that exposes vector-only, keyword-only, and hybrid search, the
 - In the chunk-size regression demo, vector and hybrid lost the most absolute recall while keyword was already near zero. That result shows hybrid's quality depends on upstream chunking and semantic retrieval behavior, not only on the fusion formula.
 - Future swaps such as rerankers or vector-store changes need this same mode-by-mode delta, because "better retrieval" is only meaningful relative to a measured baseline.
 
+[[permissions-aware-rag]] adds the permission-filtering dimension:
+
+- Vector, keyword, and hybrid retrieval are all tested under full-access, partial-access, and no-access viewer setups.
+- The HNSW gotcha belongs primarily to vector search: selective ACL predicates can cause HNSW walks to exhaust the `ef_search` candidate budget before enough visible chunks pass the filter.
+- Hybrid retrieval inherits that behavior when its vector half is affected, even though keyword retrieval has a different execution path.
+- At 10k chunks, Postgres avoids the HNSW path for selective viewers and sorts the filtered visible set exactly, so the benchmark shows 1.000 across selectivities rather than a recall curve.
+
 ## Synthesis
 
-Hybrid retrieval is useful here because the project can measure when it helps. The important design point is not simply "vector plus keyword"; it is that [[retrieval-eval-suite]] gives the project a way to compare each mode on the same corpus, then [[ci-eval-gating]] can catch when a change breaks the mode that looked strongest.
+Hybrid retrieval is useful here because the project can measure when it helps. The important design point is not simply "vector plus keyword"; it is that [[retrieval-eval-suite]] gives the project a way to compare each mode on the same corpus, [[ci-eval-gating]] can catch when a change breaks the mode that looked strongest, and [[permissions-aware-retrieval]] can reveal whether the retrieval plan still behaves when visibility is selective.

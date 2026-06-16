@@ -1,48 +1,78 @@
 # Agentic RAG
 
-**One-liner:** A production-shaped, permissions-aware Retrieval-Augmented Generation app where per-document sharing is part of the retrieval predicate itself, not a post-hoc filter. Multi-user from day one: every chunk carries an ACL, every retrieval call runs under the viewer's JWT.
+**Phase 2 one-liner:** a production starter kit that agency and freelance developers can deploy to ship a client's AI feature on a deadline: permission-aware RAG with workspace isolation, answer quality, and access correctness proven by evals.
 
 **Repo:** https://github.com/hcho22/Agentic_RAG (public)
 
-**Status:** Built and deployable. Landed in 11 progressive modules (app shell / auth / streaming chat through hybrid retrieval, agentic tools, sub-agents, text-to-SQL, the retrieval eval suite, and permission-aware retrieval). Actively maintained: nightly eval workflows run on schedule.
+**Current status:** Phase 1 is built and deployable. Phase 2 is active: productize the built system into a **Permission-Aware RAG + AI-Support Starter Kit** with a knowledge-assistant face and a B2B support-platform face.
+
+**Phase 2 source of truth:** `projects/Agentic_RAG/raw/PRD_phase2_agentic_rag_kit.md` (copied from `/Users/hcho/Developer/Agentic_RAG/.claude/agent/tasks/PRD_phase2_agentic_rag_kit.md`).
 
 ## Why this project / how it fits
 
-This is the **flagship portfolio piece for the AI Eval / QA Engineer target.** It is not just a RAG demo; it ships a real evaluation apparatus that mirrors the day-to-day of an evals role:
+This is the **flagship portfolio and productization track for the AI Eval / Quality Engineer target**. The differentiator is not "another RAG app"; it is rigor demonstrated by runnable evals:
 
-- **Retrieval eval suite:** 50-question golden set, recall@k / MRR / nDCG@5, optional generation + LLM-judge step.
-- **CI-integrated evals:** a PR workflow runs the golden set against PR head and `main` and posts a delta-vs-`main` comment; nightly snapshots publish to `docs/nightly/`.
-- **Regression alarms:** the permissions-scale nightly workflow fails the build if a configured recall floor is breached.
-- **RAGAS metrics:** Faithfulness, Answer Relevancy, Context Precision, Context Recall computed weekly.
-- **A worked regression catch:** CI caught a Δ -0.510 drop in recall@5 from a one-line chunk-size change (written up in `docs/evals.md`).
-- **Security-correctness eval:** proves the ACL property holds (fraction of `no_access` runs returning zero gold chunks = 1.000 with the SQL pre-filter).
+- **Access correctness:** permission-aware retrieval already proves zero gold-chunk leakage for unauthorized viewers (`no_access` = 1.000 with SQL pre-filter).
+- **Retrieval quality:** 50-question golden set with recall@k, MRR, nDCG@5, vector/keyword/hybrid comparisons, and PR-vs-`main` CI comments.
+- **Regression proof:** CI caught a -0.510 recall@5 drop from a one-line chunk-size change.
+- **Answer quality:** generation evals, RAGAS weekly metrics, and cross-family LLM judging are already in place.
+- **Structured-data correctness:** semantic-layer text-to-SQL improved from 10% naive accuracy to 100% semantic accuracy on the 30-question structured eval.
 
-Interview talking points: eval design (what each metric measures and what it does not), CI eval gating, regression detection, and proving a security property with an eval rather than asserting it.
+Phase 2 turns those proof points into a reusable starter kit for buyers who need to tell a client exactly what the system can and cannot safely promise.
+
+## Buyer and positioning
+
+**Buyer:** agency or freelance developers who sold a client an AI feature and need to ship it defensibly.
+
+**Product shape:** one engine, two demoable faces:
+
+- **Knowledge assistant:** internal "chat with your docs," based on the current reference app.
+- **Support platform:** customer-facing deflection with escalate-to-human, an embeddable widget, workspace/team structure, and eval-backed auto-resolve decisions.
+
+**Headline direction:** production RAG + AI-support starter kit: permission-aware retrieval, isolation, and answer quality proven by evals, with no framework lock-in.
 
 ## Stack
 
-- **Backend:** FastAPI; raw OpenAI SDK + Pydantic (no LLM frameworks)
-- **Frontend:** React + Vite + Tailwind
-- **Data:** Supabase (Postgres + pgvector + Auth + Storage + Realtime); RLS-enforced per-user visibility
-- **Retrieval:** hybrid vector (pgvector HNSW) + keyword (Postgres full-text) fused via Reciprocal Rank Fusion; optional reranker (Cohere / Voyage / LLM-as-judge)
-- **Observability:** LangSmith tracing
-- **Deploy:** Vercel (frontend) + Railway or Fly (backend) + Supabase (DB / Auth / Storage)
+- **Backend:** FastAPI; raw OpenAI SDK + Pydantic; no LangChain or LLM framework dependency.
+- **Frontend:** React + Vite + Tailwind + shadcn reference app.
+- **Data:** Supabase Postgres, pgvector, Auth, Storage, Realtime; RLS-enforced visibility.
+- **Retrieval:** hybrid vector search (pgvector HNSW) + keyword search (Postgres full-text) fused by Reciprocal Rank Fusion; optional rerankers.
+- **Eval / quality:** retrieval golden set, permission correctness eval, scale benchmark, RAGAS, generation judge, planned escalation eval.
+- **Observability:** currently LangSmith-specific; Phase 2 direction is a self-hosted Postgres trace store plus optional OTel exporters.
+- **Deploy:** Vercel frontend, Railway/Fly backend, Supabase database/auth/storage.
 
-## Key components
+## Built baseline
 
-- **Permissions-aware retrieval:** per-chunk ACLs pushed into the SQL predicate so the planner ranks among visible candidates from the start. Solves the post-filter recall collapse on selective ACLs (at 5% selectivity, top-10 yields ~0.5 visible chunks on average, so a naive post-filter most often returns nothing).
-- **Agentic tools:** streaming, tool-using chat loop with `query_database` (text-to-SQL over an allowlisted read-only schema), a `web_search` fallback, and `spawn_document_agent` sub-agents with isolated context.
-- **Ingestion:** drag-and-drop multi-format (txt / md / pdf / docx / html via docling), chunk + embed + index, live status via Supabase Realtime, LLM structured-output metadata extraction.
+- App shell, auth, streaming chat, citations, document upload, and share dialog.
+- Hybrid retrieval and optional reranker layer.
+- Per-document/per-chunk ACLs inside the retrieval predicate, including granting-principal badges.
+- Snapshot-and-replay ACL preservation during re-ingestion.
+- Multi-format ingestion via docling, chunking, embedding, indexing, Realtime status, content-hash dedup, and LLM metadata extraction.
+- Agentic optional modules: text-to-SQL semantic layer, web search fallback, and document sub-agents.
+- Retrieval, generation, RAGAS, permission correctness, and scale/nightly evals.
 
-## Deep-dive docs (in the repo)
+## Phase 2 build sequence
 
-- `docs/permissions-aware-rag.md` — the post-filter recall problem, the four-table data model, the SQL predicate, the HNSW interaction, the eval tables, and deliberate v0 scope cuts.
-- `docs/evals.md` — corpus design, the golden set, metric semantics, the worked CI-regression example, and an honest list of the eval's limitations.
-- `docs/structured-rag.md` — the semantic-layer-aware text-to-SQL compiler and the read-only role boundary.
+1. **Workspace layer:** workspace entity, workspace-boundary RLS, workspace correctness evals, and auth attack tests.
+2. **Escalation capability:** retrieval-first cascade for answer-vs-escalate decisions, escalation golden set, false-resolve/false-escalate metrics, and support handoff states.
+3. **Self-hosted observability:** Postgres trace store, standalone ops dashboard, OTel exporter facade, and error capture through the same trace path.
+4. **Eval genericization + gate:** configurable CI gate (`off | comment | fail`), buyer-facing golden dataset format, and reusable demo corpus seeders.
+5. **Model / contract / boundary polish:** Azure OpenAI verification, embedding model config, narrow ingestion boundary, commercial parser adapter, OpenAPI polish, typed TS client, and capability matrix.
+6. **Support surface:** embeddable widget, conversation state, human handoff, and teams within a workspace.
+7. **Productization:** template-ization, license/delivery terms, open-core split, landing page/waitlist, threat-model doc, and buyer-facing positioning rewrite.
+
+## Deep-dive docs
+
+Local wiki/source copies live under `projects/Agentic_RAG/raw/` and `projects/Agentic_RAG/wiki/`.
+
+- `docs/permissions-aware-rag.md` — post-filter recall collapse, ACL data model, SQL predicate, HNSW/selectivity interaction, security evals, and v0 cuts.
+- `docs/evals.md` — retrieval corpus, golden set, metrics, RAGAS comparison, and CI regression catch.
+- `docs/structured-rag.md` — semantic-layer text-to-SQL planner/compiler, read-only execution boundary, and 30-question eval.
+- `PRD_phase2_agentic_rag_kit.md` — Phase 2 productization plan and build sequence.
 
 ## How Claude helps
 
-This is a **built, production-shaped portfolio project**, not a learn-by-hand tutorial (contrast with HabitLoop's tutor mode). Help here means code review, polishing, documentation, demo prep, and especially translating the eval work into interview talking points and resume / portfolio framing for the AI Evals job search.
+This is a **built, production-shaped portfolio project moving into productization**, not a learn-by-hand tutorial. Help here means implementation planning, issue breakdown, code review, docs, demo prep, Phase 2 build execution, and translating the eval/security story into interview and buyer-facing material.
 
 ## Daily tracking (optional)
 
