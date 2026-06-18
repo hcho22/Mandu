@@ -20,13 +20,13 @@ Trigger this skill when the user wants to:
 Before searching, confirm:
 1. **Resume** — should be in context already (uploaded file or pasted). If not, ask the user to provide it.
 2. **Target companies** — a list. May come as: a typed list, an uploaded image/screenshot, a CSV, or a category ("5 AI-native companies"). If only a category is given, ask the user to specify names OR confirm they want you to propose the list.
-3. **Role preferences** — **HARD FILTER**: only surface roles that meet at least one of:
-   - **Mid-level seniority** (typically 2–5 years experience; titles like "Mid-level Engineer", "Engineer II", "Software Engineer" without Senior/Staff/Principal prefix, or explicitly tagged mid-level). Exclude Junior/Entry-level and Senior/Staff/Principal/Lead roles.
-   - **AI Builder–related** (titles or descriptions containing: "AI Builder", "AI Engineer", "Agentic Engineer", "Applied AI", "AI Solutions Engineer", "Forward Deployed AI Engineer", "LLM Engineer", "GenAI Engineer", "AI Product Engineer", or roles whose core responsibility is building with LLMs/agents/RAG/prompt engineering).
-   
-   A role qualifies if it matches **either** criterion. Drop everything else before scoring.
-4. **Location / remote preferences** — remote or 25miles radius of Burbank, CA.
-5. **Stretch tolerance** — the user may want to include roles that are a stretch (e.g., "apply even if it's a borderline match"). Default: include stretch roles but mark them clearly.
+3. **Role preferences** — **HARD FILTER**: surface only **builder roles** — the core responsibility is building with LLMs / agents / RAG / prompt engineering, or shipping production AI product features at an AI-native company. Qualifying titles include: "AI Engineer", "AI Builder", "Applied AI Engineer", "Agentic Engineer", "LLM Engineer", "GenAI Engineer", "AI Product Engineer", "Forward Deployed (AI) Engineer", "(AI) Solutions Engineer", "Member of Technical Staff", and "Software / Full-Stack Engineer" roles whose core work is shipping AI product features.
+   - **Seniority**: include **Mid-level and Senior individual-contributor** builder roles. Drop the prior mid-level-only cap — 10 years of validation experience makes Senior IC roles a strength, and startups do not ladder cleanly.
+   - **Exclude**: Staff / Principal / Lead roles that require team leadership or deep ML research; roles requiring 6+ years of *specialized* AI/ML or a research/PhD background (genuine stretch); and pure non-AI roles. Junior/entry roles only if AI-builder-titled and they clear the pay bar.
+
+   A role qualifies if it is a builder role by the above. Drop everything else before scoring.
+4. **Location** — **HARD FILTER**: keep only roles that are **remote (US-eligible)** OR **onsite/hybrid within 25 miles of Burbank, CA** (greater LA — e.g. Burbank, Glendale, Pasadena, Hollywood, Studio City, North Hollywood, Universal City, Sherman Oaks, Downtown LA). Drop every other onsite/relocation role, even strong fits. hcho is not relocating.
+5. **Stretch tolerance** — the user may want to include roles that are a stretch (e.g., "apply even if it's a borderline match"). Borderline roles that still score Fit 4 are kept and marked; Fit 3 and below are dropped (see Step 3).
 
 If any of these are missing, ask in a single batched question before starting the search.
 
@@ -49,7 +49,7 @@ For each company, fetch the careers page. Look for:
 - Team / department
 - Direct apply link
 
-**Apply the hard filter immediately**: discard any role that is NOT mid-level AND NOT AI-builder-related (see "Role preferences" in Inputs). Don't carry junior, senior, or non-AI roles into scoring — they're noise.
+**Apply the hard filters immediately**: discard any role that is not a **builder role** (see "Role preferences"), AND discard any role that is **not remote (US-eligible) and not within 25 miles of Burbank, CA** (see "Location"). Don't carry non-AI roles, Staff/Principal/Lead, research/PhD-gated roles, or out-of-area onsite roles into scoring — they're noise. Mid-level and Senior IC builder roles both qualify.
 
 If the careers page is a JavaScript-heavy app (common with Greenhouse, Lever, Ashby embeds), the visible HTML may not list roles. In that case:
 - Look for the underlying job board URL (often linked from the page)
@@ -57,17 +57,19 @@ If the careers page is a JavaScript-heavy app (common with Greenhouse, Lever, As
 - If still blocked, note "careers page requires JS — manual review needed" and move on
 
 ### Step 3: Score each role against the resume
+**Anchor scoring on demonstrated shipping, not years.** A shipped portfolio (CreativeBridge on TestFlight; Agentic RAG: FastAPI / pgvector / raw OpenAI SDK / RLS / LangSmith) satisfies "builds and ships with LLMs / RAG / agents." Treat the 10-year validation background as **production-engineering rigor** — a plus for roles that emphasize shipping production-grade systems, not a QA pigeonhole. Prefer roles with **take-home or pair-build** interviews over algorithmic-gauntlet screens.
+
 For every open role found, score on a 1-5 scale:
 
-- **5 — Strong fit**: Role title and requirements clearly map to user's experience. They should apply.
-- **4 — Good fit**: Most requirements met; minor gaps that are easily explained in a cover letter.
-- **3 — Stretch fit**: User has adjacent experience; would need to make a case. Worth applying if user is open to stretches.
-- **2 — Weak fit**: Missing major requirements (e.g., specific years of experience, missing core stack).
-- **1 — Not a fit**: Role is in a different discipline. Skip.
+- **5 — Strong fit**: Builder role; the portfolio directly demonstrates the core requirement. They should apply.
+- **4 — Good fit**: Asks for ~2-4 yrs building with LLMs / RAG / agents; the projects cover it with minor gaps explained in a cover letter.
+- **3 — Stretch fit**: Adjacent experience; would need to make a case. Below the keep-threshold — score it but do not list or save.
+- **2 — Weak fit**: Requires deep ML research, 6+ yrs specialized AI, or a PhD; or missing the core stack.
+- **1 — Not a fit**: Different discipline (including standalone QA/SDET, under the builder-only strategy). Skip.
 
 Include the rationale in one line per role.
 
-By default, show roles scoring 3 and above. Show 4+ if the user wants a tighter list.
+**Keep only roles scoring 4 or 5.** Drop Fit 3 (stretch) and below entirely — they are not shown in the shortlist or saved to the tracking note.
 
 ### Step 4: Present the shortlist
 Output as a table grouped by company, sorted by fit score within each company. Include:
@@ -85,8 +87,8 @@ Optionally offer follow-ups:
 ### Step 5: Save the scan as a dated tracking note (always)
 After presenting, persist the scan to `projects/job-search/scans/<YYYY-MM-DD>.md` (create the `scans/` folder if it does not exist; get the real date from `date +%Y-%m-%d`). This is the durable record hcho uses to track applications, so it always gets written, not just on request.
 
-- One row per role that scored 3+, with a **Status** column hcho edits over time. Status legend: `To apply` (default) / `Applied` / `Interviewing` / `Offer` / `Rejected` / `Passed` (declined).
-- Columns: `Status | Company | Role | Location | Fit | Apply | Notes`. Group remote-eligible vs onsite/relocation, sorted by fit within each group (mirrors the shortlist).
+- One row per role that scored **4+**, with a **Status** column hcho edits over time. Status legend: `To apply` (default) / `Applied` / `Interviewing` / `Offer` / `Rejected` / `Passed` (declined).
+- Columns: `Status | Company | Role | Location | Fit | Apply | Notes`. Group **remote-eligible vs Burbank-local (within 25 mi)**, sorted by fit within each group (mirrors the shortlist).
 - Also record the "no openings / unreachable" companies and the list of companies skipped this run, so the note is a complete record of what was and was not covered.
 - **Never overwrite an existing same-day file** — it may already hold hcho's Status edits. If `<YYYY-MM-DD>.md` exists, write `<YYYY-MM-DD>-2.md` (incrementing) instead, and tell hcho.
 
@@ -109,8 +111,9 @@ Read these only when you need to resolve ambiguity (e.g., a borderline fit score
 - **Don't fabricate roles.** If a company's careers page is unreachable, say so — never invent a role or URL.
 - **Verify links.** Every apply link in the output should be a real URL you actually fetched, not a guess.
 - **Respect the resume.** If the resume emphasizes specific domains (e.g., AI engineering, edtech), weight those heavily. Don't surface unrelated roles just because the company is on the list.
-- **Enforce the seniority/AI-builder filter.** Senior/Staff/Principal roles and Junior/Entry-level roles should be excluded unless they explicitly fall under the AI Builder umbrella. When in doubt about seniority, check years-of-experience requirements: 2–5 yrs = mid-level (keep), 0–1 yrs = junior (drop), 6+ yrs = senior (drop unless AI-builder-titled).
-- **Note when a company has no relevant openings.** It's useful for the user to know "Company X had nothing mid-level or AI-builder" rather than silently omitting them.
+- **Enforce the builder filter.** Keep Mid-level and Senior IC builder roles. Drop Staff/Principal/Lead (team-leadership or deep-ML-research) and roles gated on 6+ yrs specialized AI/ML or a PhD. Non-AI roles (including standalone QA/SDET) are out under the builder-only strategy. When in doubt, check whether the core responsibility is *building with LLMs/agents/RAG* — if yes, keep regardless of the Senior label.
+- **Enforce the location + fit gates.** Keep only roles that are remote (US-eligible) or within 25 miles of Burbank, CA, and only Fit 4-5. Drop onsite-elsewhere roles and anything Fit 3 or below before it reaches the shortlist or the tracking note. hcho is not relocating.
+- **Note when a company has no relevant openings.** It's useful for the user to know "Company X had no builder roles in range" rather than silently omitting them.
 
 ## Memory
 

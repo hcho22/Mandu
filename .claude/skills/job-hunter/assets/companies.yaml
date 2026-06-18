@@ -185,13 +185,6 @@ companies:
     watch_outs: "Heavy LangChain bias. If you don't know the framework cold, prep before applying."
     priority: high
 
-  - name: LlamaIndex
-    bucket: ai-native-larger
-    location: ""
-    careers_url: ""  # TODO
-    pitch: "RAG infra — Omdena CV+LLM background; CreativeBridge agentic RAG"
-    priority: high
-
   - name: Mastra
     bucket: ai-native-larger
     location: ""
@@ -283,13 +276,6 @@ companies:
     priority: low
 
   # AI for vertical SaaS (FDE / Applied AI shaped)
-  - name: Fieldguide
-    bucket: yc-vertical-saas
-    location: SF / Remote (US)
-    careers_url: https://www.ycombinator.com/companies/fieldguide/jobs
-    pitch: "Vertical AI for audit/advisory — 5 open AI Engineer / AgentOps roles; 'AI Engineer, Quality' (1+ yr) bridges QA decade directly"
-    priority: high
-
   - name: Delfino AI
     bucket: yc-vertical-saas
     location: Remote (US)
