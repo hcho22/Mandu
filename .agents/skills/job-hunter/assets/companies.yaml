@@ -1,0 +1,543 @@
+# Target list — YC-backed AI startups + Series A–C AI-native companies
+# known for practical interviews (take-homes + system design vs. LeetCode).
+# Plus the AI Evals Job Application Strategy (Tier A/B/C) — see section near bottom.
+# Edit freely. URLs marked "" are TODOs — the skill will resolve them at runtime.
+# Extra fields on Evals-strategy entries: tier, target_role, why_fit, watch_outs.
+
+companies:
+  # === YC-backed: Agentic / AI workflow builders ===
+  - name: Emergent
+    bucket: yc-agentic-builders
+    location: SF
+    careers_url: ""  # TODO
+    pitch: "Autonomous coding agents — daily Claude Code / Cursor power user, CreativeBridge built with agentic workflows"
+    priority: high
+
+  - name: Mem0
+    bucket: yc-agentic-builders
+    location: SF / Remote (US)
+    careers_url: https://www.ycombinator.com/companies/mem0/jobs
+    pitch: "Memory layer for LLM apps — Mandu memory system + RAG/embeddings background from Omdena"
+    priority: high
+
+  - name: Brainbase Labs
+    bucket: yc-agentic-builders
+    location: SF
+    careers_url: ""  # TODO
+    pitch: "Agent environments and tooling — Claude Skills SDK production user"
+    priority: high
+
+  - name: Dataleap
+    bucket: yc-agentic-builders
+    location: SF
+    careers_url: ""  # TODO
+    pitch: "'Vibe automating' platform for non-engineers — hardware QA → AI pivot story fits the no-code/low-code user persona"
+    priority: medium
+
+  - name: "Naive"
+    bucket: yc-agentic-builders
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "Autonomous company builder / AI employees — multi-AI orchestration experience from CreativeBridge"
+    priority: medium
+
+  - name: RamAIn
+    bucket: yc-agentic-builders
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "UI automation across browser/desktop — hardware QA decade = deep UI test automation background"
+    priority: medium
+
+  - name: Persana
+    bucket: yc-agentic-builders
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "Agentic GTM platform — production LLM + agent orchestration experience"
+    priority: medium
+
+  - name: StarSling
+    bucket: yc-agentic-builders
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "Agentic developer homepage (deployments, incidents, bugs) — 108-service observability + Sentry production user"
+    priority: medium
+
+  - name: Lab0
+    bucket: yc-agentic-builders
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "Agentic systems for enterprise software implementation — FDE-shaped role fits Applied AI Engineer profile"
+    priority: medium
+
+  # === YC-backed: AI for vertical SaaS (FDE / Applied AI shaped) ===
+  - name: Acolite
+    bucket: yc-vertical-saas
+    location: NY
+    careers_url: ""  # TODO
+    pitch: "AI teammates for insurance ops — agentic workflows for regulated industries"
+    priority: medium
+
+  - name: Prosper
+    bucket: yc-vertical-saas
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "AI phone agents for healthcare — voice + agent orchestration"
+    priority: medium
+
+  - name: YouShift
+    bucket: yc-vertical-saas
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "AI for hospital scheduling — constraint-solving + production LLM workflows"
+    priority: medium
+
+  - name: Trata
+    bucket: yc-vertical-saas
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "AI research desk for hedge funds — RAG/embeddings + agentic research patterns"
+    priority: medium
+
+  - name: Skypher
+    bucket: yc-vertical-saas
+    location: NY
+    careers_url: ""  # TODO
+    pitch: "AI agents for security compliance questionnaires — hardware QA + compliance instincts"
+    priority: medium
+
+  - name: Berry
+    bucket: yc-vertical-saas
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "AI Customer Success Manager for SaaS — applied AI in B2B workflow"
+    priority: medium
+
+  - name: Arden
+    bucket: yc-vertical-saas
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "AI agents for internal audit / servicing — process automation + agent orchestration"
+    priority: medium
+
+  - name: ProhostAI
+    bucket: yc-vertical-saas
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "AI property manager for Airbnb hosts — consumer-facing agentic product"
+    priority: low
+
+  - name: Closure
+    bucket: yc-vertical-saas
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "AI for law enforcement data search — RAG over heterogeneous data"
+    priority: low
+
+  - name: Structured AI
+    bucket: yc-vertical-saas
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "AI agents for construction design QA — hardware QA decade translates directly to physical-world QA"
+    priority: medium
+
+  # === YC-backed: AI infra / dev tools ===
+  - name: Wafer
+    bucket: yc-infra-devtools
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "AI agents optimizing GPU kernels — deep infra; stretch but aligned with builder identity"
+    priority: low
+
+  - name: Autosana
+    bucket: yc-infra-devtools
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "Testing layer for coding agents — hardware QA decade + AI coding agents power user = unusually strong fit"
+    priority: high
+
+  - name: Sixtyfour
+    bucket: yc-infra-devtools
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "AI investigation agents (OSINT) — agentic research + RAG patterns"
+    priority: medium
+
+  # === Larger AI-native companies (Series A–C) ===
+  - name: Anthropic
+    bucket: ai-native-larger
+    tier: A  # Frontier AI Labs (AI Evals strategy)
+    location: SF / NYC (hybrid)
+    careers_url: https://www.anthropic.com/careers
+    target_role: "AI Evals / Member of Technical Staff"
+    pitch: "Built CreativeBridge using Claude Code + Claude Skills SDK in production"
+    why_fit: "Anthropic explicitly does not require PhDs. Validation rigor is a core company value — hardware testing discipline maps directly."
+    watch_outs: "Extremely competitive. Apply after you have a public portfolio piece. Expect 5-7 rounds."
+    priority: high
+
+  - name: LangChain
+    bucket: ai-native-larger
+    tier: B  # Evals & Observability Tooling Vendors (AI Evals strategy)
+    location: ""
+    careers_url: https://www.langchain.com/careers
+    target_role: "Engineer (LangSmith team)"
+    pitch: "Applied AI orchestration — LangChain/LangSmith ecosystem; agentic + RAG production experience"
+    why_fit: "Deepest framework integration in the space. LangSmith is the default eval platform for thousands of LangChain apps."
+    watch_outs: "Heavy LangChain bias. If you don't know the framework cold, prep before applying."
+    priority: high
+
+  - name: Mastra
+    bucket: ai-native-larger
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "TypeScript agent framework — React Native/Expo + TS, agentic orchestration in CreativeBridge"
+    priority: high
+
+  - name: Hex
+    bucket: ai-native-larger
+    location: ""
+    careers_url: https://hex.tech/careers
+    pitch: "AI-native data workspaces — analytics + LLM workflows; multi-AI orchestration fit"
+    priority: medium
+
+  - name: Vercel
+    bucket: ai-native-larger
+    location: ""
+    careers_url: https://vercel.com/careers
+    pitch: "AI-native frontend infrastructure; React Native + Expo background; v0 / AI SDK team"
+    priority: high
+
+  - name: Glean
+    bucket: ai-native-larger
+    location: ""
+    careers_url: https://www.glean.com/careers
+    pitch: "RAG + embeddings background from Omdena work; enterprise search/AI"
+    priority: medium
+
+  - name: Cresta
+    bucket: ai-native-larger
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "Conversation intelligence — production LLM + real-time inference patterns"
+    priority: medium
+
+  - name: Decagon
+    bucket: ai-native-larger
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "AI customer support agents — agentic production workflows"
+    priority: medium
+
+  - name: Speak
+    bucket: ai-native-larger
+    location: ""
+    careers_url: ""  # TODO
+    pitch: "AI language tutor — edtech (target sector) + multimodal AI; CreativeBridge is edtech-adjacent"
+    priority: high
+
+  - name: Harvey
+    bucket: ai-native-larger
+    tier: C  # AI-First Product Companies (AI Evals strategy)
+    location: SF (onsite)
+    careers_url: https://www.harvey.ai/careers
+    target_role: "AI Quality / Forward-Deployed"
+    pitch: "Production LLM systems experience; legal AI vertical"
+    why_fit: "Legal AI where accuracy matters more than almost any consumer product. Validation rigor is a literal product requirement."
+    watch_outs: "Legal domain knowledge helps but is not required. Pitch your validation-against-regulated-systems experience if relevant."
+    priority: high
+
+  - name: Cohere
+    bucket: ai-native-larger
+    location: ""
+    careers_url: https://cohere.com/careers
+    pitch: "Applied AI roles — RAG/embeddings + multi-model orchestration"
+    priority: medium
+
+  # === Round 3 additions (added 2026-05-12; URLs verified at scan time) ===
+  # Agentic / AI builders
+  - name: StackAI
+    bucket: yc-agentic-builders
+    location: SF / NYC / Remote (US)
+    careers_url: https://www.ycombinator.com/companies/stack-ai/jobs
+    pitch: "Enterprise AI agent platform — Senior AI/ML Engineer (remote) + Forward Deployed AI Engineer; Claude Skills SDK + agentic orchestration"
+    priority: high
+
+  - name: Retell AI
+    bucket: yc-agentic-builders
+    location: San Carlos / SF Bay
+    careers_url: https://www.ycombinator.com/companies/retell-ai/jobs
+    pitch: "Voice AI agent platform — multi-AI orchestration from CreativeBridge; FDE / Integration Engineer shaped"
+    priority: medium
+
+  - name: Same
+    bucket: yc-agentic-builders
+    location: ""
+    careers_url: ""  # TODO — YC slug unresolved (collides with 'Million'); supply canonical URL
+    pitch: "No-code AI builder — agentic product engineering"
+    priority: low
+
+  # AI for vertical SaaS (FDE / Applied AI shaped)
+  - name: Delfino AI
+    bucket: yc-vertical-saas
+    location: Remote (US)
+    careers_url: https://www.ycombinator.com/companies/delfino-ai/jobs
+    pitch: "Healthcare admin automation — Founding AI Engineer, remote-US; mission-driven sector like CreativeBridge edtech"
+    priority: high
+
+  - name: HappyRobot
+    bucket: yc-vertical-saas
+    location: SF / Remote
+    careers_url: https://www.ycombinator.com/companies/happyrobot/jobs
+    pitch: "Logistics communication AI — Forward Deployed Engineer (remote); voice/agent workflows"
+    priority: high
+
+  - name: Lumari
+    bucket: yc-vertical-saas
+    location: SF / Remote (US)
+    careers_url: https://www.ycombinator.com/companies/lumari/jobs
+    pitch: "AI procurement automation for supply chain — mid-level SWE (remote-US) + Founding FDE"
+    priority: medium
+
+  - name: Modern Amenities
+    bucket: yc-vertical-saas
+    location: ""
+    careers_url: ""  # TODO — YC profile 404 + domain unreachable at scan time; reported Junior Agentic Engineer role unverified
+    pitch: "AI-native builder team (hospitality/amenities) — agentic engineering role per user notes; needs URL verification"
+    priority: medium
+
+  - name: Yuma AI
+    bucket: yc-vertical-saas
+    location: Boston / Barcelona
+    careers_url: https://www.ycombinator.com/companies/yuma/jobs
+    pitch: "Ecommerce support agents — AI-builder roles but Rails stack + no US-remote; lower fit"
+    priority: low
+
+  - name: Aurelian
+    bucket: yc-vertical-saas
+    location: Seattle (onsite)
+    careers_url: https://www.ycombinator.com/companies/aurelian/jobs
+    pitch: "AI for 911 call workflows — all roles Seattle onsite + Senior/Staff; weak location/seniority fit"
+    priority: low
+
+  - name: Nowadays
+    bucket: yc-vertical-saas
+    location: SF (onsite)
+    careers_url: https://www.ycombinator.com/companies/nowadays/jobs
+    pitch: "AI event planning — Founding AI Engineer; SF onsite only"
+    priority: low
+
+  - name: Rollstack
+    bucket: yc-vertical-saas
+    location: Remote (North America)
+    careers_url: https://www.rollstack.com/careers
+    pitch: "Automated slide-deck / reporting — fully-remote SWE; workflow automation, not AI-builder titled"
+    priority: low
+
+  - name: Rally UXR
+    bucket: yc-vertical-saas
+    location: Remote (US)
+    careers_url: https://www.ycombinator.com/companies/rally-uxr/jobs
+    pitch: "User research CRM — only role is Senior Product Engineer 6+ yrs; weak fit under filter"
+    priority: low
+
+  - name: Toma
+    bucket: yc-vertical-saas
+    location: ""
+    careers_url: ""  # TODO — YC reports no jobs posted; domain unreachable at scan time
+    pitch: "AI for automotive dealerships — applied AI / integrations"
+    priority: low
+
+  - name: Junction
+    bucket: yc-vertical-saas
+    location: UK / Portugal (Remote)
+    careers_url: https://www.ycombinator.com/companies/junction/jobs
+    pitch: "Home health data API — only role is Product Engineer 6+ yrs, non-US; weak fit"
+    priority: low
+
+  - name: HockeyStack
+    bucket: yc-vertical-saas
+    location: SF
+    careers_url: ""  # TODO — YC reports no engineering jobs posted
+    pitch: "B2B revenue OS — applied AI / product engineering when hiring"
+    priority: low
+
+  - name: Popl
+    bucket: yc-vertical-saas
+    location: Remote (US)
+    careers_url: https://www.ycombinator.com/companies/popl/jobs
+    pitch: "In-person GTM platform — only role is Senior Backend, not AI-builder; weak fit under filter"
+    priority: low
+
+  # AI infra / dev tools
+  - name: Chima
+    bucket: yc-infra-devtools
+    location: SF / Remote (US)
+    careers_url: https://www.ycombinator.com/companies/chima/jobs
+    pitch: "LLM customization tools — AI Engineer (SF) + remote Frontend; on-theme for applied AI"
+    priority: medium
+
+  - name: Cua
+    bucket: yc-infra-devtools
+    location: SF (onsite)
+    careers_url: https://www.ycombinator.com/companies/cua/jobs
+    pitch: "Computer-agent containers — Founding Engineer, Infra & Agent Systems; agentic infra builder"
+    priority: medium
+
+  - name: Infisical
+    bucket: yc-infra-devtools
+    location: Remote (Americas / Global)
+    careers_url: https://jobs.ashbyhq.com/infisical
+    pitch: "Open-source secrets/security platform — mid-level Full Stack roles, fully remote; not AI-builder titled"
+    priority: low
+
+  - name: GrowthBook
+    bucket: yc-infra-devtools
+    location: Remote (US)
+    careers_url: https://www.ycombinator.com/companies/growthbook/jobs
+    pitch: "Open-source feature flagging + A/B testing — Founding Solutions Engineer (remote); A/B testing on resume"
+    priority: low
+
+  - name: Lago
+    bucket: yc-infra-devtools
+    location: Remote (Europe / Americas / Canada)
+    careers_url: https://jobs.ashbyhq.com/lago
+    pitch: "Open-source usage-based billing infra — mid-level Infra Engineer (remote Canada); not AI-builder titled"
+    priority: low
+
+  - name: SigNoz
+    bucket: yc-infra-devtools
+    location: Remote (India / US)
+    careers_url: https://jobs.ashbyhq.com/SigNoz
+    pitch: "Open-source observability (Datadog alternative) — 108-service monitoring background; FDE role is India-TZ"
+    priority: low
+
+  - name: "Swif.ai"
+    bucket: yc-infra-devtools
+    location: Remote (TW / multi-region, not US-primary)
+    careers_url: https://www.ycombinator.com/companies/swif/jobs
+    pitch: "Device management / compliance automation — Frontend AI-agent role; remote but not US-eligible"
+    priority: low
+
+  # === AI Evals Job Application Strategy — Tier A/B/C (added 2026-05-30 from strategy doc) ===
+  # Focus: AI Evals / Quality / Validation roles — direct map from the hardware QA decade.
+  # Tier A (Frontier Labs):            Anthropic*, OpenAI, Google DeepMind, xAI, Meta AI/FAIR
+  # Tier B (Evals & Observability):    Braintrust, LangChain*, Galileo, Patronus AI, Arize AI
+  # Tier C (AI-First Product):         Cursor (Anysphere), Perplexity, Harvey*, Sierra
+  #   (* enriched in their existing entries above — not duplicated here)
+
+  # --- Tier A — Frontier AI Labs ---
+  - name: OpenAI
+    bucket: frontier-ai-labs
+    tier: A
+    location: SF
+    careers_url: https://openai.com/careers/
+    target_role: "AI Engineer / Residency"
+    why_fit: "OpenAI Residency is built for career changers — use it as the front door, not a regular AI Engineer posting."
+    watch_outs: "Less validation-discipline-focused than Anthropic. Lean harder on the LLM evals layer in your pitch."
+    priority: high
+
+  - name: Google DeepMind
+    bucket: frontier-ai-labs
+    tier: A
+    location: ""
+    careers_url: ""  # TODO
+    target_role: "Research Engineer / AI Quality"
+    why_fit: "Large eval orgs across Gemini and other products. Hardware-industry background reads well at Google."
+    watch_outs: "Hiring slower than Anthropic/OpenAI. Bureaucratic process; expect 8-12 weeks end-to-end."
+    priority: high
+
+  - name: xAI
+    bucket: frontier-ai-labs
+    tier: A
+    location: ""
+    careers_url: https://x.ai/careers
+    target_role: "AI Engineer"
+    why_fit: "Smaller team, fewer applicants per role. Less prestige-filtered than Anthropic/OpenAI."
+    watch_outs: "Culture is engineering-velocity-first. Validation rigor is valued but not the brand. Frame fit carefully."
+    priority: high
+
+  - name: Meta AI / FAIR
+    bucket: frontier-ai-labs
+    tier: A
+    location: ""
+    careers_url: https://www.metacareers.com/
+    target_role: "Research Engineer (Evals)"
+    why_fit: "Llama deployment scale needs massive eval infrastructure. Strong validation hires for safety/integrity work."
+    watch_outs: "Large-company process. Less startup energy. Comp is strong but pace is slower."
+    priority: medium
+
+  # --- Tier B — Evals & Observability Tooling Vendors ---
+  - name: Braintrust
+    bucket: evals-observability-tooling
+    tier: B
+    location: ""
+    careers_url: ""  # TODO
+    target_role: "Forward-Deployed Engineer / AI Engineer"
+    why_fit: "$80M Series B. Customers include Vercel, Notion, Stripe, Coursera. You'd be selling and implementing evals to teams who need exactly what you can teach."
+    watch_outs: "FDE role is half-consulting. Less of a fit if you want pure engineering. Read the JD carefully."
+    priority: high
+
+  - name: Galileo
+    bucket: evals-observability-tooling
+    tier: B
+    location: ""
+    careers_url: ""  # TODO
+    target_role: "AI Engineer / Runtime Guardrails"
+    why_fit: "Strong on production guardrails and runtime evaluation — closest to traditional QA in spirit."
+    watch_outs: "Smaller team than Braintrust/LangChain. Fewer open roles at any given time."
+    priority: medium
+
+  - name: Patronus AI
+    bucket: evals-observability-tooling
+    tier: B
+    location: ""
+    careers_url: ""  # TODO
+    target_role: "AI Engineer / Research Engineer"
+    why_fit: "Evaluation-first company. Mission alignment is unusually clean for someone with your background."
+    watch_outs: "Earlier stage. Comp is a step below Tier A. Equity matters more here."
+    priority: medium
+
+  - name: Arize AI
+    bucket: evals-observability-tooling
+    tier: B
+    location: ""
+    careers_url: ""  # TODO
+    target_role: "Solutions Engineer / ML Observability"
+    why_fit: "Arize Phoenix is widely used and the company is well-established. Hybrid technical/customer-facing roles available."
+    watch_outs: "Origin in classical ML monitoring; LLM evals is the newer focus. Position your pitch toward the LLM side."
+    priority: medium
+
+  # --- Tier C — AI-First Product Companies ---
+  - name: Cursor (Anysphere)
+    bucket: ai-first-product
+    tier: C
+    location: ""
+    careers_url: https://www.cursor.com/careers
+    target_role: "Eval / Quality Engineer"
+    why_fit: "Coding agent at massive scale. Failure modes are visible to users daily. Pre-interview prep is easy — just use the product."
+    watch_outs: "Engineering culture is fast and informal. Less structured interview process; you must self-direct."
+    priority: high
+
+  - name: Perplexity
+    bucket: ai-first-product
+    tier: C
+    location: ""
+    careers_url: ""  # TODO
+    target_role: "AI Engineer (Search Quality)"
+    why_fit: "Search hallucination is their #1 quality problem. Massive eval surface area. Visible failure modes for your study protocol."
+    watch_outs: "Move-fast culture. Expect to ship in week 1. Less hand-holding for new hires."
+    priority: high
+
+  - name: Sierra
+    bucket: ai-first-product
+    tier: C
+    location: ""
+    careers_url: https://sierra.ai/careers
+    target_role: "AI Engineer / Voice Quality"
+    why_fit: "Production voice agents where eval failures are immediately customer-facing. Bret Taylor's company — well-funded, strong engineering culture."
+    watch_outs: "Heavy enterprise sales motion. Engineering roles still strong, but adjacent to the GTM org."
+    priority: high
+
+# === Browse live YC listings ===
+# https://www.ycombinator.com/companies/industry/ai/san-francisco-bay-area/hiring
+# https://www.ycombinator.com/companies/industry/ai/new-york/hiring
+# https://www.ycombinator.com/companies/industry/generative-ai/san-francisco-bay-area/hiring
