@@ -2,7 +2,7 @@
 
 **One-liner:** Learning track for AI evaluation and quality engineering, the core skill for the target role. Working through a 20-hour, 10-session plan.
 
-**Status:** Active, current learning focus. Started 2026-06-03.
+**Status:** Parked as of 2026-06-18. Folded into the Agentic RAG flagship: evals are now pursued as the differentiating edge via that project's eval harness (golden set, leak suite, escalation golden set, CI gate), not as a standalone 20-hour study track. Resume this track if the strategy shifts back to study. Originally started 2026-06-03. See the 2026-06-18 north-star reframe in `decisions/log.md`.
 
 **Plan:** `learning-plan.md` (full 20-hour plan: 10 sessions, one-page cheat sheet, 10-question quiz, 5-level ladder, top-5 resources, Feynman walkthrough).
 

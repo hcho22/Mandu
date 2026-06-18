@@ -1,20 +1,20 @@
 # Job Search
 
-**One-liner:** hcho's active job search for an AI evals / quality engineering role at AI-native companies.
+**One-liner:** hcho's active job search for AI builder and AI evals / quality roles at AI-native companies, run as the parallel income hedge alongside the Agentic RAG product bet.
 
 **Status:** Active
 
 **Key dates:**
-- Target: land a role by end of 2026.
+- Target: income by end of 2026 (a role here, or app revenue via Agentic RAG).
 
-## Strategy (as of 2026-05-30)
+## Strategy (as of 2026-06-18)
 
-**Primary strategy: AI Evals / Quality / Validation roles.** Core thesis: a decade of hardware QA maps directly onto AI evals. No PhD required (Anthropic states this explicitly). Lead the pitch with validation rigor plus production LLM and agentic experience (CreativeBridge, Omdena, Agentic RAG).
+**Primary strategy: two co-equal buckets, AI builder roles (AI Builder / AI Product Engineer / Applied AI Engineer) and AI evals / quality roles.** Validation/evals rigor is the cross-cutting differentiator, not the role category: a decade of hardware QA maps directly onto production AI quality, and no PhD is required (Anthropic states this explicitly). Lead each application with production LLM and agentic experience (CreativeBridge, Omdena, Agentic RAG) plus validation rigor. This search runs as the parallel income hedge alongside the Agentic RAG product bet (see the 2026-06-18 north-star reframe in `decisions/log.md`).
 
 Two framings coexist on the target list:
 
 - YC-backed agentic / applied-AI startups (FDE / Applied AI shaped).
-- **AI Evals Tier A/B/C:**
+- **Tier A/B/C:**
   - **Tier A, Frontier labs:** Anthropic, OpenAI, Google DeepMind, xAI, Meta / FAIR.
   - **Tier B, Evals / observability vendors:** Braintrust, LangChain (LangSmith), Galileo, Patronus, Arize.
   - **Tier C, AI-first product:** Cursor / Anysphere, Perplexity, Harvey, Sierra.
