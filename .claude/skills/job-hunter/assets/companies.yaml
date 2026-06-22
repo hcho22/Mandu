@@ -417,6 +417,100 @@ companies:
     pitch: "Device management / compliance automation — Frontend AI-agent role; remote but not US-eligible"
     priority: low
 
+  # === BuiltIn AI roundup additions (added 2026-06-22; non-duplicates only; URLs TODO — resolved at scan time) ===
+  # Source: https://builtin.com/artificial-intelligence/ai-companies-roundup
+  # Megacaps / non-AI-native enterprises from the roundup were intentionally skipped (off-profile vs. the AI-native startup/scaleup + evals thesis).
+  - name: Hebbia
+    bucket: ai-native-larger
+    location: New York, NY
+    careers_url: ""  # TODO
+    pitch: "AI research over documents for finance/law/corporate — RAG over heterogeneous sources maps directly to Agentic RAG (pgvector retrieval) + Omdena RAG/embeddings"
+    priority: high
+
+  - name: Credal.ai
+    bucket: ai-native-larger
+    location: New York, NY
+    careers_url: ""  # TODO
+    pitch: "Multi-agent AI assistants with governance/permissions — agentic orchestration (CreativeBridge) + permission-aware RAG (Agentic RAG Phase 2 workspace isolation) is an unusually direct fit"
+    priority: high
+
+  - name: EliseAI
+    bucket: ai-native-larger
+    location: New York, NY
+    careers_url: ""  # TODO
+    pitch: "AI virtual assistants for property + healthcare ops — production agentic workflows at a well-funded scaleup"
+    priority: medium
+
+  - name: Deepgram
+    bucket: ai-native-larger
+    location: San Francisco, CA
+    careers_url: ""  # TODO
+    pitch: "Voice AI APIs (speech-to-text, TTS, voice agents) — multi-AI orchestration from CreativeBridge; FDE/integration-shaped"
+    priority: medium
+
+  - name: Sendbird
+    bucket: ai-native-larger
+    location: San Mateo, CA
+    careers_url: ""  # TODO
+    pitch: "AI agents for customer experience — agentic production workflows; conversational-AI space alongside Cresta/Decagon"
+    priority: medium
+
+  - name: Regal
+    bucket: ai-native-larger
+    location: New York, NY
+    careers_url: ""  # TODO
+    pitch: "AI voice/chat agents for autonomous customer engagement — real-time agentic inference; adjacent to Cresta/Decagon"
+    priority: medium
+
+  - name: Notion
+    bucket: ai-native-larger
+    location: San Francisco, CA
+    careers_url: ""  # TODO
+    pitch: "AI-native workspace assistant — Braintrust evals customer; aligns with the Mandu second-brain/builder identity"
+    priority: medium
+
+  - name: Webflow
+    bucket: ai-native-larger
+    location: San Francisco, CA
+    careers_url: ""  # TODO
+    pitch: "AI-native platform for building web experiences — React/Vite/Tailwind frontend background fits the AI-for-web builder surface"
+    priority: medium
+
+  - name: GC AI
+    bucket: ai-native-larger
+    location: San Mateo, CA
+    careers_url: ""  # TODO
+    pitch: "Legal AI for document drafting/review — accuracy-critical like Harvey; validation rigor is a literal product requirement"
+    priority: medium
+
+  - name: Product.ai
+    bucket: ai-native-larger
+    location: Los Angeles, CA
+    careers_url: ""  # TODO
+    pitch: "Tests product claims against evidence to deliver purchase verdicts — a verification/evals product; maps to the AI evals/quality bucket + hardware-validation background"
+    priority: medium
+
+  - name: Hedra
+    bucket: ai-native-larger
+    location: San Francisco, CA
+    careers_url: ""  # TODO
+    pitch: "AI character-video generation from voice/text — multimodal generation maps to CreativeBridge (Stable Diffusion 3.5 + multi-provider orchestration)"
+    priority: medium
+
+  - name: Tempus AI
+    bucket: ai-native-larger
+    location: Chicago, IL
+    careers_url: ""  # TODO
+    pitch: "AI over clinical/medical data for precision medicine — Omdena medical imaging (DeepLabV3+ histopathology segmentation) is a direct domain bridge"
+    priority: medium
+
+  - name: Superblocks
+    bucket: ai-native-larger
+    location: New York, NY
+    careers_url: ""  # TODO
+    pitch: "AI for internal-tools development — full-stack (FastAPI + React) builder profile; applied-AI dev tooling"
+    priority: low
+
   # === AI Evals Job Application Strategy — Tier A/B/C (added 2026-05-30 from strategy doc) ===
   # Focus: AI Evals / Quality / Validation roles — direct map from the hardware QA decade.
   # Tier A (Frontier Labs):            Anthropic*, OpenAI, Google DeepMind, xAI, Meta AI/FAIR
