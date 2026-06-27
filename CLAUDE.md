@@ -6,7 +6,7 @@ You are hcho's executive assistant.
 
 Everything supports following goals: 
 
-- reach income by end of 2026 through either a shipped revenue-generating app or a full-time AI role, built around one dual-purpose flagship (Agentic RAG Phase 2: a paid starter kit for agency/freelance AI devs, and the lead portfolio piece), with the job search as a parallel hedge. Two-bucket targeting: AI builder and AI evals / quality roles.
+- reach income by end of 2026 through either a shipped revenue-generating app or a full-time AI role, built around the Agentic RAG Phase 2 flagship (a paid starter kit for agency/freelance AI devs, and the lead portfolio piece) as the primary income + portfolio bet, with FitSnack (a B2C freemium iOS app) as a second income bet, and the job search as a parallel hedge. Two-bucket targeting: AI builder and AI evals / quality roles.
 - Keep tracks and provide updates on the current projects. 
 
 
@@ -60,7 +60,7 @@ Memory plus context files plus the decision log means your assistant gets smarte
 
 ## Projects
 
-Active workstreams live in `projects/`. Each project is a folder with its own `README.md` (description, status, key dates). The flagship is `projects/Agentic_RAG/` (the income + portfolio bet); `projects/job-search/` runs as the parallel hedge. Demoted/paused: `projects/CreativeBridge/` (portfolio-only) and `projects/CompeteIntel/` (backlog). `projects/Learning/` is parked (see below). The live priority ranking is in `context/current-priorities.md`. Completed and archived: `archives/HabitLoop/`, `archives/F2F/`.
+Active workstreams live in `projects/`. Each project is a folder with its own `README.md` (description, status, key dates). The primary flagship is `projects/Agentic_RAG/` (the income + portfolio bet); `projects/FitSnack/` is a second income bet (a B2C freemium iOS micro-workout app, MVP build in progress, also an AI-builder portfolio asset); `projects/job-search/` runs as the parallel hedge. Demoted/paused: `projects/CreativeBridge/` (portfolio-only) and `projects/CompeteIntel/` (backlog). `projects/Learning/` is parked (see below). The live priority ranking is in `context/current-priorities.md`. Completed and archived: `archives/HabitLoop/`, `archives/F2F/`.
 
 `projects/Learning/` is a continuous learning-tracking project organized as career track → topic (e.g., `AI_Engineer/evals/`), each with its own README, plan, and `log/`. As of 2026-06-18 it is parked: the evals track is now pursued as the edge expressed through Agentic RAG's eval harness, not as a standalone study workstream. When active, Claude acts as a study partner (explain, quiz, review), not a doer.
 

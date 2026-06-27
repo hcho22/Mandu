@@ -1,10 +1,10 @@
 # Career & Work
 
-Solo and independent, pursuing income by end of 2026 through a revenue product (the Agentic RAG starter kit) or a full-time AI role. No revenue yet; the projects below are portfolio work, with Agentic RAG Phase 2 now also a product bet.
+Solo and independent, pursuing income by end of 2026 through a revenue product (the Agentic RAG starter kit, or FitSnack) or a full-time AI role. No revenue yet; the projects below are portfolio work, with Agentic RAG Phase 2 (B2B) and FitSnack (B2C) as the two product bets.
 
 ## Current focus
 
-Building Agentic RAG Phase 2 as a dual-purpose flagship (a paid starter kit sold to agency/freelance AI devs, and the lead portfolio piece), validation-first; running the job search as a parallel income hedge (see `projects/job-search/`), two-bucket targeting (AI builder + AI evals / quality).
+Building Agentic RAG Phase 2 as the primary dual-purpose flagship (a paid starter kit sold to agency/freelance AI devs, and the lead portfolio piece), validation-first; building FitSnack as a second income bet (a B2C freemium iOS micro-workout app, MVP in progress); running the job search as a parallel income hedge (see `projects/job-search/`), two-bucket targeting (AI builder + AI evals / quality).
 
 ## Positioning
 
@@ -12,6 +12,7 @@ Building Agentic RAG Phase 2 as a dual-purpose flagship (a paid starter kit sold
 
 ## Portfolio projects
 
+- **FitSnack:** discipline-first micro-workout iOS app (B2C freemium, second income bet). SwiftUI + Observation; MVVM + protocol-based DI; CoreData / CloudKit; deterministic on-device engine (no LLM in the MVP); StoreKit 2, Sign in with Apple, HealthKit. Phase 2 adds language-only LLM features.
 - **CreativeBridge:** K-12 multi-AI mobile app on iOS TestFlight. React Native + Expo + Convex + Clerk; GPT-4o-mini + Stable Diffusion 3.5 (Replicate) + Claude Skills SDK; COPPA-compliant.
 - **Agentic RAG:** FastAPI + pgvector + raw OpenAI SDK (no LLM frameworks); React / Vite / Tailwind; Supabase with RLS; LangSmith observability.
 - **Omdena (2023 to 2025):** DeepLabV3+ / UNET for medical and satellite computer vision; fine-tuned LLaMA / Falcon; deployed chatbots.
