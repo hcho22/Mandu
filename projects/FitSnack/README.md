@@ -10,12 +10,16 @@
 
 ## Status
 
-_Update this line as the project moves. Last reviewed: 2026-06-27._
+_Update this line as the project moves. Last reviewed: 2026-06-30._
 
 - **Phase:** MVP, clean rebuild in progress, built story-by-story against the PRD.
   The previous app (XP/badges/streaks, AI services, SwiftData) was removed and lives only in git history (commit `23fd56f`) as reference.
-- **Current state (per the repo PRD progress tracker):** Epic A (foundation) landed - US-A01 scaffold, US-A02 domain enums, US-A03 domain models, US-A04 CoreData stack, US-A05 app shell. `ViewModels/` is still empty; the deterministic engine (Epic C), screens, Consistency Score, PhaseEvaluator, CloudKit sync, and StoreKit are the bulk of the remaining stories.
-- **Confirm with hcho:** which story is next, and the real blocker list.
+- **Current state (per the repo PRD progress tracker): complete through US-C07.**
+  - **Epic A - Foundation (✅ done):** US-A01 scaffold, US-A02 domain enums, US-A03 domain models, US-A04 CoreData stack, US-A05 service protocols / ServiceContainer / app state.
+  - **Epic B - Exercise Library (✅ done):** US-B01 bundled ~38-movement JSON library, US-B02 exercise service load + integrity-check.
+  - **Epic C - Deterministic Engine (🔄 in progress, through US-C07):** US-C01 session-shape selection, US-C02 pillar balance by staleness, US-C03 movement-pattern focus, US-C04 pool filtering, US-C05 progression-chain selection, US-C06 adaptive overload, and US-C07 assembly + timing fit done. Remaining: US-C08 deterministic swap.
+  - **Remaining after the engine:** Epic D (Consistency Score + PhaseEvaluator), Epics E-I (onboarding, home, active session, post-session, progress tab), Epic J (Sign in with Apple, CloudKit sync, HealthKit, StoreKit 2 paywall).
+- **Next story:** US-C08 (deterministic exercise swap - same pillar/pattern/difficulty band, injury- and phase-respecting, within the time budget).
 
 ## Why this project / how it fits
 

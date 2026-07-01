@@ -44,9 +44,13 @@ Topological order (each section depends only on those above it):
 
 **Reconciliation with the strategy PRD §9:** that rollout order (workspace → escalation → observability → eval → model/boundaries → support) is *go-to-market phasing*; this PRD orders by *hard build dependency*, which forces the model surface (B) ahead of escalation (D) because D's runtime faithfulness gate is B's judge role. Observability is excluded here (CONTEXT-only). Sections A–C are independently shippable in parallel; D requires A+B; E requires A+D; F lands last to classify the evals the others create.
 
-## 4a. Implementation status (updated 2026-06-17)
+## 4a. Implementation status (updated 2026-06-30)
 
 Progress is tracked per-story via the `[x]`/`[ ]` acceptance-criteria checkboxes below and a `**Status:**` line on each touched story.
+
+**High-level (2026-06-30): complete through US-084.** Workstreams A (workspace tenant isolation, US-001–011), B (config-driven model surface, US-021–028), C (ingestion parser boundary, US-036–045), and D (escalation & deflection pipeline, US-046–059) are **done**. Workstream E (support surface — widget + handoff, US-066–093) is **in progress, built through US-084** — the deflection turn (US-078–079), the escalation latch + human-handoff loop (US-080–082), and the embeddable widget shell + chat UI (US-083–084) are done; US-085–093 remain (starting with US-085, session-scoped retrieval memory enforcement). Workstream F (eval gate + golden-set genericization, US-101–112) is **not started**.
+
+> Note: the per-story `**Status:**` lines and checkboxes in the body below this section are a 2026-06-17 snapshot (the original status table covered US-001–021 only). The repo is authoritative for line-item state; the high-level summary above reflects the 2026-06-30 progress report through US-084.
 
 | Story | Status | Evidence |
 |---|---|---|
