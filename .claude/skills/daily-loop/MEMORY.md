@@ -6,4 +6,4 @@ Entries are appended only when hcho explicitly says to remember something for th
 
 ## Notes
 
-- (none yet)
+- 2026-07-01: Name new standalone document artifacts `NN-title_YYMMDD.md` (per-directory two-digit sequence, kebab-case title, underscore before a YYMMDD creation date). Convention of record and the carve-outs (daily logs, job scans, `context/*.md`, wiki pages, `README.md`, `decisions/log.md`, source/config) live in `CLAUDE.md` under "File naming". Apply going forward; do not retro-rename.

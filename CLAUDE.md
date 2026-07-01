@@ -96,6 +96,17 @@ Active wikis:
 
 Reusable templates live in `templates/`. Current: `session-summary.md` for session closeout.
 
+## File naming
+
+New standalone document artifacts you generate (posts, reports, briefs, one-off deliverables) are named `NN-title_YYMMDD.md`.
+`NN` is a two-digit, zero-padded sequence within that directory; continue from the highest existing number.
+`title` is a short kebab-case slug.
+`_YYMMDD` is the creation date with a two-digit year, separated from the title by an underscore; it is set once at creation and does not change on later edits.
+Example: `projects/Agentic_RAG/posts/02-social-5day-launch_260701.md`.
+
+This applies only to new standalone artifacts.
+Do not rename files that already have their own convention or are referenced by path: daily logs and job scans (`YYYY-MM-DD.md`), `context/*.md` (imported here via `@context/...`), wiki pages (kebab-case with `[[wikilinks]]`), `README.md`, `decisions/log.md`, `templates/`, and source code or config.
+
 ## References
 
 Supporting material lives in `references/`: `references/sops/` for standard operating procedures, `references/examples/` for example outputs and style guides.
