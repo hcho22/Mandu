@@ -4,6 +4,7 @@ source: posts/01-permission-aware-rag.md
 status: draft - ready to schedule once the waitlist link is live
 audience: agency / freelance AI developers shipping client RAG features
 cta_dependency: waitlist link (Tally) must be live before Day 4-5 CTAs go out
+research_refresh: 2026-07-01 (last30days scan of "AI Chatbot" across Reddit, YouTube, and web; see "Current signal" section)
 ---
 
 # 5-Day Launch Campaign: The Per-User Sharing Trap
@@ -27,6 +28,49 @@ The narrative climbs: problem -> fix -> the nuance nobody covers -> proof -> the
 - Recommended subs: r/Rag (Day 1), r/LocalLLaMA (Day 3), optional r/SideProject (Day 5). Skip r/MachineLearning (too academic for this) and be cautious in r/LangChain (the "no framework lock-in" angle can read as a shot).
 
 **CTA dependency:** Days 4-5 need the Tally waitlist link live. Stand that up first (see `waitlist-cta.md`). Until then, Days 1-3 run link-free with no problem.
+
+---
+
+## Current signal (researched 2026-07-01, last 30 days)
+
+Fresh signal from a last-30-days scan (Reddit, YouTube, and web) to keep this campaign timely rather than evergreen.
+Weave these into threads and, especially, into Reddit comment replies, where specifics win traction.
+
+**The premise is now consensus language, not a hot take.**
+The 2026 security write-ups describe the exact failure this campaign is about: vector databases flatten permission hierarchies during embedding and do not inherit source-system ACLs (Google Drive, SharePoint), so restricted documents get served to users who were never authorized to see them.
+That is the same "post-filter kills recall, pre-filter is the fix" story told from the security side.
+Use their framing ("vector stores don't inherit your source permissions") as a bridge into the recall-math argument.
+
+**The leak failure mode is no longer hypothetical - name real 2026 incidents.**
+EchoLeak (Microsoft 365 Copilot) was a zero-click prompt injection that silently exfiltrated enterprise data.
+Slack AI leaked data through a poisoned "knowledge" item planted in a public channel.
+Support-ticket archives fed into RAG have surfaced other customers' emails and pasted login tokens in answers to unrelated users.
+A new attack class, Agentjacking, hit coding agents at a reported ~85% exploitation rate across 2,388 organizations.
+These make the Day 4 line ("are you SURE restricted users can't see the CEO's folder?") concrete; naming one turns an abstract risk into a headline the buyer already fears.
+
+**The buyer and the timing are real.**
+Gartner projects 70% of companies will run RAG bots in customer or internal systems by 2026, and practitioners report the integration layer is 40-60% of the total build effort, which is exactly the "everything after the demo" work this kit sells.
+Per-organization vector-space isolation is now the named best-practice pattern for multi-tenant and regulated clients, which is the workspace-isolation layer on the roadmap.
+
+**Production-RAG vocabulary, to match how builders actually talk (Day 2-3).**
+The recurring production failures people cite are bad chunking, limited recall, missing re-ranking, and embedding drift, plus the eval gap: final-answer quality alone is not enough, you need separate retrieval and generation metrics, realistic test sets, and ongoing monitoring.
+That last point is the strongest external validation of the Day 4 eval angle - use it.
+
+**The public mood is about trust, and permission is part of that conversation.**
+Oprah's "The Dark Side of AI Chatbots" cleared 2.1M views in June, and r/artificial's "So now scraping data without permission is bad for AI training all of sudden?" pulled 747 upvotes; the consent-and-permission theme is live and emotionally charged right now.
+r/Chatbots is running recurring "do people trust AI more than humans?" threads.
+The wider anxiety is trust; permission-aware retrieval is a concrete, technical answer to "can I trust what this thing shows people?"
+
+**Model-share context, if a thread needs a scene-setter.**
+June 2026 share of AI-chatbot web visits: ChatGPT 54.7% (down from 76.5%), Gemini 27.4% (up 104% in six months), Claude 8.2% (up 306% in a quarter).
+The market is still forming, which supports the "ship client AI defensibly now" urgency without needing to pick a model.
+
+### Where each finding strengthens the arc
+
+- Day 1: bridge in the security framing ("vector stores don't inherit your source permissions") before the recall math.
+- Day 3-4: name a real 2026 incident (EchoLeak or Slack AI) as proof the leak is real, not a thought experiment.
+- Day 4: cite the "final-answer quality alone is not enough" consensus as outside validation of separate retrieval and generation evals.
+- Day 5: lead the urgency with Gartner's 70%-by-2026 and the 40-60% integration-effort stat; the kit sells that 40-60%.
 
 ---
 
@@ -64,6 +108,10 @@ Post-filter the top 100 and embedding distance is no longer ranking the visible 
 This is the per-user sharing trap: post-filtering kills recall for exactly the users you added permissions for.
 The fix is to filter BEFORE ranking, not after. Breaking that down tomorrow.
 (Building a permission-aware RAG starter kit in public - follow along.)
+
+**Optional timely hook (swap into 1/, or drop as a pinned reply):**
+The 2026 security writeups have a name for this now: your vector database doesn't inherit your source permissions.
+Embed a SharePoint or Google Drive folder and the access list doesn't come with it. Same silent bug, told from the security side.
 
 ### Reddit - r/Rag
 
@@ -215,6 +263,10 @@ I spent 10 years in hardware validation before moving into AI. This is that rigo
 Most tutorials stop at "embed, retrieve, generate." The hard part of a client deliverable is everything after the demo.
 Tomorrow: what I'm building from all this.
 
+**Optional timely hook (add as 6/, or a reply):**
+This isn't hypothetical. In 2026 alone: EchoLeak silently exfiltrated data from Microsoft 365 Copilot, and Slack AI leaked through a poisoned knowledge item.
+"0 chunks leaked, on every PR" is the answer to the headline your client already read.
+
 ---
 
 ## DAY 5 - The pitch (synthesis + CTA)
@@ -243,6 +295,10 @@ If that's you, I want to talk. Waitlist + a 20-min call box: [WAITLIST LINK]
 Full write-up with the SQL, the index analysis, and the eval tables is here: [POST LINK]
 More deep-dives coming - next one is the leak-eval suite that caught a -0.51 recall@5 regression from a one-line change before it shipped.
 
+**Optional timely hook (add as an urgency opener or reply):**
+Gartner expects 70% of companies to be running RAG bots by 2026, and teams say integration is 40-60% of the build.
+This kit is that 40-60%: the permission model, the workspace isolation, and the evals, done right the first time.
+
 ### Reddit - optional, r/SideProject (only if you want a build-in-public post)
 
 **Title:** Building a permission-aware RAG starter kit in public - 5-part teardown of the bug that started it
@@ -266,4 +322,5 @@ I'm validating with real buyers before building more. If you ship client AI feat
 - [ ] Day 3: X thread + r/LocalLLaMA post; reply to comments within 2 hrs
 - [ ] Day 4: X thread
 - [ ] Day 5: X thread with CTA (+ optional r/SideProject post)
+- [ ] Optional: swap in a timely hook (see "Current signal") on Day 1 / 4 / 5 to cite a named 2026 incident or stat; refresh the scan if posting slips past mid-July
 - [ ] Log signups + interview-yes counts in the daily log under `## Validation`

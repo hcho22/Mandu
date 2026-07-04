@@ -10,7 +10,7 @@
 
 ## Status
 
-_Update this line as the project moves. Last reviewed: 2026-06-30._
+_Update this line as the project moves. Last reviewed: 2026-07-01._
 
 - **Phase:** MVP, clean rebuild in progress, built story-by-story against the PRD.
   The previous app (XP/badges/streaks, AI services, SwiftData) was removed and lives only in git history (commit `23fd56f`) as reference.
@@ -20,6 +20,7 @@ _Update this line as the project moves. Last reviewed: 2026-06-30._
   - **Epic C - Deterministic Engine (🔄 in progress, through US-C07):** US-C01 session-shape selection, US-C02 pillar balance by staleness, US-C03 movement-pattern focus, US-C04 pool filtering, US-C05 progression-chain selection, US-C06 adaptive overload, and US-C07 assembly + timing fit done. Remaining: US-C08 deterministic swap.
   - **Remaining after the engine:** Epic D (Consistency Score + PhaseEvaluator), Epics E-I (onboarding, home, active session, post-session, progress tab), Epic J (Sign in with Apple, CloudKit sync, HealthKit, StoreKit 2 paywall).
 - **Next story:** US-C08 (deterministic exercise swap - same pillar/pattern/difficulty band, injury- and phase-respecting, within the time budget).
+- **Go-to-market (pre-launch):** a build-in-public 1-week social launch plan (IG/X/TikTok, "discipline over content" wedge) is drafted at `posts/01-social-1week-launch_260701.md`, grounded in a 2026-07-01 market scan. It runs as a positioning + waitlist play before the MVP ships (no app to download yet).
 
 ## Why this project / how it fits
 
