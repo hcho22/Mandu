@@ -91,6 +91,7 @@ Interview talking points from wiki work consolidate to `projects/job-search/inte
 Active wikis:
 - Evals pilot: `projects/Learning/AI_Engineer/evals/wiki/` (mode: split).
 - Agentic RAG: `projects/Agentic_RAG/wiki/` (mode: full).
+- YouTube-transcript: `projects/Learning/AI_Engineer/Youtube_transcript/wiki/` (mode: full; AI-engineering topics, video-transcript diet).
 
 ## Templates
 
