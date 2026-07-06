@@ -1,26 +1,36 @@
-# Weekly Plan: 2026-06-29 to 2026-07-05
+# Weekly Plan: 2026-07-06 to 2026-07-12
 
-_Created 2026-06-27. Regenerate at the start of each week; this file holds the current week only._
+_Created 2026-07-05. Regenerate at the start of each week; this file holds the current week only._
 
 ## Framing
 
-FitSnack is now a real build with dedicated time (new income bet #2), but the Agentic RAG daily logs show the validation gate has been open for 3 straight days: post #1 unpublished, no waitlist, no interviews booked, while the build raced ahead.
-So this week's job is to clear that gate first and prevent the new FitSnack build from cannibalizing it.
-Validation is the spine of the week; FitSnack build slots in after Monday's unblock; the job search holds at 5/week.
+The validation gate is now 6+ logged days old.
+Agentic RAG daily logs 06-22, 06-23, 06-24, 06-30, 07-01, and 07-02 all carry the same blocker: post #1 unpublished, no Tally waitlist, no buyer interviews booked.
+The prior week's plan front-loaded exactly this on Monday 6/29 and it slipped all week.
 
-Note: Sat 7/4 is the July 4th holiday, so the working week is Mon-Fri. Front-loaded accordingly.
+The pattern is not a content problem.
+Every piece of go-to-market material is already drafted and ready to fire: AR flagship post #1 (`posts/01-permission-aware-rag.md`), the AR 5-day X/Reddit campaign (`posts/02-social-5day-launch_260701.md`), the buyer-interview script (`posts/buyer-interview-script.md`), and FitSnack's 1-week social launch plan (`posts/01-social-1week-launch_260701.md`).
+All of it is blocked on one missing artifact: a live waitlist / early-access page.
+Both income bets are stuck on the same 60-minute task.
+
+So the whole week hinges on one keystone: stand up the waitlist page Monday morning.
+It is small, private, and reversible - the opposite of the scary public post that keeps slipping.
+Once it exists, post #1 has a destination, the AR campaign can run, and FitSnack's early-access page is a 20-minute clone of the same tool.
+Build work (AR US-090-093, FitSnack US-C08/Epic D) is explicitly secondary and gated behind validation per the 2026-06-18 strategy.
+
+This is a full working week: no holidays 7/6-7/12.
 
 ## Week at a glance
 
 | Day | Primary block | Secondary block | Job search |
 |-----|--------------|-----------------|------------|
-| **Mon 6/29** | AR: publish post #1 + Tally waitlist + CTA | AR: buyer-interview outreach (book 3) | 1 app |
-| **Tue 6/30** | FitSnack: build ViewModels layer | AR: post engagement, confirm CI green on main | 1 app + finalize behavioral answers |
-| **Wed 7/1** | AR: draft post #2 (leak-eval / CI-gate rigor) | FitSnack: engine Epic C steps 1-2 (TDD) | 1 app |
-| **Thu 7/2** | FitSnack: engine Epic C steps 3-4 (TDD) | AR: run booked interviews / polish post #2 | 1 app |
-| **Fri 7/3** | AR: publish post #2 | FitSnack buffer + weekly closeout | 1 app (hits 5/week) |
-| **Sat 7/4** | Holiday - off (light: reply to post engagement) | - | - |
-| **Sun 7/5** | Light: plan the following week, rest | - | - |
+| **Mon 7/6** | AR: stand up Tally waitlist (the keystone) + wire CTA + publish post #1 | AR: send 5-8 buyer-interview outreach notes (target: book 3) | 1 app |
+| **Tue 7/7** | AR: launch 5-day campaign Day 1 + engage replies | FitSnack: clone waitlist infra into an early-access page + tagged links | 1 app + finalize behavioral metrics |
+| **Wed 7/8** | FitSnack: US-C08 deterministic swap - closes Epic C (TDD) | AR: campaign Day 2-3, chase interview replies | 1 app |
+| **Thu 7/9** | FitSnack: run social launch Day 1-2 (name the enemy / "5 min counts") | AR: run booked buyer interviews, log findings | 1 app |
+| **Fri 7/10** | AR: campaign Day 4-5 + any interviews | FitSnack: Epic D start (Consistency Score) or buffer; weekly closeout | 1 app (hits 5/week) |
+| **Sat 7/11** | Light: reply to engagement across both launches | - | - |
+| **Sun 7/12** | Light: plan next week, rest | - | - |
 
 ## Daily template (daily-loop skill)
 
@@ -34,51 +44,56 @@ Adjust clock times to your rhythm:
 
 ## Day-by-day
 
-### Monday 6/29 - Clear the validation gate (highest leverage)
+### Monday 7/6 - Clear the keystone (60-minute unblock that has slipped 6 days)
 
-- Block 1: Publish flagship post #1 (`projects/Agentic_RAG/posts/01-permission-aware-rag.md`, already drafted). Pick channel (LinkedIn + a dev community), final proof, post. Create the Tally waitlist form and wire `waitlist-cta.md` variant A + link.
-- Block 2: Buyer-interview outreach - send 5-8 personalized notes to your network using `projects/Agentic_RAG/posts/buyer-interview-script.md`; target booking 3.
-- This single day kills the 3-day-old blocker that gates the income thesis.
+- Block 1: Stand up the Tally waitlist form (one field, email). This is the single artifact that unblocks both income bets - treat it as the non-negotiable of the week. Then wire `waitlist-cta.md` variant A into post #1, do a final proof, and publish post #1 to LinkedIn plus one dev community. Publishing is the only "scary" step; the waitlist page in front of it makes it a routing task, not a leap.
+- Block 2: Buyer-interview outreach - send 5-8 personalized notes to your network from `posts/buyer-interview-script.md`; target booking 3.
+- If nothing else happens this week, this day alone kills the 6-day-old blocker that gates the entire income thesis.
 
-### Tuesday 6/30 - FitSnack momentum + AR follow-through
+### Tuesday 7/7 - AR campaign live + FitSnack rides the same infra
 
-- Block 1: FitSnack - implement the empty `ViewModels/` layer wired to the mock services. Re-establish build momentum on the new #2 bet.
-- Block 2: AR - respond to post #1 engagement, chase interview replies; confirm the per-PR E7 tripwire + weekly escalation sweep run green on `main` (carried from 6/24).
-- Job search: 1 app + finalize the two behavioral answers with real Omdena/Zebra metrics (carried blocker since 6/18).
+- Block 1: AR - launch the 5-day campaign Day 1 (`posts/02-social-5day-launch_260701.md`), respond to post #1 engagement, chase interview replies.
+- Block 2: FitSnack - clone Monday's Tally setup into a one-field early-access page with per-platform tagged links (this is ~20 min now that the tool is learned, versus a fresh blocker if it waits). This unblocks the FitSnack social launch later in the week.
+- Job search: 1 app + finalize the two behavioral answers with real Omdena/Zebra metrics (carried blocker since 06-18 - close it this week).
 
-### Wednesday 7/1 - Post #2 draft (and evals-as-edge, priority #4)
+### Wednesday 7/8 - FitSnack engine closeout + AR mid-campaign
 
-- Block 1: Draft flagship post #2 (leak-eval suite / CI-gate rigor) from `docs/evals.md`. Cite concrete shipped material: the -0.51 recall@5 regression catch, the E7 false-resolve gate (PRs #27-30), and the #30 mislabel-ratio guard. This is your evals edge expressed, not a separate track.
-- Block 2: FitSnack - start the deterministic engine (Epic C): session shape + pillar balance, test-first.
+- Block 1: FitSnack - US-C08 deterministic swap (same pillar/pattern/difficulty band, injury- and phase-respecting, within the time budget), test-first. This closes Epic C, the deterministic engine.
+- Block 2: AR - campaign Day 2-3, keep chasing interview replies.
+- Job search: 1 app.
 
-### Thursday 7/2 - FitSnack engine + interviews
+### Thursday 7/9 - FitSnack goes public + AR interviews
 
-- Block 1: FitSnack engine continued (Epic C): movement-pattern focus + filter pool, test-first.
-- Block 2: Run any booked buyer interviews (log findings); otherwise more outreach. Fresh-read polish on post #2, ready to ship.
+- Block 1: FitSnack - run the 1-week social launch Day 1-2 from the drafted plan (name the enemy; "5 minutes counts"), routing to the early-access page stood up Tuesday.
+- Block 2: AR - run any booked buyer interviews and log findings; otherwise more outreach and campaign engagement.
+- Job search: 1 app.
 
-### Friday 7/3 - Ship post #2 + weekly closeout
+### Friday 7/10 - Finish the AR campaign + weekly closeout
 
-- Block 1: Publish flagship post #2, route to the waitlist CTA.
-- Block 2: FitSnack buffer (engine progression-chain / adaptive overload, or catch-up). Then weekly closeout: log interview findings, update `current-priorities.md` if focus shifted, plan the following week.
+- Block 1: AR - campaign Day 4-5, run any remaining interviews.
+- Block 2: FitSnack - start Epic D (Consistency Score + PhaseEvaluator) if the engine closed cleanly, else buffer/catch-up. Then weekly closeout: log interview findings, update `current-priorities.md` if focus shifted, plan next week.
 - Job search: 1 app (reaches 5/week).
 
-### Sat 7/4 / Sun 7/5
+### Sat 7/11 / Sun 7/12
 
-Holiday and rest.
-Optional: reply to post engagement; light planning Sunday.
+Light days.
+Saturday: reply to engagement across both launches.
+Sunday: plan the following week, rest.
 
 ## Weekly targets (the deliverables)
 
-- [ ] Post #1 published, Tally waitlist live, CTA wired
+- [ ] Tally waitlist live + CTA wired (THE keystone - one artifact unblocks both income bets)
+- [ ] AR post #1 published + 5-day campaign launched
 - [ ] 3 buyer interviews booked (run whatever gets scheduled)
-- [ ] Post #2 drafted and published
-- [ ] FitSnack: ViewModels done + deterministic engine started (Epic C, with tests)
+- [ ] FitSnack early-access page live + social launch Day 1-2 run
+- [ ] FitSnack US-C08 done, Epic C closed (with tests)
 - [ ] 5 job applications submitted
-- [ ] Behavioral answers finalized with real metrics
+- [ ] Behavioral answers finalized with real metrics (carried since 06-18)
 - [ ] Weekly closeout + next-week plan
 
 ## Balance note
 
-Weighted ~45% Agentic RAG validation / ~30% FitSnack build / ~25% job search + admin.
-This deliberately keeps Agentic RAG validation ahead of FitSnack, because the daily logs flag the validation gate as the actual income blocker.
-Rebalance toward the FitSnack build if the priority for the week shifts to getting the engine done.
+Weighted ~50% Agentic RAG validation / ~30% FitSnack (early-access page + US-C08) / ~20% job search + admin.
+Even more validation-heavy than last week, deliberately, because the gate is now 6+ days old and is the measured income blocker.
+The bet is that Monday's keystone is small: if the waitlist ships as intended, most of the rest of the week is routing, engagement, and booked interviews, which frees the mid-week blocks for the FitSnack build.
+Rebalance toward the FitSnack build only after the waitlist is live and post #1 is out - not before.
