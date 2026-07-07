@@ -1,6 +1,6 @@
 ---
 purpose: Waitlist capture for the permission-aware RAG + AI support starter kit
-status: draft — pick a form tool, paste a CTA variant into the post
+status: live — Tally form up at https://tally.so/r/vGbO0A; Variant A wired into post #1 (2026-07-06)
 audience: agency / freelance AI developers
 ---
 

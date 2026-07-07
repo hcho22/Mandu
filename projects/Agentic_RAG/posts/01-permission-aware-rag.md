@@ -2,7 +2,7 @@
 post: 1 of 2 (flagship)
 title: The per-user sharing trap that silently breaks RAG retrieval
 source: docs/permissions-aware-rag.md
-status: draft — ready to publish (pick channel: LinkedIn / dev.to / Substack / repo README)
+status: ready to publish — CTA wired to live waitlist (https://tally.so/r/vGbO0A). Pick channel: LinkedIn / dev.to / Substack / repo README
 audience: agency and freelance AI developers shipping client RAG features
 target_length: ~1100 words
 ---
@@ -142,7 +142,18 @@ defensibly.
 
 If that is you, I want to talk to you before I build more of it.
 
-<!-- WAITLIST CTA — insert chosen variant from waitlist-cta.md here -->
+I am building this as a starter kit so you do not have to solve the
+permission-and-eval problem from scratch on your next client deliverable.
+It is early and I am building it in public. If you ship client AI features,
+join the waitlist and tell me what would actually save you time:
+**https://tally.so/r/vGbO0A**
+
+<!-- CTA = Variant A (waitlist-cta.md). At publish time, append the per-channel
+     source tag to the link so signups are attributed:
+       LinkedIn:  https://tally.so/r/vGbO0A?source=linkedin
+       dev.to:    https://tally.so/r/vGbO0A?source=devto
+       Reddit:    https://tally.so/r/vGbO0A?source=reddit
+     Keep the bare link in this canonical source. -->
 
 ---
 
