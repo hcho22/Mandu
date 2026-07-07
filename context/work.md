@@ -12,7 +12,7 @@ Building Agentic RAG Phase 2 as the primary dual-purpose flagship (a paid starte
 
 ## Portfolio projects
 
-- **FitSnack:** discipline-first micro-workout iOS app (B2C freemium, second income bet). SwiftUI + Observation; MVVM + protocol-based DI; CoreData / CloudKit; deterministic on-device engine (no LLM in the MVP); StoreKit 2, Sign in with Apple, HealthKit. Phase 2 adds language-only LLM features.
+- **FitSnack:** discipline-first micro-workout iOS app (B2C freemium, second income bet). SwiftUI + Observation; MVVM + protocol-based DI; CoreData / CloudKit; deterministic on-device engine (5-60 min, first-class primal pillar); StoreKit 2, Sign in with Apple, HealthKit. Per the v6 reframe the MVP adds a daily-adaptive AI Programmer at option (C) (deterministic on-device policy re-weighting) plus one template-backed LLM "Variety Language" slice via a thin proxy; Phase 2 adds the full option-(B) LLM Programmer and Strength-Phase catalog.
 - **CreativeBridge:** K-12 multi-AI mobile app on iOS TestFlight. React Native + Expo + Convex + Clerk; GPT-4o-mini + Stable Diffusion 3.5 (Replicate) + Claude Skills SDK; COPPA-compliant.
 - **Agentic RAG:** FastAPI + pgvector + raw OpenAI SDK (no LLM frameworks); React / Vite / Tailwind; Supabase with RLS; LangSmith observability.
 - **Omdena (2023 to 2025):** DeepLabV3+ / UNET for medical and satellite computer vision; fine-tuned LLaMA / Falcon; deployed chatbots.

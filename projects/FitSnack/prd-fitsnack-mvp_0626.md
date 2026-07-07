@@ -1,5 +1,7 @@
 # PRD: FitSnack Phase 1 MVP - The Discipline Loop
 
+> **SUPERSEDED (2026-07-06):** This v5 implementation PRD is superseded by the v6 PRD (`prd-fitsnack-mvp-v6_0702.md`). Epics A-C here are built and carried forward; v6 re-expresses Epics D-J and adds the daily-adaptive AI Programmer, the 5-60 min engine, a first-class primal pillar, the Ready Screen, cold-start, the Return/Re-entry Ramp, and one template-backed LLM Variety Language slice via a thin proxy. Kept for historical reference only.
+
 **Source plan:** `.claude/agent/tasks/FitSnack-PRD-v5.md` (v5.0, reconciled to ADRs 0001-0013)
 **Build approach:** Clean rebuild (existing codebase is reference only)
 **Scope:** Full Phase 1 MVP

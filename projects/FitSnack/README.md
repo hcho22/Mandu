@@ -1,6 +1,6 @@
 # FitSnack
 
-**One-liner:** A discipline-first micro-workout iOS app. Open it, say how many minutes you have (5-30), press play; a deterministic on-device engine builds a complete zero-equipment session (warm-up, main work, cooldown) that lands within ±1 min of the requested time. No browsing, no choosing, no thinking.
+**One-liner:** A discipline-first micro-workout iOS app. Open it and a complete zero-equipment session (5-60 min) is already waiting - a deterministic on-device engine blends strength, mobility, and primal movement to land within ±1 min of your Default Duration. No browsing, no choosing, no thinking. Between sessions a daily-adaptive AI Programmer quietly rewrites each user's Session Policy (progression, pillar weighting, variety); it shapes the program, never the workout, and is never on the path to pressing start.
 
 **Repo:** https://github.com/hcho22/FitSnack (private)
 
@@ -10,22 +10,23 @@
 
 ## Status
 
-_Update this line as the project moves. Last reviewed: 2026-07-01._
+_Update this line as the project moves. Last reviewed: 2026-07-06._
 
-- **Phase:** MVP, clean rebuild in progress, built story-by-story against the PRD.
-  The previous app (XP/badges/streaks, AI services, SwiftData) was removed and lives only in git history (commit `23fd56f`) as reference.
-- **Current state (per the repo PRD progress tracker): complete through US-C07.**
-  - **Epic A - Foundation (✅ done):** US-A01 scaffold, US-A02 domain enums, US-A03 domain models, US-A04 CoreData stack, US-A05 service protocols / ServiceContainer / app state.
-  - **Epic B - Exercise Library (✅ done):** US-B01 bundled ~38-movement JSON library, US-B02 exercise service load + integrity-check.
-  - **Epic C - Deterministic Engine (🔄 in progress, through US-C07):** US-C01 session-shape selection, US-C02 pillar balance by staleness, US-C03 movement-pattern focus, US-C04 pool filtering, US-C05 progression-chain selection, US-C06 adaptive overload, and US-C07 assembly + timing fit done. Remaining: US-C08 deterministic swap.
-  - **Remaining after the engine:** Epic D (Consistency Score + PhaseEvaluator), Epics E-I (onboarding, home, active session, post-session, progress tab), Epic J (Sign in with Apple, CloudKit sync, HealthKit, StoreKit 2 paywall).
-- **Next story:** US-C08 (deterministic exercise swap - same pillar/pattern/difficulty band, injury- and phase-respecting, within the time budget).
+- **Phase:** MVP, clean rebuild, built story-by-story against the **v6 PRD** (`prd-fitsnack-mvp-v6_0702.md`, which supersedes the v5 `prd-fitsnack-mvp_0626.md`). v6 reframes the MVP as "the Discipline Loop with a daily-adaptive AI Programmer." The previous app (XP/badges/streaks, AI services, SwiftData) was removed and lives only in git history (commit `23fd56f`) as reference.
+- **Current state (per the repo v6 progress tracker): complete through US-E06 - Epics A-E done.**
+  - **Epic A - Foundation (✅ built):** scaffold, domain enums/models, CoreData stack, service protocols / ServiceContainer / app state.
+  - **Epic B - Exercise Library (✅ built):** bundled ~38-movement JSON library + load/integrity-check service.
+  - **Epic C - Deterministic Engine, Steps 1-7 + Swap (✅ built):** the full v5 pipeline, including the deterministic exercise swap (the old US-C08 is now folded into a built Epic C).
+  - **Epic D - v6 Data Model & Session Policy Foundation (✅ done, US-D01-D04):** `User` gains `why`/`duration`/`coldStart`, `WorkoutLog` gains `requestedMinutes`/`wasReturn`, the always-valid `SessionPolicy`, and the `ReprogramTrigger` service seam.
+  - **Epic E - Engine v6 Extensions (✅ done, US-E01-E06):** session shapes extended to 5-60 min, primal promoted to a first-class pillar, the engine consumes SessionPolicy levers, Step 0 cold-start override + capped Starting Difficulty, the Asymmetric Ramp, and the Return override + Re-entry Ramp.
+- **Remaining (Epics F-N, not started):** F - AI Programmer at option (C) (deterministic re-weighting, Trigger Precedence, plateau diagnosis, templated note); G - cold-start & the template-backed Variety Language LLM slice; H - Consistency Score + PhaseEvaluator; I - onboarding; J - Ready Screen; K - active session; L - post-session; M - progress tab; N - Apple integrations (Sign in with Apple, CloudKit, HealthKit, StoreKit 2) + the thin stateless proxy.
+- **Next story:** US-F01 (re-program trigger detection with Trigger Precedence) - the first story of the on-device AI Programmer.
 - **Go-to-market (pre-launch):** a build-in-public 1-week social launch plan (IG/X/TikTok, "discipline over content" wedge) is drafted at `posts/01-social-1week-launch_260701.md`, grounded in a 2026-07-01 market scan. It runs as a positioning + waitlist play before the MVP ships (no app to download yet).
 
 ## Why this project / how it fits
 
-- **Income bet #2 (B2C):** a consumer subscription app is a different revenue shape and a different buyer from the Agentic RAG kit, so it hedges the product path without competing for the same customer. Apple-native stack means near-zero hosting cost (only the $99/yr Apple Developer account).
-- **AI-builder portfolio asset:** demonstrates shipped, end-to-end product engineering - SwiftUI + Observation, MVVM with protocol-based DI, CoreData/CloudKit, StoreKit 2, Sign in with Apple, HealthKit - and a Phase 2 LLM roadmap (language-only summaries/narratives). Note the MVP is deliberately LLM-free; the "AI" story here is the AI roadmap plus the build being done AI-assisted (Claude Code), not AI in the core loop.
+- **Income bet #2 (B2C):** a consumer subscription app is a different revenue shape and a different buyer from the Agentic RAG kit, so it hedges the product path without competing for the same customer. Apple-native stack means near-zero hosting cost (the $99/yr Apple Developer account plus one free-tier stateless proxy for the single Variety Language LLM call).
+- **AI-builder portfolio asset:** demonstrates shipped, end-to-end product engineering - SwiftUI + Observation, MVVM with protocol-based DI, CoreData/CloudKit, StoreKit 2, Sign in with Apple, HealthKit. v6 puts a genuine, safety-railed AI story *in the MVP itself*: a daily-adaptive **AI Programmer** that rewrites each user's Session Policy (shipped at **option (C)** - deterministic, on-device, zero LLM calls, templated note), plus one template-backed **LLM "Variety Language" slice** served through a thin stateless proxy (US-N05). The AI writes policy, never the session; the deterministic engine still assembles every workout offline in <100ms. This is a clean production-AI story - an async off-path programmer with a hard deterministic fallback - on top of the validation-rigor angle below.
 - **Validation / quality angle (the cross-cutting edge):** the on-device engine is fully deterministic (no network, no LLM, <100ms) and backed by a broad test matrix - engine session-shape/staleness/timing-fit, Consistency Score edge cases (single-miss dents but never zeroes, 5-min counts as a full show-up), PhaseEvaluator promotion rules, persistence round-trips. This is the same validation-rigor differentiator hcho leads with elsewhere, expressed in a consumer app.
 
 ## Monetization
@@ -50,24 +51,26 @@ Freemium, paywall on **depth** not the core loop (the discipline promise stays f
 | **Persistence** | CoreData backed by `NSPersistentCloudKitContainer` (`CDUser`, `CDWorkoutLog`); local-only until CloudKit sync lands |
 | **Engine** | Pure Swift, on-device, deterministic - no network, no LLM, <100ms |
 | **Apple integrations** | Sign in with Apple, CloudKit (private DB sync), HealthKit (write), StoreKit 2 |
-| **Backend** | None in the MVP (`convex/` is an empty placeholder); an LLM API-key proxy is deferred to Phase 2 |
+| **Backend** | One thin stateless proxy (e.g. a Cloudflare Worker) that holds the model API key for the single Variety Language LLM call (US-N05) and stores no user data; no other server, scheduler, or data mirror (`convex/` remains an empty placeholder) |
+| **AI** | Daily-adaptive AI Programmer at option (C): deterministic, on-device policy re-weighting (writes `SessionPolicy`, never a workout, never on the start path); one template-backed LLM Variety Language line via the proxy, with a deterministic fallback so the app never blocks on the network |
 | **Build** | XcodeGen (`project.yml`); single `FitSnack` scheme builds the app and runs `FitSnackTests` |
 
 ## Roadmap
 
 | Phase | Focus | Status |
 |-------|-------|--------|
-| **MVP** | Discipline-Phase loop: deterministic engine, Consistency Score, PhaseEvaluator, onboarding, CoreData/CloudKit, StoreKit 2 paywall | In progress |
-| **Phase 2** | Language-only LLM features (template-free summaries, weekly narratives), full Strength-Phase catalog, equipment variants | Planned |
+| **MVP (v6)** | Discipline Loop + daily-adaptive AI Programmer at option (C): 5-60 min deterministic engine with first-class primal, Session Policy, cold-start + Return/Re-entry Ramp, Ready Screen, Consistency Score, PhaseEvaluator, onboarding, active/post/progress UI, CoreData/CloudKit, StoreKit 2 paywall, and one template-backed LLM Variety Language slice via a thin proxy | In progress (Epics A-E done) |
+| **Phase 2** | Full option-(B) LLM Programmer (richer diagnosis + narrative notes), full Strength-Phase catalog, equipment variants | Planned |
 
-MVP non-goals: no LLM in the core loop (summaries are template-based), no custom backend, no gamification, no social/leaderboards, no equipment exercises, no Android/widgets/Watch. See the PRD's Non-Goals section.
+MVP non-goals: no direct AI generation of sessions (the AI writes policy only; the deterministic engine assembles every workout), no full option-(B) LLM Programmer, no server-side scheduler or user-data mirror, no gamification, no social/leaderboards, no equipment exercises, no Android/widgets/Watch. The only MVP LLM call is the template-backed Variety Language slice. See the PRD's Non-Goals section.
 
 ## Source of truth (in the repo)
 
 | Document | Purpose |
 |----------|---------|
-| `.claude/agent/tasks/FitSnack-PRD-v5.md` | Strategic plan - vision, domain concepts, engine design, phase model, monetization (ADRs referenced inline). |
-| `.claude/agent/tasks/prd-fitsnack-mvp_0626.md` | Implementation PRD + live progress tracker - 30 user stories (US-A01 … US-J04) with acceptance criteria; checkboxes flip to `[x]` as stories land. |
+| `.claude/agent/tasks/FitSnack-PRD-v6_070226.md` | Strategic plan v6 - vision, the AI Programmer wedge, Session Policy, cold-start, phase model, monetization (reconciled to ADRs 0001-0019). |
+| `.claude/agent/tasks/prd-fitsnack-mvp-v6_0702.md` | Implementation PRD + live progress tracker - v6 user stories (US-A01 … US-N05) with acceptance criteria; checkboxes flip to `[x]` as stories land. **Supersedes `prd-fitsnack-mvp_0626.md`** (a Mandu copy is kept alongside this README). |
+| `.claude/agent/tasks/prd-fitsnack-mvp_0626.md` | Superseded v5 implementation PRD (Epics A-C built; kept for historical reference). |
 | `CLAUDE.md` | Repo conventions and architecture for contributors and AI assistants. |
 
 Always check the PRD for the relevant story before building a feature.
