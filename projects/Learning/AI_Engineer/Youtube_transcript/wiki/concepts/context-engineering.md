@@ -2,7 +2,7 @@
 type: concept
 tags: [context, claude-md, compaction, context-rot, statelessness]
 date: 2026-07-03
-source-count: 5
+source-count: 6
 status: seeded
 ---
 
@@ -32,6 +32,10 @@ Managing what an agent knows and how much of its context window is spent: loadin
 [[every-claude-feature-ranked]] makes context visible and reversible:
 
 - The status line's context percentage (e.g., 27%, 274k/1M tokens) tells you when to hand off, /clear, or /compact; /rewind rolls code and conversation to a checkpoint (better than piling corrections on); auto-memory and prompt caching work in the background.
+
+[[ai-era-50-career-moves]] frames context engineering as a career-level skill:
+
+- Names "context engineering" as the first of four pillars of agentic engineering (with agentic validations, agentic tooling, and compound engineering), and urges mastering how the harness loads memory and manages the window as a craftsman knows their tools - claiming this tool mastery alone can get you hired.
 
 ## Synthesis
 

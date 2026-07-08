@@ -2,7 +2,7 @@
 type: concept
 tags: [quality, taste, ai-slop, human-in-the-loop, judgment, review]
 date: 2026-07-03
-source-count: 4
+source-count: 5
 status: seeded
 ---
 
@@ -28,6 +28,11 @@ Keeping human judgment in the loop as the guarantor of quality: AI gets output m
 [[building-your-own-ai-operating-system]] keeps judgment in the loop as a principle:
 
 - Treat the system as a mentor, not an oracle; grant autonomy in phases (the "bike method") only after a skill earns trust. "You can outsource your thinking, but you cannot outsource your understanding" - you still read everything and add your own spin.
+
+[[ai-era-50-career-moves]] names taste as the moat in the age of cheap code:
+
+- Fully AI-generated writing, images, and video are "still usually obvious," so the most human part is taste - and encoding your taste so the machine reproduces your judgment is the central agentic-engineering skill. Actively study the greats to build it.
+- When code becomes cheap, value migrates to judgment: "own the problem, not the code." The advice pairs with a warning not to let AI atrophy the underlying skills that let you tell good from slop.
 
 ## Synthesis
 

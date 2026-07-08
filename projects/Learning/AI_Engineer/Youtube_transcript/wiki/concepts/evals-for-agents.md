@@ -2,7 +2,7 @@
 type: concept
 tags: [evals, validation, adversarial-review, self-critique, quality]
 date: 2026-07-03
-source-count: 5
+source-count: 7
 status: seeded
 ---
 
@@ -35,6 +35,16 @@ Practical evaluation of agent output in the build loop: pass/fail checks against
 [[claude-managed-agents]] builds self-checking in as a primitive:
 
 - An "outcome" passes Claude a file/blob that acts as a spec/rubric; Claude does a first pass then iterates and checks its own work against the rubric until it satisfies it, with console observability to debug the run.
+
+[[working-with-fable-5-in-claude-code]] scales independent review into the orchestration itself:
+
+- A triage prompt spawned a workflow of 48 agents - 16 investigators (one per PR) each stress-tested by a Fable+Opus judge panel; 14/16 verdicts were unanimous and it resolved the 2 contested ones. A judge panel, not a single grader, is what gives the verdicts weight.
+- A Codex Review skill asks GPT-5.5 (a different model family) for an independent review of a diff/branch/commit, and the skill is instructed to verify important claims against the code before presenting them - cross-family review plus a check on the reviewer.
+- Automated reviewers (Bugbot, Macroscope, Code Rabbit) gate every merge in the long "goal" run; the agent may not merge until they approve, and he spends more tokens verifying than producing.
+
+[[ai-era-50-career-moves]] names validation as a pillar and a boundary-mapping habit:
+
+- Lists "agentic validations" as one of the four pillars of agentic engineering, and frames "learn where the AI fails" as a deliberate practice: push systems to their limits and keep a log of where they succeed and fail, because the useful outputs are "useful hallucinations" whose boundary you must know.
 
 ## Synthesis
 

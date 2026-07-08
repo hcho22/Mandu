@@ -2,7 +2,7 @@
 type: concept
 tags: [permissions, safety, least-privilege, prompt-injection, red-team, security]
 date: 2026-07-03
-source-count: 6
+source-count: 7
 status: seeded
 ---
 
@@ -37,6 +37,11 @@ Controlling what an agent can actually do rather than what it is told to do: lea
 [[agents-are-the-new-saas]] builds approval into the agent spec:
 
 - The 7-part spec asks explicitly what the agent is allowed to do itself, where it needs approval, and when it should escalate a human into the loop.
+
+[[working-with-fable-5-in-claude-code]] shows a blast-radius boundary that makes aggressive autonomy safe:
+
+- He grants a long "goal" run explicit, enumerated capabilities (create worktrees, rebase, branch, merge and close PRs) but the guardrail is architectural: merging to main deploys to *staging only*, and production stays human-gated, so the agent cannot ship. Aggressive auto-merge is only sane because the worst case is bounded.
+- A second gate is procedural: the agent may not merge until independent automated reviewers (Bugbot, Macroscope, Code Rabbit) approve - capability plus a required approval before the irreversible step.
 
 ## Synthesis
 

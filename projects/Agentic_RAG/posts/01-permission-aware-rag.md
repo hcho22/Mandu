@@ -2,7 +2,7 @@
 post: 1 of 2 (flagship)
 title: The per-user sharing trap that silently breaks RAG retrieval
 source: docs/permissions-aware-rag.md
-status: ready to publish — CTA wired to live waitlist (https://tally.so/r/vGbO0A). Pick channel: LinkedIn / dev.to / Substack / repo README
+status: published 2026-07-07 on X - https://x.com/hyungjcho/status/2074233331236167799 ; CTA wired to live waitlist (https://tally.so/r/vGbO0A)
 audience: agency and freelance AI developers shipping client RAG features
 target_length: ~1100 words
 ---

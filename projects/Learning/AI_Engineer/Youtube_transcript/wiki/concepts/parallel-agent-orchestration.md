@@ -2,7 +2,7 @@
 type: concept
 tags: [parallelism, worktrees, orchestration, throughput, isolation]
 date: 2026-07-03
-source-count: 4
+source-count: 5
 status: seeded
 ---
 
@@ -31,6 +31,11 @@ Running many coding agents at once - across and within projects - using git work
 [[every-claude-feature-ranked]] names the enabling primitive:
 
 - Git worktrees run isolated copies of a codebase so parallel work never collides, then merge back - especially important when sharing a codebase or juggling multiple features.
+
+[[working-with-fable-5-in-claude-code]] separates workflows from worktrees and adds a multi-machine layer:
+
+- Two distinct parallelism tools: *workflows* (a JavaScript file the model writes for programmatic multi-stage fan-out-and-verify) versus *worktrees* (isolated checkouts for checkpoint-driven work). A single workflow is the wrong tool for review-gated PR work where each step needs CI + human review + merge before the next rebase - there, orchestrate from the session and spawn worktrees, using workflows only for multi-agent review passes.
+- T3 Code + Tailscale drive agents across multiple machines (even from a phone), so any bug or idea spins up a new worktree/workflow anywhere; he later had Fable merge changes from all worktrees into one conflict-resolved branch in ~5 minutes.
 
 ## Synthesis
 

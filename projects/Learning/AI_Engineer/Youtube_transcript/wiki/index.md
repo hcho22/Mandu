@@ -21,6 +21,8 @@ Concepts are created organically by the ingest that first covers each topic.
 - [[inside-conductor-agent-orchestration]] - voice-first orchestration of many agents; worktree workspaces, slop-free zones, and "code as sawdust."
 - [[building-robust-applications-with-ai]] - agentic system design via Pluto: trade-offs, monorepo-for-agent-context, Convex, and observability.
 - [[startups-for-agents-agentic-web]] - agents as the customer; the agent buying journey, six building blocks, agent-readable sites, and SEO -> AEO.
+- [[working-with-fable-5-in-claude-code]] - Theo (T3) on exploiting Fable 5: reasoning-effort discipline, routing to GPT-5.5/Codex, a model-selection glossary, and a ~5.5-hour "goal" run that shipped a month of work.
+- [[ai-era-50-career-moves]] - a career talk in the agentic-AI era; only its AI-engineering tips land here (taste as the moat, agentic-engineering pillars, the ReAct loop) - the career/money/interview bulk routes to `interview-prep.md`.
 
 ## Concepts
 
@@ -35,6 +37,7 @@ Concepts are created organically by the ingest that first covers each topic.
 - [[scheduled-agent-autonomy]] - crons, routines, and run-until-done goals; the "cadence" layer.
 - [[production-agent-infrastructure]] - sessions/events, sandboxes, durable execution, and observability.
 - [[agentic-system-design]] - architecture in the AI age: trade-offs, abstraction layers, monorepo, secure data flow.
+- [[model-routing-and-cost-control]] - route each task to the cheapest model that clears the bar; reasoning-effort discipline, orchestrate-expensive/execute-cheap, and a taste/intelligence/cost glossary.
 - [[agents-as-labor]] - selling a completed job, and running a one-person company on agents.
 - [[agentic-web-and-aeo]] - agents as customers, the machine-to-machine economy, and SEO -> AEO.
 - [[human-taste-and-ai-slop]] - the human gate on quality: the final 10-20%, and human-owned zones.

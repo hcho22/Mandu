@@ -10,17 +10,18 @@
 
 ## Status
 
-_Update this line as the project moves. Last reviewed: 2026-07-06._
+_Update this line as the project moves. Last reviewed: 2026-07-07._
 
 - **Phase:** MVP, clean rebuild, built story-by-story against the **v6 PRD** (`prd-fitsnack-mvp-v6_0702.md`, which supersedes the v5 `prd-fitsnack-mvp_0626.md`). v6 reframes the MVP as "the Discipline Loop with a daily-adaptive AI Programmer." The previous app (XP/badges/streaks, AI services, SwiftData) was removed and lives only in git history (commit `23fd56f`) as reference.
-- **Current state (per the repo v6 progress tracker): complete through US-E06 - Epics A-E done.**
+- **Current state (per the repo v6 progress tracker): complete through US-F04 - Epics A-F done.**
   - **Epic A - Foundation (✅ built):** scaffold, domain enums/models, CoreData stack, service protocols / ServiceContainer / app state.
   - **Epic B - Exercise Library (✅ built):** bundled ~38-movement JSON library + load/integrity-check service.
   - **Epic C - Deterministic Engine, Steps 1-7 + Swap (✅ built):** the full v5 pipeline, including the deterministic exercise swap (the old US-C08 is now folded into a built Epic C).
   - **Epic D - v6 Data Model & Session Policy Foundation (✅ done, US-D01-D04):** `User` gains `why`/`duration`/`coldStart`, `WorkoutLog` gains `requestedMinutes`/`wasReturn`, the always-valid `SessionPolicy`, and the `ReprogramTrigger` service seam.
   - **Epic E - Engine v6 Extensions (✅ done, US-E01-E06):** session shapes extended to 5-60 min, primal promoted to a first-class pillar, the engine consumes SessionPolicy levers, Step 0 cold-start override + capped Starting Difficulty, the Asymmetric Ramp, and the Return override + Re-entry Ramp.
-- **Remaining (Epics F-N, not started):** F - AI Programmer at option (C) (deterministic re-weighting, Trigger Precedence, plateau diagnosis, templated note); G - cold-start & the template-backed Variety Language LLM slice; H - Consistency Score + PhaseEvaluator; I - onboarding; J - Ready Screen; K - active session; L - post-session; M - progress tab; N - Apple integrations (Sign in with Apple, CloudKit, HealthKit, StoreKit 2) + the thin stateless proxy.
-- **Next story:** US-F01 (re-program trigger detection with Trigger Precedence) - the first story of the on-device AI Programmer.
+  - **Epic F - AI Programmer at option (C) (✅ done, US-F01-F04):** US-F01 re-program trigger detection with Trigger Precedence (#26), US-F02 plateau diagnosis (Physical Stall vs Disengagement) (#27), US-F03 deterministic Session Policy re-weighting service (#29), US-F04 Default Duration learning + templated policy note (#28). This is the on-device, zero-LLM daily-adaptive AI Programmer that rewrites each user's `SessionPolicy` (never a workout, never on the start path), with a human-readable note explaining each change.
+- **Remaining (Epics G-N, not started):** G - cold-start & the template-backed Variety Language LLM slice; H - Consistency Score + PhaseEvaluator; I - onboarding; J - Ready Screen; K - active session; L - post-session; M - progress tab; N - Apple integrations (Sign in with Apple, CloudKit, HealthKit, StoreKit 2) + the thin stateless proxy.
+- **Next story:** US-G01 (Starting Difficulty seeding - capped band, served gentle) - the first story of Epic G, cold-start & Variety Language.
 - **Go-to-market (pre-launch):** a build-in-public 1-week social launch plan (IG/X/TikTok, "discipline over content" wedge) is drafted at `posts/01-social-1week-launch_260701.md`, grounded in a 2026-07-01 market scan. It runs as a positioning + waitlist play before the MVP ships (no app to download yet).
 
 ## Why this project / how it fits
@@ -59,7 +60,7 @@ Freemium, paywall on **depth** not the core loop (the discipline promise stays f
 
 | Phase | Focus | Status |
 |-------|-------|--------|
-| **MVP (v6)** | Discipline Loop + daily-adaptive AI Programmer at option (C): 5-60 min deterministic engine with first-class primal, Session Policy, cold-start + Return/Re-entry Ramp, Ready Screen, Consistency Score, PhaseEvaluator, onboarding, active/post/progress UI, CoreData/CloudKit, StoreKit 2 paywall, and one template-backed LLM Variety Language slice via a thin proxy | In progress (Epics A-E done) |
+| **MVP (v6)** | Discipline Loop + daily-adaptive AI Programmer at option (C): 5-60 min deterministic engine with first-class primal, Session Policy, cold-start + Return/Re-entry Ramp, Ready Screen, Consistency Score, PhaseEvaluator, onboarding, active/post/progress UI, CoreData/CloudKit, StoreKit 2 paywall, and one template-backed LLM Variety Language slice via a thin proxy | In progress (Epics A-F done; the AI Programmer at option (C) is fully built) |
 | **Phase 2** | Full option-(B) LLM Programmer (richer diagnosis + narrative notes), full Strength-Phase catalog, equipment variants | Planned |
 
 MVP non-goals: no direct AI generation of sessions (the AI writes policy only; the deterministic engine assembles every workout), no full option-(B) LLM Programmer, no server-side scheduler or user-data mirror, no gamification, no social/leaderboards, no equipment exercises, no Android/widgets/Watch. The only MVP LLM call is the template-backed Variety Language slice. See the PRD's Non-Goals section.

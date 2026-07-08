@@ -1,7 +1,7 @@
 ---
 purpose: 5-day X/Twitter + Reddit launch campaign for flagship post #1 (permission-aware RAG)
 source: posts/01-permission-aware-rag.md
-status: draft - ready to schedule once the waitlist link is live
+status: live - running; Day 1-2 posted as of 2026-07-07, Days 3-5 pending
 audience: agency / freelance AI developers shipping client RAG features
 cta_dependency: waitlist link (Tally) must be live before Day 4-5 CTAs go out
 research_refresh: 2026-07-01 (last30days scan of "AI Chatbot" across Reddit, YouTube, and web; see "Current signal" section)
@@ -292,7 +292,7 @@ I'm building it in public and validating with real buyers before I build more.
 If that's you, I want to talk. Waitlist + a 20-min call box: [WAITLIST LINK]
 
 **5/** (optional, links out to the full piece)
-Full write-up with the SQL, the index analysis, and the eval tables is here: [POST LINK]
+Full write-up with the SQL, the index analysis, and the eval tables is here: https://x.com/hyungjcho/status/2074233331236167799
 More deep-dives coming - next one is the leak-eval suite that caught a -0.51 recall@5 regression from a one-line change before it shipped.
 
 **Optional timely hook (add as an urgency opener or reply):**
@@ -315,10 +315,10 @@ I'm validating with real buyers before building more. If you ship client AI feat
 
 ## Posting checklist
 
-- [ ] Waitlist (Tally) live, link ready for Day 4-5
-- [ ] Post #1 published somewhere linkable (LinkedIn / dev.to / Substack) for the Day 5 "full write-up" link
-- [ ] Day 1: X thread + r/Rag post; reply to comments within 2 hrs
-- [ ] Day 2: X thread
+- [x] Waitlist (Tally) live, link ready for Day 4-5
+- [x] Post #1 published somewhere linkable for the Day 5 "full write-up" link (X, 2026-07-07: https://x.com/hyungjcho/status/2074233331236167799)
+- [x] Day 1: X thread + r/Rag post; reply to comments within 2 hrs (live 2026-07-07)
+- [x] Day 2: X thread (live 2026-07-07)
 - [ ] Day 3: X thread + r/LocalLLaMA post; reply to comments within 2 hrs
 - [ ] Day 4: X thread
 - [ ] Day 5: X thread with CTA (+ optional r/SideProject post)

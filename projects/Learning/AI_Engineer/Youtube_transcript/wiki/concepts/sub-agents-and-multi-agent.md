@@ -2,7 +2,7 @@
 type: concept
 tags: [sub-agents, multi-agent, delegation, agent-teams, coordination]
 date: 2026-07-03
-source-count: 4
+source-count: 5
 status: seeded
 ---
 
@@ -28,6 +28,11 @@ Delegating work to other agents from within a task: sub-agents that run in isola
 [[inside-conductor-agent-orchestration]] raises the open design questions:
 
 - Should you be able to talk to sub-agents directly? Should there be multiplayer chats where several people work with the AIs on the same thing?
+
+[[working-with-fable-5-in-claude-code]] shows the archetypes becoming emergent:
+
+- A capable-enough model now *invents* the sub-agent archetypes a task needs (reviewer, adversarial reviewer, exploratory), so hand-defining a fixed roster is no longer worth it - decomposition itself is delegated.
+- Both patterns appear in one run: sub-agents that report up (Codex-backed review/implementation/computer-use helpers) and a debate-style panel (16 PR investigators, each verdict stress-tested by a Fable+Opus judge pair) - the panel is the multi-agent "diversity" pattern applied to raise confidence in a decision.
 
 ## Synthesis
 

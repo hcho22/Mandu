@@ -60,3 +60,18 @@ Event log for this wiki. Each entry begins with `## [YYYY-MM-DD] <op> | <title>`
 - Created `[[agentic-web-and-aeo]]`; extended `[[agent-memory]]`, `[[agent-permissions-and-safety]]`.
 - Seeded `synthesis.md`; updated `index.md`; added talking points to `projects/job-search/interview-prep.md`.
 - No daily-log pointer added because `projects/Learning/AI_Engineer/Youtube_transcript/log/2026-07-03.md` does not exist.
+
+## [2026-07-07] ingest | Working With Fable 5 in Claude Code
+
+- Created `sources/working-with-fable-5-in-claude-code.md` (Theo / T3).
+- Created `[[model-routing-and-cost-control]]`; extended `[[agentic-coding-workflow]]`, `[[sub-agents-and-multi-agent]]`, `[[parallel-agent-orchestration]]`, `[[evals-for-agents]]`, `[[agent-skills]]`, `[[agent-permissions-and-safety]]`, `[[scheduled-agent-autonomy]]`.
+- Updated `index.md` (source + new concept) and `synthesis.md` (13-source thesis; added the model-routing concept to the map).
+- Raw `raw/Fable5_ClaudeCode_Workflow_Summary.md` left byte-identical (immutable inbox).
+- No daily-log pointer added because `projects/Learning/AI_Engineer/Youtube_transcript/log/2026-07-07.md` does not exist.
+
+## [2026-07-07] ingest | 50 Career Moves in the AI Era
+
+- Created `sources/ai-era-50-career-moves.md` (unattributed tech creator; PM -> Staff SWE at Meta).
+- Extended `[[human-taste-and-ai-slop]]`, `[[agentic-coding-workflow]]`, `[[evals-for-agents]]`, `[[context-engineering]]` (AI-engineering tips only).
+- Scope note: primarily a career talk; the career/money/interview bulk is out of this wiki's domain and routes to `projects/job-search/interview-prep.md` (not edited this pass - flagged for hcho).
+- Updated `index.md`. Raw `raw/AI_Era_50_Career_Tips_Summary.md` left byte-identical.

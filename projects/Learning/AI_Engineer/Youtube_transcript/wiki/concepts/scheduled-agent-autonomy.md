@@ -2,7 +2,7 @@
 type: concept
 tags: [cron, scheduling, cadence, routines, autonomy, playbooks]
 date: 2026-07-03
-source-count: 3
+source-count: 4
 status: seeded
 ---
 
@@ -24,6 +24,10 @@ Making agents act on their own on a deterministic schedule - crons, routines, an
 [[every-claude-feature-ranked]] catalogs the scheduling primitives:
 
 - Routines schedule a real agent addressed the way you normally talk to it (local or cloud), not a deterministic script. /loop repeats a prompt on a local, session-bound cron (dies when the terminal closes; auto-shuts after 7 days). /goal runs until a verifiable condition is met - write an objective "definition of done."
+
+[[working-with-fable-5-in-claude-code]] runs a real "goal" end to end:
+
+- Instead of a time cron, this is the run-until-conditions-pass form: he sets a "goal" with an objective definition of done (all discussed work complete), an in-repo `to-do.md` to mark off and commit against, and a hard stop condition (don't merge until automated reviewers approve). It ran ~5 hours unattended and merged a month's roadmap - autonomy bounded by a verifiable finish line and a permission set, not a clock.
 
 ## Synthesis
 

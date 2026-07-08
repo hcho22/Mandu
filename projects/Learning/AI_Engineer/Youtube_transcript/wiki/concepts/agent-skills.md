@@ -2,7 +2,7 @@
 type: concept
 tags: [skills, prompting, claude-code, reuse, progressive-disclosure]
 date: 2026-07-03
-source-count: 7
+source-count: 8
 status: seeded
 ---
 
@@ -38,6 +38,12 @@ A skill is a folder of instructions (a markdown SKILL.md plus optional examples,
 
 - Conductor tunes a few-hundred-line CLAUDE.md plus skills files as the customizations that matter most.
 - In CMA, an agent is configured with skills, and Claude Code ships with a Claude API skill that makes it "really good" at the Managed Agents APIs.
+
+[[working-with-fable-5-in-claude-code]] shows skills as thin bridges to another model, with hard-won authoring rules:
+
+- His kept skills (Codex review, implementation, computer use) mostly wrap GPT-5.5/Codex so Claude borrows its strengths without building them in. Confirms the description-first mechanic: the model sees only a skill's *description* until it invokes it, so the description must carry enough to decide.
+- Authoring lessons from iterating: get the *commands* inside a skill right (the rare miss is very annoying), prompt Codex *simply* (don't prompt it like Claude), and handle the empty-result case explicitly so the parent model doesn't get confused and re-run. Broaden trigger descriptions to a sensible default.
+- Emphatic rule: "Don't blindly copy someone else's skills/config" - screenshot them, have a model guide you to build your own, and be unafraid to edit and break things.
 
 ## Synthesis
 
