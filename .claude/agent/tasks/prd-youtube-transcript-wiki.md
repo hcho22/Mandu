@@ -1,3 +1,7 @@
+> SUPERSEDED (2026-07-08): This wiki was never physically built as a separate directory.
+> Its scope was folded into AI_Wiki (`projects/Learning/AI_Engineer/AI_Wiki/`), which already realizes exactly this spec (full mode, organic concepts, AI-engineering domain, talk/tutorial/transcript diet).
+> See the 2026-07-08 "Fold the planned YouTube-transcript wiki into AI_Wiki" entry in `decisions/log.md`. Retained for history only.
+
 # PRD: YouTube-Transcript Wiki (Wiki #3 - Full-Mode, Organic-Growth Clone)
 
 ## Introduction

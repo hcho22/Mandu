@@ -60,7 +60,7 @@ Memory plus context files plus the decision log means your assistant gets smarte
 
 ## Projects
 
-Active workstreams live in `projects/`. Each project is a folder with its own `README.md` (description, status, key dates). The primary flagship is `projects/Agentic_RAG/` (the income + portfolio bet); `projects/FitSnack/` is a second income bet (a B2C freemium iOS micro-workout app, MVP build in progress, also an AI-builder portfolio asset); `projects/job-search/` runs as the parallel hedge. Demoted/paused: `projects/CreativeBridge/` (portfolio-only) and `projects/CompeteIntel/` (backlog). `projects/Learning/` is parked (see below). The live priority ranking is in `context/current-priorities.md`. Completed and archived: `archives/HabitLoop/`, `archives/F2F/`.
+Active workstreams live in `projects/`. Each project is a folder with its own `README.md` (description, status, key dates). The primary flagship is `projects/Agentic_RAG/` (the income + portfolio bet); `projects/FitSnack/` is a second income bet (a B2C freemium iOS micro-workout app, MVP build in progress, also an AI-builder portfolio asset); `projects/job-search/` runs as the parallel hedge. Demoted/paused: `projects/CreativeBridge/` (portfolio-only) and `projects/CompeteIntel/` (backlog). `projects/Learning/` is parked (see below), though its `AI_Engineer/AI_Wiki/` is an active AI-engineering + AI-career knowledge wiki and hcho's primary second brain (an enabler, maintained not pushed; see the Wikis section). The live priority ranking is in `context/current-priorities.md`. Completed and archived: `archives/HabitLoop/`, `archives/F2F/`.
 
 `projects/Learning/` is a continuous learning-tracking project organized as career track → topic (e.g., `AI_Engineer/evals/`), each with its own README, plan, and `log/`. As of 2026-06-18 it is parked: the evals track is now pursued as the edge expressed through Agentic RAG's eval harness, not as a standalone study workstream. When active, Claude acts as a study partner (explain, quiz, review), not a doer.
 
@@ -91,7 +91,7 @@ Interview talking points from wiki work consolidate to `projects/job-search/inte
 Active wikis:
 - Evals pilot: `projects/Learning/AI_Engineer/evals/wiki/` (mode: split).
 - Agentic RAG: `projects/Agentic_RAG/wiki/` (mode: full).
-- YouTube-transcript: `projects/Learning/AI_Engineer/Youtube_transcript/wiki/` (mode: full; AI-engineering topics, video-transcript diet).
+- AI_Wiki: `projects/Learning/AI_Engineer/AI_Wiki/wiki/` (mode: full; broad AI-engineering + AI-career KB and hcho's primary "second brain" for the pivot; own vault, own schema in `wiki/CLAUDE.md`). The reference layer that cross-links to the evals and Agentic RAG wikis. Subsumes the planned YouTube-transcript wiki (folded in 2026-07-08, which was never physically built): AI_Wiki owns the AI-engineering talk/tutorial/transcript diet.
 
 ## Templates
 

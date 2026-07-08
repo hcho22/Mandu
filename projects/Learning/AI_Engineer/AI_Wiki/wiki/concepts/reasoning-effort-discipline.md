@@ -1,0 +1,25 @@
+---
+type: concept
+tags: [models, cost-control, claude, reasoning-effort]
+status: seed
+source-count: 1
+last-updated: 2026-07-08
+---
+
+# Reasoning-Effort Discipline
+
+From [[working-with-fable-5]]: the single biggest cost lever is keeping reasoning effort in the low-to-high range and refusing the settings above it (x-high, max, "Ultra Code").
+Theo ([[theo-t3]]) estimates this one change alone halves many people's bills.
+
+## Key points
+
+- **High is the best value** and the default for a reason; low/medium/high can still run for a long time and do things a cheaper model cannot.
+- **The top settings over-reason:** x-high and max second-guess themselves, loop, and over-engineer - far more changes than a simple request warrants, at drastically higher cost. They are visually tempting ("a slot-machine gradient"); resist.
+- **Effort is per-step, not more steps:** higher effort makes the model overthink each individual tool call; it does not grant a longer horizon or the ability to solve harder problems. A 500-step task does not get more steps from max.
+- **A tell:** Ultra Code reportedly runs many "high" passes under the hood - read as the vendor itself agreeing high is the sweet spot. Nearly everyone blowing through usage was on x-high/max/Ultra Code.
+
+## Synthesis
+
+This is one of the two cost levers in the source, alongside [[model-routing]]; together they are why a month-scale agent run cost ~$150 rather than thousands.
+It is a useful counter to the intuition that "more thinking = better output": beyond a point, more effort buys over-engineering, not correctness - which is itself a validation observation ([[cost-of-being-wrong]] cuts both ways: over-changing simple code has a cost too).
+Note the specific settings are Theo's read of the current Claude 5 family, not a vendor benchmark; treat as a working default, not a law.
