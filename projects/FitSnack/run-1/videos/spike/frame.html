@@ -1,0 +1,15 @@
+<!doctype html><html><head><style>
+body{margin:0;width:1280px;height:720px;background:#0e1512;overflow:hidden;font-family:-apple-system,Helvetica,sans-serif}
+#w{position:relative;width:1280px;height:720px;display:flex;align-items:center;justify-content:center}
+h1{color:#e8f0ea;font-size:72px;opacity:0}
+</style></head><body><div id="w"><h1 id="t">Five minutes counts.</h1></div>
+<script>
+window.seek = function(ms){ // deterministic timeline: fade in 0-1000ms, hold, fade out 2000-3000ms
+  const t = document.getElementById('t');
+  let o = 0;
+  if (ms < 1000) o = ms/1000; else if (ms < 2000) o = 1; else o = Math.max(0, 1-(ms-2000)/1000);
+  t.style.opacity = o;
+  t.style.transform = 'translateY(' + (10*(1-Math.min(1,ms/1000))) + 'px)';
+  return o;
+};
+</script></body></html>

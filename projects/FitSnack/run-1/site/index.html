@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nonzero - Open the app. Your workout is already there.</title>
+<meta name="description" content="Nonzero is the micro-workout app where your workout is already there when you open it, and missing a day dents your score but never zeroes it.">
+<style>
+  :root {
+    --ink: #12261F; --bone: #F4F1EA; --ember: #C97B2D;
+    --moss: #7FA48E; --pine: #1E4D3B; --clay: #B9B2A4;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: var(--bone); color: var(--ink); line-height: 1.55;
+    font-variant-numeric: tabular-nums;
+  }
+  a { color: var(--pine); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+  .mark { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 19px; letter-spacing: -0.3px; }
+  .mark svg { width: 28px; height: 28px; }
+  .navlinks { display: flex; gap: 22px; align-items: center; }
+  .navlinks a { text-decoration: none; font-size: 15px; font-weight: 600; color: var(--pine); }
+  .cta {
+    background: var(--ember); color: #fff !important; padding: 9px 16px; border-radius: 10px;
+    font-size: 15px; font-weight: 700; text-decoration: none; border: none; cursor: pointer;
+  }
+  .cta:active { filter: brightness(0.93); }
+
+  /* hero */
+  .hero { display: flex; gap: 48px; align-items: center; padding: 44px 0 72px; flex-wrap: wrap; }
+  .hero-copy { flex: 1 1 420px; min-width: 0; }
+  .hero h1 { font-size: clamp(38px, 5.4vw, 62px); line-height: 1.05; letter-spacing: -1.5px; }
+  .hero h1 em { font-style: normal; color: var(--ember); }
+  .hero p.sub { margin-top: 18px; font-size: 19px; color: var(--pine); max-width: 480px; }
+  .hero .actions { margin-top: 26px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .ghost { font-size: 15px; font-weight: 600; color: var(--pine); text-decoration: none; }
+  .hero .fine { margin-top: 14px; font-size: 13.5px; color: var(--clay); }
+
+  .phone {
+    flex: 0 0 auto; width: 340px; height: 700px; background: var(--ink); border-radius: 44px;
+    padding: 10px; box-shadow: 0 30px 60px rgba(18,38,31,0.25); margin: 0 auto;
+  }
+  .phone iframe { width: 100%; height: 100%; border: none; border-radius: 34px; background: var(--bone); }
+  .phone-caption { text-align: center; font-size: 13px; color: var(--clay); margin-top: 10px; }
+
+  section { padding: 72px 0; }
+  section.dark { background: var(--ink); color: var(--bone); }
+  section.dark h2, section.dark .kicker { color: var(--bone); }
+  .kicker { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ember); margin-bottom: 10px; }
+  h2 { font-size: clamp(28px, 3.6vw, 40px); letter-spacing: -0.8px; line-height: 1.15; max-width: 620px; }
+  .lead { margin-top: 14px; font-size: 17.5px; max-width: 600px; color: var(--pine); }
+  section.dark .lead { color: var(--clay); }
+
+  /* the net: streak vs score */
+  .net { display: flex; gap: 20px; margin-top: 36px; flex-wrap: wrap; }
+  .netcard {
+    flex: 1 1 260px; background: rgba(244,241,234,0.06); border: 1px solid rgba(244,241,234,0.14);
+    border-radius: 16px; padding: 22px;
+  }
+  .netcard h3 { font-size: 15px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--clay); }
+  .bignum { font-size: 56px; font-weight: 700; letter-spacing: -2px; margin: 6px 0 2px; }
+  .netcard .state { font-size: 14.5px; min-height: 44px; }
+  .netcard.streak .bignum.dead { color: #C0553B; }
+  .netcard.score .bignum { color: var(--moss); }
+  .netbtns { margin-top: 26px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .netbtns button {
+    border: 1.5px solid rgba(244,241,234,0.3); background: none; color: var(--bone);
+    font-size: 15px; font-weight: 600; padding: 10px 16px; border-radius: 10px; cursor: pointer;
+  }
+  .netbtns button.hot { background: var(--ember); border-color: var(--ember); color: #fff; }
+  .netlog { margin-top: 14px; font-size: 14px; color: var(--clay); min-height: 20px; }
+
+  /* science strip */
+  .strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; margin-top: 36px; }
+  .fact { background: #fff; border: 1px solid rgba(18,38,31,0.08); border-radius: 16px; padding: 22px; }
+  .fact .num { font-size: 34px; font-weight: 700; letter-spacing: -1px; color: var(--pine); }
+  .fact p { font-size: 14.5px; margin-top: 6px; color: var(--ink); }
+  .fact a { font-size: 12.5px; color: var(--clay); }
+  .honesty { margin-top: 22px; font-size: 14px; color: var(--pine); max-width: 640px; background: rgba(127,164,142,0.14); border-left: 3px solid var(--moss); padding: 12px 14px; border-radius: 6px; }
+
+  /* how it works */
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 36px; }
+  .step { border-top: 3px solid var(--ember); padding-top: 16px; }
+  .step h3 { font-size: 19px; letter-spacing: -0.3px; }
+  .step p { font-size: 15px; color: var(--pine); margin-top: 8px; }
+  section.dark .step p { color: rgba(244,241,234,0.72); }
+
+  /* pricing */
+  .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-top: 36px; max-width: 800px; }
+  .plan { background: #fff; border: 1px solid rgba(18,38,31,0.1); border-radius: 18px; padding: 26px; }
+  .plan.hot { border: 2px solid var(--ember); }
+  .plan h3 { font-size: 17px; }
+  .plan .price { font-size: 38px; font-weight: 700; letter-spacing: -1px; margin: 8px 0 2px; }
+  .plan .per { font-size: 14px; color: var(--clay); }
+  .plan ul { margin: 14px 0 0 18px; font-size: 14.5px; color: var(--pine); }
+  .plan li { margin-bottom: 6px; }
+
+  /* faq */
+  .faq { margin-top: 30px; max-width: 720px; }
+  .faq details { border-bottom: 1px solid rgba(18,38,31,0.12); padding: 16px 0; }
+  .faq summary { font-size: 17px; font-weight: 600; cursor: pointer; }
+  .faq p { margin-top: 10px; font-size: 15.5px; color: var(--pine); max-width: 640px; }
+
+  @media (max-width: 640px) {
+    .navlinks a:not(.cta) { display: none; }
+  }
+
+  footer { padding: 56px 0 40px; }
+  .footcta { background: var(--pine); color: var(--bone); border-radius: 20px; padding: 44px 32px; text-align: center; }
+  .footcta h2 { margin: 0 auto; }
+  .footcta p { margin: 12px auto 22px; color: rgba(244,241,234,0.75); max-width: 460px; font-size: 16px; }
+  .footnote { text-align: center; font-size: 13px; color: var(--clay); margin-top: 28px; line-height: 1.7; }
+  #joined { display: none; margin-top: 14px; font-weight: 600; color: var(--bone); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav>
+    <div class="mark">
+      <svg viewBox="0 0 160 160"><circle cx="80" cy="80" r="46" fill="none" stroke="#12261F" stroke-width="14"/><line x1="49" y1="116" x2="111" y2="44" stroke="#C97B2D" stroke-width="14" stroke-linecap="round"/></svg>
+      nonzero
+    </div>
+    <div class="navlinks">
+      <a href="#how">How it works</a>
+      <a href="#science">Science</a>
+      <a href="#pricing">Pricing</a>
+      <a class="cta" href="#join">Get early access</a>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-copy">
+      <h1>Open the app. Your workout is <em>already there.</em></h1>
+      <p class="sub">A complete zero-equipment session, 5 to 60 minutes, assembled before you arrive. No questions. One tap. Five minutes counts as a full show-up.</p>
+      <div class="actions">
+        <a class="cta" href="#join">Get early access</a>
+        <a class="ghost" href="prototype/index.html">Try the live prototype &rarr;</a>
+      </div>
+      <p class="fine">That phone is not a mockup. It runs the real session engine, in your browser, offline. Tap things.</p>
+    </div>
+    <div>
+      <div class="phone"><iframe src="prototype/index.html" title="Nonzero Ready Screen prototype"></iframe></div>
+      <div class="phone-caption">The Ready Screen: what opening Nonzero looks like, every day.</div>
+    </div>
+  </div>
+</div>
+
+<section class="dark" id="net">
+  <div class="wrap">
+    <div class="kicker">The net</div>
+    <h2>Miss a day. Your score dents. It never zeroes.</h2>
+    <p class="lead">Streaks are powerful right up until the first miss, and then they take the habit down with them. Nonzero's Consistency Score makes a miss cost something small and visible, and makes zero impossible. Try it:</p>
+    <div class="net">
+      <div class="netcard streak">
+        <h3>The streak you had</h3>
+        <div class="bignum" id="streakval">21</div>
+        <div class="state" id="streakstate">21 days. Feels great. Feels fragile.</div>
+      </div>
+      <div class="netcard score">
+        <h3>Nonzero Consistency Score</h3>
+        <div class="bignum" id="scoreval">96</div>
+        <div class="state" id="scorestate">Misses dent it. Nothing zeroes it.</div>
+      </div>
+    </div>
+    <div class="netbtns">
+      <button class="hot" id="btnmiss">Miss a day</button>
+      <button id="btnshow">Show up (even 5 min)</button>
+      <button id="btnreset">Reset</button>
+    </div>
+    <div class="netlog" id="netlog"></div>
+  </div>
+</section>
+
+<section id="science">
+  <div class="wrap">
+    <div class="kicker">The floor</div>
+    <h2>Five minutes counts. That's the research, not a consolation prize.</h2>
+    <div class="strip">
+      <div class="fact">
+        <div class="num">g = 1.37</div>
+        <p>Exercise snacks significantly improved cardiorespiratory fitness in inactive adults across 11 randomized trials.</p>
+        <a href="https://bjsm.bmj.com/content/59/22/1434" target="_blank" rel="noopener">BJSM meta-analysis, 2025</a>
+      </div>
+      <div class="fact">
+        <div class="num">82.8%</div>
+        <p>Adherence to micro-workout protocols in those trials. People actually keep doing the tiny format.</p>
+        <a href="https://bjsm.bmj.com/content/59/22/1434" target="_blank" rel="noopener">BJSM meta-analysis, 2025</a>
+      </div>
+      <div class="fact">
+        <div class="num">1 miss &ne; broken</div>
+        <p>"Missing one opportunity did not significantly impact the habit formation process."</p>
+        <a href="https://www.ucl.ac.uk/news/2009/aug/how-long-does-it-take-form-habit" target="_blank" rel="noopener">Lally et al., UCL, 2010</a>
+      </div>
+      <div class="fact">
+        <div class="num">0 min</div>
+        <p>The minimum bout length in WHO's activity guidelines since 2020. "Every move counts." The 10-minute rule is gone.</p>
+        <a href="https://www.who.int/news/item/25-11-2020-every-move-counts-towards-better-health-says-who" target="_blank" rel="noopener">WHO, 2020</a>
+      </div>
+    </div>
+    <p class="honesty">What we won't claim: that 5-minute sessions build visible muscle, burn fat, or lower blood pressure. The same meta-analysis found no significant effect on those. Nonzero's short sessions buy you real cardio fitness and a kept habit; heavier goals unlock later, once showing up is boring.</p>
+  </div>
+</section>
+
+<section class="dark" id="how">
+  <div class="wrap">
+    <div class="kicker">How it works</div>
+    <h2>Discipline is the product. Everything else serves it.</h2>
+    <div class="steps">
+      <div class="step">
+        <h3>Assembled before you arrive</h3>
+        <p>A deterministic on-device engine builds today's session from 42 zero-equipment movements: strength, mobility, and primal work, fit to your minutes within one minute of accuracy, in under 100 milliseconds, fully offline. No browsing. No choosing. No question before you start.</p>
+      </div>
+      <div class="step">
+        <h3>Quietly retunes to you</h3>
+        <p>Between sessions, Nonzero rereads your history and adjusts the program: progression pace, variety, how much of each pillar. It tells you what it changed in one honest sentence. It never touches the moment you press Start.</p>
+      </div>
+      <div class="step">
+        <h3>Dents, never zeroes</h3>
+        <p>The Consistency Score rewards showing up. A 5-minute session counts in full. A missed day costs a visible dent that fades. Coming back after a break is served easy and celebrated, never punished. Your longest chain is kept as pride, not held hostage.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="kicker">Pricing</div>
+    <h2>The discipline is free. Forever.</h2>
+    <p class="lead">The paywall never touches the core loop. If Nonzero only ever costs you nothing, and you move five minutes a day, it did its job.</p>
+    <div class="plans">
+      <div class="plan">
+        <h3>Free</h3>
+        <div class="price">$0</div>
+        <div class="per">forever</div>
+        <ul>
+          <li>Unlimited workouts, 5 to 60 minutes</li>
+          <li>The full movement library</li>
+          <li>Consistency Score and history</li>
+          <li>Works offline, no account required</li>
+        </ul>
+      </div>
+      <div class="plan hot">
+        <h3>Depth</h3>
+        <div class="price">$9.99</div>
+        <div class="per">per month, or $59.99/year. 14-day trial.</div>
+        <ul>
+          <li>Deeper adaptive programming</li>
+          <li>Full variety and movement catalog</li>
+          <li>Analytics depth: trends, balance, bests</li>
+          <li>Strength Phase, when you've earned it</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq" style="padding-top: 0;">
+  <div class="wrap">
+    <div class="kicker">Straight answers</div>
+    <h2>The questions you should ask.</h2>
+    <div class="faq">
+      <details>
+        <summary>Why no streaks? Streaks work.</summary>
+        <p>They do, while they last. Duolingo's own research says a 7-day streak makes you 3.6x more likely to finish your course, and also that breaking one is so demotivating they built freezes, wagers, and amulets to soften it. Every measured retention win they publish is a forgiveness mechanic bolted onto the streak. Nonzero builds the forgiveness in structurally instead of selling it back to you. If you love your chain, we count it. It just can't hurt you here.</p>
+      </details>
+      <details>
+        <summary>Will 5-minute workouts actually do anything?</summary>
+        <p>For cardio fitness, yes: a 2025 meta-analysis of 11 randomized trials found significant improvement in inactive adults, with 82.8% adherence. For visible muscle or fat loss, no, and we won't pretend otherwise. Short sessions build the habit and real cardio fitness; strength programming unlocks as an earned phase, with the volume that goal actually requires.</p>
+      </details>
+      <details>
+        <summary>Is this another AI coach?</summary>
+        <p>No. The workout you see was assembled by a deterministic engine that runs on your phone, offline, in under 100 milliseconds. A quiet programmer layer re-tunes your plan between sessions and tells you what it changed in plain language. Nothing generates your workout on the fly, nothing waits on a server, and nothing is marketed to you as magic.</p>
+      </details>
+      <details>
+        <summary>Who is this NOT for?</summary>
+        <p>People who already train consistently and want optimization: apps like Dr. Muscle and BodBot adapt sets and loads for committed lifters, and they're good at it. Nonzero is for the person who has quit three fitness apps and needs the showing-up problem solved first. If browsing workout libraries is part of the fun for you, Nike Training Club is free and excellent.</p>
+      </details>
+      <details>
+        <summary>What happens to my data?</summary>
+        <p>Your history lives on your device and in your private iCloud. No account is required for the core loop. The one optional network call (a line of session language) sends no personal data and falls back to an offline template if you're in airplane mode.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footcta" id="join">
+      <h2>Your first workout is already waiting.</h2>
+      <p>Nonzero is in development for iPhone. Early access opens with the TestFlight beta.</p>
+      <button class="cta" id="joinbtn">Get early access</button>
+      <div id="joined">You're on the list. We'll be brief and infrequent.</div>
+    </div>
+    <p class="footnote">
+      Nonzero. Pre-launch. This page runs entirely locally; the phone above is the real engine.<br>
+      Sources for every number on this page: BJSM 2025 (bjsm.bmj.com), UCL/Lally 2010, WHO 2020, Duolingo Blog. Full evidence trail in the run-1 research pack.
+    </p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  // The net: streak vs Consistency Score, same person, same misses.
+  var days = []; // true = showed up
+  function init() { days = []; for (var i = 0; i < 21; i++) days.push(true); paint('21 good days on the board.'); }
+  function scoreOf() {
+    var recent = days.slice(-14), num = 0, den = 0;
+    recent.forEach(function (d, i) { var w = i + 1; num += (d ? 1 : 0.55) * w; den += w; });
+    return Math.max(25, Math.round(num / den * 100));
+  }
+  function streakOf() {
+    var n = 0;
+    for (var i = days.length - 1; i >= 0 && days[i]; i--) n++;
+    return n;
+  }
+  function paint(msg) {
+    var st = streakOf(), sc = scoreOf();
+    var sv = document.getElementById('streakval');
+    sv.textContent = st;
+    sv.className = 'bignum' + (st === 0 ? ' dead' : '');
+    document.getElementById('streakstate').textContent =
+      st === 0 ? 'Zero. The 21 days still happened, but the number says you’re nothing.'
+      : st < 5 ? st + ' days. Starting over from the bottom.'
+      : st + ' days. Feels great. Feels fragile.';
+    document.getElementById('scoreval').textContent = sc;
+    document.getElementById('scorestate').textContent =
+      sc >= 95 ? 'Misses dent it. Nothing zeroes it.'
+      : sc >= 80 ? 'Dented, visible, recoverable. Still standing.'
+      : 'Rough stretch. The floor holds. Show up once and it climbs.';
+    document.getElementById('netlog').textContent = msg || '';
+  }
+  document.getElementById('btnmiss').addEventListener('click', function () {
+    days.push(false); paint('Missed a day. The streak died completely. The score paid a small, honest price.');
+  });
+  document.getElementById('btnshow').addEventListener('click', function () {
+    days.push(true); paint('Showed up. Five minutes counts in full. Both numbers move, only one forgave you.');
+  });
+  document.getElementById('btnreset').addEventListener('click', init);
+  init();
+
+  document.getElementById('joinbtn').addEventListener('click', function () {
+    this.style.display = 'none';
+    document.getElementById('joined').style.display = 'block';
+  });
+})();
+</script>
+</body>
+</html>
