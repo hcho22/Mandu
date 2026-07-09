@@ -1,0 +1,51 @@
+---
+type: synthesis
+last-updated: 2026-07-08
+status: developing
+---
+
+# Synthesis: which role, and how to get there
+
+The top-level plan.
+This page answers: across hcho's two buckets, which roles are the strongest fit, which skills are the highest-leverage gaps to close, and in what order.
+It is rewritten as ingests shift the picture.
+
+## The two buckets
+
+- **AI builder** - AI Builder / AI Product Engineer / Applied AI Engineer / Forward Deployed Engineer.
+- **AI evals / quality** - roles centered on evaluating and assuring production AI systems.
+
+The cross-cutting differentiator in both is **validation / evals rigor** from a decade of hardware QA.
+The 2026-07-08 posting batch confirmed this is the right bet: evaluation is a named requirement in nearly every posting, across companies and role types.
+
+## Best-fit roles (ranked)
+
+Updated after the 2026-07-08 real-posting batch (16 sources, 6 role archetypes):
+
+1. [[applied-ai-engineer]] - fit 4/5. The closest single match to Agentic RAG; RAG + evals are direct strengths. Real targets: [[anthropic]], [[cohere]].
+2. [[ai-content-engineer]] - fit 4/5. Fuses hcho's evals differentiator with his active build-in-public motion. Target: [[llamaindex]]. Gap is writing-portfolio volume, which doubles as product marketing.
+3. [[forward-deployed-engineer]] - fit 3/5 but the **highest-volume** archetype (8 of 15 postings). Technically in reach; the blocker is [[customer-facing-delivery]]. Accessible entry points: [[cohere]] Prompt Specialist (0-5 yrs, eval-centric), [[langchain]] (eval/observability nice-to-have).
+4. [[ai-research-engineer]] - fit 3/5. [[hex]] Search-and-Context is a standout RAG/permissions match and Remote-USA eligible; gaps are MLOps infra + TS.
+5. [[ml-engineer-ai-agents]] - fit 3/5. [[cresta]] (resume already tailored); ML-depth gap, eval/reliability is the way in.
+6. [[founding-ai-engineer]] - fit 3/5. [[closure]] is clearance-gated; the shape recurs across the YC list.
+
+## Highest-leverage skill gaps
+
+Two kinds of gap: real skill gaps, and visibility gaps on existing strengths.
+
+Real gaps (close these to convert more roles):
+- [[customer-facing-delivery]] - hcho: learning. Now the **single biggest blocker**, because the highest-volume archetype (FDE) is built around it. Close by reframing QA/vendor + solo-founder discovery experience (the Agentic RAG buyer interviews are literal customer discovery) and targeting eval-centric FDE variants first.
+- [[mlops-deployment]] / [[distributed-systems]] - hcho: working. Containerize + cloud-deploy Agentic RAG to clear the infra bar (Hex, Cresta, Vercel v0).
+- [[typescript]] - hcho: learning. Clears "open to both" roles already; only blocks TS-primary employers (Vercel).
+
+Visibility gaps (hcho is strong; make it legible):
+- [[eval-pipeline-design]] - confirmed table stakes across nearly every posting. hcho's headline. Lead with it everywhere.
+- [[rag-systems]], [[llm-application-development]], [[prompt-engineering]] - all strong; package as public, legible artifacts.
+
+## Recommended sequence
+
+1. **Lead with the eval ship gate on every application.** The batch confirmed evaluation is a near-universal requirement most builders cannot demonstrate; it is hcho's headline differentiator.
+2. **Attack the customer-facing gap by reframing, not just building.** Put the Agentic RAG buyer interviews and QA/vendor stakeholder work on the resume as customer-discovery evidence. This unlocks the largest role pool (FDE).
+3. **Target the accessible, differentiator-aligned openings first:** Cohere Applied AI + Prompt Specialist FDE, LangChain Deployed Engineer, Hex Search-and-Context, LlamaIndex AI Content Engineer, Cresta ML Eng (resume ready).
+4. **Close the deployment/cloud gap** (containerize + thin AWS/GCP deploy of Agentic RAG) to lift fit across Applied AI, AI Research, and ML Eng roles at once.
+5. **Housekeeping:** add [[cohere]] and [[hex]] to the operational target list (`companies.yaml`); decide the 25-40% FDE travel appetite; skip clearance-gated roles (Cohere Sovereign AI, Closure).

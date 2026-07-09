@@ -92,6 +92,7 @@ Active wikis:
 - Evals pilot: `projects/Learning/AI_Engineer/evals/wiki/` (mode: split).
 - Agentic RAG: `projects/Agentic_RAG/wiki/` (mode: full).
 - AI_Wiki: `projects/Learning/AI_Engineer/AI_Wiki/wiki/` (mode: full; broad AI-engineering + AI-career KB and hcho's primary "second brain" for the pivot; own vault, own schema in `wiki/CLAUDE.md`). The reference layer that cross-links to the evals and Agentic RAG wikis. Subsumes the planned YouTube-transcript wiki (folded in 2026-07-08, which was never physically built): AI_Wiki owns the AI-engineering talk/tutorial/transcript diet.
+- Job-Search Roles: `projects/Job_Search/wiki/` (mode: full; own schema in `wiki/CLAUDE.md`, sibling `raw/` inbox). Maps target roles, their qualifications/skills, and hcho's path into each (both buckets: AI builder + AI evals/quality). Distinct from AI_Wiki (AI-engineering craft/career KB) and from the operational job-search layers: it cross-links to `.claude/skills/job-hunter/assets/companies.yaml`, `scans/`, and `../interview-prep.md` rather than duplicating them.
 
 ## Templates
 

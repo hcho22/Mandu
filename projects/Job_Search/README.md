@@ -28,4 +28,5 @@ Two framings coexist on the target list:
 - **Buckets reference:** `.claude/skills/job-hunter/references/company-list.md`.
 - **Resume:** `Hyung_Cho_Resume.docx` (in this folder).
 - **Interview prep:** `interview-prep.md` consolidates talking points across projects and wikis.
+- **Roles wiki:** `wiki/` (mode full) maps target roles, their qualifications/skills, and hcho's path into each; sibling `raw/` inbox. Schema in `wiki/CLAUDE.md`. Drop a posting or role guide into `raw/` and say "ingest this."
 - **Archive:** `archive/` holds the legacy daily notes (2026-05-12, 05-29, 05-30) and the old long-term `MEMORY.md`, kept read-only for history.
