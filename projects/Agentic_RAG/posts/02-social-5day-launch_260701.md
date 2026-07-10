@@ -1,7 +1,7 @@
 ---
 purpose: 5-day X/Twitter + Reddit launch campaign for flagship post #1 (permission-aware RAG)
 source: posts/01-permission-aware-rag.md
-status: live - running; Day 1-2 posted 2026-07-07, Day 3 X thread posted 2026-07-08 (r/LocalLLaMA pending), Day 4 X thread posted 2026-07-09, Day 5 pending
+status: complete - all 5 X threads posted; Day 1-2 posted 2026-07-07, Day 3 X thread posted 2026-07-08 (r/LocalLLaMA pending), Day 4 X thread posted 2026-07-09, Day 5 X thread (pitch + CTA) posted 2026-07-10
 audience: agency / freelance AI developers shipping client RAG features
 cta_dependency: waitlist link (Tally) must be live before Day 4-5 CTAs go out
 research_refresh: 2026-07-01 (last30days scan of "AI Chatbot" across Reddit, YouTube, and web; see "Current signal" section)
@@ -321,6 +321,6 @@ I'm validating with real buyers before building more. If you ship client AI feat
 - [x] Day 2: X thread (live 2026-07-07)
 - [x] Day 3: X thread (live 2026-07-08); r/LocalLLaMA post still pending; reply to comments within 2 hrs
 - [x] Day 4: X thread (live 2026-07-09)
-- [ ] Day 5: X thread with CTA (+ optional r/SideProject post)
+- [x] Day 5: X thread with CTA (live 2026-07-10); optional r/SideProject post still available
 - [ ] Optional: swap in a timely hook (see "Current signal") on Day 1 / 4 / 5 to cite a named 2026 incident or stat; refresh the scan if posting slips past mid-July
 - [ ] Log signups + interview-yes counts in the daily log under `## Validation`
