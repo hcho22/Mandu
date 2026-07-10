@@ -1,6 +1,6 @@
 # Current Priorities
 
-_Last updated: 2026-07-07. Update this file when your focus shifts._
+_Last updated: 2026-07-09. Update this file when your focus shifts._
 
 1. **Agentic RAG Phase 2 as the primary income + portfolio flagship (top focus):** Model A,
    sell the starter kit to agency/freelance AI devs, built in public. **The full Phase 2
@@ -15,10 +15,20 @@ _Last updated: 2026-07-07. Update this file when your focus shifts._
    sole remaining build track, and it stays gated. Observability O-series and F2/F3 are a
    later follow-up PRD.
 2. **FitSnack as the second income bet (B2C):** discipline-first micro-workout iOS app,
-   freemium (free unlimited core loop, premium "depth" paywall at ~$7.99/mo or ~$59.99/yr
-   via StoreKit 2). MVP build in progress, story-by-story against the PRD; Apple-native
-   stack so near-zero hosting cost. Also an AI-builder portfolio asset. Different buyer and
-   revenue shape from Agentic RAG, so it hedges the product path without cannibalizing it.
+   freemium (free unlimited core loop, premium "depth" paywall at $9.99/mo or $59.99/yr
+   via StoreKit 2, per the run-1 pricing lock). MVP build in progress, story-by-story
+   against the PRD (Epics A-I done; UI shell J-N next); Apple-native stack so near-zero
+   hosting cost. **run-1 market package complete (2026-07-09, committed):** thesis
+   validated in a sharper form, name provisionally locked as **Nonzero** (FitSnack is
+   trademark-blocked; counsel review + comprehension test pending), brand guidelines,
+   marketing site + live Ready Screen prototype, launch + founder videos, App Store
+   listing, all red-teamed - entry point `projects/FitSnack/run-1/recap.html`.
+   **Open call for hcho:** the red team's corrected funnel math says income-relevance
+   needs 10-20k installs/month sustained, so until the channel test clears its
+   30/60/90-day gates the honest label is "portfolio asset with revenue upside," not a
+   proven income pillar (`run-1/gtm/plan.md` section 8). Ranking left unchanged pending
+   that call. Also feeds the build: PRD US-H01 amendment recommended (per-day score
+   credit, so "miss a day, your score dents" stays true).
    (Ranked above the job-search hedge per hcho's 2026-06-27 call; swap if applications slip.)
 3. **Job search as the parallel income hedge:** sustained applications at 5/week against
    Tier A/B/C, plus interview prep. Non-negotiable minimum given the 6-12 month runway.
