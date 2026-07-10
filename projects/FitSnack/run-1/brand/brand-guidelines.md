@@ -32,6 +32,7 @@ Files: `logo.svg` (logomark + wordmark lockup), `appicon.svg` (app icon).
 - **Colors**: ring in Ink on light backgrounds, Bone on dark; the slash is always Ember. Single-color versions (all-Ink or all-Bone) are permitted where one ink is required (engraving, favicons); never recolor the slash to any other hue.
 - **Wordmark**: "nonzero" lowercase, bold, tight tracking (-1), system sans (SF Pro on Apple platforms; -apple-system/Helvetica Neue stack elsewhere).
 - Clear space: one ring-radius on all sides. Minimum size: logomark 16px, lockup 120px wide.
+- **Small sizes (below 24px):** the slash's rise stops reading and the mark can echo the prohibition glyph. Use the single-color ring-only variant, or the mark with the slash overshoot exaggerated; run the small-size confusion check ("does it read as no/blocked?") before shipping any favicon or tab icon.
 - Don't: rotate, outline, gradient, shadow, animate the slash separately (exception: the launch video may draw the slash once, as a single deliberate stroke).
 - The app icon is the logomark on an Ink field with Bone ring and Ember slash. No other icon backgrounds.
 
@@ -85,6 +86,7 @@ Principles with patterns:
    - No: "Streaks are toxic."
 6. **Claims stay inside the evidence.** Approved science lines (see `../thesis/thesis.md` §5): cardio fitness from short sessions, "every move counts" (WHO), "one missed day doesn't break a habit" (Lally 2010), sit less move more. Banned claims: builds strength (micro-format), burns fat, lowers blood pressure, adds years to your life, anything "AI-powered" in user-facing copy.
 7. **The app is quiet about its intelligence.** The AI Programmer is never marketed as AI. Approved: "It quietly retunes to you between sessions." Banned: "AI coach", "powered by machine learning", model names.
+8. **Cap the negation density.** The name, "no streaks", and "never zeroes" are all negations; stacked, they read as an app about nothingness. Rule: the affirmative beat 1 ("Open the app. Your workout is already there.") leads every surface, and at most one negation construction appears per surface. "Zero is the only way to lose" is a closer, never a headline.
 
 ### Message architecture (fixed order)
 

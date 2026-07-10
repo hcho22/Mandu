@@ -1,0 +1,166 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><style>
+  :root{
+    --ink:#12261F; --bone:#F4F1EA; --ember:#C97B2D; --moss:#7FA48E; --pine:#1E4D3B; --clay:#B9B2A4;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{width:1280px;height:720px;overflow:hidden;background:var(--ink);
+       font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,sans-serif}
+  .stage{position:absolute;inset:0;width:1280px;height:720px;opacity:0}
+  .ink{background:var(--ink);color:var(--bone)}
+  .bone{background:var(--bone);color:var(--ink)}
+
+  /* Scene 1: the onboarding gauntlet */
+  #s1 .title{position:absolute;top:96px;width:100%;text-align:center;font-size:44px;font-weight:700;letter-spacing:-0.5px}
+  .chips{position:absolute;top:210px;left:0;width:100%;display:flex;flex-direction:column;align-items:center;gap:26px}
+  .chip{opacity:0;font-size:30px;font-weight:500;color:var(--bone);background:var(--pine);
+        padding:20px 44px;border-radius:16px;transform:translateY(14px)}
+
+  /* Scenes 2-3: the Ready Screen */
+  #s2 .title{position:absolute;top:64px;width:100%;text-align:center;font-size:48px;font-weight:700;letter-spacing:-0.5px;opacity:0}
+  .phone{position:absolute;left:370px;top:158px;width:300px;height:506px;border-radius:36px;
+         border:10px solid #0d1a15;overflow:hidden;background:#0d1a15;opacity:0;
+         box-shadow:0 24px 60px rgba(18,38,31,0.28)}
+  .phone img{width:100%;display:block}
+  .caps{position:absolute;left:760px;top:300px;width:420px}
+  .cap{position:absolute;left:0;top:0;width:420px;font-size:34px;font-weight:700;line-height:1.25;
+       color:var(--ink);opacity:0}
+
+  /* Scene 4: the dent */
+  #s4 .ringwrap{position:absolute;left:250px;top:200px;width:320px;height:320px;opacity:0}
+  #s4 .score{position:absolute;left:250px;top:328px;width:320px;text-align:center;font-size:64px;font-weight:700;
+             color:var(--bone);font-variant-numeric:tabular-nums;opacity:0}
+  #s4 .scorelabel{position:absolute;left:250px;top:406px;width:320px;text-align:center;font-size:17px;color:var(--clay);opacity:0}
+  #s4 .t1,#s4 .t2{position:absolute;left:660px;width:480px;font-size:40px;font-weight:700;line-height:1.3;opacity:0}
+  #s4 .t1{top:280px} #s4 .t2{top:390px;color:var(--moss)}
+
+  /* Scene 5: the floor */
+  #s5 .line{position:absolute;top:330px;width:100%;text-align:center;font-size:46px;font-weight:700;opacity:0}
+
+  /* Scene 6: end card */
+  #s6 .col{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+  #s6 .mark{width:190px;height:190px}
+  #s6 .word{font-size:64px;font-weight:700;letter-spacing:-1.5px;color:var(--bone);opacity:0;margin-top:6px}
+  #s6 .tag{font-size:24px;color:var(--bone);opacity:0;margin-top:10px}
+  #s6 .small{font-size:16px;color:var(--clay);opacity:0;margin-top:14px}
+  #fade{position:absolute;inset:0;background:#000;opacity:0}
+</style></head><body>
+
+<div class="stage ink" id="s1">
+  <div class="title">Every fitness app opens the same way.</div>
+  <div class="chips">
+    <div class="chip" id="q1">What are your goals?</div>
+    <div class="chip" id="q2">What equipment do you have?</div>
+    <div class="chip" id="q3">Pick your level.</div>
+    <div class="chip" id="q4">Build your plan.</div>
+  </div>
+</div>
+
+<div class="stage bone" id="s2">
+  <div class="title">Nonzero opens with the workout.</div>
+  <div class="phone"><img src="../assets/ready-clean.png" alt=""></div>
+  <div class="caps">
+    <div class="cap" id="c1">Assembled before you arrive.</div>
+    <div class="cap" id="c2">5 to 60 minutes. Zero equipment.</div>
+    <div class="cap" id="c3">One tap. You're moving.</div>
+  </div>
+</div>
+
+<div class="stage ink" id="s4">
+  <div class="ringwrap">
+    <svg viewBox="0 0 320 320" width="320" height="320">
+      <circle cx="160" cy="160" r="132" fill="none" stroke="#1E4D3B" stroke-width="18"/>
+      <circle cx="160" cy="160" r="132" fill="none" stroke="#7FA48E" stroke-width="18"
+              stroke-linecap="round" transform="rotate(-90 160 160)"/>
+      <!-- the dent: a short Ember notch, ~5% of circumference -->
+      <circle id="dent" cx="160" cy="160" r="132" fill="none" stroke="#C97B2D" stroke-width="18"
+              stroke-linecap="round" stroke-dasharray="41 788.4" transform="rotate(-38 160 160)" opacity="0"/>
+    </svg>
+  </div>
+  <div class="score" id="scoreNum">96</div>
+  <div class="scorelabel">Consistency Score</div>
+  <div class="t1" id="s4t1">Miss a day. Your score dents.</div>
+  <div class="t2" id="s4t2">It never zeroes.</div>
+</div>
+
+<div class="stage ink" id="s5">
+  <div class="line">Five minutes counts as a full show-up.</div>
+</div>
+
+<div class="stage ink" id="s6">
+  <div class="col">
+    <svg class="mark" viewBox="0 0 160 160">
+      <circle id="ring6" cx="80" cy="80" r="46" fill="none" stroke="#F4F1EA" stroke-width="14" opacity="0"/>
+      <line id="slash6" x1="49" y1="116" x2="111" y2="44" stroke="#C97B2D" stroke-width="14"
+            stroke-linecap="round" stroke-dasharray="95.08" stroke-dashoffset="95.08"/>
+    </svg>
+    <div class="word" id="word6">nonzero</div>
+    <div class="tag" id="tag6">Your workout is already there.</div>
+    <div class="small" id="small6">Free on iOS. Depth if you want it.</div>
+  </div>
+</div>
+
+<div id="fade"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const clamp = v => v < 0 ? 0 : v > 1 ? 1 : v;
+const sm = t => { t = clamp(t); return t * t * (3 - 2 * t); };           // smoothstep
+const fin  = (ms, a, d) => sm((ms - a) / d);                              // fade in starting a, duration d
+const win  = (ms, a, b, d) => Math.min(sm((ms - a) / d), 1 - sm((ms - (b - d)) / d)); // in at a, out ending b
+
+window.seek = function (ms) {
+  // ---- Scene 1: 0 - 8800 ----
+  $('s1').style.opacity = win(ms, 0, 8800, 400);
+  const chips = [['q1', 1400], ['q2', 3000], ['q3', 4600], ['q4', 6200]];
+  const dimmed = fin(ms, 7400, 600);
+  for (const [id, t] of chips) {
+    const o = fin(ms, t, 500);
+    const el = $(id);
+    el.style.opacity = o * (1 - 0.55 * dimmed);
+    el.style.transform = 'translateY(' + (14 * (1 - o)) + 'px)';
+  }
+
+  // ---- Scenes 2+3: 8800 - 21400 ----
+  $('s2').style.opacity = win(ms, 8800, 21400, 400);
+  $('s2').querySelector('.title').style.opacity = fin(ms, 8900, 700);
+  const ph = $('s2').querySelector('.phone');
+  const po = fin(ms, 9000, 1100);
+  ph.style.opacity = po;
+  ph.style.transform = 'translateY(' + (110 * (1 - po)) + 'px)';
+  $('c1').style.opacity = win(ms, 13400, 15900, 350);
+  $('c2').style.opacity = win(ms, 16100, 18500, 350);
+  $('c3').style.opacity = fin(ms, 18700, 350) * (ms < 21000 ? 1 : 1 - sm((ms - 21000) / 400));
+
+  // ---- Scene 4: 21400 - 27400 ----
+  $('s4').style.opacity = win(ms, 21400, 27400, 400);
+  $('s4').querySelector('.ringwrap').style.opacity = fin(ms, 21700, 600);
+  $('scoreNum').style.opacity = fin(ms, 21700, 600);
+  $('s4').querySelector('.scorelabel').style.opacity = fin(ms, 21900, 600);
+  $('s4t1').style.opacity = fin(ms, 21900, 600);
+  const dentIn = fin(ms, 23600, 500);
+  $('dent').setAttribute('opacity', dentIn);
+  $('scoreNum').textContent = ms >= 23800 ? '94' : '96';
+  const pulse = ms >= 23800 ? 1 + 0.08 * (1 - sm((ms - 23800) / 500)) : 1;
+  $('scoreNum').style.transform = 'scale(' + pulse + ')';
+  $('s4t2').style.opacity = fin(ms, 24800, 600);
+
+  // ---- Scene 5: 27400 - 31000 ----
+  $('s5').style.opacity = win(ms, 27400, 31000, 400);
+  $('s5').querySelector('.line').style.opacity = win(ms, 27700, 31000, 500);
+
+  // ---- Scene 6: 31000 - 40000 ----
+  $('s6').style.opacity = fin(ms, 31000, 400);
+  $('ring6').setAttribute('opacity', fin(ms, 31200, 700));
+  const draw = sm((ms - 32000) / 1600);
+  $('slash6').setAttribute('stroke-dashoffset', 95.08 * (1 - draw));
+  $('word6').style.opacity = fin(ms, 33800, 700);
+  $('tag6').style.opacity = fin(ms, 34700, 700);
+  $('small6').style.opacity = fin(ms, 35600, 700);
+
+  // global fade to black at the very end
+  $('fade').style.opacity = fin(ms, 39200, 800);
+  return ms;
+};
+window.seek(0);
+</script></body></html>

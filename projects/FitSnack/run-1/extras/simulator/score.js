@@ -20,19 +20,33 @@ function weeks(days) {
   return out;
 }
 
-function consistencyScore(days) {
+function consistencyScore(days, goal = WEEKLY_GOAL) {
   const ws = weeks(days);
   if (!ws.length) return 0;
   const recent = ws.slice(-WINDOW_WEEKS);
   // linear recency weights: oldest week 1, newest week N
   let num = 0, den = 0;
   recent.forEach((w, i) => {
-    const adherence = Math.min(1, w.filter(Boolean).length / WEEKLY_GOAL);
+    // pro-rata for a partial (current) week: 3 shows in 3 elapsed days is full
+    // adherence, not 3/7 - otherwise every Monday would read as a huge dent
+    const effectiveGoal = Math.min(goal, w.length);
+    const adherence = Math.min(1, w.filter(Boolean).length / effectiveGoal);
     const weight = i + 1;
     num += adherence * weight;
     den += weight;
   });
-  return Math.round((num / den) * 100);
+  const raw = Math.round((num / den) * 100);
+  // US-H01 floor: for anyone with at least one show-up in history the score
+  // never renders below 25. The floor mirrors the promise: it never zeroes.
+  //
+  // Red-team finding R13 (redteam/objections.md): with a weekly bucket and
+  // min(1, done/goal), a user ABOVE goal who misses a day loses nothing, so
+  // "miss a day, your score dents" is false for over-goal users. The shipping
+  // mechanic should follow the prototype's per-day credit model instead
+  // (site/prototype/index.html: a miss earns 0.55 credit, every miss dents).
+  // This simulator stays honest because all scenarios run goal 7 (daily
+  // habit), where the weekly bucket dents on any miss.
+  return days.some(Boolean) ? Math.max(25, raw) : raw;
 }
 
 function currentStreak(days) {
@@ -49,14 +63,14 @@ function longestChain(days) {
 
 // Simulate the same person under both mechanics across a day-by-day pattern.
 // Returns per-day series for charting.
-function simulate(days) {
+function simulate(days, goal = WEEKLY_GOAL) {
   const series = [];
   for (let i = 1; i <= days.length; i++) {
     const slice = days.slice(0, i);
     series.push({
       day: i,
       workedOut: days[i - 1],
-      score: consistencyScore(slice),
+      score: consistencyScore(slice, goal),
       streak: currentStreak(slice),
       longestChain: longestChain(slice),
     });
@@ -79,22 +93,31 @@ function pattern(spec) {
   return days;
 }
 
+// Scenarios model a DAILY-habit user (weekly goal 7), so the daily streak
+// counter is a fair opponent: for a 3x/week user a daily streak is trivially
+// 0 or 1, which would overstate the score's advantage. With a daily user both
+// mechanics watch the same behavior and only the failure response differs.
 const SCENARIOS = {
-  'The one missed day': (() => {
-    // 3/week solid, then one week with a single miss (2/week), then back
-    const d = pattern([[3, 4]]);
-    d.push(...pattern([[2, 1]]));
-    d.push(...pattern([[3, 3]]));
-    return d;
-  })(),
-  'The two-week vacation': (() => {
-    const d = pattern([[3, 3]]);
-    d.push(...pattern([[0, 2]]));
-    d.push(...pattern([[3, 3]]));
-    return d;
-  })(),
-  'The slow fade': pattern([[3, 2], [2, 2], [1, 2], [0, 2]]),
-  'The comeback': pattern([[0, 2], [1, 1], [2, 2], [3, 3]]),
+  'The one missed day': {
+    goal: 7,
+    note: 'Four perfect weeks, one skipped Sunday, three perfect weeks.',
+    days: pattern([[7, 4], [6, 1], [7, 3]]),
+  },
+  'The two-week vacation': {
+    goal: 7,
+    note: 'Three perfect weeks, two weeks fully off, three perfect weeks.',
+    days: pattern([[7, 3], [0, 2], [7, 3]]),
+  },
+  'The slow fade': {
+    goal: 7,
+    note: 'Daily habit erodes: 7, then 5, then 3, then 1 sessions a week.',
+    days: pattern([[7, 2], [5, 2], [3, 2], [1, 2]]),
+  },
+  'The comeback': {
+    goal: 7,
+    note: 'Two dead weeks, then rebuilding: 2, 3, 5, then daily.',
+    days: pattern([[0, 2], [2, 1], [3, 1], [5, 1], [7, 3]]),
+  },
 };
 
 if (typeof module !== 'undefined') module.exports = { consistencyScore, currentStreak, longestChain, simulate, SCENARIOS, pattern };

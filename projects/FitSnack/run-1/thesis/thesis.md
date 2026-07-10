@@ -20,7 +20,7 @@ The original FitSnack thesis survives, but only after surgery. Three of its plan
 
 The one-sentence thesis, final form:
 
-> Busy desk-bound adults abandon fitness apps at catastrophic, measured rates; the two most-cited mechanisms - decision friction and punitive mechanics - are design choices, not laws; and as of 2026-07-09 no app found across the US iOS and Google Play top results serves a complete adaptive session the moment it opens while refusing to punish a miss. Nonzero is that app.
+> Busy desk-bound adults abandon fitness apps at catastrophic, measured rates; two design-choice mechanisms with the strongest qualitative evidence - decision friction and punitive mechanics - are choices, not laws (the top measured churn reasons, interest-loss and free alternatives, are addressed only partially, by the engine's variety and the free core loop; see ledger items 2-3); and as of 2026-07-09 no app found across the US iOS and Google Play top results serves a complete adaptive session the moment it opens while refusing to punish a miss. Nonzero is that app.
 
 ## 1. The pain, grounded
 
@@ -129,3 +129,5 @@ Full table in `../research/science.md`. The headline findings:
 7. **The wedge is a window, not a moat** - Freeletics, Google, and Muscle Booster are each one decision away (Section 3).
 8. **Category retention is brutal even for winners** - plan on 25-33% annual renewal into Year 2, not the folkloric 50%.
 9. **Marketing "AI" to this audience is risky** - Wakeout's users punished AI content ("a lot of the charm is lost"). The AI Programmer stays invisible plumbing.
+10. **The segment's flagship is shrinking inside a growing market** (added post-red-team, R4) - Seven fell from ~40k to ~30k downloads/month over eight months while the category grew 24.5%. Size the bet against Seven's ~$1M/yr US run rate as the realistic ceiling anchor, not the $3.4B market.
+11. **The one forgiving-fitness operator with real cohort data moved TOWARD streaks** (added post-red-team, R15) - Gentler Streak, holding retention curves we cannot see, later added a workout streak. Adverse evidence for the pure no-streak line; "why did GS add a streak" is a required buyer-interview question.

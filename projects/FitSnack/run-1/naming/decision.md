@@ -52,3 +52,13 @@ Every other candidate failed the availability screen: same-name Health & Fitness
 
 - The engine, PRD, and codebase are unaffected (internal identifiers can stay; bundle ID changes at App Store setup).
 - The one-liner becomes: "Nonzero - the micro-workout app where your workout is already there when you open it, and missing a day dents your score but never zeroes it."
+
+## Post-red-team rider (2026-07-09, see ../redteam/objections.md R21-R25)
+
+The lock is **provisional**, with three pre-conditions before public launch spend:
+
+1. **Counsel review** of the Robert Wright "Nonzero" coexistence call (this run's no-spend guardrail made that impossible here; the LOW-MODERATE assessment above is a lay read of USPTO evidence, not clearance).
+2. **Search-shadow check**: "nonzero" organic results are owned by Wright's media brand and we hold neither .com, .org, nor .app; verify "nonzero app" and App Store bare-name ranking against the incumbent "NonZero" productivity app before committing ad spend to the bare name.
+3. **5-second comprehension test**: name plus icon, no copy, shown to non-Reddit desk workers. The "audience already speaks it" rationale is inference from r/NonZeroDay; if cold comprehension is near zero, the subtitle must carry the entire meaning and should be chosen for that job.
+
+Fallback if any pre-condition fails: rerun the screen on the next tier of tournament candidates (all documented in `screen-results.md`) rather than reverting to the trademark-blocked FitSnack.

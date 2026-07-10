@@ -103,3 +103,55 @@ INFERENCE: these are benchmark multiplications, not forecasts. The honest read: 
 2. The build-in-public case studies are habit apps (n=2, self-reported); the one fitness app in those stories (Liftbear) failed.
 3. Solo-founder content cadence competes with hcho's Agentic RAG flagship for the same weekly hours; the plan assumes ~1 produced video/day is sustainable, which the prior social plan flags as the ceiling.
 4. The wedge window: Freeletics, Google's Gemini coach, and Muscle Booster are each one product decision from the compound (`../research/competitor-holes.md`). Speed matters more than polish everywhere except the first session.
+
+## 8. Red-team adjustments (2026-07-09, dispositions in `../redteam/objections.md`)
+
+The plan above stands as written, and this section supersedes it where they conflict.
+
+### 8.1 Corrected funnel math (R16, R27)
+
+The section 5 table used $50/payer-yr; the package's own RevenueCat citation says H&F Year-1 realized LTV is **$35.64 median per payer**, and no commission line was included. Corrected, at the 15% App Store Small Business rate:
+
+| Installs/mo | Payers by D35 (2.9% / 6.2%) | Year-1 revenue per cohort, net of 15% (~$30.29/payer) |
+|---|---|---|
+| 1,000 | 29 / 62 | ~$880 / ~$1.9k |
+| 5,000 | 145 / 310 | ~$4.4k / ~$9.4k |
+| 10,000 | 290 / 620 | ~$8.8k / ~$18.8k |
+
+Cohorts are not recurring: 25-33% of annual payers renew into Year 2, so run-rate decays ~70% per cohort per year without new installs.
+The honest restatement: **income-relevance needs roughly 10-20k installs/month sustained**, which exceeds every named entrant in the niche except the declining category leader.
+Until the channel test (8.2) proves otherwise, Nonzero is a portfolio asset with revenue upside, not a second income pillar; that label change is surfaced to hcho for the priorities call.
+A free-tier caveat applies on top: the 2.9% median comes from apps that convert by withholding; Nonzero's complete free tier should be planned below median until measured.
+
+### 8.2 Top-of-funnel model and kill thresholds (R2, R18, R26)
+
+Section 5 started at "installs/mo" with no mechanism. The channel hypothesis, stated falsifiably:
+
+- Hypothesis: short-form demo content (the Ready Screen as the first frame) converts views to installs at a rate that makes 5k+ installs/month reachable within 6 months of launch.
+- 30 days post-first-post: 20+ videos published, any video over 10k views, or restrategize the hook.
+- 60 days: profile-to-store CTR measurable and above 1%; if unmeasurable or below, move spend of effort to the fallback.
+- 90 days: 1,000+ cumulative installs attributable to short-form, or short-form is demoted to secondary.
+- Fallback channel (pre-named): build-in-public X + ASO demand-term iteration + waitlist/win-back email. The install table becomes aspirational, and the bet is relabeled per 8.1.
+
+### 8.3 Cadence and hours (R28)
+
+Sustainable floor is **2-3 videos/week**, not 1/day; the daily blitz is reserved for launch week only, and the whole lane is sequenced behind the Agentic RAG validation milestone (first buyer interviews booked). Weekly budget: ~6 hours content, ~2 hours community. If FitSnack content hours collide with flagship validation hours in any week, the flagship wins by standing rule.
+
+### 8.4 Mechanic validation gates (R1, R11, R12, R13)
+
+- V1 (open-friction pain): instrument first-session drop-off from day one. If open-friction churn does not appear in our own funnel, the anti-streak win-back angle is pre-committed to take the lead.
+- V2 (category demand): the 8.2 thresholds double as the demand test; "exercise snacks" is framing, not a channel.
+- V3 (dent-score retention): instrument D7/D30 by mechanic exposure. If D7 underperforms category benchmarks, test a streak-with-repair variant instead of defending the pure no-streak line. The Score's data model must support that A/B without a rebuild.
+- Mechanic-copy contract (R13): the shipping Score follows the prototype's per-day credit model (every miss dents), not a raw weekly bucket; US-H01 amendment recommended (per-day granularity, windowed floor). "Miss a day, your score dents" is only honest under that model.
+
+### 8.5 Wedge falsification triggers (R6, R7, R8, R9)
+
+Any of the following forces a positioning decision (not a quiet re-narrowing): Seven or another scaled incumbent ships a default ready-on-open session; Gentler Streak ships guided micro sessions; Google's coach adds a session player on its adaptive targets; a comprehension or demand test shows the compound wedge does not register with the lapsed-non-exerciser segment. Assume dent-parity from at least one scaled incumbent within 12 months. Gentler Streak sits on the live-threat watchlist with the counter-position: session-first for lapsed non-exercisers vs tracker-first for the already-active.
+
+### 8.6 Smaller corrections
+
+- Reddit is demoted from "ignition" to community listening and win-back copy research, behind a genuine participation runway and mod outreach (R29).
+- Apple-featuring pitch angle is decision-removal (the Ready Screen), not "refuses to guilt you", which is Gentler Streak's already-written Apple story (R31).
+- Launch pricing tactic: intro annual $44.99-49.99 until the Strength-Phase catalog ships, then step to the $59.99 list (R19). List price and the free/paid boundary spec are unchanged.
+- First-50-reviews plan: beta wave asked at the moment of a completed week-two session via SKStoreReviewController; no review gating (R30).
+- The pre-renewal save flow gets written under the voice contract (forgiveness with a spine), as a named copy deliverable (R20).
