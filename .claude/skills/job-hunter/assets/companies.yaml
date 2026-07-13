@@ -511,6 +511,123 @@ companies:
     pitch: "AI for internal-tools development — full-stack (FastAPI + React) builder profile; applied-AI dev tooling"
     priority: low
 
+  # === BuiltIn AI roundup re-scan additions (added 2026-07-13; only non-duplicates from the same roundup) ===
+  # Source: https://builtin.com/artificial-intelligence/ai-companies-roundup (re-read 2026-07-13; the 06-22 block above
+  # already captured Hebbia/Credal/EliseAI/Deepgram/Sendbird/Regal/Notion/Webflow/GC AI/Product.ai/Hedra/Tempus/Superblocks).
+  # Skipped as before: megacaps + non-AI-native incumbents (Google/NVIDIA/MSFT/Meta/Oracle/IBM/Amazon/Palantir/CrowdStrike/
+  # Samsara/Celonis/Klaviyo/Coupa/Boomi/Kensho/Dynatrace/LogicMonitor/Cisco/Genius Sports/Riskified/System1/Motive/Atlassian/
+  # GM/Northwestern Mutual/PwC), robotics/CV/hardware (AMP/GrayMatter/Metropolis/True Anomaly/Air Space Intelligence/STR/
+  # Inspiren/Graphcore), consultancies (Northslope/Quantum Rise), fintech-where-AI-isn't-the-build-surface (Airwallex/Gynger),
+  # classical-ML verticals (Gradient AI/Laudio), captioning (3Play), non-US adtech (Smartly), labor marketplace (WorkWhile).
+  - name: Mistral AI
+    bucket: frontier-ai-labs
+    tier: A
+    location: Paris, France
+    careers_url: https://jobs.lever.co/mistral  # verify US-remote eligibility; 0 open roles at 2026-07-13 scan
+    pitch: "Open-weight frontier LLM lab (Le Chat, Mistral/Mixtral) - raw-OpenAI-SDK + multi-model orchestration; frontier-lab bucket alongside Cohere/OpenAI"
+    watch_outs: "Paris HQ; US-remote is the open question. Location gate likely fails unless a US-remote role exists."
+    priority: low
+
+  - name: Kepler
+    bucket: ai-native-larger
+    location: New York, NY (in-person team)
+    careers_url: https://jobs.ashbyhq.com/kepler-ai
+    pitch: "AI for financial research with cited answers - RAG-over-documents-with-citations maps 1:1 to Agentic RAG (pgvector retrieval + provenance) and Omdena RAG/embeddings; Hebbia-adjacent"
+    watch_outs: "2026-07-13 scan: all 7 roles NYC in-person (isRemote=False) - strong substance (Agentic Systems Engineer, Platform Engineer w/ eval systems, FDE) but LOCATION GATE. Only pursue if hcho opens to NYC."
+    priority: high
+
+  - name: Outset AI
+    bucket: ai-native-larger
+    location: San Francisco, CA
+    careers_url: https://jobs.ashbyhq.com/outset
+    pitch: "Conversational AI running large-scale qualitative research - LLM-driven interview/analysis at scale is evals-adjacent (measuring open-ended output quality); fits the evals/quality bucket"
+    priority: medium
+
+  - name: Striveworks
+    bucket: ai-native-larger
+    location: Austin, TX / Remote (US)
+    careers_url: https://boards.greenhouse.io/striveworks
+    pitch: "AIOps platform (Chariot) for rapidly building/deploying and monitoring models - model release + validation + monitoring is a direct hardware-QA-to-AI-evals map; MLOps/evals-adjacent"
+    watch_outs: "2026-07-13 scan: remote-US roles are classical-ML/data-science (Sr MLE) or Go/microservice MLOps-platform (Sr SWE) spine, not LLM/agentic building (Fit 3). Some roles need Active Secret Clearance. National-security domain."
+    priority: low
+
+  - name: Bellagent
+    bucket: ai-native-larger
+    location: Chicago, IL
+    careers_url: ""  # TODO — no Greenhouse/Lever/Ashby board found 2026-07-13; careers likely on own site
+    pitch: "Agent platform connecting to 1,300+ business apps - agentic orchestration across tools (CreativeBridge multi-AI) with permission/integration surface like Agentic RAG Phase 2"
+    priority: medium
+
+  - name: Obvious
+    bucket: ai-native-larger
+    location: Remote (US)
+    careers_url: https://jobs.ashbyhq.com/obvious
+    pitch: "AI-native workspace / co-intelligence OS - production agentic workflows (memory, agent-to-agent, 'non-deterministic repeatability' = an evals hook); applied-AI full-stack builder shape, remote-US"
+    priority: high
+
+  - name: Prosodica
+    bucket: ai-native-larger
+    location: Chicago, IL
+    careers_url: ""  # TODO — no Greenhouse/Lever/Ashby board found 2026-07-13; careers likely on own site
+    pitch: "AI conversation analytics for contact centers - production LLM + real-time inference; conversation-intelligence space alongside Cresta/Decagon/Regal"
+    priority: medium
+
+  - name: Agentio
+    bucket: ai-native-larger
+    location: New York, NY
+    careers_url: https://jobs.ashbyhq.com/agentio
+    pitch: "AI matching for creator-led advertising - agentic GTM/matching product (Persana-adjacent); applied-AI in a B2B workflow"
+    watch_outs: "2026-07-13 scan: lone eng role (Software Engineer) is NYC-onsite; rest of board is sales/marketing. Location gate + thin eng bench."
+    priority: low
+
+  - name: Jasper
+    bucket: ai-native-larger
+    location: San Francisco, CA
+    careers_url: ""  # TODO — no public GH/Lever/Ashby board found 2026-07-13; roles surface via Insight Partners board
+    pitch: "GenAI content platform for marketing teams - established genAI product company; LLM product features + prompt/eval surface"
+    watch_outs: "2026-07-13 scan: only eng-adjacent opening was an internal AI & IT Systems Engineer (not a product-AI-builder role)."
+    priority: low
+
+  # NOTE: two different companies both named 'Artera'. This entry is artera.io (patient-communication AI, LA hub).
+  # The resolvable Lever board `jobs.lever.co/artera` is a DIFFERENT company, artera.ai (cancer-therapy medical AI) -
+  # do NOT use that board for this entry. artera.io's own board is JS-embedded and unresolved as of 2026-07-13.
+  - name: Artera
+    bucket: ai-native-larger
+    location: Santa Barbara, CA (hubs incl. Los Angeles)
+    careers_url: ""  # TODO — artera.io board JS-embedded, unresolved 2026-07-13; needs manual careers-page look. NOT jobs.lever.co/artera (that is artera.ai, a different company).
+    pitch: "Healthcare AI automating patient interactions (voice/text virtual agents) - vertical conversational AI, accuracy-critical/regulated; LA hub could make a role LA-local-eligible; validation rigor is a product requirement"
+    priority: low
+
+  - name: Domino Data Lab
+    bucket: ai-native-larger
+    location: San Francisco, CA / Remote (US)
+    careers_url: https://boards.greenhouse.io/dominodatalab
+    pitch: "Enterprise platform for building/deploying AI - MLOps/model-lifecycle surface (release, monitoring) adjacent to the evals/quality thesis; larger/established"
+    watch_outs: "2026-07-13 scan: remote-US roles are pre-sales Solutions Engineer + FDE-consulting (Life Sciences); no AI-builder-core remote role. Classical-ML/data-science platform."
+    priority: low
+
+  - name: Onshore
+    bucket: ai-native-larger
+    location: New York, NY
+    careers_url: ""  # TODO — gh:onshore board is all-sales, likely wrong/mis-scoped entity; VERIFY identity before scanning again
+    pitch: "AI for corporate R&D tax-credit prep - vertical document-extraction/RAG over financial records; narrow but on-theme for applied AI"
+    watch_outs: "2026-07-13 scan: the greenhouse `onshore` board is entirely sales/BD/client-success with zero eng roles - probably a wrong-entity match. Confirm the company before keeping."
+    priority: low
+
+  - name: Granica
+    bucket: ai-native-larger
+    location: Mountain View, CA
+    careers_url: https://jobs.ashbyhq.com/granica
+    pitch: "AI infrastructure for data optimization/compression - infra-devtools adjacent; deeper-infra stretch vs the LLM-builder core"
+    priority: low
+
+  - name: Hi Marley
+    bucket: ai-native-larger
+    location: Boston, MA
+    careers_url: https://boards.greenhouse.io/himarley
+    pitch: "P&C insurance conversational-AI platform - regulated-vertical conversational AI; validation-against-regulated-systems pitch applies; narrow"
+    priority: low
+
   # === AI Evals Job Application Strategy — Tier A/B/C (added 2026-05-30 from strategy doc) ===
   # Focus: AI Evals / Quality / Validation roles — direct map from the hardware QA decade.
   # Tier A (Frontier Labs):            Anthropic*, OpenAI, Google DeepMind, xAI, Meta AI/FAIR

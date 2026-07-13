@@ -4,7 +4,7 @@ category: technical
 hcho-level: strong
 demand: 5
 status: established
-last-updated: 2026-07-08
+last-updated: 2026-07-13
 source-count: 8
 tags: [evals, quality, ship-gate, differentiator, ai-evals]
 ---
@@ -38,6 +38,8 @@ Cross-link: [[rag-systems]], [[mlops-deployment]].
 ## Confirmed at scale (2026-07-08 posting batch)
 Evaluation appeared as a named requirement in nearly every posting across companies: "rigorous evaluation frameworks" (Cohere), "evaluation frameworks and deployment at scale" (Anthropic), "LLM evaluation, observability, guardrails" (LangChain), "evaluation and reliability" (Cresta), benchmark-building (LlamaIndex).
 This validates evals as hcho's headline differentiator: it is not a niche, it is a broad baseline that most builders cannot actually demonstrate.
+
+The 2026-07-13 Cohere North FDE (West Coast) posting states the bar almost verbatim to hcho's positioning: "proven ability to build robust evaluation frameworks, moving well beyond trial and error, to measure agent accuracy, safety, and latency." Use this phrasing as a template for how to frame the Agentic RAG eval harness in applications. [[cohere-fde-agentic-platform]]
 
 ## Roles that require it
 - [[applied-ai-engineer]] (must-have)

@@ -5,7 +5,7 @@ seniority: mid | senior | founding
 fit: 3
 status: established
 source-count: 8
-last-updated: 2026-07-08
+last-updated: 2026-07-13
 tags: [ai-builder, forward-deployed-engineer, fde, agents, customer-facing, enterprise]
 ---
 
@@ -45,7 +45,7 @@ Experience bar: typically 3-5 years, at least ~2 in a customer-facing technical 
 - [[anthropic]] (Tier A) - ship Claude apps, MCP/sub-agents/Agent Skills; $200K-$300K; ~25% travel. [[anthropic-forward-deployed-engineer-applied-ai]]
 - [[langchain]] (Tier B) - co-build production agents, own technical pre-sales win; eval/observability nice-to-have; $185K-$280K OTE; 40% travel; on-site SF. [[langchain-deployed-engineer]]
 - [[vercel]] - TS/Next.js-primary; enterprise integration (SSO/SCIM/RBAC), IaC; AI SDK; $126K-$207K; 25-40% travel. [[vercel-forward-deployed-engineer]], [[vercel-forward-deployed-engineer-v0]]
-- [[cohere]] - North workspace platform; RAG/agentic apps; on-prem/private-cloud deployment; 20-40% travel. Sovereign AI variant needs security clearance; Prompt Specialist variant is 0-5 years (junior-friendly). [[cohere-fde-agentic-platform]], [[cohere-fde-prompt-specialist]], [[cohere-fde-sovereign-ai]]
+- [[cohere]] - North workspace platform; RAG/agentic apps; 20-40% travel. Four variants: Agentic Platform (on-prem/private-cloud), Prompt Specialist (0-5 yrs, junior-friendly), Sovereign AI (clearance-gated), and **Agentic Platform (West Coast)** - remote with **Los Angeles among eligible locations** (LA-local-eligible for hcho) and an unusually explicit eval-framework requirement (the general and West Coast postings share one source page). [[cohere-fde-agentic-platform]], [[cohere-fde-prompt-specialist]], [[cohere-fde-sovereign-ai]]
 - [[closure]] (YC) - founding FDE, in-person with law-enforcement users; pre-scale problem solver; CJIS clearance. [[closure-founding-forward-deployed-engineer]]
 
 ## Seniority and comp
@@ -58,6 +58,7 @@ Strong:
 - The technical core is squarely in reach: Python, production LLM/agent apps, RAG, and evals are all hcho strengths (Agentic RAG is a direct artifact).
 - Several variants are accessible: "former technical founders encouraged," 3+ years, Bachelor's-fine, and Cohere's Prompt Specialist is explicitly 0-5 years.
 - The eval-heavy pre-sales/technical-win framing rewards hcho's validation rigor.
+- Location is no longer a blanket blocker on this archetype: Cohere's **Agentic Platform (West Coast)** variant (2026-07-13) is remote with Los Angeles among eligible locations, so an eval-centric Cohere FDE is now LA-local-eligible for hcho. [[cohere-fde-agentic-platform]]
 
 Gaps:
 - [[customer-facing-delivery]] is the defining skill and hcho's thinnest area: no enterprise customer-embedded or pre-sales track record, and the role is built around it.

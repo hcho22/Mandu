@@ -1,6 +1,6 @@
 ---
 type: synthesis
-last-updated: 2026-07-08
+last-updated: 2026-07-13
 status: developing
 ---
 
@@ -24,7 +24,7 @@ Updated after the 2026-07-08 real-posting batch (16 sources, 6 role archetypes):
 
 1. [[applied-ai-engineer]] - fit 4/5. The closest single match to Agentic RAG; RAG + evals are direct strengths. Real targets: [[anthropic]], [[cohere]].
 2. [[ai-content-engineer]] - fit 4/5. Fuses hcho's evals differentiator with his active build-in-public motion. Target: [[llamaindex]]. Gap is writing-portfolio volume, which doubles as product marketing.
-3. [[forward-deployed-engineer]] - fit 3/5 but the **highest-volume** archetype (8 of 15 postings). Technically in reach; the blocker is [[customer-facing-delivery]]. Accessible entry points: [[cohere]] Prompt Specialist (0-5 yrs, eval-centric), [[langchain]] (eval/observability nice-to-have).
+3. [[forward-deployed-engineer]] - fit 3/5 but the **highest-volume** archetype (9 postings). Technically in reach; the blocker is [[customer-facing-delivery]]. Accessible entry points: [[cohere]] **Agentic Platform West Coast** (remote, LA-local-eligible, eval-forward - added 2026-07-13, [[cohere-fde-agentic-platform]]) and Prompt Specialist (0-5 yrs, eval-centric), [[langchain]] (eval/observability nice-to-have). The West Coast Cohere FDE is notable: it clears the location gate for hcho AND leads with his eval differentiator.
 4. [[ai-research-engineer]] - fit 3/5. [[hex]] Search-and-Context is a standout RAG/permissions match and Remote-USA eligible; gaps are MLOps infra + TS.
 5. [[ml-engineer-ai-agents]] - fit 3/5. [[cresta]] (resume already tailored); ML-depth gap, eval/reliability is the way in.
 6. [[founding-ai-engineer]] - fit 3/5. [[closure]] is clearance-gated; the shape recurs across the YC list.
@@ -46,6 +46,6 @@ Visibility gaps (hcho is strong; make it legible):
 
 1. **Lead with the eval ship gate on every application.** The batch confirmed evaluation is a near-universal requirement most builders cannot demonstrate; it is hcho's headline differentiator.
 2. **Attack the customer-facing gap by reframing, not just building.** Put the Agentic RAG buyer interviews and QA/vendor stakeholder work on the resume as customer-discovery evidence. This unlocks the largest role pool (FDE).
-3. **Target the accessible, differentiator-aligned openings first:** Cohere Applied AI + Prompt Specialist FDE, LangChain Deployed Engineer, Hex Search-and-Context, LlamaIndex AI Content Engineer, Cresta ML Eng (resume ready).
+3. **Target the accessible, differentiator-aligned openings first:** Cohere Agentic Platform **West Coast** FDE (LA-local + eval-forward - apply now), Cohere Applied AI + Prompt Specialist FDE, LangChain Deployed Engineer, Hex Search-and-Context, LlamaIndex AI Content Engineer, Cresta ML Eng (resume ready).
 4. **Close the deployment/cloud gap** (containerize + thin AWS/GCP deploy of Agentic RAG) to lift fit across Applied AI, AI Research, and ML Eng roles at once.
-5. **Housekeeping:** add [[cohere]] and [[hex]] to the operational target list (`companies.yaml`); decide the 25-40% FDE travel appetite; skip clearance-gated roles (Cohere Sovereign AI, Closure).
+5. **Housekeeping:** [[cohere]] is now on the operational target list (`companies.yaml`); add [[hex]] if not yet there; decide the 20-40% FDE travel appetite (now a live question given the LA-eligible Cohere West Coast FDE); skip clearance-gated roles (Cohere Sovereign AI, Closure).

@@ -1,6 +1,6 @@
 ---
 type: index
-last-updated: 2026-07-08
+last-updated: 2026-07-13
 ---
 
 # Index
@@ -13,7 +13,7 @@ Grouped by category; each entry is one line with a link and a one-line summary.
 
 - [[applied-ai-engineer]] - AI builder; 2026 product AI engineer (prompts/RAG/agents/eval). Fit 4/5. 3 sources.
 - [[ai-content-engineer]] - benchmarks + high-velocity technical writing; fuses evals with build-in-public. Fit 4/5. 1 source.
-- [[forward-deployed-engineer]] - customer-embedded builder; dominant archetype (8 postings). Fit 3/5, customer-facing gap. 8 sources.
+- [[forward-deployed-engineer]] - customer-embedded builder; dominant archetype (9 postings). Fit 3/5, customer-facing gap; a Cohere West-Coast variant is now LA-local-eligible. 8 source pages.
 - [[ai-research-engineer]] - product-embedded experimentation/MLOps (Hex). Fit 3/5. 2 sources.
 - [[ml-engineer-ai-agents]] - production ML for agents (Cresta). Fit 3/5. 1 source.
 - [[founding-ai-engineer]] - backend-depth founding AI hire (Closure). Fit 3/5. 1 source.
@@ -37,7 +37,7 @@ Grouped by category; each entry is one line with a link and a one-line summary.
 
 - [[anthropic]] - Tier A frontier lab. Roles: Applied AI Eng, FDE. Evals-forward, no-PhD, $200-300K.
 - [[langchain]] - Tier B evals/observability (LangSmith). Role: Deployed Engineer (FDE). $185-280K OTE.
-- [[cohere]] - enterprise frontier-model (North). 4 roles: Applied AI + 3 FDE variants. Candidate target-list add.
+- [[cohere]] - enterprise frontier-model (North). 5 postings: Applied AI + 4 FDE variants (incl. LA-eligible West Coast FDE). On `companies.yaml`.
 - [[hex]] - AI-first data product (Notebook Agent). 2 AI Research Eng roles; Search-and-Context = strong RAG match.
 - [[cresta]] - contact-center AI. ML Eng (AI Agents); hcho has a tailored resume variant.
 - [[vercel]] - v0/Next.js. 2 FDE roles (TS-primary; weakest fit). $126-207K.
@@ -53,7 +53,7 @@ Grouped by category; each entry is one line with a link and a one-line summary.
 - [[vercel-forward-deployed-engineer]] - Vercel FDE posting.
 - [[vercel-forward-deployed-engineer-v0]] - Vercel FDE v0 posting.
 - [[langchain-deployed-engineer]] - LangChain Deployed Engineer posting.
-- [[cohere-fde-agentic-platform]] - Cohere North FDE posting.
+- [[cohere-fde-agentic-platform]] - Cohere North FDE; covers two postings, the general/on-prem and the West Coast (remote, LA-eligible, eval-forward) variant.
 - [[cohere-fde-prompt-specialist]] - Cohere North FDE (prompt/eval; 0-5 yrs).
 - [[cohere-fde-sovereign-ai]] - Cohere North FDE (public sector; clearance).
 - [[closure-founding-forward-deployed-engineer]] - Closure FDE posting.
