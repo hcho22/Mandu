@@ -6,7 +6,8 @@
 **Supersedes:** `.claude/agent/tasks/prd-fitsnack-mvp_0626.md` (the v5 implementation PRD). Its Epics A-C are already built and are carried forward here as done; its Epics D-J are re-expressed under v6 below.
 **Persistence:** CoreData backed by `NSPersistentCloudKitContainer`; domain models are `Codable` structs; nested fields stored as JSON-encoded `Data`.
 **Platform:** iOS 17+, SwiftUI, Swift 5.9, Xcode 16.3. Bundle ID `com.fitsnack.app`.
-**Status:** Epics A-C built (`[x]`); Epic D complete (US-D01-D04 done); Epic E complete (US-E01-E06 done); Epics F-N not started (`[ ]`).
+**Status:** Epics A-K built (A-I through US-I01 by 2026-07-08; J via #37-#38 on 2026-07-10; K via #39-#42 by 2026-07-11); Epic L in progress (US-L01 merged #43 on 2026-07-12, US-L02 next); Epics M-N not started.
+**Deadline:** complete this PRD this week, by 2026-07-18 (set 2026-07-12). Remaining: US-L02, US-M01-M02, US-N01-N05 (8 stories).
 
 ---
 
@@ -94,7 +95,7 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 ---
 
-### Epic D - v6 Data Model & Session Policy Foundation
+### Epic D - v6 Data Model & Session Policy Foundation (BUILT)
 
 > The new v6 domain layer that everything downstream reads. Additive to the built models; preserves the persistence contract pinned by `EnumsTests`, `ModelsTests`, and `PersistenceTests`.
 
@@ -183,7 +184,7 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 ---
 
-### Epic E - Engine v6 Extensions
+### Epic E - Engine v6 Extensions (BUILT)
 
 > Modifies the built Epic C pipeline. Every story preserves the engine's invariants: pure Swift, no network, no LLM, deterministic for a given input, <100ms, Zero-Equipment Floor (`equipment == []`).
 
@@ -308,7 +309,7 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 ---
 
-### Epic F - AI Programmer at Option (C)
+### Epic F - AI Programmer at Option (C) (BUILT)
 
 > On-device, deterministic, zero LLM calls. Writes the Session Policy; never generates a session; never on the critical path of starting one. The user never waits: the app renders from the existing policy immediately and a freshly computed policy applies on the next open.
 
@@ -318,10 +319,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] `SessionPolicyServiceProtocol.dueTriggers(user:recentLogs:asOf:)` returns the triggers currently due: `weekly_boundary` (aligned to the Consistency Score week), `return` (post-gap), `physical_stall` (cleared to advance but hasn't), `disengagement` (shrinking or skipped sessions)
-- [ ] Trigger Precedence is enforced: when `physical_stall` and `disengagement` both apply, `disengagement` wins and `physical_stall` is suppressed
-- [ ] Detection is pure and deterministic for a given `(user, recentLogs, asOf)`; no wall-clock reads inside the logic (time is passed in)
-- [ ] Unit tests cover each trigger firing independently and the precedence case; build and tests pass
+- [x] `SessionPolicyServiceProtocol.dueTriggers(user:recentLogs:asOf:)` returns the triggers currently due: `weekly_boundary` (aligned to the Consistency Score week), `return` (post-gap), `physical_stall` (cleared to advance but hasn't), `disengagement` (shrinking or skipped sessions)
+- [x] Trigger Precedence is enforced: when `physical_stall` and `disengagement` both apply, `disengagement` wins and `physical_stall` is suppressed
+- [x] Detection is pure and deterministic for a given `(user, recentLogs, asOf)`; no wall-clock reads inside the logic (time is passed in)
+- [x] Unit tests cover each trigger firing independently and the precedence case; build and tests pass
 
 **Validation Test:**
 
@@ -337,10 +338,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] A pure diagnosis function classifies recent history as `physical_stall` (advancement criteria cleared repeatedly but not advanced -> more challenge) or `disengagement` (declining session length, rising skips, longer gaps -> less friction)
-- [ ] The diagnosis is deterministic and reads only `WorkoutLog` history plus consistency signals
-- [ ] The mapping from diagnosis to policy levers is explicit: `physical_stall` raises `progressionRate`/variety; `disengagement` lowers difficulty and shortens sessions
-- [ ] Unit tests cover a clear stall case, a clear disengagement case, and a mixed case (resolved by precedence); build and tests pass
+- [x] A pure diagnosis function classifies recent history as `physical_stall` (advancement criteria cleared repeatedly but not advanced -> more challenge) or `disengagement` (declining session length, rising skips, longer gaps -> less friction)
+- [x] The diagnosis is deterministic and reads only `WorkoutLog` history plus consistency signals
+- [x] The mapping from diagnosis to policy levers is explicit: `physical_stall` raises `progressionRate`/variety; `disengagement` lowers difficulty and shortens sessions
+- [x] Unit tests cover a clear stall case, a clear disengagement case, and a mixed case (resolved by precedence); build and tests pass
 
 **Validation Test:**
 
@@ -356,11 +357,11 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] A real `DeterministicSessionPolicyService` implements `reprogram(user:recentLogs:trigger:)` and writes a new `SessionPolicy` with `version` incremented and `updatedBy == .deterministic`
-- [ ] Re-program is invoked by the client on app open only when `dueTriggers` is non-empty; the app renders from the existing policy immediately and the new policy applies on the next open (new programming lands one session later)
-- [ ] The service never generates or returns a workout; it only writes policy
-- [ ] `disengagement` never increases challenge (Trigger Precedence upheld end-to-end); `return` sets the `reentry` ramp (US-E06)
-- [ ] Unit tests cover: version increments; each trigger moves the expected levers; a disengagement re-program does not raise difficulty; build and tests pass
+- [x] A real `DeterministicSessionPolicyService` implements `reprogram(user:recentLogs:trigger:)` and writes a new `SessionPolicy` with `version` incremented and `updatedBy == .deterministic`
+- [x] Re-program is invoked by the client on app open only when `dueTriggers` is non-empty; the app renders from the existing policy immediately and the new policy applies on the next open (new programming lands one session later)
+- [x] The service never generates or returns a workout; it only writes policy
+- [x] `disengagement` never increases challenge (Trigger Precedence upheld end-to-end); `return` sets the `reentry` ramp (US-E06)
+- [x] Unit tests cover: version increments; each trigger moves the expected levers; a disengagement re-program does not raise difficulty; build and tests pass
 
 **Validation Test:**
 
@@ -377,10 +378,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] Each re-program writes a templated `note` (`source == 'template'`) describing the real change ("what I changed and why"); the note may never invoke a `why` or claim a change the sessions will not reflect
-- [ ] The service updates `user.duration.completedDurationEWMA` from logged `durationMinutes` (what the user completed, not requested) and sets `duration.defaultMinutes` from that EWMA
-- [ ] `defaultMinutes` is snapped to a valid chip value (5/10/15/20/30/45/60)
-- [ ] Unit tests cover: the note reflects the actual lever moved; EWMA tracks completed durations; `defaultMinutes` snaps correctly; build and tests pass
+- [x] Each re-program writes a templated `note` (`source == 'template'`) describing the real change ("what I changed and why"); the note may never invoke a `why` or claim a change the sessions will not reflect
+- [x] The service updates `user.duration.completedDurationEWMA` from logged `durationMinutes` (what the user completed, not requested) and sets `duration.defaultMinutes` from that EWMA
+- [x] `defaultMinutes` is snapped to a valid chip value (5/10/15/20/30/45/60)
+- [x] Unit tests cover: the note reflects the actual lever moved; EWMA tracks completed durations; `defaultMinutes` snaps correctly; build and tests pass
 
 **Validation Test:**
 
@@ -392,7 +393,7 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 ---
 
-### Epic G - Cold Start & Variety Language
+### Epic G - Cold Start & Variety Language (BUILT, #30-#33)
 
 > Governs roughly the first five sessions until the engine can drive itself. Includes the one LLM slice pulled into the MVP, always backed by a deterministic template.
 
@@ -402,10 +403,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] Onboarding seeds `sessionPolicy.coldStartContract.cappedMaxDifficulty` from `profile.fitnessLevel` using a capped band (provisional: beginner 2, intermediate 3, advanced 4)
-- [ ] The engine serves cold-start sessions at the gentle end of the eligible band (lowest eligible difficulty first), per US-E04
-- [ ] Correction is left to the Asymmetric Ramp (US-E05): too-easy self-corrects as the user returns; too-hard is prevented up front
-- [ ] Unit tests assert the cap per fitness level and gentle-end selection; build and tests pass
+- [x] Onboarding seeds `sessionPolicy.coldStartContract.cappedMaxDifficulty` from `profile.fitnessLevel` using a capped band (provisional: beginner 2, intermediate 3, advanced 4)
+- [x] The engine serves cold-start sessions at the gentle end of the eligible band (lowest eligible difficulty first), per US-E04
+- [x] Correction is left to the Asymmetric Ramp (US-E05): too-easy self-corrects as the user returns; too-hard is prevented up front
+- [x] Unit tests assert the cap per fitness level and gentle-end selection; build and tests pass
 
 **Validation Test:**
 
@@ -421,10 +422,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] While `coldStart.active`, `coldStartContract.forceContrastSpread` is true and drives the Step 0 spread from US-E04
-- [ ] The First-Week Contrast rule guarantees no pillar repeats back-to-back across the first several cold-start sessions, even when `why`/`sitsLong` would bias toward one theme (e.g. a desk worker toward all mobility)
-- [ ] The spread is deterministic given the onboarding inputs
-- [ ] Unit tests assert a desk-worker cold start still spans multiple pillars in week one; build and tests pass
+- [x] While `coldStart.active`, `coldStartContract.forceContrastSpread` is true and drives the Step 0 spread from US-E04
+- [x] The First-Week Contrast rule guarantees no pillar repeats back-to-back across the first several cold-start sessions, even when `why`/`sitsLong` would bias toward one theme (e.g. a desk worker toward all mobility)
+- [x] The spread is deterministic given the onboarding inputs
+- [x] Unit tests assert a desk-worker cold start still spans multiple pillars in week one; build and tests pass
 
 **Validation Test:**
 
@@ -440,11 +441,11 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] A `VarietyLanguage` component produces a short line for the session ("Today's a mobility day - yesterday was strength")
-- [ ] When online and cold-start-active, it may call the LLM once through the thin stateless proxy (US-N05) and set `note.source == 'llm'`
-- [ ] It is always backed by a deterministic template: on any failure, timeout, or offline state it falls back to the template and sets `note.source == 'template'`; the app never blocks on the call
-- [ ] The language may only name a contrast the engine actually produced (no hollow callbacks)
-- [ ] Unit tests cover: template output offline; graceful fallback on a simulated proxy failure; the produced contrast matches the assembled session; build and tests pass
+- [x] A `VarietyLanguage` component produces a short line for the session ("Today's a mobility day - yesterday was strength")
+- [x] When online and cold-start-active, it may call the LLM once through the thin stateless proxy (US-N05) and set `note.source == 'llm'`
+- [x] It is always backed by a deterministic template: on any failure, timeout, or offline state it falls back to the template and sets `note.source == 'template'`; the app never blocks on the call
+- [x] The language may only name a contrast the engine actually produced (no hollow callbacks)
+- [x] Unit tests cover: template output offline; graceful fallback on a simulated proxy failure; the produced contrast matches the assembled session; build and tests pass
 
 **Validation Test:**
 
@@ -460,10 +461,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] `user.coldStart.sessionsLogged` increments on each completed session
-- [ ] `coldStart.active` flips to false once `sessionsLogged` reaches the provisional threshold of 5 (tunable; v6 range 5-7)
-- [ ] When `coldStart.active` becomes false, `coldStartContract` is cleared from the policy and Step 0 becomes a no-op, so staleness rotation and Adaptive Overload drive sessions unassisted
-- [ ] Unit tests cover the flip at the threshold and the no-op Step 0 afterward; build and tests pass
+- [x] `user.coldStart.sessionsLogged` increments on each completed session
+- [x] `coldStart.active` flips to false once `sessionsLogged` reaches the provisional threshold of 5 (tunable; v6 range 5-7)
+- [x] When `coldStart.active` becomes false, `coldStartContract` is cleared from the policy and Step 0 becomes a no-op, so staleness rotation and Adaptive Overload drive sessions unassisted
+- [x] Unit tests cover the flip at the threshold and the no-op Step 0 afterward; build and tests pass
 
 **Validation Test:**
 
@@ -475,7 +476,7 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 ---
 
-### Epic H - Consistency & Phase
+### Epic H - Consistency & Phase (BUILT, #34-#35)
 
 > Real implementations of the two evaluators that are currently mocks. Return-protected and Discipline-only at launch.
 
@@ -485,12 +486,12 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] A real `ConsistencyScore`/evaluator replaces `MockConsistencyService`: `weeklyAdherence(week) = min(1, workoutsCompleted / weeklyGoal)`; `score = weightedRollingAverage(weeklyAdherence, recentWeeks) * 100` with recent weeks weighted more (`weeklyGoal` default 3)
-- [ ] A 5-minute session counts as a full show-up; a single miss dents the score but never zeroes it
-- [ ] `longestChain` is tracked and surfaced as an earned point of pride; a broken chain reduces the chain counter but only dents the score
-- [ ] A Return (US-E06) protects the Score - it is celebrated, never penalized
-- [ ] Copy contracts are identity-framed ("you're someone who moves"), never loss-framed
-- [ ] New `ConsistencyScoreTests` cover: empty history, perfect run, single-miss dent (not zero), 5-min show-up, rolling weighting, Return protection; build and tests pass
+- [x] A real `ConsistencyScore`/evaluator replaces `MockConsistencyService`: `weeklyAdherence(week) = min(1, workoutsCompleted / weeklyGoal)`; `score = weightedRollingAverage(weeklyAdherence, recentWeeks) * 100` with recent weeks weighted more (`weeklyGoal` default 3)
+- [x] A 5-minute session counts as a full show-up; a single miss dents the score but never zeroes it
+- [x] `longestChain` is tracked and surfaced as an earned point of pride; a broken chain reduces the chain counter but only dents the score
+- [x] A Return (US-E06) protects the Score - it is celebrated, never penalized
+- [x] Copy contracts are identity-framed ("you're someone who moves"), never loss-framed
+- [x] New `ConsistencyScoreTests` cover: empty history, perfect run, single-miss dent (not zero), 5-min show-up, rolling weighting, Return protection; build and tests pass
 
 **Validation Test:**
 
@@ -506,10 +507,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] A real `PhaseEvaluator` replaces `MockPhaseService`: returns `.strength` only when both hold - Consistency Score sustained above threshold over a rolling window (e.g. >= 80% over ~8 weeks) and the foundational chains' entry tiers cleared (push/squat/hinge/core)
-- [ ] Consistency-only or competence-only stays `.discipline`; a fresh user is `.discipline`
-- [ ] Phase is never user-selectable; the transition is a gradual ramp, framed as honest stewardship (never failure) for a consistent-but-not-advancing user
-- [ ] New `PhaseEvaluatorTests` cover: consistency-only stays Discipline, competence-only stays Discipline, both-met promotes, fresh user Discipline; build and tests pass
+- [x] A real `PhaseEvaluator` replaces `MockPhaseService`: returns `.strength` only when both hold - Consistency Score sustained above threshold over a rolling window (e.g. >= 80% over ~8 weeks) and the foundational chains' entry tiers cleared (push/squat/hinge/core)
+- [x] Consistency-only or competence-only stays `.discipline`; a fresh user is `.discipline`
+- [x] Phase is never user-selectable; the transition is a gradual ramp, framed as honest stewardship (never failure) for a consistent-but-not-advancing user
+- [x] New `PhaseEvaluatorTests` cover: consistency-only stays Discipline, competence-only stays Discipline, both-met promotes, fresh user Discipline; build and tests pass
 
 **Validation Test:**
 
@@ -521,7 +522,7 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 ---
 
-### Epic I - Onboarding
+### Epic I - Onboarding (BUILT, #36)
 
 > Minimal by design; the detailed flow is deferred to Phase 2. Ends by opening the Ready Screen with the first session already generated.
 
@@ -531,11 +532,11 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] Onboarding collects: name and basic profile (age/sex/height/weight), `fitnessLevel`, the free-text `why` statement, "do you sit 6+ hours most days?" (`sitsLong`), optional injuries, and exactly one duration question ("how long do you usually have?") that seeds `duration.onboardingSeedMinutes` and `duration.defaultMinutes`
-- [ ] Onboarding seeds the capped Starting Difficulty (US-G01) and initializes `coldStart` (`active == true`, `sessionsLogged == 0`) and `SessionPolicy.default` with a `coldStartContract`
-- [ ] On completion the app routes straight to the Ready Screen with the first session already generated (no picker to clear); `AppState` records onboarded
-- [ ] The flow uses `Theme` tokens (56pt buttons, 16pt card radius, >= 44pt targets); no XP/levels/badges anywhere
-- [ ] Uses `@Observable` view models; verify in iOS Simulator
+- [x] Onboarding collects: name and basic profile (age/sex/height/weight), `fitnessLevel`, the free-text `why` statement, "do you sit 6+ hours most days?" (`sitsLong`), optional injuries, and exactly one duration question ("how long do you usually have?") that seeds `duration.onboardingSeedMinutes` and `duration.defaultMinutes`
+- [x] Onboarding seeds the capped Starting Difficulty (US-G01) and initializes `coldStart` (`active == true`, `sessionsLogged == 0`) and `SessionPolicy.default` with a `coldStartContract`
+- [x] On completion the app routes straight to the Ready Screen with the first session already generated (no picker to clear); `AppState` records onboarded
+- [x] The flow uses `Theme` tokens (56pt buttons, 16pt card radius, >= 44pt targets); no XP/levels/badges anywhere
+- [x] Uses `@Observable` view models; verify in iOS Simulator
 
 **Validation Test:**
 
@@ -548,7 +549,7 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 ---
 
-### Epic J - Ready Screen
+### Epic J - Ready Screen (BUILT, #37-#38)
 
 > The state the app opens to (ADR-0016). A complete session pre-generated at the Default Duration, one tap to start, duration a non-blocking adjustment. Replaces the v5 Home screen.
 
@@ -558,11 +559,11 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] On open, the app shows a complete session pre-generated at `duration.defaultMinutes` with one visually dominant "Start" action
-- [ ] Duration is a non-blocking, one-tap-adjustable chip offering 5/10/15/20/30/45/60; tapping a value regenerates the session in under 100ms; Start is never disabled waiting for an answer
-- [ ] The screen shows "Today: N min - Start", never "How long do you have today?" with Start gated
-- [ ] The session preview lists today's blocks; no XP/levels/badges appear
-- [ ] Uses `Theme` tokens and `@Observable` view models; verify in iOS Simulator
+- [x] On open, the app shows a complete session pre-generated at `duration.defaultMinutes` with one visually dominant "Start" action
+- [x] Duration is a non-blocking, one-tap-adjustable chip offering 5/10/15/20/30/45/60; tapping a value regenerates the session in under 100ms; Start is never disabled waiting for an answer
+- [x] The screen shows "Today: N min - Start", never "How long do you have today?" with Start gated
+- [x] The session preview lists today's blocks; no XP/levels/badges appear
+- [x] Uses `Theme` tokens and `@Observable` view models; verify in iOS Simulator
 
 **Validation Test:**
 
@@ -579,10 +580,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] The screen surfaces the session's Variety Language line (US-G03), the forgiving Consistency Score (identity-framed, never loss-framed), and the policy `note` when present
-- [ ] On open, the app checks `dueTriggers` (US-F01) and, if any are due, triggers a Re-program in the background while rendering from the existing policy; the new policy applies next open
-- [ ] The user never waits on the Re-program or the LLM slice; the screen is fully interactive immediately
-- [ ] No XP/levels/badges; uses `Theme` tokens; verify in iOS Simulator
+- [x] The screen surfaces the session's Variety Language line (US-G03), the forgiving Consistency Score (identity-framed, never loss-framed), and the policy `note` when present
+- [x] On open, the app checks `dueTriggers` (US-F01) and, if any are due, triggers a Re-program in the background while rendering from the existing policy; the new policy applies next open
+- [x] The user never waits on the Re-program or the LLM slice; the screen is fully interactive immediately
+- [x] No XP/levels/badges; uses `Theme` tokens; verify in iOS Simulator
 
 **Validation Test:**
 
@@ -595,7 +596,7 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 ---
 
-### Epic K - Active Session
+### Epic K - Active Session (BUILT, #39-#42)
 
 > The player. Large touch targets (60pt on active screens), auto-playing demos, set tracking, rest timer, swap, and resume.
 
@@ -605,11 +606,11 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] The player renders each `PrescribedExercise` in order with its target (reps or hold seconds), an auto-playing Lottie demo (static fallback under Reduce Motion), and set tracking
-- [ ] Elapsed time is always visible; touch targets are >= 60pt on this screen
-- [ ] Set completion advances the session and records completed sets toward the eventual log
-- [ ] Accessibility: VoiceOver labels on controls, Dynamic Type respected
-- [ ] Uses `Theme` tokens and `@Observable` view models; verify in iOS Simulator
+- [x] The player renders each `PrescribedExercise` in order with its target (reps or hold seconds), an auto-playing Lottie demo (static fallback under Reduce Motion), and set tracking
+- [x] Elapsed time is always visible; touch targets are >= 60pt on this screen
+- [x] Set completion advances the session and records completed sets toward the eventual log
+- [x] Accessibility: VoiceOver labels on controls, Dynamic Type respected
+- [x] Uses `Theme` tokens and `@Observable` view models; verify in iOS Simulator
 
 **Validation Test:**
 
@@ -625,10 +626,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] After a set, a rest timer counts down `restSeconds` and auto-advances when done
-- [ ] Completion fires a haptic, with an audio alternative for accessibility
-- [ ] The timer can be skipped or extended; it pauses correctly if the app is backgrounded
-- [ ] Uses `Theme` tokens; verify in iOS Simulator (haptics verified on device where possible)
+- [x] After a set, a rest timer counts down `restSeconds` and auto-advances when done
+- [x] Completion fires a haptic, with an audio alternative for accessibility
+- [x] The timer can be skipped or extended; it pauses correctly if the app is backgrounded
+- [x] Uses `Theme` tokens; verify in iOS Simulator (haptics verified on device where possible)
 
 **Validation Test:**
 
@@ -644,10 +645,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] A swap control calls the deterministic swap engine (US-C08, `ExerciseSwap.swap`) and substitutes within the same pillar/pattern, difficulty band, and time budget, never duplicating a movement already in the session
-- [ ] When no safe in-budget peer exists, the UI shows a clear "no alternative" state rather than an unsafe substitution
-- [ ] The swapped exercise carries a fresh capacity-relative target and preserves the slot's set count and rest
-- [ ] Uses `Theme` tokens; verify in iOS Simulator
+- [x] A swap control calls the deterministic swap engine (US-C08, `ExerciseSwap.swap`) and substitutes within the same pillar/pattern, difficulty band, and time budget, never duplicating a movement already in the session
+- [x] When no safe in-budget peer exists, the UI shows a clear "no alternative" state rather than an unsafe substitution
+- [x] The swapped exercise carries a fresh capacity-relative target and preserves the slot's set count and rest
+- [x] Uses `Theme` tokens; verify in iOS Simulator
 
 **Validation Test:**
 
@@ -663,10 +664,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] Session state (current exercise, set, elapsed time, rest timer) persists across backgrounding and app relaunch
-- [ ] Resuming restores the exact position; the rest timer resumes correctly
-- [ ] An abandoned session can be resumed or discarded from the Ready Screen
-- [ ] Verify in iOS Simulator
+- [x] Session state (current exercise, set, elapsed time, rest timer) persists across backgrounding and app relaunch
+- [x] Resuming restores the exact position; the rest timer resumes correctly
+- [x] An abandoned session can be resumed or discarded from the Ready Screen
+- [x] Verify in iOS Simulator
 
 **Validation Test:**
 
@@ -678,7 +679,7 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 ---
 
-### Epic L - Post-Session
+### Epic L - Post-Session (IN PROGRESS: US-L01 built #43; US-L02 next)
 
 > Celebration, summary, log write, and the feedback that feeds Default Duration and the Asymmetric Ramp.
 
@@ -688,10 +689,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] On completion the app writes a `WorkoutLog` with `requestedMinutes`, the actually-completed `durationMinutes`, `shape`, `focusPillar`, `wasReturn`, and per-exercise `completedSets`/`skipped`
-- [ ] `durationMinutes` feeds `duration.completedDurationEWMA` (US-F04); the Consistency Score updates (US-H01)
-- [ ] The screen shows a completion celebration and a template-based summary with muscle/mobility coverage; copy is identity-framed
-- [ ] No XP/levels/badges; uses `Theme` tokens and `@Observable` view models; verify in iOS Simulator
+- [x] On completion the app writes a `WorkoutLog` with `requestedMinutes`, the actually-completed `durationMinutes`, `shape`, `focusPillar`, `wasReturn`, and per-exercise `completedSets`/`skipped`
+- [x] `durationMinutes` feeds `duration.completedDurationEWMA` (US-F04); the Consistency Score updates (US-H01)
+- [x] The screen shows a completion celebration and a template-based summary with muscle/mobility coverage; copy is identity-framed
+- [x] No XP/levels/badges; uses `Theme` tokens and `@Observable` view models; verify in iOS Simulator
 
 **Validation Test:**
 

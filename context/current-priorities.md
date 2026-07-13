@@ -1,6 +1,10 @@
 # Current Priorities
 
-_Last updated: 2026-07-09. Update this file when your focus shifts._
+_Last updated: 2026-07-12. Update this file when your focus shifts._
+
+**This week (by 2026-07-18), per hcho 2026-07-12:** finish both in-flight PRDs -
+Agentic RAG retrieval-quality pass (merge US-117 PR #84, then US-118) and the
+FitSnack v6 MVP (US-L02, M01-M02, N01-N05, 8 stories).
 
 1. **Agentic RAG Phase 2 as the primary income + portfolio flagship (top focus):** Model A,
    sell the starter kit to agency/freelance AI devs, built in public. **The full Phase 2
