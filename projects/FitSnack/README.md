@@ -2,7 +2,9 @@
 
 **One-liner:** A discipline-first micro-workout iOS app. Open it and a complete zero-equipment session (5-60 min) is already waiting - a deterministic on-device engine blends strength, mobility, and primal movement to land within ±1 min of your Default Duration. No browsing, no choosing, no thinking. Between sessions a daily-adaptive AI Programmer quietly rewrites each user's Session Policy (progression, pillar weighting, variety); it shapes the program, never the workout, and is never on the path to pressing start.
 
-**Repo:** https://github.com/hcho22/FitSnack (private)
+**Name:** Rebranded **FitSnack → Rep Today** on 2026-07-14, pre-public (FitSnack was trademark-blocked; "Nonzero" was an interim run-1 placeholder, now retired). App Store listing name: "Rep Today, Rest Tomorrow". This folder and tracker keep the FitSnack name for continuity; the shipped app, module, identifiers (`com.reptoday.app`), and GitHub repo are all "Rep Today". See `prd-rebrand-fitsnack-to-rep-today_071426.md`.
+
+**Repo:** https://github.com/hcho22/reptoday (private; formerly `hcho22/FitSnack`, auto-redirects)
 
 **Strategic role:** **Second income bet** alongside the Agentic RAG flagship, and an **AI-builder portfolio asset** for the job search. Where Agentic RAG is the B2B starter kit sold to agency/freelance devs, FitSnack is the B2C consumer freemium play (see Monetization). The two run as parallel revenue paths under the same income-by-end-of-2026 north star; Agentic RAG remains the primary flagship.
 
@@ -10,11 +12,11 @@
 
 ## Status
 
-_Update this line as the project moves. Last reviewed: 2026-07-12._
+_Update this line as the project moves. Last reviewed: 2026-07-15._
 
+- **✅ v6 MVP COMPLETE (2026-07-14), ahead of the 2026-07-18 deadline.** All epics A-N shipped and merged. The final eight stories landed on 2026-07-14: US-L02 (#44), US-M01 (#45), US-M02 (#46), US-N01-N05 (#47-#51). Then the app was **rebranded FitSnack → Rep Today** (US-001-009, PRs #52-#60) with the whole-repo guard passing at **667/667 tests green**. Next up is not more MVP build - it is pre-submission provisioning (`DEVELOPMENT_TEAM`/signing, App Store Connect record, real privacy-policy URL) and the channel-test GTM gates from run-1.
 - **Phase:** MVP, clean rebuild, built story-by-story against the **v6 PRD** (`prd-fitsnack-mvp-v6_0702.md`, which supersedes the v5 `prd-fitsnack-mvp_0626.md`). v6 reframes the MVP as "the Discipline Loop with a daily-adaptive AI Programmer." The previous app (XP/badges/streaks, AI services, SwiftData) was removed and lives only in git history (commit `23fd56f`) as reference.
-- **Deadline: complete the v6 MVP PRD this week, by 2026-07-18** (set 2026-07-12). Remaining: US-L02, US-M01-M02, US-N01-N05 (8 stories).
-- **Current state (per the code repo, 2026-07-12): complete through US-L01 - Epics A-K done, Epic L in progress.**
+- **Current state (per the code repo, 2026-07-14): all epics A-N complete; rebrand complete.**
   - **Epic A - Foundation (✅ built):** scaffold, domain enums/models, CoreData stack, service protocols / ServiceContainer / app state.
   - **Epic B - Exercise Library (✅ built):** bundled ~38-movement JSON library + load/integrity-check service.
   - **Epic C - Deterministic Engine, Steps 1-7 + Swap (✅ built):** the full v5 pipeline, including the deterministic exercise swap (the old US-C08 is now folded into a built Epic C).
@@ -26,9 +28,11 @@ _Update this line as the project moves. Last reviewed: 2026-07-12._
   - **Epic I - Onboarding (✅ done, US-I01):** the minimal v6 onboarding flow (#36) - collects profile/`why`/`sitsLong`/duration, seeds capped Starting Difficulty + `coldStart` + `SessionPolicy.default`, then routes straight to the Ready Screen with the first session pre-generated (no picker). Single-story epic by design; the detailed flow is deferred to Phase 2.
   - **Epic J - Ready Screen (✅ done, US-J01-J02):** pre-generated session + non-blocking duration chip (#37), felt-personalization (Variety Language line, Consistency, AI note) + re-program-on-open (#38).
   - **Epic K - Active Session (✅ done, US-K01-K04):** active session player (#39), rest timer with haptics (#40), in-session swap (#41), background and resume (#42).
-  - **Epic L - Post-Session (in progress):** US-L01 post-session summary and log write done (#43, 2026-07-12); US-L02 rating and perceived-difficulty feedback remaining.
-- **Remaining (8 stories):** US-L02; Epic M - progress tab (US-M01-M02); Epic N - Apple integrations (Sign in with Apple, CloudKit, HealthKit, StoreKit 2) + the thin stateless proxy (US-N01-N05).
-- **Next story:** US-L02 (rating and perceived-difficulty feedback), closing Epic L; then M, then N.
+  - **Epic L - Post-Session (✅ done, US-L01-L02):** US-L01 post-session summary and log write (#43); US-L02 rating and perceived-difficulty feedback that feeds the Asymmetric Ramp (#44).
+  - **Epic M - Progress Tab (✅ done, US-M01-M02):** US-M01 session calendar + Consistency Score trend (#45); US-M02 pillar balance, chain position, personal bests, and premium gating (#46).
+  - **Epic N - Apple Integrations & Thin Proxy (✅ done, US-N01-N05):** Sign in with Apple (#47), CloudKit sync/backup (#48), HealthKit write (#49), StoreKit 2 subscriptions + paywall (#50), and the thin stateless Variety Language proxy (#51).
+- **Remaining MVP build:** none - all epics A-N shipped.
+- **Next:** pre-submission provisioning + GTM channel test, not more MVP feature build.
 - **Go-to-market (pre-launch):** a build-in-public 1-week social launch plan (IG/X/TikTok, "discipline over content" wedge) is drafted at `posts/01-social-1week-launch_260701.md`, grounded in a 2026-07-01 market scan. It runs as a positioning + waitlist play before the MVP ships (no app to download yet).
 
 ## Why this project / how it fits
@@ -61,13 +65,13 @@ Freemium, paywall on **depth** not the core loop (the discipline promise stays f
 | **Apple integrations** | Sign in with Apple, CloudKit (private DB sync), HealthKit (write), StoreKit 2 |
 | **Backend** | One thin stateless proxy (e.g. a Cloudflare Worker) that holds the model API key for the single Variety Language LLM call (US-N05) and stores no user data; no other server, scheduler, or data mirror (`convex/` remains an empty placeholder) |
 | **AI** | Daily-adaptive AI Programmer at option (C): deterministic, on-device policy re-weighting (writes `SessionPolicy`, never a workout, never on the start path); one template-backed LLM Variety Language line via the proxy, with a deterministic fallback so the app never blocks on the network |
-| **Build** | XcodeGen (`project.yml`); single `FitSnack` scheme builds the app and runs `FitSnackTests` |
+| **Build** | XcodeGen (`project.yml`); single `RepToday` scheme builds the app and runs `RepTodayTests` (renamed from `FitSnack`/`FitSnackTests` in the 2026-07-14 rebrand) |
 
 ## Roadmap
 
 | Phase | Focus | Status |
 |-------|-------|--------|
-| **MVP (v6)** | Discipline Loop + daily-adaptive AI Programmer at option (C): 5-60 min deterministic engine with first-class primal, Session Policy, cold-start + Return/Re-entry Ramp, Ready Screen, Consistency Score, PhaseEvaluator, onboarding, active/post/progress UI, CoreData/CloudKit, StoreKit 2 paywall, and one template-backed LLM Variety Language slice via a thin proxy | In progress (Epics A-K done + US-L01; remaining is US-L02, progress tab M, and Apple integrations N - due 2026-07-18) |
+| **MVP (v6)** | Discipline Loop + daily-adaptive AI Programmer at option (C): 5-60 min deterministic engine with first-class primal, Session Policy, cold-start + Return/Re-entry Ramp, Ready Screen, Consistency Score, PhaseEvaluator, onboarding, active/post/progress UI, CoreData/CloudKit, StoreKit 2 paywall, and one template-backed LLM Variety Language slice via a thin proxy | ✅ Complete (all epics A-N shipped by 2026-07-14; rebranded to Rep Today) - next is provisioning + App Store submission |
 | **Phase 2** | Full option-(B) LLM Programmer (richer diagnosis + narrative notes), full Strength-Phase catalog, equipment variants | Planned |
 
 MVP non-goals: no direct AI generation of sessions (the AI writes policy only; the deterministic engine assembles every workout), no full option-(B) LLM Programmer, no server-side scheduler or user-data mirror, no gamification, no social/leaderboards, no equipment exercises, no Android/widgets/Watch. The only MVP LLM call is the template-backed Variety Language slice. See the PRD's Non-Goals section.

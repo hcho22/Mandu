@@ -1,12 +1,22 @@
 # Current Priorities
 
-_Last updated: 2026-07-13. Update this file when your focus shifts._
+_Last updated: 2026-07-15. Update this file when your focus shifts._
 
-**This week (by 2026-07-18), per hcho 2026-07-12:** finish both in-flight PRDs.
+**This week (by 2026-07-18), per hcho 2026-07-12:** finish both in-flight PRDs. ✅ **BOTH DONE.**
 ✅ **Agentic RAG retrieval-quality pass DONE** (2026-07-13, two days early - all six
-stories US-113-118 merged, manual QA passed). Remaining: the **FitSnack v6 MVP**
-(US-L02, M01-M02, N01-N05, 8 stories). With the AR pass closed, Agentic RAG returns to
-purely validation (the standing #1), and this week's build capacity is now all FitSnack.
+stories US-113-118 merged, manual QA passed).
+✅ **FitSnack v6 MVP DONE** (2026-07-14, four days early - final 8 stories US-L02, M01-M02,
+N01-N05 merged; all epics A-N shipped). Immediately followed by the **FitSnack → Rep Today
+rebrand** (US-001-009, PRs #52-#60, complete 2026-07-14; 667/667 tests green). Both build
+tracks for the week are closed. FitSnack's next step is not more build - it is pre-submission
+provisioning (signing/`DEVELOPMENT_TEAM`, App Store Connect record, privacy-policy URL) and
+the run-1 GTM channel test. With both passes closed, Agentic RAG returns to purely validation
+(the standing #1). **New in-flight (opened 2026-07-15): the "Purvia" rebrand**
+(`projects/Agentic_RAG/raw/prd-rebrand-purvia-2026-07-14.md`) - the product's
+first real brand, a tight display-only rename (6 vendor-facing "Agentic RAG"
+strings → "Purvia") plus a naming ADR, zero behavior/RLS/contract change. PRD
+authored + committed to the dev repo (PR #87); implementation US-001-006 not yet
+started. Pre-launch branding prep, not a productization build track.
 
 1. **Agentic RAG Phase 2 as the primary income + portfolio flagship (top focus):** Model A,
    sell the starter kit to agency/freelance AI devs, built in public. **The full Phase 2
@@ -18,15 +28,19 @@ purely validation (the standing #1), and this week's build capacity is now all F
    Omdena, r/RAG - plus campaign engagers and a free "permission-RAG teardown" on-ramp, not
    warm intros) and drive waitlist signups. Only after findings: P-series productization
    (template-ization, license/delivery, open-core split, landing page, threat-model) - the
-   sole remaining build track, and it stays gated. Observability O-series and F2/F3 are a
+   sole remaining build track, and it stays gated. (Separate from that gate, a small
+   display-only "Purvia" rebrand opened 2026-07-15 - see the "This week" block above.)
+   Observability O-series and F2/F3 are a
    later follow-up PRD.
 2. **FitSnack as the second income bet (B2C):** discipline-first micro-workout iOS app,
    freemium (free unlimited core loop, premium "depth" paywall at $9.99/mo or $59.99/yr
-   via StoreKit 2, per the run-1 pricing lock). MVP build in progress, story-by-story
-   against the PRD (Epics A-I done; UI shell J-N next); Apple-native stack so near-zero
-   hosting cost. **run-1 market package complete (2026-07-09, committed):** thesis
-   validated in a sharper form, name provisionally locked as **Nonzero** (FitSnack is
-   trademark-blocked; counsel review + comprehension test pending), brand guidelines,
+   via StoreKit 2, per the run-1 pricing lock). **MVP build COMPLETE (2026-07-14):** all
+   epics A-N shipped story-by-story against the v6 PRD; Apple-native stack so near-zero
+   hosting cost. **Rebranded FitSnack → Rep Today (2026-07-14):** name now locked as
+   **Rep Today** (App Store listing "Rep Today, Rest Tomorrow"), superseding the interim
+   "Nonzero" placeholder; `com.reptoday.app` identifiers baked in pre-public. **run-1
+   market package complete (2026-07-09, committed):** thesis validated in a sharper form,
+   brand guidelines,
    marketing site + live Ready Screen prototype, launch + founder videos, App Store
    listing, all red-teamed - entry point `projects/FitSnack/run-1/recap.html`.
    **Open call for hcho:** the red team's corrected funnel math says income-relevance

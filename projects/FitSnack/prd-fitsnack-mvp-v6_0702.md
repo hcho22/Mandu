@@ -5,9 +5,9 @@
 **Scope:** Comprehensive standalone v6 MVP. Covers the net-new v6 work (Session Policy, AI Programmer at option C, cold-start, Ready Screen, Return / Re-entry Ramp, engine 5-60 min and first-class primal, thin proxy) plus the still-unbuilt v5 epics (Consistency/Phase, onboarding, active/post/progress, Apple integrations) reframed under v6.
 **Supersedes:** `.claude/agent/tasks/prd-fitsnack-mvp_0626.md` (the v5 implementation PRD). Its Epics A-C are already built and are carried forward here as done; its Epics D-J are re-expressed under v6 below.
 **Persistence:** CoreData backed by `NSPersistentCloudKitContainer`; domain models are `Codable` structs; nested fields stored as JSON-encoded `Data`.
-**Platform:** iOS 17+, SwiftUI, Swift 5.9, Xcode 16.3. Bundle ID `com.fitsnack.app`.
-**Status:** Epics A-K built (A-I through US-I01 by 2026-07-08; J via #37-#38 on 2026-07-10; K via #39-#42 by 2026-07-11); Epic L in progress (US-L01 merged #43 on 2026-07-12, US-L02 next); Epics M-N not started.
-**Deadline:** complete this PRD this week, by 2026-07-18 (set 2026-07-12). Remaining: US-L02, US-M01-M02, US-N01-N05 (8 stories).
+**Platform:** iOS 17+, SwiftUI, Swift 5.9, Xcode 16.3. Bundle ID `com.fitsnack.app` at build time (rebranded to `com.reptoday.app` afterward; see `prd-rebrand-fitsnack-to-rep-today_071426.md`).
+**Status:** ✅ **COMPLETE (2026-07-14).** All epics A-N shipped and merged. The final eight stories landed after the 2026-07-12 status: US-L02 (#44), US-M01 (#45), US-M02 (#46), US-N01 (#47), US-N02 (#48), US-N03 (#49), US-N04 (#50), US-N05 (#51). Delivered ahead of the 2026-07-18 deadline. The app was then rebranded FitSnack -> Rep Today (PRs #52-#60) under the separate rebrand PRD; module/scheme/identifier references below reflect the pre-rebrand `FitSnack` naming in force when each story was built.
+**Deadline:** 2026-07-18 (set 2026-07-12) - **met early**, all 8 remaining stories done by 2026-07-14.
 
 ---
 
@@ -708,10 +708,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] The post-session screen collects `perceivedDifficulty` (`too_easy`/`just_right`/`too_hard`) and stores it on the `WorkoutLog`
-- [ ] The value feeds the Asymmetric Ramp (US-E05) so the next session adjusts within one cycle
-- [ ] The control is optional and non-blocking; skipping it is treated as unrated
-- [ ] Uses `Theme` tokens; verify in iOS Simulator
+- [x] The post-session screen collects `perceivedDifficulty` (`too_easy`/`just_right`/`too_hard`) and stores it on the `WorkoutLog`
+- [x] The value feeds the Asymmetric Ramp (US-E05) so the next session adjusts within one cycle
+- [x] The control is optional and non-blocking; skipping it is treated as unrated
+- [x] Uses `Theme` tokens; verify in iOS Simulator
 
 **Validation Test:**
 
@@ -734,10 +734,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] A calendar shows completed sessions; a chart shows the Consistency Score over time (Swift Charts)
-- [ ] `longestChain` is surfaced as an earned point of pride; all copy is identity-framed, never loss-framed
-- [ ] The view reads real `WorkoutLog` history and the real score (US-H01)
-- [ ] Uses `Theme` tokens and `@Observable` view models; verify in iOS Simulator
+- [x] A calendar shows completed sessions; a chart shows the Consistency Score over time (Swift Charts)
+- [x] `longestChain` is surfaced as an earned point of pride; all copy is identity-framed, never loss-framed
+- [x] The view reads real `WorkoutLog` history and the real score (US-H01)
+- [x] Uses `Theme` tokens and `@Observable` view models; verify in iOS Simulator
 
 **Validation Test:**
 
@@ -753,10 +753,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] The tab shows pillar balance (strength/mobility/primal), progression-chain position, and personal bests from real history
-- [ ] Deeper analytics are gated behind premium (US-N04); the gate is a clear, non-nagging upsell
-- [ ] Free users still see basic balance, chain position, and bests; only the deep-analytics layer is gated
-- [ ] Uses `Theme` tokens; verify in iOS Simulator
+- [x] The tab shows pillar balance (strength/mobility/primal), progression-chain position, and personal bests from real history
+- [x] Deeper analytics are gated behind premium (US-N04); the gate is a clear, non-nagging upsell
+- [x] Free users still see basic balance, chain position, and bests; only the deep-analytics layer is gated
+- [x] Uses `Theme` tokens; verify in iOS Simulator
 
 **Validation Test:**
 
@@ -778,10 +778,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] A real `AuthService` implements `signInWithApple()`, `currentUserIdentifier()`, and `signOut()` via Sign in with Apple
-- [ ] The core loop works offline and without an iCloud account; sign-in is not a gate to the first session
-- [ ] The signed-in identifier is stored and used to key the user record
-- [ ] Verify in iOS Simulator (full flow verified on device where possible)
+- [x] A real `AuthService` implements `signInWithApple()`, `currentUserIdentifier()`, and `signOut()` via Sign in with Apple
+- [x] The core loop works offline and without an iCloud account; sign-in is not a gate to the first session
+- [x] The signed-in identifier is stored and used to key the user record
+- [x] Verify in iOS Simulator (full flow verified on device where possible)
 
 **Validation Test:**
 
@@ -797,10 +797,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] The CoreData stack switches to the CloudKit-backed `NSPersistentCloudKitContainer` private DB for `CDUser`, `CDWorkoutLog`, and the persisted `SessionPolicy`
-- [ ] The core loop still works fully offline and with no iCloud account; sync is additive
-- [ ] Conflict handling and initial sync are verified; no data loss on a round trip through iCloud
-- [ ] Verify in iOS Simulator (sync verified across two signed-in instances where possible)
+- [x] The CoreData stack switches to the CloudKit-backed `NSPersistentCloudKitContainer` private DB for `CDUser`, `CDWorkoutLog`, and the persisted `SessionPolicy`
+- [x] The core loop still works fully offline and with no iCloud account; sync is additive
+- [x] Conflict handling and initial sync are verified; no data loss on a round trip through iCloud
+- [x] Verify in iOS Simulator (sync verified across two signed-in instances where possible)
 
 **Validation Test:**
 
@@ -816,10 +816,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] A real `HealthKitService` requests authorization and writes each completed session as a workout (on-device only, using `metValue`/duration)
-- [ ] HealthKit data stays on-device; a denied authorization degrades gracefully (no crash, no blocked loop)
-- [ ] Writes are idempotent per session (no duplicates on resume)
-- [ ] Verify in iOS Simulator (write verified on device where possible)
+- [x] A real `HealthKitService` requests authorization and writes each completed session as a workout (on-device only, using `metValue`/duration)
+- [x] HealthKit data stays on-device; a denied authorization degrades gracefully (no crash, no blocked loop)
+- [x] Writes are idempotent per session (no duplicates on resume)
+- [x] Verify in iOS Simulator (write verified on device where possible)
 
 **Validation Test:**
 
@@ -835,11 +835,11 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] A real `SubscriptionService` implements `currentSubscription()`, `refreshEntitlements()`, `purchasePremium()`, and `restorePurchases()` via StoreKit 2
-- [ ] Free tier is unlimited workouts forever; premium (~$7.99/mo or ~$59.99/yr, 14-day trial) unlocks the depth layer (analytics depth, Strength Phase, later AI reports)
-- [ ] The paywall never gates the core loop; entitlement drives the premium gates in US-M02
-- [ ] Subscription state persists and restores; clear disclosure per App Store rules
-- [ ] Verify in iOS Simulator (StoreKit configuration/sandbox)
+- [x] A real `SubscriptionService` implements `currentSubscription()`, `refreshEntitlements()`, `purchasePremium()`, and `restorePurchases()` via StoreKit 2
+- [x] Free tier is unlimited workouts forever; premium (~$7.99/mo or ~$59.99/yr, 14-day trial) unlocks the depth layer (analytics depth, Strength Phase, later AI reports)
+- [x] The paywall never gates the core loop; entitlement drives the premium gates in US-M02
+- [x] Subscription state persists and restores; clear disclosure per App Store rules
+- [x] Verify in iOS Simulator (StoreKit configuration/sandbox)
 
 **Validation Test:**
 
@@ -855,10 +855,10 @@ Discipline overrides optimization by design: a Return after a gap is served easy
 
 **Acceptance Criteria:**
 
-- [ ] A thin stateless proxy (e.g. a Cloudflare Worker) holds the model API key and proxies exactly one Claude call per Variety Language request
-- [ ] It stores no user logs at rest: history is sent transiently from the device and not persisted server-side; no scheduler, no database mirror
-- [ ] The client calls it only for the Variety Language slice (US-G03) and always falls back to the deterministic template on any failure or timeout
-- [ ] The proxy endpoint, request/response contract, and the client fallback are documented; a failing/absent proxy never blocks the app
+- [x] A thin stateless proxy (e.g. a Cloudflare Worker) holds the model API key and proxies exactly one Claude call per Variety Language request
+- [x] It stores no user logs at rest: history is sent transiently from the device and not persisted server-side; no scheduler, no database mirror
+- [x] The client calls it only for the Variety Language slice (US-G03) and always falls back to the deterministic template on any failure or timeout
+- [x] The proxy endpoint, request/response contract, and the client fallback are documented; a failing/absent proxy never blocks the app
 
 **Validation Test:**
 

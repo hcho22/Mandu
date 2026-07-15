@@ -1,6 +1,6 @@
 # PRD — Phase 2 Build: Permission-Aware RAG + AI-Support Starter Kit
 
-**Status:** Implementation-ready. Decomposes on-disk ADRs **0002–0008** (and the `CONTEXT.md` designs they reference) into buildable, independently-shippable user stories. Companion to `.claude/agent/tasks/PRD_phase2_agentic_rag_kit.md` (the strategy/scoping PRD); governed by `CONTEXT.md` (terminology) and `docs/adr/` (decisions). Generated 2026-06-17.
+**Status:** ✅ COMPLETE - all workstreams A-F (US-001-112) merged as of 2026-07-07 (see the project README build sequence). [Original status: Implementation-ready.] Decomposes on-disk ADRs **0002–0008** (and the `CONTEXT.md` designs they reference) into buildable, independently-shippable user stories. Companion to `.claude/agent/tasks/PRD_phase2_agentic_rag_kit.md` (the strategy/scoping PRD); governed by `CONTEXT.md` (terminology) and `docs/adr/` (decisions). Generated 2026-06-17.
 
 **Scope:** the full remaining Phase-2 build — workspace tenant isolation, config-driven model surface, ingestion parser boundary, escalation/deflection pipeline, the anonymous support-widget surface + conversation/handoff, and the eval-gate + golden-set genericization. **Self-contained:** prerequisite stories (e.g. the workspace layer the support surface sits on) are *included*, not assumed.
 
