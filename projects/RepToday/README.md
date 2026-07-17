@@ -1,8 +1,8 @@
-# FitSnack
+# Rep Today
 
 **One-liner:** A discipline-first micro-workout iOS app. Open it and a complete zero-equipment session (5-60 min) is already waiting - a deterministic on-device engine blends strength, mobility, and primal movement to land within ±1 min of your Default Duration. No browsing, no choosing, no thinking. Between sessions a daily-adaptive AI Programmer quietly rewrites each user's Session Policy (progression, pillar weighting, variety); it shapes the program, never the workout, and is never on the path to pressing start.
 
-**Name:** Rebranded **FitSnack → Rep Today** on 2026-07-14, pre-public (FitSnack was trademark-blocked; "Nonzero" was an interim run-1 placeholder, now retired). App Store listing name: "Rep Today, Rest Tomorrow". This folder and tracker keep the FitSnack name for continuity; the shipped app, module, identifiers (`com.reptoday.app`), and GitHub repo are all "Rep Today". See `prd-rebrand-fitsnack-to-rep-today_071426.md`.
+**Name:** Rebranded **FitSnack → Rep Today** on 2026-07-14, pre-public (FitSnack was trademark-blocked; "Nonzero" was an interim run-1 placeholder, now retired). App Store listing name: "Rep Today, Rest Tomorrow". The Mandu tracker folder was renamed `FitSnack → RepToday` on 2026-07-16 to match; the shipped app, module, identifiers (`com.reptoday.app`), and GitHub repo are all "Rep Today". See `prd-rebrand-fitsnack-to-rep-today_071426.md`. Trademark and App Store name clearance for "Rep Today" remain UNVERIFIED (the founder's next action, per the GTM package self-grade).
 
 **Repo:** https://github.com/hcho22/reptoday (private; formerly `hcho22/FitSnack`, auto-redirects)
 
@@ -12,9 +12,10 @@
 
 ## Status
 
-_Update this line as the project moves. Last reviewed: 2026-07-15._
+_Update this line as the project moves. Last reviewed: 2026-07-16._
 
-- **✅ v6 MVP COMPLETE (2026-07-14), ahead of the 2026-07-18 deadline.** All epics A-N shipped and merged. The final eight stories landed on 2026-07-14: US-L02 (#44), US-M01 (#45), US-M02 (#46), US-N01-N05 (#47-#51). Then the app was **rebranded FitSnack → Rep Today** (US-001-009, PRs #52-#60) with the whole-repo guard passing at **667/667 tests green**. Next up is not more MVP build - it is pre-submission provisioning (`DEVELOPMENT_TEAM`/signing, App Store Connect record, real privacy-policy URL) and the channel-test GTM gates from run-1.
+- **✅ v6 MVP COMPLETE (2026-07-14), ahead of the 2026-07-18 deadline.** All epics A-N shipped and merged. The final eight stories landed on 2026-07-14: US-L02 (#44), US-M01 (#45), US-M02 (#46), US-N01-N05 (#47-#51). Then the app was **rebranded FitSnack → Rep Today** (US-001-009, PRs #52-#60) with the whole-repo guard passing at **667/667 tests green**.
+- **✅ GO-TO-MARKET PACKAGE COMPLETE (2026-07-16, dev-repo PR #61).** A full Rep Today-branded GTM package (superseding the earlier Nonzero-era run-1 GTM plan) lives in the dev repo at `/Users/hcho/Developer/RepToday/gtm/` (front door `recap.html`). Self-graded 2026-07-15 after a red-team pass. Contents: sourced research with 139 cited URLs (competitor teardowns, review mining, category economics, ASO landscape, creator landscape, name collisions), a naming tournament + brand guidelines that passed a fresh-agent test, a landing site verified at mobile/desktop widths, a gated 48s launch video, an investment thesis with explicit kill criteria, a channel plan ranking **ASO #1** (owns the near-empty "micro workout" whitespace; title "Rep Today, Rest Tomorrow", subtitle "Opens to a ready workout"), a 55-objection red-team dossier (30 objections ship verbatim), App Store screenshots, a social launch kit, a review-response playbook, and an investor teaser. **Honesty guardrails held:** everything is local/static, nothing published/deployed/purchased; zero fabricated stats, users, or testimonials; the app is pre-launch (zero users, zero downloads, zero revenue). **Next up is not more build or planning - it is pre-submission provisioning** (`DEVELOPMENT_TEAM`/signing, App Store Connect record, real privacy-policy URL, trademark + App Store name clearance) and then executing the channel test against the thesis kill criteria.
 - **Phase:** MVP, clean rebuild, built story-by-story against the **v6 PRD** (`prd-fitsnack-mvp-v6_0702.md`, which supersedes the v5 `prd-fitsnack-mvp_0626.md`). v6 reframes the MVP as "the Discipline Loop with a daily-adaptive AI Programmer." The previous app (XP/badges/streaks, AI services, SwiftData) was removed and lives only in git history (commit `23fd56f`) as reference.
 - **Current state (per the code repo, 2026-07-14): all epics A-N complete; rebrand complete.**
   - **Epic A - Foundation (✅ built):** scaffold, domain enums/models, CoreData stack, service protocols / ServiceContainer / app state.
@@ -33,7 +34,7 @@ _Update this line as the project moves. Last reviewed: 2026-07-15._
   - **Epic N - Apple Integrations & Thin Proxy (✅ done, US-N01-N05):** Sign in with Apple (#47), CloudKit sync/backup (#48), HealthKit write (#49), StoreKit 2 subscriptions + paywall (#50), and the thin stateless Variety Language proxy (#51).
 - **Remaining MVP build:** none - all epics A-N shipped.
 - **Next:** pre-submission provisioning + GTM channel test, not more MVP feature build.
-- **Go-to-market (pre-launch):** a build-in-public 1-week social launch plan (IG/X/TikTok, "discipline over content" wedge) is drafted at `posts/01-social-1week-launch_260701.md`, grounded in a 2026-07-01 market scan. It runs as a positioning + waitlist play before the MVP ships (no app to download yet).
+- **Go-to-market (✅ package complete, pre-launch):** the full Rep Today GTM package is done and self-graded (dev-repo PR #61, `/Users/hcho/Developer/RepToday/gtm/`, front door `recap.html`) - see the GTM bullet under Status above. It supersedes both the Nonzero-era run-1 GTM plan (`run-1/gtm/plan.md`) and the earlier 2026-07-01 1-week social launch draft (`posts/01-social-1week-launch_260701.md`), folding their intent into a sourced, red-teamed package with a channel plan (ASO-led), a launch video, and an investment thesis with kill criteria. It remains a positioning + pre-launch asset: nothing is published, deployed, or purchased, and there is no app to download yet.
 
 ## Why this project / how it fits
 

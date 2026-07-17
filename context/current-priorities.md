@@ -8,9 +8,17 @@ stories US-113-118 merged, manual QA passed).
 ✅ **FitSnack v6 MVP DONE** (2026-07-14, four days early - final 8 stories US-L02, M01-M02,
 N01-N05 merged; all epics A-N shipped). Immediately followed by the **FitSnack → Rep Today
 rebrand** (US-001-009, PRs #52-#60, complete 2026-07-14; 667/667 tests green). Both build
-tracks for the week are closed. FitSnack's next step is not more build - it is pre-submission
-provisioning (signing/`DEVELOPMENT_TEAM`, App Store Connect record, privacy-policy URL) and
-the run-1 GTM channel test. With both passes closed, Agentic RAG returns to purely validation
+tracks for the week are closed. ✅ **Rep Today GO-TO-MARKET PACKAGE DONE (2026-07-16,
+dev-repo PR #61):** a full sourced, red-teamed, Rep Today-branded GTM package
+(`/Users/hcho/Developer/RepToday/gtm/`, front door `recap.html`) - research (139 cited
+URLs), naming tournament + brand guidelines, landing site, 48s launch video, investment
+thesis with kill criteria, an ASO-led channel plan, a 55-objection red-team dossier, App
+Store assets + social launch kit; self-graded 2026-07-15, honesty guardrails held (pre-launch,
+zero users/downloads/revenue, nothing published). It supersedes the run-1 GTM plan. Rep Today's
+next step is not more build or planning - it is pre-submission
+provisioning (signing/`DEVELOPMENT_TEAM`, App Store Connect record, privacy-policy URL,
+trademark + App Store name clearance which the GTM self-grade flags as UNVERIFIED) and then
+executing the channel test against the thesis kill criteria. With both passes closed, Agentic RAG returns to purely validation
 (the standing #1). **New in-flight (opened 2026-07-15): the "Purvia" rebrand**
 (`projects/Agentic_RAG/raw/prd-rebrand-purvia-2026-07-14.md`) - the product's
 first real brand, a tight display-only rename (6 vendor-facing "Agentic RAG"
@@ -38,15 +46,20 @@ started. Pre-launch branding prep, not a productization build track.
    epics A-N shipped story-by-story against the v6 PRD; Apple-native stack so near-zero
    hosting cost. **Rebranded FitSnack → Rep Today (2026-07-14):** name now locked as
    **Rep Today** (App Store listing "Rep Today, Rest Tomorrow"), superseding the interim
-   "Nonzero" placeholder; `com.reptoday.app` identifiers baked in pre-public. **run-1
-   market package complete (2026-07-09, committed):** thesis validated in a sharper form,
-   brand guidelines,
-   marketing site + live Ready Screen prototype, launch + founder videos, App Store
-   listing, all red-teamed - entry point `projects/FitSnack/run-1/recap.html`.
-   **Open call for hcho:** the red team's corrected funnel math says income-relevance
+   "Nonzero" placeholder; `com.reptoday.app` identifiers baked in pre-public. The Mandu
+   tracker folder was renamed `projects/FitSnack → projects/RepToday` on 2026-07-16 to match.
+   **GTM package COMPLETE (2026-07-16, dev-repo PR #61):** a full sourced, red-teamed,
+   Rep Today-branded go-to-market package (`/Users/hcho/Developer/RepToday/gtm/`, front door
+   `recap.html`) - research with 139 cited URLs, naming tournament + brand guidelines,
+   landing site, 48s launch video, an investment thesis with kill criteria, an ASO-led
+   channel plan, a 55-objection red-team dossier, App Store assets + social launch kit;
+   self-graded 2026-07-15. It supersedes the earlier run-1 GTM plan and the 2026-07-01 social
+   launch draft. Honesty guardrails held: pre-launch, zero users/downloads/revenue, nothing
+   published or purchased, no fabricated stats.
+   **Open call for hcho (unchanged):** the red team's corrected funnel math says income-relevance
    needs 10-20k installs/month sustained, so until the channel test clears its
    30/60/90-day gates the honest label is "portfolio asset with revenue upside," not a
-   proven income pillar (`run-1/gtm/plan.md` section 8). Ranking left unchanged pending
+   proven income pillar. Ranking left unchanged pending
    that call. Also feeds the build: PRD US-H01 amendment recommended (per-day score
    credit, so "miss a day, your score dents" stays true).
    (Ranked above the job-search hedge per hcho's 2026-06-27 call; swap if applications slip.)
