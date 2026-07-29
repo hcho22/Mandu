@@ -1,8 +1,8 @@
 ---
 type: synthesis
-last-updated: 2026-07-08
+last-updated: 2026-07-28
 status: developing
-source-count: 21
+source-count: 22
 ---
 
 # Synthesis
@@ -115,13 +115,33 @@ It supplies the origin story (the Codeforces cliff: GPT-4 at 10/10 pre-cutoff, 0
 The dose-response nuance matters: contamination always inflates raw numbers, but overtraining on fresh data dilutes the real-vs-benchmark gap toward zero for frontier models, while short-form MCQ stays vulnerable and long generative reasoning resists memorization.
 The practical conclusion is the wiki's spine one more time: public benchmarks decay ([[benchmark-saturation]] + contamination are the steady state), so the defense - at both the leaderboard and the application layer - is to **evaluate on your own data the labs cannot have seen**. That is [[eval-driven-development]] and [[functional-scorers]] restated as a security posture, and it is the exact test-set-hygiene discipline hcho brings from hardware validation.
 
+The twenty-second source ([[designing-loops-and-workflows]]) is the first **primary-source** material in the wiki, from [[tharic]] on Anthropic's [[claude-code]] team, and it closes the open thread asking for exactly that.
+Its central rule is the one the workflow arc had been circling for thirteen sources without stating: **the verification signal decides the orchestration mechanism** ([[verification-signal-picks-the-mechanism]]).
+A deterministic check earns a `/goal` and a long leash; a subjective check requires a workflow with a rubric and a separate verifying agent.
+That inverts the intuitive framing, where mechanism follows task difficulty, and it makes measurability the binding constraint on autonomy: you can only delegate as far as you can define done.
+Stated that way, the wiki's eval spine is not a parallel track to its agentic-engineering track, it is *upstream* of it - which is the strongest version yet of why hcho's background is the leverage rather than the legacy.
+
+The source also lands a genuine convergence.
+[[self-referential-bias]] - a model grades its own output too leniently - was already in the wiki twice, measured from the eval literature ([[llm-as-judge]]: GPT-4 about +10%, Claude-v1 about +25% self-win rate) and attributed to shared context by a code-review product ([[fresh-context-review]]).
+Anthropic's own tooling team arrives at it a third time, independently, as an architectural constraint, and prescribes the fuller fix: vary the model *and* the context, splitting coordinate, do, and verify into three agents.
+Three literatures reaching the same conclusion without citing each other is the strongest evidence standard the wiki has, and the conclusion is the founding principle of independent validation: the thing that checks the work cannot be the thing that did it.
+
+Two smaller shifts are worth recording because they cut against the wiki's own accumulated instincts.
+First, [[principles-over-constraints]]: Anthropic cut the Claude Code system prompt by 80%, because smarter models need less direction, fewer constraints, and fewer examples, and both `CLAUDE.md` files and skills are judged generally too long.
+Earlier sources encouraged richer configuration; this says instruction volume now caps quality rather than raising it, which is [[build-for-the-model-of-the-future]] applied to your own prompts.
+Second, a counterweight to [[get-out-of-the-loop]]: Tharic cut back from about five parallel Claude Code sessions to one active session, and [[read-what-the-agent-writes]] names the failure mode both speakers confess to (skipping the plan and saying "just do it").
+The reconciliation is a distinction the wiki had been blurring - the loop you exit is the *review* loop, the loop you cannot exit is the *judgment* loop - and it means parallel agent count is capped by human attention, not by tooling.
+That is a more honest picture of solo-operator leverage than the maximal-parallelism sources implied, and a relevant correction for how hcho actually runs Mandu.
+
 ## Open threads
 
 - The [[rag]] and [[production-llm]] hubs are now open and substantive; the prompting hub is still empty (folded loosely into production-llm and the career curriculum for now).
-- The `raw/` inbox is now fully ingested (all 22 curated sources). The eval area is [[evals|established]] (9 sources) with a coherent stance: define criteria up front, prefer functional testing, triangulate methods, measure reproducibly, and evaluate on your own uncontaminated data.
+- The eval area is [[evals|established]] (9 sources) with a coherent stance: define criteria up front, prefer functional testing, triangulate methods, measure reproducibly, and evaluate on your own uncontaminated data.
+- **`raw/` is no longer empty.** Five sources landed between 2026-07-16 and 2026-07-28; one ([[designing-loops-and-workflows]]) is ingested, four remain: loop engineering applied to running a business, Ryan Carson ([[ryan-carson]]) on operating agent fleets, Kun's real full-stack agentic build, and the Forward Deployed Engineer playbook. All four press on the agentic-engineering and career halves.
 - Next natural growth: a **prompting** hub (still empty) and dedicated **agent-eval / retrieval-eval** concepts (Huyen Ch. 6 territory; the guidebook's tool-calling/assistant/agentic benchmarks). A **lint** pass would be timely to catch any orphan pages or missing cross-wiki links after this large batch.
 - A dedicated agentic-eval / retrieval-eval concept may be worth splitting out as agent and RAG evaluation recur (Huyen's Ch. 6 territory).
-- [[agentic-engineering]] may graduate from a concept into its own area hub once the Claude Code / agent-tooling sources land.
+- [[agentic-engineering]] should graduate from a concept into its own area hub. The first Claude Code / agent-tooling source has now landed and four more are queued; the plan is to graduate it after that batch, so the hub is shaped once from the full evidence.
 - The career hub folds ~50 tips; a few (e.g. [[own-the-problem-not-the-code]], [[build-for-the-model-of-the-future]]) are link-markers awaiting reinforcement before becoming full pages.
-- Anthropic's actual "building effective agents" guidance underlies [[start-as-a-workflow]]; deepen it when a primary Anthropic source is ingested.
+- Anthropic's actual "building effective agents" guidance underlies [[start-as-a-workflow]]. The first primary Anthropic voice is now in ([[tharic]], [[designing-loops-and-workflows]]) and is consistent with it, but the published guidance document itself is still not a source; worth ingesting directly.
+- **New, from source 22:** [[principles-over-constraints]] argues most `CLAUDE.md` files and skills are too long. That is an actionable audit of Mandu's own configuration, and it sits in tension with [[context-is-king]]; the working reconciliation (load domain context heavily, behavioral instructions sparingly) should be tested rather than assumed.
 - Cross-wiki: keep this reference layer linked to, not duplicating, hcho's own eval synthesis in the evals pilot wiki.

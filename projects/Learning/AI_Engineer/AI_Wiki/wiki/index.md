@@ -1,6 +1,6 @@
 ---
 type: index
-last-updated: 2026-07-08
+last-updated: 2026-07-28
 ---
 
 # Index
@@ -10,7 +10,7 @@ Every page is listed once under its category with a one-line summary.
 Read this first when answering a query, then drill into the linked pages.
 Updated on every ingest.
 
-Counts: 21 sources, 8 areas, 96 concepts, 20 entities.
+Counts: 22 sources, 8 areas, 101 concepts, 21 entities.
 
 ## Areas
 
@@ -46,6 +46,7 @@ Counts: 21 sources, 8 areas, 96 concepts, 20 entities.
 - [[functional-scorers]] - rule-based verifiers (IFEval-style); the interpretable, cheap default over model judges.
 - [[score-reproducibility]] - the full checklist of why a reported benchmark score won't reproduce.
 - [[contamination-detection]] - the three flavors and five methods for catching benchmark contamination.
+- [[self-referential-bias]] - a model grades its own output too leniently; vary both the model and the context of the verifier.
 
 ### Agent SaaS
 - [[agent-saas-sells-work]] - sell the job that disappears, not the tool; the market is labor, not seats.
@@ -91,6 +92,7 @@ Counts: 21 sources, 8 areas, 96 concepts, 20 entities.
 - [[own-the-problem-not-the-code]] - as code gets cheap, own the domain, architecture, and definition of done.
 - [[dont-let-ai-be-your-architect]] - humans own architecture, APIs, and interface; AI gets non-core areas.
 - [[code-as-sawdust]] - prompts/specs are the durable artifact; code is a regenerable byproduct.
+- [[read-what-the-agent-writes]] - do not exit the loop by skipping the plan; reading explainers is how you keep judgment.
 
 ### AI Operating System and agent safety
 - [[ai-operating-system]] - a personal second brain you run all work through so context compounds.
@@ -100,6 +102,7 @@ Counts: 21 sources, 8 areas, 96 concepts, 20 entities.
 - [[phased-autonomy]] - the bike method: grant autonomy in stages, only once earned.
 - [[building-skills]] - build skills forward or by reverse-engineering; evolve them every use.
 - [[self-updating-config]] - a skill that mines correction history and improves its own CLAUDE.md.
+- [[principles-over-constraints]] - smarter models need fewer rules and examples; Anthropic cut its own system prompt by 80%.
 - [[red-team-your-agent]] - deliberately attack your agent (prompt injection) to verify it holds.
 
 ### Agent operations
@@ -115,6 +118,8 @@ Counts: 21 sources, 8 areas, 96 concepts, 20 entities.
 - [[ship-fast-learn-from-users]] - ship in days not months; real users reveal edge cases.
 - [[get-out-of-the-loop]] - don't review every line; build the automated reviewer instead.
 - [[plan-code-validate]] - plan deeply, delegate coding, automate validation; plan depth buys autonomy.
+- [[planning-is-removing-unknowns]] - planning is not a phase but continuous exploration; interrogate dependencies, keep implementation notes, re-spec.
+- [[verification-signal-picks-the-mechanism]] - choose /loop vs /goal vs a workflow by the shape of your check, not the size of the task.
 - [[fresh-context-review]] - review AI work in a clean context window; a biased reviewer misses bugs.
 - [[agent-testing-instructions]] - write "how I would test this" E2E instructions; agents default to shallow tests.
 - [[sub-agents]] - delegate heavy exploration to child agents that return only conclusions.
@@ -154,7 +159,8 @@ Counts: 21 sources, 8 areas, 96 concepts, 20 entities.
 - [[huggingface]] - open-source AI platform; Open LLM Leaderboard, MTEB, OpenEvals; hub of rigorous benchmarking.
 - [[anthropic]] - maker of Claude / Claude Code; source of the "start as a workflow, earn autonomy" agent guidance.
 - [[andrej-karpathy]] - AI engineer/educator; frames tool-use as a real skill gap.
-- [[boris-cherny]] - associated with Claude Code; "build for the model of the future."
+- [[boris-cherny]] - associated with Claude Code; "build for the model of the future"; author of `simplify`.
+- [[tharic]] - Anthropic Claude Code team; the wiki's first primary-source voice on loops, goals, and workflows.
 - [[claude-code]] - Anthropic's agentic coding tool; substrate for agentic engineering and the AI OS.
 - [[openai]] - maker of GPT / Codex; the common cross-checking model in multi-model workflows.
 - [[josh-pigford]] - serial solo founder (sold Baremetrics); builds 5 AI products in parallel with agents.
@@ -191,7 +197,14 @@ Counts: 21 sources, 8 areas, 96 concepts, 20 entities.
 - [[evaluate-ai-systems]] - Chip Huyen (AI Engineering Ch. 4): evaluation criteria, model selection/build-vs-buy, contamination, and designing an evaluation pipeline.
 - [[llm-evaluation-guidebook]] - Fourrier et al. (OpenEvals/HF): the exhaustive eval guidebook - saturation, reproducibility, functional scorers, judge biases, and creating your own eval.
 - [[what-is-a-contaminated-llm]] - Jonathan Chavez (llm-stats): the contamination deep-dive - the Codeforces cliff, five detection methods, famous cases, and the 2026 resistant stack.
+- [[designing-loops-and-workflows]] - Tharic (Anthropic Claude Code team) with Peter Yang: the first primary-source account of /loop, /goal, and workflows - pick the mechanism by your verification signal, split the verifier from the producer, and cut your instructions.
 
 ## Pending pages (linked, not yet written)
 
 None currently - all previously-pending link markers have been written.
+
+## Open structural question
+
+[[agentic-engineering]] is still a concept page but now behaves like a hub, with [[verification-signal-picks-the-mechanism]], [[sub-agents]], [[plan-code-validate]], [[planning-is-removing-unknowns]], [[principles-over-constraints]], and [[get-out-of-the-loop]] hanging off it.
+Four more agent-workflow sources are queued in `raw/` as of 2026-07-28 (loops-for-business, Ryan Carson on agent fleets, Kun's agentic full-stack build, the FDE playbook).
+Plan: graduate it to an area once that batch is ingested, so the hub is shaped once from the full evidence rather than four times.

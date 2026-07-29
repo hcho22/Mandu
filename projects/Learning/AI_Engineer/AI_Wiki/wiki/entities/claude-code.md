@@ -1,9 +1,9 @@
 ---
 type: entity
 tags: [tool, claude-code, anthropic, agentic-engineering]
-status: developing
-source-count: 5
-last-updated: 2026-07-08
+status: established
+source-count: 6
+last-updated: 2026-07-28
 ---
 
 # Claude Code
@@ -18,8 +18,25 @@ Runs the Claude models in an agent harness with memory, context management, slas
 - [[production-agent-with-cma]] - ships a built-in Claude API skill that makes it "really good" at building on Anthropic's Managed Agents APIs ("Claude can help you build your own Claude").
 - [[every-claude-feature-ranked]] - a 500-hour tour of its feature surface (Skills #1; status line, routines, sub-agents vs [[agent-teams]], [[checkpoint-rewind]], auto-memory, /goal, /insights).
 - [[working-with-fable-5]] - Theo's ([[theo-t3]]) production workflow: reasoning-effort control ([[reasoning-effort-discipline]]), `CLAUDE.md` as a [[model-selection]] glossary, [[model-routing]] by shelling out to Codex via `bash`, JS **workflows** (fan-out + judge panel) vs **sub-agents**, and the long-running **"goal"** that ran ~5 hours to clear a backlog.
+- [[designing-loops-and-workflows]] - **the first primary-source account**, from [[tharic]] on the Claude Code team.
+
+## The orchestration primitives (from the team, [[designing-loops-and-workflows]])
+
+- **`/loop`** - the general mechanism for iterative, orchestrated work.
+- **`/goal`** - reminds the agent of its exit condition so it does not stop early; for when spec and exploration are already done.
+- **Workflows** - the most powerful of the three; spin up [[sub-agents]] that do the work in parallel and verify it, making a non-deterministic task closer to deterministic. Implemented as a JS file that can be saved into a skill.
+- **The selection rule** is [[verification-signal-picks-the-mechanism]]: deterministic check takes `/goal`, subjective check takes a workflow with a rubric and a separate verifier ([[self-referential-bias]]).
+
+## Product and org facts from that source
+
+- **The system prompt was cut by 80%,** on the reasoning that smarter models need less direction, fewer constraints, and fewer examples ([[principles-over-constraints]]).
+- **HTML artifacts** are used broadly at Anthropic for sharing plans, PRs, status reports, and incident reports; at time of recording they were on Team and Enterprise plans, not Max or Pro.
+- **Claude in Slack ("cloud tag")** is the async sibling surface: parallel and background work (explorations, PR specs, babysitting a PR) happens there, focused iterative work happens in Claude Code. Every agent and channel has its own memory, and skills trigger from natural language with no special syntax.
+- **`simplify`**, a repo-cleanup tool by [[boris-cherny]], is named as the answer to workspace slop.
+- MCP context cost "depends on the MCP"; the MCP team has invested in reducing it via tool search.
 
 ## Notes
 
-Central node across the AI-builder sources hcho is ingesting; expect the Fable5, claude-features-ranked, and Claude-managed-agents summaries to extend this page.
+Central node across the AI-builder sources hcho is ingesting; the Fable5, claude-features-ranked, Claude-managed-agents, and now the Claude Code team interview all extend it.
 Relevant to hcho directly: mastery of Claude Code is repeatedly framed as independently hireable.
+Note the evidentiary shift with the sixth source: prior entries describe the tool from outside, and this one describes the intent behind it from inside, which is why the two accounts of workflows (Theo's fan-out-plus-judge-panel and Tharic's verify-against-a-rubric) agree on structure without either citing the other.

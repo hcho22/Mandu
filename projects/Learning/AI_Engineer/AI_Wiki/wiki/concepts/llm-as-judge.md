@@ -2,8 +2,8 @@
 type: concept
 tags: [evals, llm-as-judge, model-based-eval, alignment]
 status: established
-source-count: 5
-last-updated: 2026-07-08
+source-count: 6
+last-updated: 2026-07-28
 ---
 
 # LLM-as-Judge
@@ -41,3 +41,13 @@ Related: **reward models** (Bradley-Terry pairwise or absolute-score) are fast, 
 The trap this concept guards against is trusting a judge that was never validated against humans.
 The rigorous move, which is exactly hcho's validation instinct, is to treat the evaluator itself as a system under test: measure it with precision/recall, not raw agreement, and keep a human-labeled calibration set.
 Later sources on judge design, rubric prompting, and bias should attach here.
+
+## The same bias, arrived at from agent tooling ([[designing-loops-and-workflows]], 2026-07-28)
+
+Self-enhancement bias is not only an eval-methodology finding.
+An Anthropic [[claude-code]] team member ([[tharic]]) names it independently as **[[self-referential-bias]]** and treats it as a design constraint on agent architecture: "When a model prefers its own outputs, it's going to be more lenient at verifying it."
+His prescription is the structural version of the mitigation this page already records, applied to workflows rather than benchmarks: split coordinating, doing, and verifying into three agents with different context and different models.
+
+This is a notable convergence.
+The measured finding here (GPT-4 about +10%, Claude-v1 about +25% self-win rate), the code-review finding in [[fresh-context-review]], and Anthropic's own tooling guidance all reach the same conclusion without citing one another, which raises confidence that "do not let the producer grade itself" is a property of the models rather than an artifact of any one evaluation setup.
+The practical bridge is that the jury recommendation on this page and the separate-verifier-agent recommendation there are the same countermeasure at different scales.
