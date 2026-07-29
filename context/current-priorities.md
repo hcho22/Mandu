@@ -1,6 +1,6 @@
 # Current Priorities
 
-_Last updated: 2026-07-15. Update this file when your focus shifts._
+_Last updated: 2026-07-17. Update this file when your focus shifts._
 
 **This week (by 2026-07-18), per hcho 2026-07-12:** finish both in-flight PRDs. ✅ **BOTH DONE.**
 ✅ **Agentic RAG retrieval-quality pass DONE** (2026-07-13, two days early - all six
@@ -19,12 +19,12 @@ next step is not more build or planning - it is pre-submission
 provisioning (signing/`DEVELOPMENT_TEAM`, App Store Connect record, privacy-policy URL,
 trademark + App Store name clearance which the GTM self-grade flags as UNVERIFIED) and then
 executing the channel test against the thesis kill criteria. With both passes closed, Agentic RAG returns to purely validation
-(the standing #1). **New in-flight (opened 2026-07-15): the "Purvia" rebrand**
-(`projects/Agentic_RAG/raw/prd-rebrand-purvia-2026-07-14.md`) - the product's
-first real brand, a tight display-only rename (6 vendor-facing "Agentic RAG"
-strings → "Purvia") plus a naming ADR, zero behavior/RLS/contract change. PRD
-authored + committed to the dev repo (PR #87); implementation US-001-006 not yet
-started. Pre-launch branding prep, not a productization build track.
+(the standing #1). ✅ **Purvia rebrand DONE (2026-07-17):** the product's
+first real brand shipped - a tight display-only rename (vendor-facing "Agentic RAG"
+strings → "Purvia") plus naming ADR-0011 and the GitHub repo rename to Purvia;
+US-001-007 merged (dev-repo PRs #88-92), zero behavior/RLS/contract change, technical
+namespace untouched. Source PRD `projects/Agentic_RAG/raw/prd-rebrand-purvia-2026-07-14.md`.
+With that closed there is now zero in-flight build; Agentic RAG is purely validation.
 
 1. **Agentic RAG Phase 2 as the primary income + portfolio flagship (top focus):** Model A,
    sell the starter kit to agency/freelance AI devs, built in public. **The full Phase 2
