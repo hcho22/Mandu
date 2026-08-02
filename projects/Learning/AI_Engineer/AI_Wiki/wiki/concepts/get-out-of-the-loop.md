@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [agentic-engineering, workflow, scale, validation]
-status: developing
-source-count: 3
-last-updated: 2026-07-28
+status: established
+source-count: 6
+last-updated: 2026-08-01
 ---
 
 # Get Out of the Loop
@@ -28,6 +28,26 @@ The central philosophy of [[building-products-with-agents]] (and lived out in [[
 
 Dating the two claims: [[building-products-with-agents]] (filed 2026-07-08) frames parallelism as a forcing function that pushes you out of the loop; this source (2026-07-28) finds a ceiling where added parallelism degrades the human's prompt quality and judgment faster than it adds throughput.
 These are compatible if you separate the two exits: parallelism forces you out of *line-by-line review*, which is the point, but it does not scale your capacity for *direction and judgment*, which is what [[read-what-the-agent-writes]] says you must not exit.
+
+## Where the exits stop (2026-08-01)
+
+Three more sources sharpen the boundary further, and all three exit *further* on implementation while explicitly refusing to exit somewhere else.
+
+- **Out of the tool calls, but not the plan** ([[agentic-full-stack-build]]).
+Kun runs a "calm mode" that hides all tool calls, script runs, and skill invocations, and never reads source code across an entire full-stack build - while reviewing every plan as an interactive artifact ([[review-plans-as-artifacts]]).
+His justification is dated: watching tool calls was useful with weaker models and the noise is no longer worth reading.
+But the two interventions that mattered were both **scope and cost judgments** ([[agent-over-engineering]], [[anchor-cost-in-real-pricing]]) - so what he could not delegate was deciding how much system the situation deserved.
+- **Out of the code, but not out of the product** ([[running-teams-of-ai-agents]]).
+[[ryan-carson]] automates browser QA, production digests, and rubric-graded self-improvement, and still says: "There's no substitute, and we probably won't have a substitute for a while, for you using your own app."
+Even the smartest models still lack the sense of *obvious*.
+He also names the real cost of the exit: **observability is the hard part, not the automation.**
+- **Out of the scaffolding entirely** ([[building-at-the-frontier]]).
+[[boris-cherny]]'s prescription is the furthest exit recorded here - describe the **task, the guardrails, and the exit criteria**, then let the model cook and check back later, for days or weeks ([[long-horizon-agent-runs]]).
+The condition is unchanged and absolute: a verification loop the model can run on itself.
+
+The pattern across six sources is now stable enough to state as a rule.
+**You can exit any loop you can replace with a check, and no loop you cannot.**
+Line-by-line review is replaceable ([[adversarial-code-review]]). Scope judgment, product feel, and direction are not - because no one has built the oracle for them.
 
 ## Synthesis
 

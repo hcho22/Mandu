@@ -1,8 +1,8 @@
 ---
 type: synthesis
-last-updated: 2026-07-28
-status: developing
-source-count: 22
+last-updated: 2026-08-01
+status: established
+source-count: 28
 ---
 
 # Synthesis
@@ -133,15 +133,83 @@ Second, a counterweight to [[get-out-of-the-loop]]: Tharic cut back from about f
 The reconciliation is a distinction the wiki had been blurring - the loop you exit is the *review* loop, the loop you cannot exit is the *judgment* loop - and it means parallel agent count is capped by human attention, not by tooling.
 That is a more honest picture of solo-operator leverage than the maximal-parallelism sources implied, and a relevant correction for how hcho actually runs Mandu.
 
+## What the six-source batch changed (2026-08-01)
+
+The batch that closed `raw/` - [[building-at-the-frontier]], [[running-teams-of-ai-agents]], [[agentic-full-stack-build]], [[fde-in-30-days]], [[loops-to-run-your-business]], [[building-marketing-agents]] - is the largest single shift in the wiki's picture so far.
+It graduated [[agentic-engineering]] to an area, created [[agent-operations]], and did three things to the spine.
+
+### 1. Verification was promoted from a practice to *the* constraint
+
+The wiki's founding thesis was that quality is the connective tissue between the craft and the business.
+This batch makes a stronger claim: **verification is the binding constraint on the entire agentic discipline, and everything else is being absorbed by the harness.**
+
+The creator of [[claude-code]] says verification is "probably the single most important thing that people do not get right" ([[elicitation-over-prompt-engineering]]).
+An 11-day autonomous rewrite of a JavaScript runtime from Zig to Rust worked because a mature test suite existed; a 15-day Electron-to-Swift port runs on "screenshot it, compare pixel by pixel, don't stop until you're done" ([[long-horizon-agent-runs]]).
+A business loop closes on a Google ranking or an eval threshold rather than a test ([[business-loops]]).
+An enterprise engagement sells the eval report as the artifact that earns a client's trust ([[audit-eval-deployment]]).
+
+Meanwhile prompting was explicitly demoted (elicitation replaced it), context management is being demoted ([[compaction-over-context-window]]), and orchestration primitives are partially demoted at the frontier (`/go` and `/loop` are "helpful but not required" now).
+**What has not been demoted, in any of six sources, is verification.**
+
+That makes [[evals]] upstream of [[agentic-engineering]] rather than adjacent to it: what you can measure determines what you can automate.
+It is the strongest form the wiki has yet produced of the argument that hcho's validation background is a first-class AI-engineering skill and not a story he has to keep justifying.
+
+### 2. The eval inverted - from a gate into a source of work
+
+Three unrelated sources use eval sets to *drive* something rather than to report on it: as a loop's stop condition, as a commercial artifact that purchases autonomy, and - most consequentially - as a generator.
+[[self-improving-agent-loop]] grades real production conversations against a rubric daily, and anything below threshold **opens its own fix PR**; roughly three ship per day.
+
+The standard case for evals is defensive.
+This inverts it: **a good rubric plus real traffic plus an agent that can open PRs turns the eval system into the thing that generates the roadmap.**
+It is the [[data-flywheel]] move applied to product changes rather than training data, and it is directly buildable against the Agentic RAG escalation golden set and Rep Today once it has users.
+
+The cost of that promotion is a claim that has to be held honestly: [[evals-saturate-and-get-replaced]].
+Boris Cherny says evals outlive the harness "but not by much" - one to three model generations.
+The wiki had implicitly assumed private product evals were immune to the decay that eats public benchmarks; they are not, only slower.
+**The eval skill is durable; the eval artifact is not.**
+Positioning should be stated at the level that survives, and investment should go into the *generator* - the path from observed failure to new test case - rather than into the test cases.
+
+### 3. The career half acquired a specific, well-paid target
+
+[[forward-deployed-engineer]] is the first named role in the wiki whose two required capabilities map cleanly onto hcho's actual history.
+The role wants deployment judgment and eval rigor.
+The eval half is the declared edge.
+The other half - going on-site, watching how work actually happens rather than how it is documented, cataloguing every exception, being accountable when it breaks in production - is a description of hardware validation at a customer-facing company.
+
+**FDE is unusual among AI roles in rewarding the non-AI half of his background rather than discounting it**, and it straddles both target buckets rather than forcing a choice between AI builder and AI evals/quality.
+
+Two practical consequences follow.
+[[do-the-job-before-the-title]]'s 30-day case-study spec is **largely already satisfied** by the Agentic RAG work; the gaps are narrow (an audit trail framed as a trust artifact, resumability as a deliberate feature, the three-bucket business framing, and Week 4 packaging - iteration history plus a rehearsed VP-level pitch).
+That reframes the flagship as "a product I am validating *that is also an FDE case study*" at close to zero extra cost.
+And [[solve-for-the-exceptions]] supplies a better sentence than "I bring validation rigor": *there is one way it goes right and a thousand ways it goes wrong, and I have spent ten years cataloguing the thousand.*
+
+The honest counterweight is [[two-kinds-of-judgment]]: the technical column is well covered and the **commercial column is thin**.
+Running the buyer interviews as free Phase-1 audits would build the weak column while doing work already on the plan.
+
+### The thing the wiki now disagrees with itself about
+
+This batch is also the first to introduce load-bearing contradictions rather than accumulating agreement, and that is a sign of maturity rather than a problem.
+Local versus cloud agents, whether context degrades, whether instructions compound, whether prompt injection is still the threat model, whether scaffolding is necessary - all are recorded on their pages and tabulated in [[index]] rather than smoothed over.
+
+The one that most affects how this wiki should be read is **vendor concentration**.
+The input diet is heavily Claude Code-centric, several sources are from Anthropic itself, and [[independent-agent-lab-vs-frontier-lab]] is the first explicit counter-position.
+That should be corrected in the source diet, not just noted.
+
+Finally, [[creative-entropy]] is the batch's most under-appreciated finding and applies to everything in [[agent-operations]]: **every loop here is a hill climber, and hill climbers converge and then keep running while their own metrics look fine.**
+Only one source names it. It is a general property of the pattern the whole area is built on.
+
 ## Open threads
 
 - The [[rag]] and [[production-llm]] hubs are now open and substantive; the prompting hub is still empty (folded loosely into production-llm and the career curriculum for now).
-- The eval area is [[evals|established]] (9 sources) with a coherent stance: define criteria up front, prefer functional testing, triangulate methods, measure reproducibly, and evaluate on your own uncontaminated data.
-- **`raw/` is no longer empty.** Five sources landed between 2026-07-16 and 2026-07-28; one ([[designing-loops-and-workflows]]) is ingested, four remain: loop engineering applied to running a business, Ryan Carson ([[ryan-carson]]) on operating agent fleets, Kun's real full-stack agentic build, and the Forward Deployed Engineer playbook. All four press on the agentic-engineering and career halves.
-- Next natural growth: a **prompting** hub (still empty) and dedicated **agent-eval / retrieval-eval** concepts (Huyen Ch. 6 territory; the guidebook's tool-calling/assistant/agentic benchmarks). A **lint** pass would be timely to catch any orphan pages or missing cross-wiki links after this large batch.
-- A dedicated agentic-eval / retrieval-eval concept may be worth splitting out as agent and RAG evaluation recur (Huyen's Ch. 6 territory).
-- [[agentic-engineering]] should graduate from a concept into its own area hub. The first Claude Code / agent-tooling source has now landed and four more are queued; the plan is to graduate it after that batch, so the hub is shaped once from the full evidence.
+- The eval area is [[evals|established]] (12 sources) with a coherent stance: define criteria up front, prefer functional testing, triangulate methods, measure reproducibly, and evaluate on your own uncontaminated data - now with the added caveat that the suite itself has a one-to-three-generation half-life.
+- **`raw/` is empty.** All 28 sources have been ingested as of 2026-08-01. The next ingest needs new material curated in.
+- **Correct the vendor bias in the input diet.** The wiki is heavily Claude Code and Anthropic-weighted. Sources on OpenAI/Codex, the independent agent labs (Amp, Cognition, Factory), and open-model tooling would test whether the craft conclusions here generalize or are harness-specific. [[independent-agent-lab-vs-frontier-lab]] is currently the only counter-position and it comes from a paying customer of one of those labs.
+- ~~[[agentic-engineering]] should graduate into its own area hub.~~ **Done 2026-08-01**, along with the creation of [[agent-operations]].
+- Next natural growth: a **prompting** hub (still empty) and dedicated **agent-eval / retrieval-eval** concepts (Huyen Ch. 6 territory; the guidebook's tool-calling/assistant/agentic benchmarks). Agent evaluation is now conspicuously under-covered relative to how much agent *building* the wiki holds.
+- **A lint pass is now overdue.** The 2026-08-01 batch added 37 concepts, 2 areas, and 3 entities in one pass; it should be checked for orphans, broken links, stale cross-references, and pages whose claims a newer source has superseded.
 - The career hub folds ~50 tips; a few (e.g. [[own-the-problem-not-the-code]], [[build-for-the-model-of-the-future]]) are link-markers awaiting reinforcement before becoming full pages.
 - Anthropic's actual "building effective agents" guidance underlies [[start-as-a-workflow]]. The first primary Anthropic voice is now in ([[tharic]], [[designing-loops-and-workflows]]) and is consistent with it, but the published guidance document itself is still not a source; worth ingesting directly.
-- **New, from source 22:** [[principles-over-constraints]] argues most `CLAUDE.md` files and skills are too long. That is an actionable audit of Mandu's own configuration, and it sits in tension with [[context-is-king]]; the working reconciliation (load domain context heavily, behavioral instructions sparingly) should be tested rather than assumed.
+- **Audit Mandu's own configuration.** [[principles-over-constraints]] argued most `CLAUDE.md` files and skills are too long; [[ablation-driven-development]] now supplies the procedure (delete, use, observe, add back only repeated failures) and Boris Cherny's blunt instruction to users: every six months, delete your `CLAUDE.md`, skills, and hooks and see what the model does. This sits in tension with [[context-is-king]]; the working reconciliation (load domain context heavily, behavioral instructions sparingly) should be tested rather than assumed.
+- **Cross-project actions this batch generated**, which belong outside this wiki and are noted here only so they are not lost: an FDE role page in the Job-Search Roles wiki (`projects/Job_Search/wiki/`, which covers Applied AI Engineer but not FDE); FDE-titled roles added to the job-hunter target list; [[solve-for-the-exceptions]] and the carpenter analogy from [[manager-of-agents]] added to `projects/job-search/interview-prep.md`; and an assessment of the Agentic RAG work against the [[do-the-job-before-the-title]] checklist.
+- **Test [[creative-entropy]] against the wiki's own loops.** It is the batch's least-corroborated finding (one source) and its most broadly applicable. If it holds, every scheduled agent in [[agent-operations]] needs a deliberate external-input step.
 - Cross-wiki: keep this reference layer linked to, not duplicating, hcho's own eval synthesis in the evals pilot wiki.

@@ -1,6 +1,6 @@
 ---
 type: index
-last-updated: 2026-07-28
+last-updated: 2026-08-01
 ---
 
 # Index
@@ -10,13 +10,15 @@ Every page is listed once under its category with a one-line summary.
 Read this first when answering a query, then drill into the linked pages.
 Updated on every ingest.
 
-Counts: 22 sources, 8 areas, 101 concepts, 21 entities.
+Counts: 28 sources, 10 areas, 137 concepts, 24 entities.
 
 ## Areas
 
-- [[evals]] - how you measure whether an LLM product works and keep improving it past the demo stage. (3 sources)
+- [[evals]] - how you measure whether an LLM product works and keep improving it past the demo stage. (12 sources)
+- [[agentic-engineering]] - building software *with* agents: direction, orchestration, verification, context, cost, and what the human is still for. (11 sources)
+- [[agent-operations]] - running things *with* agents continuously: loops, routines, fleets, self-improvement, and agents pointed at distribution. (6 sources)
+- [[ai-career]] - navigating an AI-native tech career: staying valuable, positioning, growth, and the forward-deployed-engineer role. (4 sources)
 - [[agent-saas]] - building and selling agents as products: the business model, build ladder, and trust layer. (1 source)
-- [[ai-career]] - navigating an AI-native tech career: staying valuable, positioning, and growth. (1 source)
 - [[ml-metrics]] - classical ML evaluation metrics (ROC/AUC, precision/recall, thresholds); the foundations under evals. (1 source)
 - [[system-design]] - designing robust, production-ready apps in the AI era: trade-offs, abstraction layers, security boundaries, durability. (1 source)
 - [[agentic-web]] - building for a web where AI agents are the customer: the machine-to-machine economy, agent infrastructure, and AEO. (1 source)
@@ -47,6 +49,7 @@ Counts: 22 sources, 8 areas, 101 concepts, 21 entities.
 - [[score-reproducibility]] - the full checklist of why a reported benchmark score won't reproduce.
 - [[contamination-detection]] - the three flavors and five methods for catching benchmark contamination.
 - [[self-referential-bias]] - a model grades its own output too leniently; vary both the model and the context of the verifier.
+- [[evals-saturate-and-get-replaced]] - your own product evals decay too (1-3 model generations); budget for replacement, not maintenance.
 
 ### Agent SaaS
 - [[agent-saas-sells-work]] - sell the job that disappears, not the tool; the market is labor, not seats.
@@ -82,8 +85,16 @@ Counts: 22 sources, 8 areas, 101 concepts, 21 entities.
 - [[switchers-edge]] - the bar moved from credential to owned-outcome judgment, which career switchers already have.
 - [[career-switch-mistakes]] - the four that end switches in week two; antidote is skill-first/build-first/tool-agnostic/public.
 - [[single-call-workflow-or-agent]] - pick the least-powerful architecture that works; knowing when NOT to use an agent.
-- [[agentic-engineering]] - the new expertise: context engineering, agentic validations, agentic tooling, compound engineering.
 - [[react-loop]] - the agent control loop: reason, act with a tool, observe, repeat.
+- [[forward-deployed-engineer]] - the embedded role that pays $150K-$1M for deployment judgment plus eval rigor. **Live career target.**
+- [[deployment-is-the-moat]] - intelligence is commoditized; the edge is where, how, and why you apply it.
+- [[audit-eval-deployment]] - the three-phase engagement loop, with eval as the load-bearing middle stage.
+- [[real-workflow-not-documented]] - the documented process is never the real one; the exceptions are the system.
+- [[two-kinds-of-judgment]] - commercial plus technical, and why "good enough at both" fails.
+- [[solve-for-the-exceptions]] - one way it goes right, a thousand ways it goes wrong; hcho's QA thesis restated.
+- [[build-on-existing-systems]] - never force a migration off the ERP they spent millions on.
+- [[do-the-job-before-the-title]] - a checkpointed 30-day spec for manufacturing the proof before applying.
+- [[manager-of-agents]] - whatever you were, you manage agents now; it makes you more technical, and decisions become the bottleneck.
 - [[taste-as-moat]] - as production gets cheap, encoded judgment (taste) is the durable value.
 - [[t-shaped-portfolio]] - broad breadth + one deep area; what recruiters want.
 - [[build-in-public]] - share unfinished work to finish, improve, and get discovered.
@@ -110,6 +121,24 @@ Counts: 22 sources, 8 areas, 101 concepts, 21 entities.
 - [[agent-as-employee]] - give the agent its own identity and scoped permissions; write as itself.
 - [[everything-is-a-pr]] - run a full SDLC even solo; every change is a reviewable PR.
 - [[build-the-machine-first]] - build the system that does the work, then augment; inverts MVP advice.
+- [[self-maintaining-codebase]] - 20-30 daily routines at Anthropic; one-sentence prompts, every routine ends in a PR.
+- [[self-improving-agent-loop]] - grade real production traffic against a rubric; failures open their own fix PRs.
+- [[production-watchdog]] - a daily digest of what real customers did, each line linked to the live UI.
+- [[cloud-agents-over-local]] - a VM per session instead of worktrees. **Contested against local-worktree sources.**
+- [[independent-agent-lab-vs-frontier-lab]] - don't build your software factory inside a frontier lab's stack.
+
+### Business loops
+- [[business-loops]] - build/measure/learn pointed at business metrics over months; the Lean Startup lineage.
+- [[minimal-viable-loop]] - start with the smallest verifiable outcome, not the ambitious goal.
+- [[leading-metric-over-vanity-metric]] - pick a number a single iteration can actually move.
+- [[loop-cost-discipline]] - tie stop conditions to unit economics; cost scales with run frequency, not lifetime.
+- [[creative-entropy]] - loops converge and stagnate silently; inject DNA from outside the loop.
+
+### Agents pointed at distribution
+- [[marketing-agent]] - the three requirements that separate an agent from an automation.
+- [[unified-data-warehouse-for-agents]] - unified cross-channel data is the precondition, not the model.
+- [[test-breadth-over-conviction]] - positioning is empirical; 10-20 variants before concluding.
+- [[creative-is-the-targeting]] - the model reads your creative and routes it; the paid-media twin of AEO.
 
 ### AI-assisted build workflow
 - [[phased-implementation]] - research to plan to implement in small, testable phases; each phase = one PR.
@@ -130,6 +159,19 @@ Counts: 22 sources, 8 areas, 101 concepts, 21 entities.
 - [[model-routing]] - one model orchestrates and "shells out" to a cheaper/specialized model for the grunt work.
 - [[reasoning-effort-discipline]] - keep effort at "high"; x-high/max over-reason and over-charge. The biggest cost lever.
 - [[time-to-fix-as-health-signal]] - read agent time-to-fix + files-touched as a codebase-health diagnostic.
+- [[ablation-driven-development]] - delete the whole prompt layer; add back only what repeatedly fails.
+- [[product-overhang]] - capability nobody has built a product for, and the hobbling that hides it.
+- [[elicitation-over-prompt-engineering]] - the durable skill: a too-hard task plus self-verification.
+- [[long-horizon-agent-runs]] - days-to-weeks runs; hard task + self-executable check + stopping condition.
+- [[dynamic-workflows-as-test-time-compute]] - fan out, verify, fan out; orchestration as a scaling axis.
+- [[one-orchestrator-agent]] - single-threaded human interface over parallel work; steerable crewmates.
+- [[review-plans-as-artifacts]] - interactive artifacts beat 351-line markdown; feedback becomes per-element.
+- [[define-the-end-to-end-gate]] - a concrete E2E done-condition, stated up front, forces the plan to expose gaps.
+- [[agent-over-engineering]] - agents invent env tiers, audit trails, exports; cutting them is human work.
+- [[anchor-cost-in-real-pricing]] - make it search real pricing; bad numbers silently drive architecture.
+- [[compaction-over-context-window]] - compaction quality beats window size. **In tension with [[context-rot]].**
+- [[design-system-not-a-design]] - build the vocabulary, not the screen; let the design agent challenge the PRD.
+- [[ramble-then-structure]] - exhaust the constraints; structure is cheap, completeness is not.
 
 ### Production agent infrastructure
 - [[managed-agent-primitives]] - agents, environments, sessions, events; a production agent-infra model.
@@ -173,6 +215,9 @@ Counts: 22 sources, 8 areas, 101 concepts, 21 entities.
 - [[theo-t3]] - developer/YouTuber; builder of T3 Code; cost-aware Fable 5 + Claude Code workflow.
 - [[ross-hey-fabrica]] - developer/agency founder; builder of Pluto; teaches agentic system design.
 - [[convex]] - everything-as-code backend + database platform; Pluto's control plane.
+- [[kun]] - L8 principal engineer (ex-Meta/Microsoft/Atlassian); builder of First Mate, Lavish, No Mistakes; the wiki's best-documented full build session.
+- [[vas]] - founder of Varick Agents; the wiki's primary source on the forward-deployed-engineer role.
+- [[cody-schneider]] - marketer/builder (companiesgraph.com); agents pointed at distribution; named the entropy problem.
 
 ## Sources
 
@@ -198,13 +243,35 @@ Counts: 22 sources, 8 areas, 101 concepts, 21 entities.
 - [[llm-evaluation-guidebook]] - Fourrier et al. (OpenEvals/HF): the exhaustive eval guidebook - saturation, reproducibility, functional scorers, judge biases, and creating your own eval.
 - [[what-is-a-contaminated-llm]] - Jonathan Chavez (llm-stats): the contamination deep-dive - the Codeforces cliff, five detection methods, famous cases, and the 2026 resistant stack.
 - [[designing-loops-and-workflows]] - Tharic (Anthropic Claude Code team) with Peter Yang: the first primary-source account of /loop, /goal, and workflows - pick the mechanism by your verification signal, split the verifier from the producer, and cut your instructions.
+- [[building-at-the-frontier]] - Boris Cherny (Anthropic, creator of Claude Code): ablation, product overhang, elicitation, 11-day and 15-day autonomous rewrites, dynamic workflows as a compute axis, and Claude maintaining Anthropic's own codebases.
+- [[running-teams-of-ai-agents]] - Ryan Carson (Untangle), post-PMF: cloud agent fleets, three production automations, decision throughput as the bottleneck, and don't build your factory inside a frontier lab's stack.
+- [[agentic-full-stack-build]] - Kun: an entire full-stack app built without reading source code, with the two human interventions isolated (cost anchoring and invented scope).
+- [[fde-in-30-days]] - Vas (Varick Agents): the forward-deployed-engineer role, Audit → Eval → Deployment, and a 30-day case-study roadmap. **The most career-actionable source in the wiki.**
+- [[loops-to-run-your-business]] - the loop primitive pointed at SEO, ads, and product KPIs over months rather than at a codebase over minutes.
+- [[building-marketing-agents]] - Cody Schneider: the deepest technical account of a non-engineering agent, plus the under-discussed entropy problem.
 
 ## Pending pages (linked, not yet written)
 
 None currently - all previously-pending link markers have been written.
 
-## Open structural question
+## Open tensions to watch
 
-[[agentic-engineering]] is still a concept page but now behaves like a hub, with [[verification-signal-picks-the-mechanism]], [[sub-agents]], [[plan-code-validate]], [[planning-is-removing-unknowns]], [[principles-over-constraints]], and [[get-out-of-the-loop]] hanging off it.
-Four more agent-workflow sources are queued in `raw/` as of 2026-07-28 (loops-for-business, Ryan Carson on agent fleets, Kun's agentic full-stack build, the FDE playbook).
-Plan: graduate it to an area once that batch is ingested, so the hub is shaped once from the full evidence rather than four times.
+The 2026-08-01 batch introduced real disagreements between sources. They are recorded on the pages rather than resolved, and are worth revisiting as new sources land.
+
+| Question | Positions | Where |
+|---|---|---|
+| **Does context degrade as it fills?** | [[context-rot]] says start fresh; [[compaction-over-context-window]] reports four clean compactions | [[agentic-engineering]] |
+| **Local or cloud agents?** | [[cloud-agents-over-local]] vs the local worktrees of [[building-5-ai-products-solo]] and [[inside-conductor-workflow]] | [[agent-operations]] |
+| **Is orchestration scaffolding necessary?** | [[verification-signal-picks-the-mechanism]] gives a selection rule; [[building-at-the-frontier]] says `/go` and `/loop` are "helpful but not required" now | [[agentic-engineering]] |
+| **Do evals compound?** | The [[evals]] area treats the suite as the compounding asset; [[evals-saturate-and-get-replaced]] gives it a 1-3 generation half-life | [[evals]] |
+| **Do instructions compound?** | [[building-skills]] and [[self-updating-config]] treat them as an asset; [[ablation-driven-development]] treats them as debt | [[agentic-engineering]] |
+| **Is prompt injection still the threat model?** | [[red-team-your-agent]] assumes yes; [[building-at-the-frontier]] says Opus 5 is not demonstrably injectable, with caveats | [[red-team-your-agent]] |
+| **Vendor concentration** | The wiki's input diet is heavily Claude Code-centric; [[independent-agent-lab-vs-frontier-lab]] is its first explicit counter-position | - |
+
+## Structural note (2026-08-01)
+
+The 2026-07-28 plan to graduate `agentic-engineering` from a concept to an area **has been executed**, after the queued batch of agent-workflow sources landed.
+It is now [[agentic-engineering]] (area, 11 sources), and a sibling area [[agent-operations]] was created to hold the distinct activity of running things with agents continuously rather than building software with them.
+The boundary between them is documented at the top of [[agent-operations]].
+
+`raw/` is now empty of unprocessed sources - all 28 have been ingested.

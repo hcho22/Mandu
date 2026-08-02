@@ -9,7 +9,7 @@ last-updated: 2026-07-08
 # RAG (Retrieval-Augmented Generation)
 
 The durable hub for giving a model a library to look things up in, so it can answer from your documents instead of only its training data.
-This area is directly load-bearing for hcho: his flagship [[agentic-rag-project|Agentic RAG]] product is a permission-aware RAG starter kit, so the general craft lives here and the product-specific decisions live in the Agentic RAG wiki.
+This area is directly load-bearing for hcho: his flagship Agentic RAG product (branded Purvia since 2026-07-17) is a permission-aware RAG starter kit, so the general craft lives here and the product-specific decisions live in the Agentic RAG wiki (`projects/Agentic_RAG/wiki/`).
 
 ## The core idea (plain English)
 

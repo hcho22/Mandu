@@ -169,3 +169,37 @@ Never edit or delete past entries. Only append.
 - Convergence worth noting: [[self-referential-bias]] is now the third independent arrival at the same finding (eval literature measured it, a code-review product attributed it to shared context, Anthropic's tooling team treats it as an architecture constraint). No source cites another.
 - Synthesis revised: the verification signal gating the orchestration mechanism makes the eval spine *upstream* of agentic engineering rather than parallel to it; also records the review-loop vs judgment-loop distinction and the instruction-volume reversal. No contradictions between sources, only refinements.
 - Updated [[index]] (22 sources, 8 areas, 101 concepts, 21 entities) and logged the open structural question: graduate [[agentic-engineering]] into an area after the remaining four queued sources, not now.
+
+## [2026-08-01] ingest | Six-source batch: agent workflows, agent operations, and the FDE role
+
+Closed the `raw/` inbox. Six sources ingested in one pass at hcho's direction (the skill default is one at a time; he chose the full batch so the queued agent-workflow material could shape the hub once from complete evidence).
+
+**Sources filed:** [[building-at-the-frontier]] (Boris Cherny, Anthropic - Opus 5, ablation, unhobbling), [[running-teams-of-ai-agents]] ([[ryan-carson]], post-PMF), [[agentic-full-stack-build]] ([[kun]]), [[fde-in-30-days]] ([[vas]], Varick Agents), [[loops-to-run-your-business]], [[building-marketing-agents]] ([[cody-schneider]]).
+
+**Structural changes:**
+- **[[agentic-engineering]] graduated from concept to area** (11 sources), executing the plan recorded in [[index]] on 2026-07-28. The concept page at `concepts/agentic-engineering.md` was removed and its content rebuilt as the area hub; all existing `[[agentic-engineering]]` links resolve unchanged.
+- **[[agent-operations]] created** as a sibling area (6 sources), for running things with agents continuously rather than building software with them. Boundary documented at the top of that page.
+
+**New pages:** 37 concepts, 2 areas, 3 entities ([[kun]], [[vas]], [[cody-schneider]]).
+Counts now 28 sources, 10 areas, 137 concepts, 24 entities.
+
+**Contradictions flagged** (recorded on both sides, not smoothed over):
+- [[context-rot]] vs [[compaction-over-context-window]] - four clean auto-compactions reported against the "start fresh" rule. Probably concedes the capacity claim, not the contamination claim; counter-evidence is one session, one model, one harness.
+- [[cloud-agents-over-local]] vs [[building-5-ai-products-solo]] and [[inside-conductor-workflow]] - "if you are working locally you are a caveman" against two sources running local worktrees deliberately. Ryan Carson's evidence is real but *n* of 1 from a paying Devin customer.
+- [[evals-saturate-and-get-replaced]] vs the [[evals]] area's compounding-asset framing - private product evals given a 1-3 model-generation half-life. Reconciled as "the eval skill is durable, the eval artifact is not," stated explicitly on both pages.
+- [[red-team-your-agent]] - Opus 5 reported as not demonstrably prompt-injectable, with Boris Cherny's own caveats preserved (Anthropic's own red-teaming; two of three defense layers live in the serving stack, not the weights).
+- [[verification-signal-picks-the-mechanism]] tempered - `/go` and `/loop` now "helpful but not required"; likely a model-tier difference, which is inference not source claim.
+- [[independent-agent-lab-vs-frontier-lab]] - the wiki's first explicit counter-position to its own Claude Code-centric input diet. Logged as a source-diet correction in [[synthesis]].
+- [[sub-agents]] - steerability/observability named as the pattern's weakness by [[agentic-full-stack-build]]; scale ceiling corrected upward by orders of magnitude by [[building-at-the-frontier]].
+
+**Fact correction:** [[ryan-carson]]'s company recorded as "Untangled" from the first source; the second source consistently gives **Untangle**. Entity page and index corrected; noted in the provenance section of [[running-teams-of-ai-agents]].
+
+**Identification:** the "solo L8 builder" of [[building-products-with-agents]] is named as **Kun** by [[agentic-full-stack-build]]; entity created and both sources cross-linked.
+
+**Existing pages extended:** [[principles-over-constraints]] (2nd primary source + the ablation method behind the 80% cut), [[agents-as-cron-plus-markdown]] (4 sources; matured from cron+markdown to cloud playbooks and lab routines), [[get-out-of-the-loop]] (6 sources; the rule is now "you can exit any loop you can replace with a check"), [[credential-vaults]], [[eval-driven-development]], [[phased-autonomy]], [[agent-observability]], [[t-shaped-portfolio]], [[build-for-the-model-of-the-future]], [[sub-agents]], [[verification-signal-picks-the-mechanism]], [[context-rot]], [[red-team-your-agent]], plus the [[evals]] and [[ai-career]] area hubs.
+
+**[[synthesis]] revised** with a new section on what the batch changed: verification promoted from a practice to *the* binding constraint; the eval inverted from a gate into a source of work; and the career half acquiring a specific target in [[forward-deployed-engineer]], whose two required capabilities map unusually cleanly onto a hardware-validation background.
+
+**Noted, not filed:** roughly a third of [[building-marketing-agents]] is a startup pitch (an AI-first WordPress plugin bundle) used as its worked example. It is a specific opportunity rather than durable knowledge, so no page was created; it remains in the raw file.
+
+**Follow-ups logged in [[synthesis]]:** a lint pass (overdue after a batch this size), correcting the Claude Code/Anthropic weighting in the source diet, an FDE role page in the Job-Search Roles wiki, and an [[ablation-driven-development]] audit of Mandu's own `CLAUDE.md` and skills.

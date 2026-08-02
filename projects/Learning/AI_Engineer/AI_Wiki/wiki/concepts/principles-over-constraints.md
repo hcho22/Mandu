@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [prompting, context-engineering, claude-code, craft, anthropic]
-status: seed
-source-count: 1
-last-updated: 2026-07-28
+status: established
+source-count: 2
+last-updated: 2026-08-01
 ---
 
 # Principles Over Constraints
@@ -41,6 +41,24 @@ This reinforces [[building-skills]]'s existing "keep it human-reviewable, favor 
 - On MCPs: "it depends on the MCP."
 Some consume significant context, but the MCP team has invested in reducing this through tool search and related work.
 
+## Second primary source, and the method behind it (2026-08-01)
+
+[[building-at-the-frontier]] confirms the 80% cut from the person who ships the harness, and supplies what this page was missing: **how you find out which 80%.**
+
+[[boris-cherny]]'s answer is [[ablation-driven-development]] - delete the whole system prompt, bring it back line by line, and add back only what repeatedly fails.
+"An eval measures; an ablation removes things to measure."
+Anthropic runs this internally with an undocumented simple mode that strips *all* system prompts including tool prompts.
+
+Three additions that sharpen the rule:
+
+- **The reason the cut worked:** with those prompts removed the model is *slightly more intelligent*. They ship anyway because they make Claude Code behave like a coherent product for a human - a product decision, not a capability one.
+- **Every instruction is re-read on every invocation**, so it has to earn its token cost. That is the mechanism behind "too long," stated as economics rather than taste.
+- **The failure has a demographic:** engineers with years or decades of experience struggle most, because over-specifying is what every previous system demanded of them.
+
+The most extreme evidence is [[self-maintaining-codebase]]: Anthropic's dead-code and abstraction-police routines are **one-sentence prompts**, and the sophistication - deciding to run static *and* dynamic analysis - came from the model rather than the prompt.
+
+Boris's instruction to users, not just builders: **every six months, delete your `CLAUDE.md`, your skills, and your hooks and see what the model does.**
+
 ## Synthesis
 
 This is a direct corrective to a habit the wiki's own sources encouraged in an earlier model generation, where richer configuration, more examples, and longer skill files read as better engineering.
@@ -55,3 +73,7 @@ Load the first heavily, the second sparingly.
 For hcho this is immediately actionable and slightly uncomfortable, since Mandu's own `CLAUDE.md` and skill files are long and rule-dense.
 The test it suggests is per rule: does this encode context the model cannot infer, or is it a constraint the model would have satisfied anyway?
 The second kind is costing tokens and capping quality.
+
+With the second source that test now has a procedure attached, and the honest reading is stronger.
+Mandu's configuration is not just possibly-too-long, it is **debt written against the model generation it was tuned on**, and the only reliable way to find the debt is to zero it and let the failures re-accumulate ([[ablation-driven-development]]).
+Boris's demographic observation also lands close to home: a decade of engineering discipline is exactly the background that over-specifies, and unlearning it is described as a journey rather than a decision.

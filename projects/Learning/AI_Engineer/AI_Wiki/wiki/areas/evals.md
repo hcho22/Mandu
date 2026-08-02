@@ -2,8 +2,8 @@
 type: area
 tags: [evals, testing, llm, quality]
 status: established
-source-count: 9
-last-updated: 2026-07-08
+source-count: 12
+last-updated: 2026-08-01
 ---
 
 # Evals
@@ -38,6 +38,8 @@ Evals turn "the model feels better now" into a measurable, repeatable signal, an
 - [[functional-scorers]] - rule-based verifiers (IFEval-style); the interpretable, cheap, contamination-resistant default over judges.
 - [[score-reproducibility]] - the full checklist of why a reported benchmark score won't reproduce.
 - [[contamination-detection]] - the three flavors and five methods for catching benchmark contamination without corpus access.
+- [[self-referential-bias]] - a model grades its own output too leniently; vary the model and the context of the verifier.
+- [[evals-saturate-and-get-replaced]] - your own product evals decay too, over one to three model generations. **See the tension below.**
 
 ## Sources
 
@@ -50,6 +52,40 @@ Evals turn "the model feels better now" into a measurable, repeatable signal, an
 - [[evaluate-ai-systems]] - Chip Huyen (AI Engineering Ch. 4): the end-to-end reference - criteria, model selection/build-vs-buy, contamination detection, and how to design an evaluation pipeline.
 - [[llm-evaluation-guidebook]] - Fourrier et al. (OpenEvals/HF): the exhaustive benchmarking-side reference - saturation, reproducibility, functional scorers, the judge-bias catalog, and creating your own eval.
 - [[what-is-a-contaminated-llm]] - Jonathan Chavez (llm-stats): the dedicated contamination deep-dive - the Codeforces cliff, five detection methods, famous cases, and the contamination-resistant 2026 stack.
+- [[building-at-the-frontier]] - Boris Cherny (Anthropic): evals as the only semi-durable asset, walked back to a one-to-three-generation half-life; verification named as the single most important thing practitioners get wrong.
+- [[fde-in-30-days]] - Vas (Varick Agents): the eval as a commercial artifact - golden datasets from historical data, a formal report with categorized failure reasons, as the thing that earns a client's trust.
+- [[loops-to-run-your-business]] - an eval threshold (≥90%) used directly as a loop's stop condition, not as a report.
+
+## Two shifts from the 2026-08-01 batch
+
+**1. The eval stopped being a gate and became a control mechanism.**
+Three sources independently use eval sets to *drive* something rather than to report on it:
+as a loop's stop condition, where the agent retries until it clears 90% ([[loops-to-run-your-business]]);
+as the sellable artifact that earns a client permission to grant autonomy ([[audit-eval-deployment]]);
+and as a **source of work**, where a rubric graded against real production traffic opens its own fix PRs ([[self-improving-agent-loop]]).
+
+That last one is the most consequential idea this area has absorbed.
+The standard case for evals is defensive - catch regressions, prove quality.
+A good rubric plus real traffic plus an agent that can open PRs inverts it: **the eval system becomes the thing that generates the roadmap.**
+It is the [[data-flywheel]] move applied to product changes rather than training data.
+
+**2. The suite is less durable than the area assumed.**
+[[evals-saturate-and-get-replaced]] is a genuine tension with this hub's framing and is recorded rather than smoothed over.
+[[boris-cherny]] argues evals outlive the harness "but not by much" - one to three model generations before they saturate and get thrown away - and says to **budget for replacing evals rather than maintaining them indefinitely.**
+
+This area had treated [[benchmark-saturation]] as a public-leaderboard problem and implicitly assumed your own product evals were immune.
+They are not; they are just slower.
+
+The reconciliation, which has to be stated rather than assumed:
+
+| What saturates | What doesn't |
+|---|---|
+| The specific test cases and thresholds | The *method* for sourcing them from observed failures |
+| The absolute scores | The failure taxonomy and the slices you learned to care about |
+| Benchmarks near the ceiling | The instrumentation, trace-review habit, and CI plumbing |
+
+**The eval skill is durable; the eval artifact is not.**
+That argues against gold-plating a suite built for a three-year horizon that does not exist, and in favor of investing in the **generator** - the path from observed failure to new test case - over the test cases themselves.
 
 ## Synthesis
 
@@ -59,5 +95,10 @@ Eugene Yan's [[llm-patterns]] hardens this into method: **Eval-Driven Developmen
 Open threads to fill as more sources land: how judge alignment is measured rigorously (precision/recall over raw agreement, now sharpened by the known judge biases), how RAG evaluation differs (Ragas; [[retrieval-is-the-bottleneck]]), and how eval harnesses gate CI in practice.
 
 The classical foundations under all of this live in [[ml-metrics]] ([[precision-recall]], [[roc-and-auc]], [[classification-threshold]]); the eval caveats here are LLM-era restatements of those.
+
+As of twelve sources the area's most important claim for hcho's positioning is one that only became visible with the frontier and consulting sources side by side.
+**Verification is the binding constraint on the whole agentic discipline**, not a quality step downstream of it.
+[[elicitation-over-prompt-engineering]] names it as "the single most important thing that people do not get right"; [[verification-signal-picks-the-mechanism]] makes it decide which orchestration primitive is even available; [[long-horizon-agent-runs]] shows an 11-day autonomous rewrite that worked only because a test suite existed.
+That makes this area upstream of [[agentic-engineering]] rather than adjacent to it - **what you can measure determines what you can automate** - and it is the strongest available argument that hcho's validation background is a first-class AI-engineering skill rather than a differentiator he has to keep justifying.
 
 Cross-wiki: hcho's own hand-written eval synthesis lives in the evals pilot wiki (`projects/Learning/AI_Engineer/evals/`, split mode); this hub is the broad reference layer that cross-links to it.
