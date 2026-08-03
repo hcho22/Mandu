@@ -4,7 +4,7 @@
 - **Role:** AI Engineer, pivoting from ~10 years in hardware QA / validation into AI-native development. Currently targeting AI builder roles (AI Builder / AI Product Engineer / Applied AI Engineer) and AI evals / quality roles.
 - **Timezone:** PST
 - **In one sentence:** I build production AI and agentic applications, pursuing income by end of 2026 through a revenue product or a full-time AI builder / evals-quality role.
-- **#1 priority:** Reach income by end of 2026 through a shipped revenue app or a full-time AI builder / evals-quality role, anchored on the Agentic RAG Phase 2 flagship (primary, B2B) with FitSnack as a second income bet (B2C), and the job search as a parallel hedge.
+- **#1 priority:** Reach income by end of 2026 through a shipped revenue app or a full-time AI builder / evals-quality role. **Reordered 2026-08-02:** Rep Today (B2C iOS, primary near-term income bet - ship it and test PMF) ahead of Purvia (B2B permission-aware RAG starter kit, second income bet and the strongest portfolio piece / most likely route into an AI role), with the job search as a parallel hedge.
 
 ## Background
 

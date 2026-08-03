@@ -8,6 +8,10 @@
 
 **Last dev-repo activity:** 2026-07-16. Nothing has landed in roughly 2.5 weeks, including the nightly evals - see "Standing risks" below.
 
+**Strategic role (changed 2026-08-02): ranked priority #2, behind Rep Today, and still a live income bet - not portfolio-only.** The paid starter kit and the 10 buyer interviews stay on the board, just behind Rep Today's launch. What changed is the honest read on which value is nearer. Purvia is the strongest technical evidence hcho can put in front of an AI hiring manager, so **job-search leverage is now its most reliable payoff**, while its revenue path has been blocked for six weeks on a buyer who has not been reachable. Ranking it second rather than shelving it is deliberate: if Rep Today's kill criteria fire, Purvia is still standing as a revenue path instead of something to restart. Logged in `decisions/log.md`.
+
+Practically, at #2 the cheap standing obligation is **keeping the eval receipts alive** (see Standing risks). That is what the interview story rests on, and it costs little compared to chasing productization or a launch that is gated on eight preconditions anyway.
+
 ---
 
 ## Status (2026-08-02)

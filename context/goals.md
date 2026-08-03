@@ -5,28 +5,38 @@ _Update this file at the start of each quarter._
 ## North star
 
 Reach income by end of 2026, through either a shipped revenue-generating app or a
-full-time AI role. Primary bet: the Agentic RAG Phase 2 flagship, both a strong portfolio
-piece and a paid B2B product for agency/freelance AI developers. Second income bet:
-FitSnack, a B2C freemium iOS micro-workout app. The job search runs as a parallel hedge.
+full-time AI role. **Primary near-term income bet (reordered 2026-08-02): Rep Today**, a
+B2C freemium iOS micro-workout app - the fastest path to real users and real dollars, and
+the one whose PMF question can actually be answered this quarter. **Second bet: Purvia**
+(formerly Agentic RAG), a paid B2B permission-aware RAG starter kit that is also the
+strongest portfolio piece and the most likely thing to land an AI role. The job search
+runs as a parallel hedge. Both product bets stay live; the ranking is about sequencing
+attention, not about abandoning either.
 
 ## By end of 2026
 
-- Income secured: the Agentic RAG starter kit or FitSnack generating revenue, OR a
+- Income secured: Rep Today or the Purvia starter kit generating revenue, OR a
   full-time AI builder / evals-quality role landed.
-- Agentic RAG Phase 2 shipped: open-core public, paid tier defined, paying or
+- Rep Today shipped to the App Store with the StoreKit 2 premium tier live, and its
+  90-day kill-criteria review published - a clear negative counts as a completed goal,
+  since the point is to get a real answer rather than to protect the bet.
+- Purvia Phase 2 shipped: open-core public, paid tier defined, paying or
   waitlisted buyers.
-- FitSnack MVP shipped to the App Store with the StoreKit 2 premium tier live.
 
-## Q3 2026 (current)
+## Q3 2026 (current, revised 2026-08-02)
 
-- Validate the buyer before more building: publish the 2 existing flagship posts, run
-  10 buyer interviews, stand up a waitlist (target ~50 signups).
-- Gate further Agentic RAG feature-building (workspace layer, escalation, observability)
-  on interview findings.
-- FitSnack: advance the MVP build story-by-story past the deterministic engine (Epic C)
-  toward a TestFlight-ready Discipline-Phase loop.
+- **Ship Rep Today and test PMF.** In order: build account deletion (App Store 5.1.1(v))
+  and funnel instrumentation; clear the trademark and the App Store Connect record; author
+  and host the privacy policy; run the moderated TestFlight cohort with the K8 rubric
+  frozen first; then launch ASO-led and read the K1-K8 gates at week 8 and week 12.
+- **Do not let Purvia's receipts rot.** Restart the nightly eval series (stopped
+  2026-07-16) and fix or annotate the permissions-scale benchmark (red since 2026-06-19).
+  This is cheap, it is the eval story hcho interviews on, and it is the project's own
+  kill criterion 4.
+- Purvia buyer validation continues at lower intensity: the 10 interviews stay on the
+  board, behind Rep Today's launch.
 - Job-search hedge: sustained applications at 5/week against the Tier A/B/C list, plus
-  interview prep.
+  interview prep, now leaning on Purvia as the lead technical artifact.
 
 ## Q2 2026 (closing)
 
