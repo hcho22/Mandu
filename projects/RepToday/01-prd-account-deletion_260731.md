@@ -3,7 +3,8 @@
 **Status:** Implementation-ready. Not started.
 **Opened:** 2026-07-31
 **Blocks:** TestFlight / App Store submission. This is a hard rejection blocker, not a nice-to-have.
-**Repo:** `/Users/hcho/Developer/RepToday/ios`
+**Repo:** `/Users/hcho/firstmate/projects/RepToday/ios` (canonical as of 2026-08-05; the audit below was captured against the pre-instrumentation tree at the old `/Users/hcho/Developer/RepToday`).
+**⚠️ Line-number caveat:** the `file:line` citations below were taken 2026-07-31, before the funnel-instrumentation work (US-T01-T05) landed. US-T05 added `installId`/`firstLaunchAt`/`lastActiveAt` to `AppState.swift`, and US-T06 will add a Settings surface, so lines in `AppState.swift`, `RootView.swift`, and `OnboardingView.swift` have likely shifted in firstmate. Re-confirm each anchor against the canonical tree before building. The named types/methods are still valid; only the line numbers may drift.
 
 ## Why this exists
 
@@ -142,6 +143,6 @@ story the privacy policy and App Store nutrition labels will tell. Revisit only 
 ## Downstream
 
 Clearing this unblocks the remaining pre-submission items in
-`/Users/hcho/Developer/RepToday/gtm/06-redteam/pre-publication-checklist.md`:
+`/Users/hcho/firstmate/projects/RepToday/gtm/08-redteam/pre-publication-checklist.md`:
 privacy policy authoring and hosting, App Store Connect record and name reservation, trademark clearance,
 and the on-device screenshot capture.
