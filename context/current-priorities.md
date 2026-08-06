@@ -24,13 +24,15 @@ two mandatory builds, and the K1-K8 gates are in item 1 below. Logged in `decisi
 
 **⭐ ACTIVE FOCUS (hcho): complete the funnel-instrumentation PRD**
 (`projects/RepToday/prd-funnel-instrumentation_260803.md`, US-T01-T13), the front of the
-two-build gate, ahead of account deletion. **Progress as of 2026-08-05: US-T01-T05 complete and
-on `main`** (the whole foundation - the US-T01 transport spike, the `AnalyticsService` seam +
-event model, the Convex append-only sink, the live transport, and the anonymous per-install
-identity; PRs #69-#73 in the firstmate repo). **Next up: US-T06** (opt-out consent flag +
-Settings toggle + onboarding disclosure), then the 13 emissions (US-T07-T12) and the
-ground-truth reconciliation (US-T13). The Mandu copy of the PRD is synced from the live tracker
-(35/100 acceptance boxes checked).
+two-build gate, ahead of account deletion. **Progress as of 2026-08-05: US-T01-T06 complete and
+on `main`** - the full foundation *plus consent*: the US-T01 transport spike, the
+`AnalyticsService` seam + event model, the Convex append-only sink, the live transport, the
+anonymous per-install identity, and now (US-T06, #74) the **opt-out consent flag + a real
+`SettingsView` + onboarding disclosure**, with a launch-argument override and an out-of-process
+gate proof (879 unit + 10 UI tests green). The pipeline is built and gated but still emits
+nothing. **Next up: US-T07** (`app_install` / `day7_return` / `day30_return` at app entry), then
+the rest of the 13 emissions (US-T08-T12) and the ground-truth reconciliation (US-T13). The Mandu
+copy of the PRD is synced from the live tracker (44/103 acceptance boxes checked).
 
 **Transport correction (2026-08-05):** the US-T01 spike returned a **no-go on `convex-swift`**
 (it ships an arm64-only xcframework, so it cannot build for the Intel host's Simulator). Adopted
@@ -142,15 +144,19 @@ With that closed there is now zero in-flight build; Agentic RAG is purely valida
 
    **(a) Two builds, both mandatory before anyone can use the app. Instrumentation is the
    current active build (hcho); account deletion follows.**
-   - **⭐ Funnel instrumentation (US-T01-T13)** - THE current task. **Foundation done:
-     US-T01-T05 complete and on `main` as of 2026-08-05** (PRs #69-#73). Landed: the transport
+   - **⭐ Funnel instrumentation (US-T01-T13)** - THE current task. **Foundation + consent done:
+     US-T01-T06 complete and on `main` as of 2026-08-05** (PRs #69-#74). Landed: the transport
      spike, the `AnalyticsService` seam + `AnalyticsEvent` model, the Convex append-only sink
      (`events` table + `logEvent` + a `POST /logEvent` HTTP action), the live `URLSession`
-     transport, and the anonymous per-install identity on `AppState` (`installId`,
-     `firstLaunchAt`, `lastActiveAt`, computed `installWeek`). The pipeline exists end to end
-     but **nothing emits into it yet** - each foundation story deliberately shipped its piece
-     uncalled. **Next: US-T06** (opt-out consent + Settings toggle + onboarding disclosure),
-     then the 13 emissions (US-T07-T12) and US-T13 ground-truth reconciliation. Design, as
+     transport, the anonymous per-install identity on `AppState` (`installId`, `firstLaunchAt`,
+     `lastActiveAt`, computed `installWeek`), and now (US-T06, #74) the **opt-out consent flag +
+     a real `SettingsView` reachable from the Profile tab + a one-sentence onboarding
+     disclosure + privacy-policy link**, with a launch-argument override so `RepTodayUITests`
+     runs inert and an out-of-process proof that emission stops when the toggle is off (879 unit
+     + 10 UI tests green). The pipeline is built and gated but **still emits nothing** - each
+     story so far shipped its piece uncalled. **Next: US-T07** (the first emissions -
+     `app_install` / `day7_return` / `day30_return` at app entry), then the rest of the 13
+     emissions (US-T08-T12) and US-T13 ground-truth reconciliation. Design, as
      built: a **Convex-backed, ingest-only** pipeline for the **13 pre-registered events**
      (from `gtm/06-channels/event-metric-schema.md`) to one append-only table with all cohort
      math deferred to after launch; strictly fire-and-forget so the offline core loop is never
