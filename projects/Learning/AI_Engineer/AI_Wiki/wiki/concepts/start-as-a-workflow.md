@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [agents, agent-design, workflows, anthropic]
-status: seed
-source-count: 1
-last-updated: 2026-07-08
+status: developing
+source-count: 2
+last-updated: 2026-08-05
 ---
 
 # Start as a Workflow, Earn Autonomy
@@ -15,6 +15,7 @@ The design principle, attributed in [[agents-are-the-new-saas]] to [[anthropic]]
 - A **workflow** follows a predictable, pre-defined path; an **agent** decides more dynamically at runtime.
 - Most problems are better served by starting predictable, then adding autonomy incrementally - you "earn" autonomy rather than assuming it.
 - This is the same instinct as the [[minimal-useful-agent]] ladder (draft to act): begin at the constrained end.
+- [[graph-engineering-isenberg]] restates it as a build discipline from the operator side: **"draw the graph before you automate the graph,"** and run the workflow manually and successfully three times before reaching for LangGraph or a framework - "if you automate a workflow you do not understand, you get a mess." Same principle, one level more concrete: earn the automation, not just the autonomy.
 
 ## Synthesis
 

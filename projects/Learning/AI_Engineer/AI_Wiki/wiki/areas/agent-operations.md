@@ -2,8 +2,8 @@
 type: area
 tags: [agent-operations, agents, loops, automation, cost, business]
 status: developing
-source-count: 6
-last-updated: 2026-08-01
+source-count: 7
+last-updated: 2026-08-05
 ---
 
 # Agent Operations
@@ -37,6 +37,7 @@ People routinely span both - [[ryan-carson]] runs a cloud engineering fleet *and
 - [[creative-entropy]] - loops converge and stagnate silently; inject DNA from outside the loop.
 
 ### Running agents in production
+- [[heartbeat-automation]] - a scheduled agent that reads all your inboxes on a cadence and hands back one "what needs attention" briefing (the "Chief of Staff" pattern).
 - [[agents-as-cron-plus-markdown]] - an agent = a deterministic cron + a good skill file.
 - [[self-maintaining-codebase]] - 20-30 daily routines at Anthropic; one-sentence prompts, every routine ends in a PR.
 - [[self-improving-agent-loop]] - grade real production traffic against a rubric; failures open their own fix PRs.
@@ -72,6 +73,7 @@ People routinely span both - [[ryan-carson]] runs a cloud engineering fleet *and
 - [[building-marketing-agents]] - Cody Schneider: the deepest technical account of a non-engineering agent, plus the entropy problem.
 - [[building-at-the-frontier]] - Boris Cherny: Anthropic's 20-30 daily self-maintenance routines, and the loop/routine/workflow distinction.
 - [[production-agent-with-cma]] - Anthropic: the production agent-infrastructure primitives underneath all of it.
+- [[running-life-on-codex]] - Jason (OpenAI Codex): the personal-operations version - a scheduled "Chief of Staff" heartbeat, a self-improving skill library, and a markdown vault as the agent's memory; the OpenAI-side confirmation that these patterns are not Anthropic-specific.
 
 ## Open tensions
 

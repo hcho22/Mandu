@@ -2,8 +2,8 @@
 type: concept
 tags: [evals, verification, agents, llm-as-judge, bias, agentic-engineering]
 status: developing
-source-count: 1
-last-updated: 2026-07-28
+source-count: 2
+last-updated: 2026-08-05
 ---
 
 # Self-Referential Bias
@@ -18,15 +18,16 @@ Named as a concept in [[designing-loops-and-workflows]] by a member of Anthropic
 - A stated side benefit: separating the roles also means each one puts more compute into its own job and is less likely to stop early.
 - This is one of the two reasons the source gives for using a workflow over a single skill (the other being context management).
 
-## The same phenomenon, named three ways
+## The same phenomenon, named four ways
 
-This page exists because three parts of the wiki independently arrived at the same finding from different directions.
+This page exists because separate parts of the wiki independently arrived at the same finding from different directions - an eval literature, a code-review product, Anthropic's tooling team, and now a founder-audience explainer.
 
 | Framing | Where | The angle |
 |---|---|---|
 | **Self-enhancement bias** | [[llm-as-judge]], from [[llm-patterns]] and [[llm-evaluation-guidebook]] | Measured: GPT-4 favors its own outputs by about +10%, Claude-v1 by about +25% self-win rate. Mitigation: do not grade with the model that generated, or use a jury |
 | **Fresh-context review** | [[fresh-context-review]], from [[building-products-with-agents]] | A reviewer that watched the work happen already believes it is correct and misses edge cases |
-| **Self-referential bias** | this source | An orchestration constraint: it is why workflows split doing from verifying across separate agents |
+| **Self-referential bias** | [[designing-loops-and-workflows]] | An orchestration constraint: it is why workflows split doing from verifying across separate agents |
+| **"The same model writes and grades the answer"** | [[graph-engineering-isenberg]] | The founder/operator statement of it, applied to *decision research* not code: the skeptic must be its own job, "like asking someone to write their own performance review" |
 
 They are not in conflict.
 The eval literature measures it, the code-review literature attributes it to shared context, and this source treats it as a design constraint on agent architecture.
@@ -44,7 +45,7 @@ The longer an agent runs unattended ([[get-out-of-the-loop]]), the more the syst
 ## Synthesis
 
 This is the single mechanism underneath most of the wiki's verification family, and naming it makes the family legible: [[fresh-context-review]], [[adversarial-code-review]], the [[skill-eval-loop]]'s separate grader, jury methods in [[llm-as-judge]], and the verifier sub-agent in [[verification-signal-picks-the-mechanism]] are all the same countermeasure applied at different layers.
-The convergence is worth noting on its own terms: an eval-benchmarking literature, a code-review product, and Anthropic's own tooling team reached the same conclusion without citing each other, which is about as strong as evidence gets in this wiki.
+The convergence is worth noting on its own terms: an eval-benchmarking literature, a code-review product, Anthropic's own tooling team, and a founder-audience explainer ([[graph-engineering-isenberg]]) reached the same conclusion without citing each other, which is about as strong as evidence gets in this wiki.
 
 For hcho this is the highest-value import from the source.
 It is a first-principles argument, backed by numbers, for exactly the role he is qualified to hold: **the thing that checks the work cannot be the thing that did the work.**

@@ -2,8 +2,8 @@
 type: concept
 tags: [models, cost-control, claude, reasoning-effort]
 status: developing
-source-count: 2
-last-updated: 2026-07-28
+source-count: 3
+last-updated: 2026-08-05
 ---
 
 # Reasoning-Effort Discipline
@@ -34,3 +34,5 @@ Together they say effort is a budget you allocate explicitly in both directions,
 This is one of the two cost levers in the source, alongside [[model-routing]]; together they are why a month-scale agent run cost ~$150 rather than thousands.
 It is a useful counter to the intuition that "more thinking = better output": beyond a point, more effort buys over-engineering, not correctness - which is itself a validation observation ([[cost-of-being-wrong]] cuts both ways: over-changing simple code has a cost too).
 Note the specific settings are Theo's read of the current Claude 5 family, not a vendor benchmark; treat as a working default, not a law.
+
+**Independent OpenAI-side confirmation:** [[running-life-on-codex]] states the same lever from the [[codex]] side - [[jason-openai-codex]] defaults to **medium** effort for routine admin/ops (Slack, calendar, scheduling) and only sets **extra-high / ultra** for long, complex build sessions. Same principle as Theo's, matched to task rather than to model: cheap effort for the high-frequency low-stakes work, peak effort reserved for the rare hard build. (The Codex tier names in that source - "GPT-5.6," "Terra," "Luna," "Sole medium" - are transcription-flagged as uncertain; the match-effort-to-task pattern is the durable claim, not the labels.) That two vendors' practitioners independently land on "don't run everything at max" strengthens this from a Theo preference toward a cross-stack default.

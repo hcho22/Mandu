@@ -2,8 +2,8 @@
 type: area
 tags: [ai-career, positioning, portfolio, mindset, solo-building]
 status: established
-source-count: 4
-last-updated: 2026-08-01
+source-count: 5
+last-updated: 2026-08-05
 ---
 
 # AI Career
@@ -73,6 +73,7 @@ The counterweight is honest: the new bottleneck is **decision throughput** (2-3 
 - [[zero-to-hireable-ai-engineer]] - @free_ai_guides: a build-first four-month path from zero to hireable, with PwC/Glassdoor market data.
 - [[fde-in-30-days]] - Vas (Varick Agents): the forward-deployed-engineer role, the Audit → Eval → Deployment loop, and a 30-day case-study roadmap.
 - [[running-teams-of-ai-agents]] - Ryan Carson: you are a manager of agents now, and it makes you more technical.
+- [[running-life-on-codex]] - Jason (OpenAI Codex): the sharpest statement of [[taste-as-moat]] ("the only job left is to understand what you don't like and put it into words"), plus a dissent from the [[manager-of-agents]] framing - he calls the job caring about outcomes and taste, not managing.
 
 ## Synthesis
 

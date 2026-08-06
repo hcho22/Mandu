@@ -1,6 +1,6 @@
 ---
 type: index
-last-updated: 2026-08-01
+last-updated: 2026-08-05
 ---
 
 # Index
@@ -10,7 +10,7 @@ Every page is listed once under its category with a one-line summary.
 Read this first when answering a query, then drill into the linked pages.
 Updated on every ingest.
 
-Counts: 28 sources, 10 areas, 137 concepts, 24 entities.
+Counts: 30 sources, 10 areas, 144 concepts, 28 entities.
 
 ## Areas
 
@@ -72,6 +72,7 @@ Counts: 28 sources, 10 areas, 137 concepts, 24 entities.
 - [[retrieval-is-the-bottleneck]] - most RAG failures are retrieval failures, not model failures; debug what got retrieved first.
 - [[embeddings]] - text as vectors; model choice and ANN indices are upstream of retrieval quality.
 - [[hybrid-retrieval]] - combine keyword (BM25) and semantic search; each covers the other's blind spots.
+- [[knowledge-graph]] - store entities and relationships (GraphRAG) so multi-hop answers become traversable; fixes what chunk-similarity can't connect. **Seed.**
 
 ### Production LLM
 - [[fine-tuning]] - LoRA/QLoRA, RLHF, the alignment tax; reach for it last, after prompting and retrieval.
@@ -107,6 +108,9 @@ Counts: 28 sources, 10 areas, 137 concepts, 24 entities.
 
 ### AI Operating System and agent safety
 - [[ai-operating-system]] - a personal second brain you run all work through so context compounds.
+- [[skills-vs-plugins]] - a skill is one capability; a plugin bundles skills + MCP servers + scripts to share.
+- [[personal-voice-skill]] - a skill that writes in your voice, grounded in your own message history, tuned by audience.
+- [[browser-use-vs-computer-use]] - the two automation surfaces: logged-in in-app browser vs OS/app-level control.
 - [[context-is-king]] - the model is the engine, your context is the fuel; models are stateless.
 - [[four-cs-framework]] - Context to Connections to Capabilities to Cadence, built in order.
 - [[capabilities-not-instructions]] - remove the key; do not rely on an instruction for agent safety.
@@ -117,6 +121,7 @@ Counts: 28 sources, 10 areas, 137 concepts, 24 entities.
 - [[red-team-your-agent]] - deliberately attack your agent (prompt injection) to verify it holds.
 
 ### Agent operations
+- [[heartbeat-automation]] - a scheduled agent that reads all your inboxes on a cadence and returns one "what needs attention" briefing.
 - [[agents-as-cron-plus-markdown]] - an agent = a deterministic cron + a good skill file.
 - [[agent-as-employee]] - give the agent its own identity and scoped permissions; write as itself.
 - [[everything-is-a-pr]] - run a full SDLC even solo; every change is a reviewable PR.
@@ -141,6 +146,8 @@ Counts: 28 sources, 10 areas, 137 concepts, 24 entities.
 - [[creative-is-the-targeting]] - the model reads your creative and routes it; the paid-media twin of AEO.
 
 ### AI-assisted build workflow
+- [[graph-engineering]] - design the work as jobs, arrows, and shared state; the founder-legible name for the whole orchestration pillar, with a manual-first build ladder.
+- [[goal-plan-worklog]] - the "ultra goal" triad: an agent-authored, editable goal.md with a verifiable end-state, plus plan and worklog.
 - [[phased-implementation]] - research to plan to implement in small, testable phases; each phase = one PR.
 - [[context-rot]] - reliability decays as context fills; start each unit of work fresh.
 - [[adversarial-code-review]] - a different model (or forced self-critique) hunts for bugs in AI-written code.
@@ -218,6 +225,10 @@ Counts: 28 sources, 10 areas, 137 concepts, 24 entities.
 - [[kun]] - L8 principal engineer (ex-Meta/Microsoft/Atlassian); builder of First Mate, Lavish, No Mistakes; the wiki's best-documented full build session.
 - [[vas]] - founder of Varick Agents; the wiki's primary source on the forward-deployed-engineer role.
 - [[cody-schneider]] - marketer/builder (companiesgraph.com); agents pointed at distribution; named the entropy problem.
+- [[greg-isenberg]] - founder, host of the Startup Ideas Podcast; the wiki's main founder/operator voice on agents; coined the wiki's [[graph-engineering]] framing.
+- [[codex]] - OpenAI's agentic coding tool (ChatGPT Work is a UX view on it); the wiki's best-documented non-Anthropic agent stack.
+- [[jason-openai-codex]] - OpenAI Codex / DX team; first primary source from inside OpenAI; runs his life on Codex; rejects the "manager of agents" framing.
+- [[obsidian]] - local-first markdown notes app; in the wiki, a structured markdown store an agent reads for context (hcho's own tool of record).
 
 ## Sources
 
@@ -249,6 +260,8 @@ Counts: 28 sources, 10 areas, 137 concepts, 24 entities.
 - [[fde-in-30-days]] - Vas (Varick Agents): the forward-deployed-engineer role, Audit → Eval → Deployment, and a 30-day case-study roadmap. **The most career-actionable source in the wiki.**
 - [[loops-to-run-your-business]] - the loop primitive pointed at SEO, ads, and product KPIs over months rather than at a codebase over minutes.
 - [[building-marketing-agents]] - Cody Schneider: the deepest technical account of a non-engineering agent, plus the under-discussed entropy problem.
+- [[graph-engineering-isenberg]] - Greg Isenberg: "graph engineering" as the work-design layer above prompt/context; agent graphs vs knowledge graphs; a manual-to-automated build ladder.
+- [[running-life-on-codex]] - Jason (OpenAI Codex): running work and life on Codex/ChatGPT Work - heartbeat automations, skills vs plugins, browser vs computer use, goal/plan/worklog, and taste as the remaining skill; the wiki's first inside-OpenAI source.
 
 ## Pending pages (linked, not yet written)
 
@@ -266,7 +279,9 @@ The 2026-08-01 batch introduced real disagreements between sources. They are rec
 | **Do evals compound?** | The [[evals]] area treats the suite as the compounding asset; [[evals-saturate-and-get-replaced]] gives it a 1-3 generation half-life | [[evals]] |
 | **Do instructions compound?** | [[building-skills]] and [[self-updating-config]] treat them as an asset; [[ablation-driven-development]] treats them as debt | [[agentic-engineering]] |
 | **Is prompt injection still the threat model?** | [[red-team-your-agent]] assumes yes; [[building-at-the-frontier]] says Opus 5 is not demonstrably injectable, with caveats | [[red-team-your-agent]] |
-| **Vendor concentration** | The wiki's input diet is heavily Claude Code-centric; [[independent-agent-lab-vs-frontier-lab]] is its first explicit counter-position | - |
+| **Do you still read the agent's code?** | [[read-what-the-agent-writes]] says reading is how you keep judgment; [[running-life-on-codex]] says "a lot of us don't review code anymore" - verification moved onto verifiable-goal oracles, not abandoned | [[read-what-the-agent-writes]] |
+| **Manager, or director of taste?** | [[manager-of-agents]] (Ryan Carson, Cody Schneider) says you manage agents now; [[running-life-on-codex]] (Jason, OpenAI) rejects the manager frame and calls the job articulating taste | [[manager-of-agents]] |
+| **Vendor concentration** | The input diet is heavily Claude Code-centric; [[independent-agent-lab-vs-frontier-lab]] is the first counter-position, and [[running-life-on-codex]] (2026-08-05) is the first inside-OpenAI source - it reports the *same* patterns, which is itself the finding | - |
 
 ## Structural note (2026-08-01)
 

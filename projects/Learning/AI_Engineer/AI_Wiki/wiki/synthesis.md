@@ -1,8 +1,8 @@
 ---
 type: synthesis
-last-updated: 2026-08-01
+last-updated: 2026-08-05
 status: established
-source-count: 28
+source-count: 30
 ---
 
 # Synthesis
@@ -198,12 +198,24 @@ That should be corrected in the source diet, not just noted.
 Finally, [[creative-entropy]] is the batch's most under-appreciated finding and applies to everything in [[agent-operations]]: **every loop here is a hill climber, and hill climbers converge and then keep running while their own metrics look fine.**
 Only one source names it. It is a general property of the pattern the whole area is built on.
 
+## What the 2026-08-05 ingest added
+
+Two sources ([[graph-engineering-isenberg]], [[running-life-on-codex]]) landed together, and their value is almost entirely **cross-vendor, cross-audience convergence** on the spine the wiki already holds - which is exactly what a maturing reference layer should be accumulating.
+
+The first names a layer the wiki had only in pieces. [[graph-engineering]] - designing the work as jobs, arrows, and shared state - is a founder-audience name for the orchestration pillar of [[agentic-engineering]], and its load-bearing rules are ones the wiki reached from the engineering side: the checker must be a separate job ([[self-referential-bias]], now independently named *four* ways), understand the workflow before you automate it ([[start-as-a-workflow]]), and build the smallest graph that improves quality, not the biggest. Its contribution is accessibility, not novelty: "draw your work as a team of jobs on a whiteboard" is the wiki's most-repeated structural lesson made actionable for someone without an engineering background, and it is a clean statement of the counter-pressure against a wiki this fond of orchestration - most tasks earn a smaller graph than they get.
+
+The second is the wiki's **first primary source from inside OpenAI**, and it matters most for what it does *not* do: it does not disagree. [[jason-openai-codex]] runs pinned long-running threads with auto-[[compaction-over-context-window|compaction]], a markdown [[obsidian]] vault as his agent's memory ([[monorepo-for-agent-context]]), effort discipline ([[reasoning-effort-discipline]]: medium for admin, ultra for builds), a self-improving skill library ([[self-improving-agent-loop]]), verifiable agent-authored goal files ([[goal-plan-worklog]]), and taste as the remaining skill ([[taste-as-moat]]: "the only job left is to understand what you don't like and put it into words"). Every one of those was already in the wiki from Anthropic-centric and solo-founder sources. Two vendors' practitioners reaching the same practices independently is the strongest evidence the wiki can carry, and it is the first real dent in the **vendor-concentration** caveat: the craft conclusions here look harness-shaped in vocabulary but not in substance.
+
+It also introduced the wiki's first two genuine **frictions** rather than agreements, both recorded and unresolved: Jason's "a lot of us don't review code anymore" against [[read-what-the-agent-writes]] (reconciled as verification *relocated* onto executable goal-oracles, not abandoned - though correctness-checking is not understanding, and that edge stands), and his explicit rejection of the [[manager-of-agents]] self-image in favor of "articulating taste" (a metaphor clash over the same day's work). Both are the healthy kind of disagreement - two credible practitioners describing the same activity with different verbs - and both are now in the [[index]] tensions table.
+
+For hcho the sharpest personal note is the mirror: Jason's setup - a markdown vault as the agent's single source of truth, browsed by a human, written by an agent, with verifiable goal files and worklogs - is Mandu, and Rep Today's and Purvia's PRD-driven build loop, described from inside OpenAI. That is outside validation that the operating system he already runs is the emerging default, not an idiosyncrasy. The importable sharpenings are small and concrete: ground his voice rules in a corpus of his own writing rather than a rules file ([[personal-voice-skill]]), and make his strongest goal files name the verifiable check, drafted with the agent rather than dictated to it.
+
 ## Open threads
 
 - The [[rag]] and [[production-llm]] hubs are now open and substantive; the prompting hub is still empty (folded loosely into production-llm and the career curriculum for now).
 - The eval area is [[evals|established]] (12 sources) with a coherent stance: define criteria up front, prefer functional testing, triangulate methods, measure reproducibly, and evaluate on your own uncontaminated data - now with the added caveat that the suite itself has a one-to-three-generation half-life.
-- **`raw/` is empty.** All 28 sources have been ingested as of 2026-08-01. The next ingest needs new material curated in.
-- **Correct the vendor bias in the input diet.** The wiki is heavily Claude Code and Anthropic-weighted. Sources on OpenAI/Codex, the independent agent labs (Amp, Cognition, Factory), and open-model tooling would test whether the craft conclusions here generalize or are harness-specific. [[independent-agent-lab-vs-frontier-lab]] is currently the only counter-position and it comes from a paying customer of one of those labs.
+- **`raw/` is empty of unprocessed sources.** All 30 sources have been ingested as of 2026-08-05. The next ingest needs new material curated in.
+- **Vendor bias: first correction landed, keep going.** [[running-life-on-codex]] (2026-08-05) is the wiki's first inside-OpenAI/Codex source, and it reports the *same* craft (compaction, skills, verifiable goals, taste, markdown-vault memory) - early evidence the conclusions here generalize beyond Claude Code rather than being harness-specific. Still wanted: the independent agent labs (Amp, Cognition, Factory) and open-model tooling. [[independent-agent-lab-vs-frontier-lab]] remains the sharpest structural counter-position.
 - ~~[[agentic-engineering]] should graduate into its own area hub.~~ **Done 2026-08-01**, along with the creation of [[agent-operations]].
 - Next natural growth: a **prompting** hub (still empty) and dedicated **agent-eval / retrieval-eval** concepts (Huyen Ch. 6 territory; the guidebook's tool-calling/assistant/agentic benchmarks). Agent evaluation is now conspicuously under-covered relative to how much agent *building* the wiki holds.
 - **A lint pass is now overdue.** The 2026-08-01 batch added 37 concepts, 2 areas, and 3 entities in one pass; it should be checked for orphans, broken links, stale cross-references, and pages whose claims a newer source has superseded.

@@ -2,8 +2,8 @@
 type: concept
 tags: [agent-operations, evals, rubric, automation, agents]
 status: developing
-source-count: 1
-last-updated: 2026-08-01
+source-count: 2
+last-updated: 2026-08-05
 ---
 
 # The Self-Improving Agent Loop
@@ -30,6 +30,13 @@ Because the agent already found it, opened the PR, and made it ready, he just sh
 This is work that would otherwise never clear the priority bar, which is exactly the pattern [[self-maintaining-codebase]] independently arrives at.
 - **The big unlock, stated generally:** set your agents up so that **they can make themselves better**, rather than you hand-building all the systems.
 - The grading input is **real production traffic**, not a synthetic test set. That is [[looking-at-your-data]] running as a scheduled job.
+
+## The same loop, pointed at a skill library
+
+[[running-life-on-codex]] runs a smaller version of this loop against a **personal skill library** rather than a production app.
+[[jason-openai-codex]] built a **"self-improve" skill** that reviews which skills are called most often, reads the sessions where they ran, and surfaces recurring feedback patterns - and periodically audits bloat ("look at the past 400 sessions, which skills were never used, clean things up, interview me").
+Worked example: a Slack-reply skill noticed he *always* asked it to reply back into Slack after finishing a Slack-requested task, and absorbed that step so it stopped needing to be asked.
+The signal is the same as Ryan's rubric - **a repeated correction is a spec the skill should absorb** ([[self-updating-config]]) - just sourced from your own usage history instead of graded production traffic.
 
 ## The two guardrails
 

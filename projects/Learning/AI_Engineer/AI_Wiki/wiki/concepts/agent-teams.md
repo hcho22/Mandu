@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [agents, multi-agent, deliberation, agentic-engineering]
-status: seed
-source-count: 1
-last-updated: 2026-07-08
+status: developing
+source-count: 2
+last-updated: 2026-08-05
 ---
 
 # Agent Teams
@@ -15,6 +15,7 @@ Groups of agents that talk to each other and debate, from [[every-claude-feature
 - Create panels or debate boards with distinct personas (e.g. a complete beginner, a CEO) that analyze or brainstorm a topic through rounds of debate until they reach agreement.
 - The value is hearing genuinely different perspectives, not just parallel throughput.
 - Token intensive and experimental (enabled in `.claude` settings), then driven with natural language.
+- [[graph-engineering-isenberg]] describes the same structure as an **agent graph** for decision work: a planner splits the question, parallel researchers cover customer / competitors / distribution, and a **skeptic** whose only job is to kill weak findings runs before a merge step - a role-differentiated team where, crucially, the checker is a separate job from the producers ([[self-referential-bias]]).
 
 ## Synthesis
 

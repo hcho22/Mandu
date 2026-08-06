@@ -2,8 +2,8 @@
 type: concept
 tags: [ai-career, agent-operations, role, management, craft]
 status: developing
-source-count: 2
-last-updated: 2026-08-01
+source-count: 3
+last-updated: 2026-08-05
 ---
 
 # You Are a Manager of Agents
@@ -40,6 +40,19 @@ Mantra: "Slow is smooth, and smooth is fast."
 
 The host's observation, which Ryan accepts: this is not very different from what a well-organized person did *before* AI.
 **"It's back to the basics, just in an agent age."**
+
+## A dissent worth holding: "I don't feel like a manager"
+
+[[jason-openai-codex]] in [[running-life-on-codex]] is the wiki's first explicit **counter** to this framing.
+Asked directly about feeling like a manager of agents, he says he does *not* relate to it: he frames his role as caring about **outcomes and quality** - articulating what he does and does not like ([[taste-as-moat]]) - not about supervising labor or hours.
+
+This is less a factual disagreement than a metaphor clash, and it is genuine:
+
+- Ryan/Cody's "manager of agents" foregrounds **decision throughput and delegation** - the bottleneck is you approving/directing work.
+- Jason's "I care about outcomes, not management" foregrounds **taste and specification** - the job is knowing what good is and saying it precisely.
+- Both are describing the same day (direct the agents, judge the output, decide what ships); they disagree on which verb names it. [[agent-as-employee]] already flags that the coworker metaphor is "helpful but limiting," and this is that caution landing on the management metaphor specifically.
+
+Recorded as an open perspective split, not resolved. Watch whether later sources cluster on "manager" or on "editor/director-of-taste" language.
 
 ## Synthesis
 

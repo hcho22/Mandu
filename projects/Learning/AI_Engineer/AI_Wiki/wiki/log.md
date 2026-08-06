@@ -203,3 +203,19 @@ Counts now 28 sources, 10 areas, 137 concepts, 24 entities.
 **Noted, not filed:** roughly a third of [[building-marketing-agents]] is a startup pitch (an AI-first WordPress plugin bundle) used as its worked example. It is a specific opportunity rather than durable knowledge, so no page was created; it remains in the raw file.
 
 **Follow-ups logged in [[synthesis]]:** a lint pass (overdue after a batch this size), correcting the Claude Code/Anthropic weighting in the source diet, an FDE role page in the Job-Search Roles wiki, and an [[ablation-driven-development]] audit of Mandu's own `CLAUDE.md` and skills.
+
+## [2026-08-05] ingest | Graph Engineering, Clearly Explained (Greg Isenberg)
+- Source: [[graph-engineering-isenberg]] (Greg Isenberg, Startup Ideas Podcast; local raw file, auto-caption summary).
+- New concepts: [[graph-engineering]] (the work-design layer: jobs, arrows, state; agent graphs vs knowledge graphs; manual -> file-based -> automated ladder; smallest graph that improves quality) and [[knowledge-graph]] (GraphRAG; the multi-hop complement to chunk-similarity RAG, seed).
+- New entity: [[greg-isenberg]] (the wiki's main founder/operator voice; same show as [[agents-are-the-new-saas]] and [[startups-for-agents]]).
+- Extended with cross-links: [[self-referential-bias]] (added the operator-language framing "same model writes and grades," now named four ways), [[start-as-a-workflow]] ("draw the graph before you automate it"), [[agent-teams]] (the planner/researcher/skeptic/merge structure as an agent graph).
+- Areas: [[agentic-engineering]] (+concept, +source, now 12 sources), [[rag]] (+knowledge-graph, +source, now 3), [[agent-operations]] cross-referenced.
+- No new contradictions; the source is independent operator-side *confirmation* of the split-doing-from-verifying and understand-before-automating pillars. Updated [[index]] and [[synthesis]].
+
+## [2026-08-05] ingest | Running Your Life on Codex (Jason, OpenAI Codex team)
+- Source: [[running-life-on-codex]] (Jason, OpenAI Codex/DX team; local raw file, auto-caption summary). The wiki's first primary source from inside OpenAI.
+- New concepts: [[heartbeat-automation]], [[personal-voice-skill]], [[skills-vs-plugins]], [[browser-use-vs-computer-use]], [[goal-plan-worklog]].
+- New entities: [[codex]], [[jason-openai-codex]], [[obsidian]]; extended [[openai]] (now 3 sources).
+- Extended with cross-links: [[reasoning-effort-discipline]] (OpenAI-side confirmation: medium for admin, ultra for builds), [[self-improving-agent-loop]] (the self-improve skill / bloat audit), [[taste-as-moat]] ("the only job left is to understand what you don't like and put it into words"), [[compaction-over-context-window]] (second source, other vendor), [[monorepo-for-agent-context]] (the Obsidian vault as agent memory).
+- Contradictions flagged, not resolved: (1) "a lot of us don't review code anymore" vs [[read-what-the-agent-writes]] - recorded as verification relocated to executable goal oracles, not abandoned; (2) Jason rejects the [[manager-of-agents]] self-image, calling the job "articulating taste" - recorded as a metaphor split. Both added to the [[index]] Open-tensions table.
+- Areas: [[agent-operations]] (+heartbeat-automation, +source, now 7), [[agentic-engineering]] (+3 concepts, +source, now 13), [[ai-career]] (+source, now 5). Updated [[index]] and [[synthesis]].

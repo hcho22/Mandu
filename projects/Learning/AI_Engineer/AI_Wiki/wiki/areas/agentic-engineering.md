@@ -2,8 +2,8 @@
 type: area
 tags: [agentic-engineering, agents, craft, tooling, orchestration, verification]
 status: established
-source-count: 11
-last-updated: 2026-08-01
+source-count: 13
+last-updated: 2026-08-05
 ---
 
 # Agentic Engineering
@@ -48,6 +48,7 @@ What survives is [[ramble-then-structure]] (say the constraints, not the structu
 
 ### Planning and review
 - [[planning-is-removing-unknowns]] - planning as continuous exploration, not a phase.
+- [[goal-plan-worklog]] - the "ultra goal" triad: an agent-authored, editable goal.md with a verifiable end-state, plus plan and worklog.
 - [[plan-code-validate]] - plan deeply, delegate coding, automate validation.
 - [[phased-implementation]] - research to plan to implement in small testable phases.
 - [[review-plans-as-artifacts]] - interactive artifacts beat 351-line markdown, because feedback becomes per-element.
@@ -56,6 +57,7 @@ What survives is [[ramble-then-structure]] (say the constraints, not the structu
 - [[adversarial-code-review]] - a different model hunts for bugs in AI-written code.
 
 ### Orchestration
+- [[graph-engineering]] - designing the work as jobs, arrows, and shared state; the founder-legible name for this whole pillar, with a manual-first build ladder.
 - [[dynamic-workflows-as-test-time-compute]] - fan out, verify, fan out; a new scaling axis.
 - [[verification-signal-picks-the-mechanism]] - pick /loop vs /goal vs a workflow by the shape of your check.
 - [[sub-agents]] - delegate heavy exploration to children that return conclusions.
@@ -83,6 +85,9 @@ What survives is [[ramble-then-structure]] (say the constraints, not the structu
 
 ### Artifacts and craft
 - [[building-skills]] - build skills forward or by reverse-engineering.
+- [[skills-vs-plugins]] - a skill is one capability; a plugin bundles skills + MCP servers + scripts to share.
+- [[personal-voice-skill]] - a skill that writes in your voice, grounded in your own message history, tuned by audience.
+- [[browser-use-vs-computer-use]] - the two automation surfaces (logged-in web vs OS/app level) and when each applies.
 - [[self-updating-config]] - a skill that mines corrections and improves its own config.
 - [[design-system-not-a-design]] - a vocabulary, not a screen; let the design agent challenge the PRD.
 - [[code-as-sawdust]] - prompts and specs are durable; code is a regenerable byproduct.
@@ -102,6 +107,8 @@ What survives is [[ramble-then-structure]] (say the constraints, not the structu
 - [[every-claude-feature-ranked]] - the broad feature tour of the ecosystem.
 - [[production-agent-with-cma]] - Anthropic: production agent primitives and outcome rubrics.
 - [[building-robust-apps-with-ai]] - Ross: why agent-operable infra makes any of this possible.
+- [[graph-engineering-isenberg]] - Greg Isenberg: names the work-design layer ("graph engineering") for a founder audience; independent operator-side confirmation of the split-doing-from-verifying and understand-before-automating pillars.
+- [[running-life-on-codex]] - Jason (OpenAI Codex): the OpenAI-side practitioner account - skills/plugins, browser vs computer use, the goal/plan/worklog build workflow, effort discipline, and taste as the remaining skill; the wiki's first non-Anthropic confirmation that these practices are converging across vendors.
 
 ## Open tensions
 

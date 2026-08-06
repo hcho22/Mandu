@@ -2,8 +2,8 @@
 type: area
 tags: [rag, retrieval, embeddings, agents, production-llm]
 status: developing
-source-count: 2
-last-updated: 2026-07-08
+source-count: 3
+last-updated: 2026-08-05
 ---
 
 # RAG (Retrieval-Augmented Generation)
@@ -23,6 +23,7 @@ The model answers from what you gave it. Everything else is refinement. See [[re
 - [[retrieval-is-the-bottleneck]] - most RAG failures are retrieval failures, not model failures; debug what got retrieved first.
 - [[embeddings]] - text as vectors; model choice and ANN indices are upstream of everything.
 - [[hybrid-retrieval]] - combine keyword (BM25) and semantic search; each covers the other's blind spots.
+- [[knowledge-graph]] - store entities and relationships explicitly (GraphRAG) so multi-hop answers become traversable; fixes the "connect scattered facts" blind spot chunk-similarity cannot. **Seed; needs a technical source to deepen.**
 
 ## Building blocks (folded here for now, promote as sources deepen them)
 
@@ -43,6 +44,7 @@ The model answers from what you gave it. Everything else is refinement. See [[re
 
 - [[zero-to-hireable-ai-engineer]] - a clean RAG primer inside the four-month curriculum.
 - [[llm-patterns]] - Eugene Yan's RAG pattern: history (DPR/FiD/RETRO/HyDE), embeddings + ANN, and hybrid retrieval.
+- [[graph-engineering-isenberg]] - Greg Isenberg: a founder-level introduction of knowledge graphs (GraphRAG) as the complement to ordinary chunk-similarity retrieval.
 
 ## Synthesis
 

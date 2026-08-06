@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [craft, learning, judgment, ai-career, agentic-engineering, failure-modes]
-status: seed
-source-count: 1
-last-updated: 2026-07-28
+status: developing
+source-count: 2
+last-updated: 2026-08-05
 ---
 
 # Read What the Agent Writes
@@ -33,6 +33,18 @@ Most people prompt and glance at the result without engaging with the reasoning.
 - **Make the habit structural.** Add a custom instruction asking the agent to produce an HTML report or explainer for significant tasks, precisely so you are prompted to read and learn from it.
 - Citing [[andrej-karpathy]]: **"education should feel like work more than fun."**
 Real learning takes deliberate effort; prompting and looking at outputs is not it.
+
+## The tension: "a lot of us don't review code anymore"
+
+[[running-life-on-codex]] states the opposite practice head-on: [[jason-openai-codex]] (and his host) say, as personal practice, that they no longer review most of the code the agent writes - which is why he does much of his work in ChatGPT Work, where the diffs are hidden.
+
+Read carefully, this is less a contradiction than a relocation of the check:
+
+- This page's warning is about not reading the **plan/reasoning**, which is how you keep the judgment to catch the agent.
+- Jason has moved verification off the **diff** and onto an **executable oracle**: [[goal-plan-worklog]] goal files that name a verifiable end-state, computer-use self-checks ("open the app, upload this video, confirm the data comes back"), and separate checker steps. He reads the **worklog**, not every message.
+- So both agree the check must exist; they disagree on where it lives - reading the work vs running an oracle against it.
+
+The unresolved edge is real, though: an executable check verifies *correctness*, not *understanding*, and this page's core claim is that understanding is a separate exit you should not take ([[andrej-karpathy]]: "education should feel like work"). An operator who only ever reads a green check, never the reasoning, still erodes the judgment [[taste-as-moat]] depends on. Held as an open tension, filed on both pages.
 
 ## Synthesis
 

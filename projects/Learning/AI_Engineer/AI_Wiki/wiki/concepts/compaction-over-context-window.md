@@ -2,8 +2,8 @@
 type: concept
 tags: [agentic-engineering, context-engineering, compaction, contradiction]
 status: developing
-source-count: 1
-last-updated: 2026-08-01
+source-count: 2
+last-updated: 2026-08-05
 ---
 
 # Compaction Quality Beats Context-Window Size
@@ -30,6 +30,13 @@ The file system is the durable memory; the context window is a cache.
 Mechanics worth knowing:
 Codex has a **server-side compaction** capability better than any other he knows of, but running GPT models in a third-party harness does *not* get it automatically - the harness uses its own algorithm unless you install the extension that restores it.
 He also caps requests at **272K** deliberately, citing a reported billing bug where requests exceeding the context cap are charged higher than usual.
+
+## A second source, same conclusion, other vendor
+
+[[running-life-on-codex]] reports the same practice from the [[codex]] side: [[jason-openai-codex]] runs a small number of **pinned long-running threads** and relies on **automatic compaction** so they keep prior context indefinitely, never managing it by hand.
+It also corroborates the "file system is the real memory" reconciliation below: his source of truth is an [[obsidian]] markdown vault ([[monorepo-for-agent-context]]), and everything important lives there rather than in any single thread's context, so a compaction is an eviction from cache, not a loss.
+(Kun's note that Codex has strong **server-side** compaction that a third-party harness does not inherit is consistent with Jason relying on it inside Codex itself.)
+Two vendors' practitioners now report "just let it compact," which shifts this from an n-of-1 read toward a default - though the [[context-rot]] tension below still stands as capacity-vs-contamination.
 
 ## The contradiction to hold
 
