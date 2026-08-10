@@ -2,9 +2,10 @@
 
 **Status:** Implementation-ready. Not started.
 **Opened:** 2026-07-31
+**Story IDs:** `US-AD01`-`US-AD06`. **Renumbered from `US-D01`-`US-D06` on 2026-08-10** to end the collision with the completed **Epic D** (v6 data model, `US-D01-D04`) in `prd-fitsnack-mvp-v6_0702.md`. Older daily logs (07-06, 08-02, 08-05) and the instrumentation PRD's collision note refer to the old `US-D##` IDs as point-in-time history; this PRD and the live trackers now use `US-AD##`.
 **Blocks:** TestFlight / App Store submission. This is a hard rejection blocker, not a nice-to-have.
 **Repo:** `/Users/hcho/firstmate/projects/RepToday/ios` (canonical as of 2026-08-05; the audit below was captured against the pre-instrumentation tree at the old `/Users/hcho/Developer/RepToday`).
-**⚠️ Line-number caveat:** the `file:line` citations below were taken 2026-07-31, before the funnel-instrumentation work (US-T01-T05) landed. US-T05 added `installId`/`firstLaunchAt`/`lastActiveAt` to `AppState.swift`, and US-T06 will add a Settings surface, so lines in `AppState.swift`, `RootView.swift`, and `OnboardingView.swift` have likely shifted in firstmate. Re-confirm each anchor against the canonical tree before building. The named types/methods are still valid; only the line numbers may drift.
+**⚠️ Line-number caveat:** the `file:line` citations below were taken 2026-07-31, before the funnel-instrumentation work (US-T01-T05) landed. US-T05 added `installId`/`firstLaunchAt`/`lastActiveAt` to `AppState.swift`, and US-T06 added a real `Views/Settings/SettingsView.swift` reachable from the Profile tab (the Delete-Account row should **extend** it, not add a second Settings surface), so lines in `AppState.swift`, `RootView.swift`, and `OnboardingView.swift` have shifted in firstmate. Re-confirm each anchor against the canonical tree before building. The named types/methods are still valid; only the line numbers may drift.
 
 ## Why this exists
 
@@ -60,7 +61,7 @@ no KV, no D1, no cache."
 
 ## Stories
 
-### US-D01 - Profile/Settings screen
+### US-AD01 - Profile/Settings screen
 
 Replace `PlaceholderTabView` at `Views/RootView.swift:48-56` with a real `ProfileView`.
 
@@ -70,7 +71,7 @@ Replace `PlaceholderTabView` at `Views/RootView.swift:48-56` with a real `Profil
 - **AC:** the Profile tab renders a real screen; Delete Account is visible without scrolling on the smallest
   supported device (iPhone SE class).
 
-### US-D02 - Bulk delete methods on the persistence protocols
+### US-AD02 - Bulk delete methods on the persistence protocols
 
 Two protocol methods do not exist and must be added.
 
@@ -79,7 +80,7 @@ Two protocol methods do not exist and must be added.
 - **AC:** both are implemented against CoreData, mocked in the test doubles, and unit-tested for the
   delete-everything-for-this-user case including the zero-records case.
 
-### US-D03 - AccountDeletionService orchestration
+### US-AD03 - AccountDeletionService orchestration
 
 A new service, wired through `DI/ServiceContainer.swift`, that performs the full teardown in order:
 
@@ -94,14 +95,14 @@ A new service, wired through `DI/ServiceContainer.swift`, that performs the full
 - **AC:** after deletion, a relaunch lands on onboarding with no residual profile, no logs, and no Keychain
   identifier. Verified by deleting, force-quitting, relaunching.
 
-### US-D04 - Confirmation flow
+### US-AD04 - Confirmation flow
 
 - Tapping Delete Account presents a confirmation alert naming what is destroyed (profile, workout history,
   and, if applicable, the Sign in with Apple link) and stating it cannot be undone.
 - Destructive action is the non-default button.
-- **AC:** cancelling leaves all data intact; confirming runs US-D03 exactly once even on double-tap.
+- **AC:** cancelling leaves all data intact; confirming runs US-AD03 exactly once even on double-tap.
 
-### US-D05 - Sign in with Apple credential handling
+### US-AD05 - Sign in with Apple credential handling
 
 Nothing in the codebase revokes the credential today, and reviewers frequently reject Sign in with Apple
 apps that delete local data without addressing the token. With no backend, two viable options:
@@ -119,7 +120,7 @@ story the privacy policy and App Store nutrition labels will tell. Revisit only 
 - **AC:** the deletion flow surfaces the Apple ID guidance when a Sign in with Apple credential was used,
   and does not surface it in the local-UUID case.
 
-### US-D06 - HealthKit sample removal (optional, recommended)
+### US-AD06 - HealthKit sample removal (optional, recommended)
 
 - Offer, as a checkbox or a second confirmation step, deletion of app-authored HealthKit workouts via
   `HKHealthStore.delete`, matching on `HKMetadataKeyExternalUUID`.
@@ -134,7 +135,7 @@ story the privacy policy and App Store nutrition labels will tell. Revisit only 
 
 ## Verification
 
-- Unit tests for US-D02 and US-D03 orchestration, including the never-signed-in path.
+- Unit tests for US-AD02 and US-AD03 orchestration, including the never-signed-in path.
 - One UI test driving the full flow: Profile tab → Delete Account → confirm → lands on onboarding.
 - Manual on-device check: delete, force-quit, relaunch, confirm onboarding and empty history. Then sign in
   with Apple again and confirm a clean new identity rather than the resurrected old one - this is the check

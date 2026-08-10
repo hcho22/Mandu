@@ -13,7 +13,7 @@ _Status: in progress - Gate 0 half cleared (2026-08-07). Done: name cleared (USP
 The package splits marketing into two tracks with different gates:
 
 - **Track A - organic content + waitlist** can start **now**, in parallel with finishing the build. The channel plan's doctrine is "continuous cadence, not a launch week" (`06-channels/channel-plan.md` §1c), and its #1 channel is organic short-form that needs no App Store listing. This is where "start marketing" actually begins.
-- **Track B - launch-day channels** (ASO, TestFlight, Apple Ads, Show HN / Product Hunt) are **blocked** on the app being live - still behind two builds (instrumentation emissions US-T07-T13 and account deletion US-D01-D06) and the submission checklist.
+- **Track B - launch-day channels** (ASO, TestFlight, Apple Ads, Show HN / Product Hunt) are **blocked** on the app being live - still behind two builds (instrumentation emissions US-T07-T13 and account deletion US-AD01-AD06) and the submission checklist.
 
 **Recommended first move:** clear Gate 0, fix the two asset gates as needed, record the demo asset, then start the 14-day cadence. Do not let Track B compete for attention until the build is submittable.
 
@@ -57,7 +57,7 @@ Runs for a quarter, not a week. TikTok primary, YouTube Shorts secondary, identi
 
 Blocked on the app being submittable. Sequenced:
 
-1. [ ] **Finish the two mandatory builds** - instrumentation emissions US-T07-T13 (the funnel *must* be instrumented before TestFlight) and account deletion US-D01-D06 (App Store 5.1.1(v)). Tracked in `prd-funnel-instrumentation_260803.md` and `01-prd-account-deletion_260731.md`.
+1. [ ] **Finish the two mandatory builds** - instrumentation emissions US-T07-T13 (the funnel *must* be instrumented before TestFlight) and account deletion US-AD01-AD06 (App Store 5.1.1(v)). Tracked in `prd-funnel-instrumentation_260803.md` and `01-prd-account-deletion_260731.md`.
 2. [ ] **Author + host the privacy policy.** Elevated by US-T06: the privacy link now sits on the *first* onboarding screen and in Settings beside the anonymous-usage-data consent, and `LegalLinks.privacyPolicy` still points at an `example.com` placeholder. Hosting the doc and setting that one constant are the same task. Align the App Store privacy nutrition label to the on-device / optional-iCloud / HealthKit-opt-in story **plus** the disclosed anonymous Usage Data (per funnel PRD FR-12: not linked to identity, not used for tracking, no ATT, no IDFA).
 3. [ ] **Reconcile the site FAQ + event schema + nutrition label to one story** once an emitting build ships. The FAQ currently omits the off switch. **Trigger is emission, not US-T06** - fires the moment a build that actually calls `record(_:)` is distributed (US-T07+). **Do not "helpfully" fix the live A/B site copy mid-test** - changing both arms destroys comparability for no benefit while nothing is collected.
 4. [ ] **App Store assets** - capture real on-device submission screenshots (Guideline 2.3.3; the comps in `gtm` are design references, not submission assets); confirm final pricing then regenerate screenshot 05 and the site pricing section. Listing title ("Rep Today"), subtitle ("Opens to a ready workout"), and the 99-char keyword field are already decided (`gtm/06-channels/channel-plan.md` A2). Consider adding the return-after-a-gap screen (strongest emotional differentiator).

@@ -35,8 +35,8 @@ launch-time verification activity, not a build; it cannot run until the TestFlig
 so "all US-Txx *implementations* done" is exactly the honest state.
 
 **⭐ ACTIVE FOCUS shifts to the SECOND (and last) mandatory build: account deletion
-(US-D01-D06)** - App Store Guideline 5.1.1(v), the remaining hard blocker before submission.
-PRD ready at `projects/RepToday/01-prd-account-deletion_260731.md`. Decide US-D05 (a) vs (b)
+(US-AD01-AD06)** - App Store Guideline 5.1.1(v), the remaining hard blocker before submission.
+PRD ready at `projects/RepToday/01-prd-account-deletion_260731.md`. Decide US-AD05 (a) vs (b)
 first; (a) recommended. Its Delete-Account row should extend the US-T06 `SettingsView`, not add a
 second Settings surface, and its `file:line` citations predate US-T05/T06's `AppState`/Settings
 changes and need re-confirming against firstmate before building.
@@ -70,7 +70,7 @@ Two decisions in that PRD supersede what this file said on 2026-08-02, both reco
   thesis's 200-user floor, leaving the week-8/12 checkpoints reading a tiny self-selected
   sample. This **reverses the "explicit opt-in" line I wrote on 2026-08-02.**
 
-Account deletion (US-D01-D06) remains a mandatory gate, just sequenced second now.
+Account deletion (US-AD01-AD06) remains a mandatory gate, just sequenced second now.
 
 ---
 
@@ -83,7 +83,7 @@ placeholder), which violates **App Store Guideline 5.1.1(v)**. Optional sign-in 
 it - Apple treats *supporting account creation* as triggering the requirement. The teardown
 capability exists only as unreachable dead code, and the Keychain identifier survives reinstall,
 so a partial implementation resurrects deleted identities. PRD is implementation-ready
-(`projects/RepToday/01-prd-account-deletion_260731.md`, US-D01-D06), **not started**. This
+(`projects/RepToday/01-prd-account-deletion_260731.md`, US-AD01-AD06), **not started**. This
 directly overturns the "next step is not more build" line below, and it gates every other
 pre-submission item (privacy policy, App Store Connect record, trademark clearance, on-device
 screenshots). **This is the single highest-leverage unblocked task on the board.**
@@ -178,15 +178,15 @@ With that closed there is now zero in-flight build; Agentic RAG is purely valida
      three pre-publication items in the top block** (privacy policy hosted; site/schema/label
      reconciled before any emitting build ships; production Convex deployment + shared secret
      provisioned).
-   - **⭐ Account deletion (US-D01-D06)** - App Store Guideline 5.1.1(v), **now the active build**
+   - **⭐ Account deletion (US-AD01-AD06)** - App Store Guideline 5.1.1(v), **now the active build**
      and the last hard blocker before submission. Not started. PRD at
-     `projects/RepToday/01-prd-account-deletion_260731.md`. Decide US-D05 first: the PRD
+     `projects/RepToday/01-prd-account-deletion_260731.md`. Decide US-AD05 first: the PRD
      recommends guidance + a Settings deep link over standing up a revoke proxy. Its
      Delete-Account row should **extend the US-T06 `SettingsView`**, not add a second Settings
-     surface. Two caveats: (1) its `file:line` citations predate US-T05/T06's `AppState`/Settings
-     changes and need re-confirming against firstmate first; (2) the `US-D01-D06` prefix collides
-     with the completed Epic D in the v6 tracker - reconcile it (the instrumentation PRD sidesteps
-     the same clash with `US-T##`).
+     surface. Caveat: its `file:line` citations predate US-T05/T06's `AppState`/Settings changes
+     and need re-confirming against firstmate first. (The old story-ID collision with the completed
+     v6 Epic D is resolved: these stories were renumbered `US-D01-D06 → US-AD01-AD06` on
+     2026-08-10.)
 
    **(b) Clear the name and the legal surface.** USPTO trademark search for "Rep Today" plus
    the App Store Connect record and name reservation for "Rep Today, Rest Tomorrow" - both
@@ -297,4 +297,4 @@ With that closed there is now zero in-flight build; Agentic RAG is purely valida
   launch preconditions (nightly fixed, README dated, branch protection, USPTO clearance,
   bio verified, SECURITY.md, repo hygiene, career read).
 - Rep Today: MVP shipped (TestFlight / App Store; date TBD). Blocked on account deletion
-  (US-D01-D06), then provisioning.
+  (US-AD01-AD06), then provisioning.
