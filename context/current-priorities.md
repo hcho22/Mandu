@@ -22,17 +22,32 @@ by feel. Purvia stays a live income bet, not portfolio-only - it is ranked secon
 shelved, so it is still standing if Rep Today's kill criteria fire. Full sequencing, the
 two mandatory builds, and the K1-K8 gates are in item 1 below. Logged in `decisions/log.md`.
 
-**⭐ ACTIVE FOCUS (hcho): complete the funnel-instrumentation PRD**
-(`projects/RepToday/prd-funnel-instrumentation_260803.md`, US-T01-T13), the front of the
-two-build gate, ahead of account deletion. **Progress as of 2026-08-05: US-T01-T06 complete and
-on `main`** - the full foundation *plus consent*: the US-T01 transport spike, the
-`AnalyticsService` seam + event model, the Convex append-only sink, the live transport, the
-anonymous per-install identity, and now (US-T06, #74) the **opt-out consent flag + a real
-`SettingsView` + onboarding disclosure**, with a launch-argument override and an out-of-process
-gate proof (879 unit + 10 UI tests green). The pipeline is built and gated but still emits
-nothing. **Next up: US-T07** (`app_install` / `day7_return` / `day30_return` at app entry), then
-the rest of the 13 emissions (US-T08-T12) and the ground-truth reconciliation (US-T13). The Mandu
-copy of the PRD is synced from the live tracker (44/103 acceptance boxes checked).
+**✅ FUNNEL INSTRUMENTATION CODE-COMPLETE (US-T01-T13, all on `main` 2026-08-10; PRs #69-#83).**
+Gate one of the two-build pre-launch gate is done. All 13 pre-registered events now emit:
+app-entry (US-T07, #76), onboarding (US-T08, #77), `ready_screen_shown`+`generation_ms`
+(US-T09, #78), session lifecycle (US-T10, #79), `week_active` (US-T11, #80), monetization
+(US-T12, #81), plus the US-T13 reconciliation harness (#82) and a shared-secret + rate-limit
+abuse guard on `POST /logEvent` (#83). PRD synced: **96/103 boxes checked.** The pipeline that
+was "built but emits nothing" through US-T06 now genuinely collects.
+**The 7 open boxes are all US-T13's cohort-dependent reconciliation** - comparing the pipeline's
+records against a non-founder coder's observations of the moderated TestFlight cohort. That is a
+launch-time verification activity, not a build; it cannot run until the TestFlight cohort exists,
+so "all US-Txx *implementations* done" is exactly the honest state.
+
+**⭐ ACTIVE FOCUS shifts to the SECOND (and last) mandatory build: account deletion
+(US-D01-D06)** - App Store Guideline 5.1.1(v), the remaining hard blocker before submission.
+PRD ready at `projects/RepToday/01-prd-account-deletion_260731.md`. Decide US-D05 (a) vs (b)
+first; (a) recommended. Its Delete-Account row should extend the US-T06 `SettingsView`, not add a
+second Settings surface, and its `file:line` citations predate US-T05/T06's `AppState`/Settings
+changes and need re-confirming against firstmate before building.
+
+**Emission is now live, which ARMS three pre-publication items** (see the marketing checklist and
+the GTM `08-redteam/pre-publication-checklist.md`): (1) the **privacy policy must be authored and
+hosted** - it is now genuinely collecting, and the link sits on the first onboarding screen still
+pointing at an `example.com` placeholder; (2) the **site FAQ + event schema + nutrition label
+must be reconciled to one story** before any *emitting* build is distributed (TestFlight counts);
+(3) the **production Convex deployment + its `ANALYTICS_SHARED_SECRET` / `REPTODAY_ANALYTICS_SECRET`
+must be provisioned** - the Release analytics endpoint currently points at nothing by design.
 
 **Transport correction (2026-08-05):** the US-T01 spike returned a **no-go on `convex-swift`**
 (it ships an arm64-only xcframework, so it cannot build for the Intel host's Simulator). Adopted
@@ -142,40 +157,36 @@ With that closed there is now zero in-flight build; Agentic RAG is purely valida
    **The path to the PMF test, in dependency order. Nothing below can be skipped or
    reordered.**
 
-   **(a) Two builds, both mandatory before anyone can use the app. Instrumentation is the
-   current active build (hcho); account deletion follows.**
-   - **⭐ Funnel instrumentation (US-T01-T13)** - THE current task. **Foundation + consent done:
-     US-T01-T06 complete and on `main` as of 2026-08-05** (PRs #69-#74). Landed: the transport
-     spike, the `AnalyticsService` seam + `AnalyticsEvent` model, the Convex append-only sink
-     (`events` table + `logEvent` + a `POST /logEvent` HTTP action), the live `URLSession`
-     transport, the anonymous per-install identity on `AppState` (`installId`, `firstLaunchAt`,
-     `lastActiveAt`, computed `installWeek`), and now (US-T06, #74) the **opt-out consent flag +
-     a real `SettingsView` reachable from the Profile tab + a one-sentence onboarding
-     disclosure + privacy-policy link**, with a launch-argument override so `RepTodayUITests`
-     runs inert and an out-of-process proof that emission stops when the toggle is off (879 unit
-     + 10 UI tests green). The pipeline is built and gated but **still emits nothing** - each
-     story so far shipped its piece uncalled. **Next: US-T07** (the first emissions -
-     `app_install` / `day7_return` / `day30_return` at app entry), then the rest of the 13
-     emissions (US-T08-T12) and US-T13 ground-truth reconciliation. Design, as
-     built: a **Convex-backed, ingest-only** pipeline for the **13 pre-registered events**
-     (from `gtm/06-channels/event-metric-schema.md`) to one append-only table with all cohort
-     math deferred to after launch; strictly fire-and-forget so the offline core loop is never
-     touched; anonymous per-install UUID in `UserDefaults` (never Keychain - that would
-     resurrect a deleted identity); **opt-out** consent; and, per the US-T01 spike, **zero new
-     Swift Package dependencies** - the transport is a Convex HTTP action reached by a plain
-     `URLSession` POST because `convex-swift` no-go'd (arm64-only xcframework, unbuildable on
-     the Intel host's Simulator). **Bonus: one build clears two blockers** -
-     `ready_screen_shown.generation_ms` (emitted in US-T09) is the on-device benchmark that
-     substantiates the "under 100ms" marketing claim (a pre-publication blocker for the site,
-     video, screenshots, and investor teaser).
-   - **Account deletion (US-D01-D06)** - App Store Guideline 5.1.1(v). A hard rejection
-     blocker, not started, sequenced after instrumentation. PRD is implementation-ready at
+   **(a) Two builds, both mandatory before anyone can use the app. Instrumentation is DONE;
+   account deletion is now the active build.**
+   - **✅ Funnel instrumentation (US-T01-T13) - CODE-COMPLETE on `main` 2026-08-10** (PRs
+     #69-#83, 96/103 PRD boxes checked). A **Convex-backed, ingest-only** pipeline for the **13
+     pre-registered events** (from `gtm/06-channels/event-metric-schema.md`), strictly
+     fire-and-forget so the offline core loop is never touched, keyed by an anonymous per-install
+     UUID in `UserDefaults` (never Keychain), **opt-out** consent with a real `SettingsView` +
+     onboarding disclosure, **zero new Swift Package dependencies** (Convex HTTP action reached by
+     `URLSession`; `convex-swift` no-go'd on the Intel Simulator), and a shared-secret +
+     rate-limit abuse guard on `POST /logEvent` (#83). All 13 events now emit: app-entry (T07),
+     onboarding (T08), `ready_screen_shown`+`generation_ms` (T09), session lifecycle (T10),
+     `week_active` (T11), monetization (T12). **The 7 open boxes are all US-T13's
+     cohort-dependent reconciliation** - line-by-line comparison of the pipeline's records against
+     a non-founder coder's observations of the moderated TestFlight cohort. That is a launch-time
+     verification, not a build, and cannot run until the cohort exists; the *harness* for it
+     shipped (#82). **Bonus delivered:** `ready_screen_shown.generation_ms` (US-T09) is the
+     on-device benchmark that substantiates the "under 100ms" marketing claim - though the claim
+     still needs a real-hardware p95 recorded (pre-pub gate). **Emission being live now arms the
+     three pre-publication items in the top block** (privacy policy hosted; site/schema/label
+     reconciled before any emitting build ships; production Convex deployment + shared secret
+     provisioned).
+   - **⭐ Account deletion (US-D01-D06)** - App Store Guideline 5.1.1(v), **now the active build**
+     and the last hard blocker before submission. Not started. PRD at
      `projects/RepToday/01-prd-account-deletion_260731.md`. Decide US-D05 first: the PRD
-     recommends guidance + a Settings deep link over standing up a revoke proxy. (Note a story
-     collision to fix here: both this PRD and the completed Epic D in the v6 tracker use
-     `US-D01-D06`; the instrumentation PRD sidesteps it with `US-T##` and flags it as an open
-     question. Also: US-T06 and this PRD both need a Settings surface, so build the toggle
-     home once and share it.)
+     recommends guidance + a Settings deep link over standing up a revoke proxy. Its
+     Delete-Account row should **extend the US-T06 `SettingsView`**, not add a second Settings
+     surface. Two caveats: (1) its `file:line` citations predate US-T05/T06's `AppState`/Settings
+     changes and need re-confirming against firstmate first; (2) the `US-D01-D06` prefix collides
+     with the completed Epic D in the v6 tracker - reconcile it (the instrumentation PRD sidesteps
+     the same clash with `US-T##`).
 
    **(b) Clear the name and the legal surface.** USPTO trademark search for "Rep Today" plus
    the App Store Connect record and name reservation for "Rep Today, Rest Tomorrow" - both
