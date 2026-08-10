@@ -4,7 +4,7 @@
 **Source of truth:** the GTM package at `/Users/hcho/firstmate/projects/RepToday/gtm/` (v2, self-graded 2026-08-02). Nothing there is published, deployed, or purchased.
 **Purpose:** turn the finished GTM package into an execution to-do. Check items off as they land; update the status line below when the picture shifts.
 
-_Status: not started. The package is complete; this is the "press go" list._
+_Status: in progress - Gate 0 half cleared (2026-08-07). Done: name cleared (USPTO) + reserved in App Store Connect ("Rep Today" locked, public assets unblocked); handles secured (@reptoday on TikTok, YouTube, Instagram, X). Remaining Gate 0: commit to the domain, stand up the waitlist._
 
 ---
 
@@ -21,8 +21,8 @@ The package splits marketing into two tracks with different gates:
 
 ## Gate 0 - clear before ANY public asset (small, founder-owned, days not weeks)
 
-- [ ] **USPTO trademark search for "Rep Today"** (ideally with counsel) + **App Store Connect name reservation**. Blocks *everything public*; the self-grade's stated "founder's next action." Do this first.
-- [ ] **Secure the handles** - `@reptoday` on TikTok and YouTube (primary), plus Instagram / X defensively. Availability was never verifiable from research.
+- [x] **USPTO trademark search for "Rep Today"** (ideally with counsel) + **App Store Connect name reservation**. **DONE 2026-08-07** - name cleared and reserved (the App ID `com.reptoday.app` was registered in the Developer portal as part of this, so the ASC app record could be created). This was the self-grade's stated "founder's next action" and it unblocks *everything public*. The "clearance UNVERIFIED" caveat that still appears throughout the GTM package (naming decision, recap banner, README, site footers, teaser, brand guidelines, screenshots README) can now be updated to reflect this.
+- [x] **Secure the handles** - `@reptoday` on TikTok and YouTube (primary), plus Instagram / X defensively. **DONE 2026-08-07** - all four claimed (`@reptoday`). The TikTok + YouTube pair is what the PMF cadence actually posts to; IG/X held defensively against impersonation.
 - [ ] **Commit to `reptoday.app`** as the domain. Do **not** buy `reptoday.com` ($3,895 at HugeDomains - the package is emphatic it buys zero installs).
 - [ ] **Stand up the waitlist.** It is the measurement spine of the whole plan ("pre-publication action #1") and does not exist yet. The landing page is built (`gtm/03-site/index.html`) but is a deliberate dead end - it needs exactly **one** low-pressure CTA (email capture) wired and hosted. First-party, web-side capture is the one funnel no iOS attribution constraint can degrade.
 
