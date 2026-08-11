@@ -1,6 +1,6 @@
 # PRD: Account Deletion (App Store Guideline 5.1.1(v))
 
-**Status:** Implementation-ready. Not started.
+**Status:** ✅ **COMPLETE** - shipped as dev-repo **#86** (`07cac5b`, 2026-08-10) in one flow: `AccountDeletionService` + `AccountDeletionViewModel`, a Delete Account row added to the US-T06 `SettingsView` (extended, not duplicated), the bulk delete methods (`deleteAllLogs()`, SessionPolicy/ActiveSession deletes), and **US-AD05 shipped as Option (a)** - `ASAuthorizationAppleIDProvider.getCredentialState(forUserID:)` + on-device Apple-ID guidance, no revoke proxy, no backend. Backed by `AccountDeletionServiceTests` (276 lines), `AccountDeletionViewModelTests`, and `AccountDeletionUITests`. With this, both mandatory pre-launch builds (instrumentation + account deletion) are done.
 **Opened:** 2026-07-31
 **Story IDs:** `US-AD01`-`US-AD06`. **Renumbered from `US-D01`-`US-D06` on 2026-08-10** to end the collision with the completed **Epic D** (v6 data model, `US-D01-D04`) in `prd-fitsnack-mvp-v6_0702.md`. Older daily logs (07-06, 08-02, 08-05) and the instrumentation PRD's collision note refer to the old `US-D##` IDs as point-in-time history; this PRD and the live trackers now use `US-AD##`.
 **Blocks:** TestFlight / App Store submission. This is a hard rejection blocker, not a nice-to-have.

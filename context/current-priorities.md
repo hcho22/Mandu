@@ -34,20 +34,45 @@ records against a non-founder coder's observations of the moderated TestFlight c
 launch-time verification activity, not a build; it cannot run until the TestFlight cohort exists,
 so "all US-Txx *implementations* done" is exactly the honest state.
 
-**⭐ ACTIVE FOCUS shifts to the SECOND (and last) mandatory build: account deletion
-(US-AD01-AD06)** - App Store Guideline 5.1.1(v), the remaining hard blocker before submission.
-PRD ready at `projects/RepToday/01-prd-account-deletion_260731.md`. Decide US-AD05 (a) vs (b)
-first; (a) recommended. Its Delete-Account row should extend the US-T06 `SettingsView`, not add a
-second Settings surface, and its `file:line` citations predate US-T05/T06's `AppState`/Settings
-changes and need re-confirming against firstmate before building.
+**✅ BOTH MANDATORY BUILDS DONE - the app is now build-complete for submission.** Account
+deletion (US-AD01-AD06) shipped as dev-repo **#86** (2026-08-10): `AccountDeletionService` +
+view model, a Delete Account flow added to the US-T06 `SettingsView`, the bulk delete methods,
+and **US-AD05 as Option (a)** (`getCredentialState` + on-device Apple-ID guidance, no revoke
+proxy), with service/view-model/UI tests. That was the last App Store 5.1.1(v) blocker, and with
+instrumentation (US-T01-T13) already done, **no mandatory code build remains.**
 
-**Emission is now live, which ARMS three pre-publication items** (see the marketing checklist and
-the GTM `08-redteam/pre-publication-checklist.md`): (1) the **privacy policy must be authored and
-hosted** - it is now genuinely collecting, and the link sits on the first onboarding screen still
-pointing at an `example.com` placeholder; (2) the **site FAQ + event schema + nutrition label
-must be reconciled to one story** before any *emitting* build is distributed (TestFlight counts);
-(3) the **production Convex deployment + its `ANALYTICS_SHARED_SECRET` / `REPTODAY_ANALYTICS_SECRET`
-must be provisioned** - the Release analytics endpoint currently points at nothing by design.
+**⭐ ACTIVE FOCUS is now PROVISIONING + ASSETS, not building.** The path to actually submitting
+and running the PMF test:
+- ⬜ **Capture the iPhone XS / iOS 17 real-hardware p95** to substantiate "under 100ms" (or change
+  the number everywhere). #92 landed the harness + a strong Simulator-proxy signal, but that is
+  explicitly not device evidence; it blocks every asset carrying the claim, incl. the App Store
+  listing.
+- ⬜ **Provision the production Convex deployment + `ANALYTICS_SHARED_SECRET`/`REPTODAY_ANALYTICS_SECRET`**
+  - the Release analytics endpoint points at nothing by design, so a shipping build collects
+  nothing until this is set.
+- ⬜ **App Store submission mechanics:** real on-device screenshots (Guideline 2.3.3), confirm
+  pricing, enter the authored nutrition labels into App Store Connect (record + name already
+  reserved).
+- ⬜ **Stand up the waitlist** (the last Gate 0 marketing item; name/handles/domain all done).
+- Then **TestFlight** → at which point US-T13's reconciliation and the K8 wedge cohort can finally
+  run.
+
+**The three armed pre-publication items, updated 2026-08-11** (dev-repo #88-#92; see the marketing
+checklist and the GTM `08-redteam/pre-publication-checklist.md`):
+(1) ✅ **Privacy policy authored + hosted** - live at `reptoday.app/privacy` (Cloudflare Worker),
+the in-app `LegalLinks.privacyPolicy` rewired from the `example.com` placeholder to the real URL
+(onboarding, Settings, paywall), contact email set (#89), FAQ linked (#90), and the App Store
+**nutrition-label spec authored** (#91) - to be entered into App Store Connect at submission. This
+also means **`reptoday.app` is now registered and live**, closing the Gate 0 domain item.
+(2) 🔄 **Site FAQ + event schema + nutrition label reconciled to one story** - largely done: FAQ
+now links the hosted policy (#90), label spec authored (#91); remaining is confirming the FAQ names
+the opt-out on the final emitting build and entering the labels at submission.
+(3) ⬜ **Production Convex deployment + `ANALYTICS_SHARED_SECRET` / `REPTODAY_ANALYTICS_SECRET` still
+to be provisioned** - the Release analytics endpoint points at nothing by design.
+**Also (Gate 1, still open):** the "under 100ms" benchmark got a re-runnable harness + a strong
+Simulator-proxy signal (p95 ~2.7ms, ≈36x margin) in #92, but the record is explicit the proxy is
+"not evidence for a device latency claim" - the **iPhone XS / iOS 17 real-hardware p95 is still the
+outstanding blocker** and the claim must not be published until it passes.
 
 **Transport correction (2026-08-05):** the US-T01 spike returned a **no-go on `convex-swift`**
 (it ships an arm64-only xcframework, so it cannot build for the Intel host's Simulator). Adopted
@@ -157,8 +182,9 @@ With that closed there is now zero in-flight build; Agentic RAG is purely valida
    **The path to the PMF test, in dependency order. Nothing below can be skipped or
    reordered.**
 
-   **(a) Two builds, both mandatory before anyone can use the app. Instrumentation is DONE;
-   account deletion is now the active build.**
+   **(a) Two builds, both mandatory before anyone can use the app. ✅ BOTH DONE (2026-08-10):
+   instrumentation (US-T01-T13) and account deletion (US-AD01-AD06). No mandatory code build
+   remains; what gates submission now is provisioning + assets (top block).**
    - **✅ Funnel instrumentation (US-T01-T13) - CODE-COMPLETE on `main` 2026-08-10** (PRs
      #69-#83, 96/103 PRD boxes checked). A **Convex-backed, ingest-only** pipeline for the **13
      pre-registered events** (from `gtm/06-channels/event-metric-schema.md`), strictly
@@ -178,15 +204,15 @@ With that closed there is now zero in-flight build; Agentic RAG is purely valida
      three pre-publication items in the top block** (privacy policy hosted; site/schema/label
      reconciled before any emitting build ships; production Convex deployment + shared secret
      provisioned).
-   - **⭐ Account deletion (US-AD01-AD06)** - App Store Guideline 5.1.1(v), **now the active build**
-     and the last hard blocker before submission. Not started. PRD at
-     `projects/RepToday/01-prd-account-deletion_260731.md`. Decide US-AD05 first: the PRD
-     recommends guidance + a Settings deep link over standing up a revoke proxy. Its
-     Delete-Account row should **extend the US-T06 `SettingsView`**, not add a second Settings
-     surface. Caveat: its `file:line` citations predate US-T05/T06's `AppState`/Settings changes
-     and need re-confirming against firstmate first. (The old story-ID collision with the completed
-     v6 Epic D is resolved: these stories were renumbered `US-D01-D06 → US-AD01-AD06` on
-     2026-08-10.)
+   - **✅ Account deletion (US-AD01-AD06) - DONE** (dev-repo **#86**, 2026-08-10), the last App
+     Store 5.1.1(v) blocker. Shipped in one flow: `AccountDeletionService` + `AccountDeletionViewModel`,
+     a Delete Account row that **extends the US-T06 `SettingsView`** (not a second surface), the
+     bulk delete methods (`deleteAllLogs()`, SessionPolicy/ActiveSession deletes), and **US-AD05 as
+     Option (a)** - `getCredentialState` + on-device Apple-ID guidance, no revoke proxy, no backend.
+     Backed by `AccountDeletionServiceTests` (276 lines), a view-model test, and a UI test. PRD at
+     `projects/RepToday/01-prd-account-deletion_260731.md`. **With this, both mandatory builds are
+     done and no mandatory code build remains** - see the top block for the provisioning/assets
+     path to submission.
 
    **(b) Clear the name and the legal surface.** USPTO trademark search for "Rep Today" plus
    the App Store Connect record and name reservation for "Rep Today, Rest Tomorrow" - both
