@@ -11,6 +11,28 @@ been repointed to firstmate. Note the GTM structure changed with v2:
 `gtm/07-thesis/` (was `05-thesis`), `gtm/08-redteam/` (was `06-redteam`), plus new
 `gtm/06-channels/` (the event-metric schema); front door `gtm/recap.html`.
 
+**🗓️ 2026-08-11 UPDATE (both projects advanced the same day).**
+- **Rep Today** (firstmate `main`): **#93** pre-registered the **K8 wedge-comprehension coding
+  rubric** in `gtm/` before the first cohort - this closes the marketing-checklist Track A "K8
+  rubric" item and one half of the thesis's standing open owner slot (naming the non-founder
+  *coder* who applies it is still open). **#94** prescribes **one set per Movement Practice
+  stretch** (engine correction). Both land on top of #88-#92 (privacy policy hosted + wired,
+  nutrition-label spec, latency-benchmark harness) already recorded below. Provisioning + assets
+  remain the active focus; no code build is gating.
+- **Purvia is NOT idle - it moved today, and its launch preconditions are clearing.** Four items
+  landed: **#107** `SECURITY.md` + private vulnerability reporting → **precondition 6 GREEN**;
+  **#108** security gates report on every PR (dropped the path filter) → **precondition 3 step 1**;
+  **#109** nightly evals publish via **auto-merge PR** (needed once branch protection blocks direct
+  push); and a **branch-protection ruleset on `main`** requiring the E6/E7 + AU4 checks with no
+  bypass (repo setting) → **precondition 3 (branch protection) COMPLETE / GREEN**. Verified
+  independently: the **nightly series is publishing again** (08-05/09/10/11) and the
+  **permissions-scale nightly for 2026-08-11 is GREEN (1.000 across all cells)**, not the 0.000
+  the text below still describes - so **precondition 1 is effectively resolved too**. Net:
+  **8 RED → ~4-5 RED** (1, 3, 6 cleared; 2 likely). The "receipts rotting / kill criterion 4
+  half-true / idle since 07-16" framing throughout this file is now stale. Still open: USPTO
+  clearance (4), founder-bio verification (5), repo hygiene (7), pre-launch career read (8), and
+  confirming the README all-1.000 table is dated (2).
+
 **⭐ PRIORITY CHANGE (2026-08-02, hcho's call): Rep Today is now #1, Purvia #2.**
 The reasoning, in hcho's words: Purvia is the stronger portfolio piece and may well be what
 lands an AI role, but **Rep Today is the more likely source of near-term income**. The move
@@ -135,7 +157,10 @@ everything in the repo is MIT and irrevocably granted, so a paid tier can only e
 that does not exist yet; (3) **the pitch is no longer "adopt my kit"** but "you'll build the
 retrieval loop yourself anyway - what you won't cheaply build is the proof."
 
-⚠️ **Purvia has been idle since 2026-07-16, and its own kill criterion 4 is half-true.** The
+⚠️ **[SUPERSEDED 2026-08-11 - see the top update block: the nightly is publishing again
+(08-05/09/10/11) and the permissions-scale benchmark is GREEN at 1.000, so this "idle / receipts
+rotting" read no longer holds; preconditions 1/3/6 cleared 2026-08-11.]** ~~Purvia has been idle
+since 2026-07-16, and its own kill criterion 4 is half-true.~~ The
 nightly eval series stopped publishing on 07-16, and the permissions-scale benchmark has been red
 (0.000 in every cell) since 2026-06-19. The thesis names exactly this as a kill signal; it does
 not fire only because nobody is reading the artifacts yet. That is the same "publication is not
@@ -294,10 +319,13 @@ With that closed there is now zero in-flight build; Agentic RAG is purely valida
    positioning rewrite is done, and open-core got a hard constraint - everything in the repo
    is MIT and irrevocably granted, so a paid tier can only gate work that does not exist yet.
    Template-ization and the threat model are untouched. Observability O-series and F2/F3 are a
-   later follow-up PRD. **Maintenance debt now competes for this slot:** the nightly evals
+   later follow-up PRD. ~~**Maintenance debt now competes for this slot:** the nightly evals
    stopped 2026-07-16 and the permissions-scale benchmark has been red since 2026-06-19, which
-   is the thesis's own kill criterion 4 in slow motion. Restarting and annotating them is
-   cheap and is launch preconditions 1 and 2.
+   is the thesis's own kill criterion 4 in slow motion.~~ **[RESOLVED 2026-08-11: the nightly is
+   publishing daily again (08-05/09/10/11) and the permissions-scale benchmark is back to 1.000;
+   preconditions 3 (branch protection) and 6 (SECURITY.md) also cleared today via #107/#108/#109 +
+   the ruleset. The cheapest-credibility maintenance debt is largely paid down.]** Restarting and
+   annotating them was launch preconditions 1 and 2.
 3. **Job search as the parallel income hedge:** sustained applications at 5/week against
    Tier A/B/C, plus interview prep. Non-negotiable minimum given the 6-12 month runway.
    Two-bucket targeting (AI builder + AI evals/quality), pitched on validation rigor.
@@ -319,8 +347,12 @@ With that closed there is now zero in-flight build; Agentic RAG is purely valida
 ## Active deadlines
 
 - Income by end of 2026 (app revenue or a full-time role).
-- Purvia: open-core public + waitlist (Q3 2026). Public launch is hard-gated on eight RED
+- Purvia: open-core public + waitlist (Q3 2026). Public launch is hard-gated on the eight
   launch preconditions (nightly fixed, README dated, branch protection, USPTO clearance,
-  bio verified, SECURITY.md, repo hygiene, career read).
+  bio verified, SECURITY.md, repo hygiene, career read). **As of 2026-08-11 three-to-four are
+  green** - branch protection (#108 + ruleset), SECURITY.md/private vuln reporting (#107), and
+  the nightly-fixed benchmark (permissions-scale back to 1.000, publishing daily); README-dated
+  likely too. Remaining RED: USPTO clearance, bio verified, repo hygiene, career read. See the
+  2026-08-11 update block at the top.
 - Rep Today: MVP shipped (TestFlight / App Store; date TBD). Blocked on account deletion
   (US-AD01-AD06), then provisioning.
