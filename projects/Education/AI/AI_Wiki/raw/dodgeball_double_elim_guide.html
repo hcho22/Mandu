@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dodgeball Double-Elimination Rumble — Station Guide</title>
+<style>
+  :root{
+    --navy:#141d33; --glow:#f5411e; --glowbg:#fdeae4; --amber:#c77b12;
+    --amberbg:#fdf3e3; --ink:#1c2430; --grey:#5f6b7a; --line:#d6dce2;
+    --ltbg:#f5f7f9; --red:#c0392b; --redbg:#fdecea; --blue:#1f6fb2; --bluebg:#e7f1f9;
+  }
+  *{box-sizing:border-box;}
+  body{font-family:"Segoe UI",Arial,Helvetica,sans-serif; color:var(--ink);
+    line-height:1.5; margin:0; padding:0; background:#eef1f4;}
+  .page{max-width:920px; margin:0 auto; background:#fff; padding:40px 46px;}
+  header.masthead{border-bottom:4px solid var(--glow); padding-bottom:14px; margin-bottom:8px;}
+  h1{font-size:31px; color:var(--navy); margin:0 0 2px; letter-spacing:-.5px;}
+  .sub{color:var(--grey); font-size:14px; margin:0;}
+  .tagline{color:var(--glow); font-weight:700; font-style:italic; font-size:15px; margin:14px 0 0;}
+  .facts{display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 4px;}
+  .fact{background:var(--ltbg); border:1px solid var(--line); border-radius:6px; padding:7px 12px; font-size:12.5px;}
+  .fact b{color:var(--navy);}
+  h2{background:var(--navy); color:#fff; font-size:16px; padding:8px 12px; margin:30px 0 14px; border-radius:4px;}
+  h3{color:var(--navy); font-size:15px; margin:20px 0 6px;}
+  p{margin:8px 0;}
+  ul,ol{margin:8px 0 8px 4px; padding-left:22px;}
+  li{margin:5px 0;}
+  table{border-collapse:collapse; width:100%; margin:12px 0; font-size:13px;}
+  th{background:var(--navy); color:#fff; text-align:left; padding:7px 9px; font-weight:600;}
+  td{border:1px solid var(--line); padding:7px 9px; vertical-align:top;}
+  tbody tr:nth-child(even){background:var(--ltbg);}
+  .r{text-align:right;} .c{text-align:center;}
+  .callout{border-radius:6px; padding:12px 15px; margin:14px 0; font-size:13.5px;}
+  .hard{background:var(--redbg); border:1px solid #e6a79f;} .hard b{color:var(--red);}
+  .tip{background:var(--glowbg); border:1px solid #f3b6a3;} .tip b{color:var(--glow);}
+  .warn{background:var(--amberbg); border:1px solid #e6c58f;} .warn b{color:var(--amber);}
+  .cool{background:var(--bluebg); border:1px solid #a9cde8;} .cool b{color:var(--blue);}
+  .two{display:flex; gap:18px; flex-wrap:wrap;} .two>div{flex:1 1 320px;}
+  .price{color:var(--grey); font-size:12px; font-weight:600;}
+  .total-row{background:var(--glowbg)!important; font-weight:700;}
+  .wave-w{background:var(--glowbg)!important;} .wave-l{background:var(--bluebg)!important;}
+  .badge{display:inline-block; font-size:11px; font-weight:700; color:#fff; padding:1px 7px; border-radius:10px; vertical-align:middle;}
+  .b-w{background:var(--glow);} .b-l{background:var(--blue);} .b-show{background:var(--navy);}
+  .map{width:100%; height:auto; margin:14px 0; border:1px solid var(--line); border-radius:6px;}
+  .bracket-wrap{overflow-x:auto; margin:14px 0; border:1px solid var(--line); border-radius:6px; background:#fff;}
+  .bracket-wrap svg{display:block; width:100%; min-width:1000px; height:auto;}
+  footer{margin-top:34px; border-top:2px solid var(--glow); padding-top:12px; color:var(--grey); font-size:12px;}
+  @media print{
+    body{background:#fff;} .page{padding:0; max-width:100%;}
+    h2,th,.steps>li::before,.badge{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+    h2{break-after:avoid;} table,.callout{break-inside:avoid;}
+    .bracket-wrap{overflow:visible;} .bracket-wrap svg{min-width:0;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="masthead">
+  <h1>DODGEBALL DOUBLE-ELIMINATION RUMBLE</h1>
+  <p class="sub">16 Teams &middot; 1v1 &rarr; 4-Team Four-Square &middot; Double-Elim + Redemption Rumble &middot; ~75 min</p>
+  <p class="tagline">Everybody plays, nobody stands still &mdash; survive the four-square or fight your way back.</p>
+</header>
+
+<div class="facts">
+  <span class="fact"><b>Players:</b> ~200 men</span>
+  <span class="fact"><b>Teams:</b> 16 &times; 12&ndash;13</span>
+  <span class="fact"><b>Clock:</b> ~75 min</span>
+  <span class="fact"><b>Field:</b> ~175 &times; 110 ft</span>
+  <span class="fact"><b>R1:</b> 1v1 &nbsp;&middot;&nbsp; <b>R2:</b> 4-team four-square</span>
+  <span class="fact"><b>Games:</b> 18&ndash;19 total</span>
+</div>
+
+<h2>The Big Idea (why this hits all three goals)</h2>
+<p>The tournament escalates in format, not just stakes: <b>Round 1 is 1v1</b> (classic head-to-head, 8 matches, all 16 teams playing in the first 10 minutes), then <b>Round 2 is 4-team four-square</b> &mdash; the schoolyard game scaled up: one big square split into four quadrants, each team holds a zone, throw across the lines, <b>last zone standing survives</b>. That single change is a huge energy and creativity spike: choosing which neighbor to target invites temporary alliances, gang-ups, and last-second betrayals, and it collapses the field fast so the whole bracket fits comfortably in 75 minutes.</p>
+<p>Because a 4-way sends three teams down at once, we keep it a true <b>double-elimination</b>: losing a 1v1 or getting knocked out of a four-square is your <em>first</em> life lost, not your last &mdash; you drop into the losers bracket and keep going. And the instant a team takes its second loss, it rolls onto a freed court for the continuous <b>Redemption Rumble</b>, so no team of 200 men ever stands idle.</p>
+<div class="tip callout"><b>The three levers.</b> <b>High energy</b> = short games, four-square territory battles, and a converging center showcase for the finals. <b>Teamwork</b> = catch-to-revive + assigned roles reward a coordinated team, and in four-square a team that defends its zone as a unit outlasts scattered ones. <b>Creativity</b> = no fixed lineup, captain power-plays, four-square alliance-brokering, and rotating variant rules in the Rumble.</p>
+
+<h2>Field Layout &mdash; Pre-Mark BOTH Court Sets (no reconfiguring)</h2>
+<p>Mark the field <b>once</b>, in two colors: four <b>50 &times; 30 ft courts</b> (2&times;2 grid) for the 1v1 rounds, and two <b>~50 &times; 60 ft four-square arenas</b> that overlay the same footprint (each arena = the two courts in one column merged, then split into four quadrants by a &ldquo;+&rdquo;). Refs just point teams to the right color &mdash; no cones move mid-event. The center spine collapses to one <b>showcase court</b> for the finals.</p>
+
+<svg class="map" viewBox="0 0 700 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Field layout: four 1v1 courts that merge into two four-square arenas">
+  <rect x="0" y="0" width="700" height="460" fill="#f5f7f9" stroke="#d6dce2"/>
+  <text x="350" y="20" font-family="Segoe UI,Arial" font-size="13" fill="#5f6b7a" text-anchor="middle">FIELD ~175 ft (length) &#8596;</text>
+  <text x="16" y="240" font-family="Segoe UI,Arial" font-size="13" fill="#5f6b7a" text-anchor="middle" transform="rotate(-90 16 240)">~110 ft (width)</text>
+  <!-- Arena outlines (dashed orange) -->
+  <rect x="60" y="48" width="256" height="360" fill="none" stroke="#f5411e" stroke-width="2.5" stroke-dasharray="9 5"/>
+  <rect x="384" y="48" width="256" height="360" fill="none" stroke="#f5411e" stroke-width="2.5" stroke-dasharray="9 5"/>
+  <text x="188" y="42" font-family="Segoe UI,Arial" font-size="12" fill="#f5411e" text-anchor="middle" font-weight="700">FOUR-SQUARE A</text>
+  <text x="512" y="42" font-family="Segoe UI,Arial" font-size="12" fill="#f5411e" text-anchor="middle" font-weight="700">FOUR-SQUARE B</text>
+  <!-- 1v1 courts (navy) -->
+  <g font-family="Segoe UI,Arial" font-size="12" fill="#141d33" text-anchor="middle">
+    <rect x="74" y="62" width="228" height="150" fill="#fff" stroke="#141d33" stroke-width="2"/>
+    <text x="188" y="141" font-weight="600">COURT 1</text>
+    <rect x="398" y="62" width="228" height="150" fill="#fff" stroke="#141d33" stroke-width="2"/>
+    <text x="512" y="141" font-weight="600">COURT 2</text>
+    <rect x="74" y="244" width="228" height="150" fill="#fff" stroke="#141d33" stroke-width="2"/>
+    <text x="188" y="323" font-weight="600">COURT 3</text>
+    <rect x="398" y="244" width="228" height="150" fill="#fff" stroke="#141d33" stroke-width="2"/>
+    <text x="512" y="323" font-weight="600">COURT 4</text>
+  </g>
+  <rect x="60" y="216" width="580" height="24" fill="#141d33" opacity="0.07"/>
+  <text x="350" y="232" font-family="Segoe UI,Arial" font-size="11" fill="#141d33" text-anchor="middle" font-weight="700">CENTER SPINE &mdash; MC / ball return / showcase court for the finals</text>
+  <text x="350" y="448" font-family="Segoe UI,Arial" font-size="11" fill="#5f6b7a" text-anchor="middle">Solid navy = 1v1 courts &middot; dashed orange = four-square arenas (Courts 1+3 = A, Courts 2+4 = B; each split into 4 quadrants) &middot; ~15 ft runoff all sides</text>
+</svg>
+
+<h2>The Bracket (visual)</h2>
+<p>Every team gets two lives. A <b>1v1 loss</b> or a <b>failure to survive a melee</b> is one loss and drops you to the losers bracket (blue). A second loss ends your bracket run &mdash; then you&rsquo;re into the Redemption Rumble. Seeds are shown in standard 1&ndash;16 order.</p>
+
+<div class="bracket-wrap">
+<svg viewBox="0 0 1140 780" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Double elimination bracket with 1v1 round one and 4-team four-square round two">
+  <style>
+    .lbl{font-family:"Segoe UI",Arial;font-size:12px;font-weight:700;fill:#141d33;}
+    .col{font-family:"Segoe UI",Arial;font-size:11px;font-weight:700;fill:#5f6b7a;letter-spacing:.5px;}
+    .t{font-family:"Segoe UI",Arial;font-size:10.5px;fill:#1c2430;}
+    .tw{fill:#fff;}
+    .sm{font-family:"Segoe UI",Arial;font-size:9.5px;fill:#5f6b7a;font-style:italic;}
+    .con{stroke:#c9cfd8;stroke-width:1.5;fill:none;}
+    .drop{stroke:#1f6fb2;stroke-width:1.6;fill:none;stroke-dasharray:5 4;}
+    .arrow{fill:#1f6fb2;}
+  </style>
+
+  <!-- ============ WINNERS BRACKET ============ -->
+  <text x="20" y="26" class="lbl" style="font-size:14px;fill:#f5411e;">WINNERS BRACKET</text>
+  <text x="93"  y="46" class="col" text-anchor="middle">R1 &middot; 1v1</text>
+  <text x="300" y="46" class="col" text-anchor="middle">R2 &middot; 4-TEAM FOUR-SQUARE</text>
+  <text x="505" y="46" class="col" text-anchor="middle">WINNERS FINAL &middot; 1v1</text>
+
+  <!-- R1 eight 1v1 boxes -->
+  <g>
+    <!-- helper: each box 146 wide x 30 -->
+    <g>
+      <rect x="20" y="56"  width="146" height="30" rx="3" fill="#fff" stroke="#f5411e" stroke-width="1.5"/>
+      <text x="28" y="70" class="t">M1 &nbsp; Seed 1</text><text x="28" y="82" class="t">Seed 16</text>
+      <rect x="20" y="94"  width="146" height="30" rx="3" fill="#fff" stroke="#f5411e" stroke-width="1.5"/>
+      <text x="28" y="108" class="t">M2 &nbsp; Seed 8</text><text x="28" y="120" class="t">Seed 9</text>
+      <rect x="20" y="132" width="146" height="30" rx="3" fill="#fff" stroke="#f5411e" stroke-width="1.5"/>
+      <text x="28" y="146" class="t">M3 &nbsp; Seed 5</text><text x="28" y="158" class="t">Seed 12</text>
+      <rect x="20" y="170" width="146" height="30" rx="3" fill="#fff" stroke="#f5411e" stroke-width="1.5"/>
+      <text x="28" y="184" class="t">M4 &nbsp; Seed 4</text><text x="28" y="196" class="t">Seed 13</text>
+      <rect x="20" y="208" width="146" height="30" rx="3" fill="#fff" stroke="#f5411e" stroke-width="1.5"/>
+      <text x="28" y="222" class="t">M5 &nbsp; Seed 3</text><text x="28" y="234" class="t">Seed 14</text>
+      <rect x="20" y="246" width="146" height="30" rx="3" fill="#fff" stroke="#f5411e" stroke-width="1.5"/>
+      <text x="28" y="260" class="t">M6 &nbsp; Seed 6</text><text x="28" y="272" class="t">Seed 11</text>
+      <rect x="20" y="284" width="146" height="30" rx="3" fill="#fff" stroke="#f5411e" stroke-width="1.5"/>
+      <text x="28" y="298" class="t">M7 &nbsp; Seed 7</text><text x="28" y="310" class="t">Seed 10</text>
+      <rect x="20" y="322" width="146" height="30" rx="3" fill="#fff" stroke="#f5411e" stroke-width="1.5"/>
+      <text x="28" y="336" class="t">M8 &nbsp; Seed 2</text><text x="28" y="348" class="t">Seed 15</text>
+    </g>
+  </g>
+
+  <!-- connectors R1 -> Melee A/B -->
+  <path class="con" d="M166 71 H182 V120 H196"/>
+  <path class="con" d="M166 109 H182 V120"/>
+  <path class="con" d="M166 147 H182 V120"/>
+  <path class="con" d="M166 185 H182 V120"/>
+  <path class="con" d="M166 223 H182 V288 H196"/>
+  <path class="con" d="M166 261 H182 V288"/>
+  <path class="con" d="M166 299 H182 V288"/>
+  <path class="con" d="M166 337 H182 V288"/>
+
+  <!-- Melee A -->
+  <rect x="196" y="74" width="188" height="92" rx="4" fill="#fdeae4" stroke="#f5411e" stroke-width="1.8"/>
+  <rect x="204" y="80" width="52" height="15" rx="7" fill="#f5411e"/><text x="230" y="91" class="t tw" text-anchor="middle" font-weight="700">4-WAY</text>
+  <text x="264" y="92" class="t" font-weight="700">SQUARE A</text>
+  <text x="204" y="112" class="t">Winners of M1, M2,</text>
+  <text x="204" y="126" class="t">M3, M4</text>
+  <text x="204" y="146" class="sm">1 survives &rarr; Final &middot; 3 drop &darr;</text>
+
+  <!-- Melee B -->
+  <rect x="196" y="242" width="188" height="92" rx="4" fill="#fdeae4" stroke="#f5411e" stroke-width="1.8"/>
+  <rect x="204" y="248" width="52" height="15" rx="7" fill="#f5411e"/><text x="230" y="259" class="t tw" text-anchor="middle" font-weight="700">4-WAY</text>
+  <text x="264" y="260" class="t" font-weight="700">SQUARE B</text>
+  <text x="204" y="280" class="t">Winners of M5, M6,</text>
+  <text x="204" y="294" class="t">M7, M8</text>
+  <text x="204" y="314" class="sm">1 survives &rarr; Final &middot; 3 drop &darr;</text>
+
+  <!-- Melee -> WF -->
+  <path class="con" d="M384 120 H396 V196 H408"/>
+  <path class="con" d="M384 288 H396 V212 H408"/>
+
+  <!-- Winners Final -->
+  <rect x="408" y="180" width="150" height="48" rx="4" fill="#fff" stroke="#f5411e" stroke-width="1.8"/>
+  <text x="416" y="198" class="t" font-weight="700">WINNERS FINAL</text>
+  <text x="416" y="212" class="t">A-survivor</text>
+  <text x="416" y="224" class="t">vs B-survivor</text>
+
+  <!-- WF winner -> Grand Final -->
+  <path class="con" d="M558 190 H720 V372 H878" stroke="#f5411e" stroke-width="2"/>
+  <text x="640" y="184" class="sm" fill="#f5411e">Winners Champion &rarr;</text>
+
+  <!-- WF loser drops to Losers Final -->
+  <path class="drop" d="M480 228 V250 H760 V520"/>
+  <text x="586" y="245" class="sm" fill="#1f6fb2">WF loser drops to Losers Final &darr;</text>
+
+  <!-- ============ GRAND FINAL ============ -->
+  <rect x="878" y="330" width="240" height="96" rx="5" fill="#141d33"/>
+  <text x="998" y="356" class="t tw" text-anchor="middle" font-weight="700" style="font-size:13px;">GRAND FINAL &middot; 1v1</text>
+  <text x="998" y="378" class="t tw" text-anchor="middle">Winners Champion</text>
+  <text x="998" y="394" class="t tw" text-anchor="middle">vs Losers Champion</text>
+  <text x="998" y="414" class="tw" text-anchor="middle" style="font-family:Segoe UI,Arial;font-size:9.5px;font-style:italic;fill:#f3b6a3;">bracket resets if Losers win</text>
+
+  <!-- divider -->
+  <line x1="20" y1="452" x2="1118" y2="452" stroke="#d6dce2" stroke-width="1"/>
+
+  <!-- ============ LOSERS BRACKET ============ -->
+  <text x="20" y="480" class="lbl" style="font-size:14px;fill:#1f6fb2;">LOSERS BRACKET</text>
+  <text x="113" y="500" class="col" text-anchor="middle">LR1 &middot; 4-WAY</text>
+  <text x="325" y="500" class="col" text-anchor="middle">LR2 &middot; 4-WAY</text>
+  <text x="527" y="500" class="col" text-anchor="middle">LR3 &middot; 1v1</text>
+  <text x="722" y="500" class="col" text-anchor="middle">LOSERS FINAL &middot; 1v1</text>
+
+  <!-- LR1 melee a -->
+  <rect x="20" y="512" width="186" height="84" rx="4" fill="#e7f1f9" stroke="#1f6fb2" stroke-width="1.8"/>
+  <rect x="28" y="518" width="52" height="15" rx="7" fill="#1f6fb2"/><text x="54" y="529" class="t tw" text-anchor="middle" font-weight="700">4-WAY</text>
+  <text x="88" y="530" class="t" font-weight="700">SQUARE &alpha;</text>
+  <text x="28" y="550" class="t">Losers of M1&ndash;M4</text>
+  <text x="28" y="570" class="sm">1 survives &rarr; LR2</text>
+  <!-- LR1 melee b -->
+  <rect x="20" y="640" width="186" height="84" rx="4" fill="#e7f1f9" stroke="#1f6fb2" stroke-width="1.8"/>
+  <rect x="28" y="646" width="52" height="15" rx="7" fill="#1f6fb2"/><text x="54" y="657" class="t tw" text-anchor="middle" font-weight="700">4-WAY</text>
+  <text x="88" y="658" class="t" font-weight="700">SQUARE &beta;</text>
+  <text x="28" y="678" class="t">Losers of M5&ndash;M8</text>
+  <text x="28" y="698" class="sm">1 survives &rarr; LR2</text>
+
+  <!-- LR1 -> LR2 -->
+  <path class="con" d="M206 554 H222 V510 H236" transform="translate(0,44)"/>
+  <path class="con" d="M206 682 H222 V638 H236"/>
+
+  <!-- LR2 melee gamma -->
+  <rect x="236" y="512" width="192" height="84" rx="4" fill="#e7f1f9" stroke="#1f6fb2" stroke-width="1.8"/>
+  <rect x="244" y="518" width="52" height="15" rx="7" fill="#1f6fb2"/><text x="270" y="529" class="t tw" text-anchor="middle" font-weight="700">4-WAY</text>
+  <text x="304" y="530" class="t" font-weight="700">SQUARE &gamma;</text>
+  <text x="244" y="550" class="t">&alpha;-survivor + 3 R2 drops</text>
+  <text x="244" y="570" class="sm">1 survives &rarr; LR3</text>
+  <!-- LR2 melee delta -->
+  <rect x="236" y="640" width="192" height="84" rx="4" fill="#e7f1f9" stroke="#1f6fb2" stroke-width="1.8"/>
+  <rect x="244" y="646" width="52" height="15" rx="7" fill="#1f6fb2"/><text x="270" y="657" class="t tw" text-anchor="middle" font-weight="700">4-WAY</text>
+  <text x="304" y="658" class="t" font-weight="700">SQUARE &delta;</text>
+  <text x="244" y="678" class="t">&beta;-survivor + 3 R2 drops</text>
+  <text x="244" y="698" class="sm">1 survives &rarr; LR3</text>
+
+  <!-- LR2 -> LR3 -->
+  <path class="con" d="M428 554 H444 V566 H458"/>
+  <path class="con" d="M428 682 H444 V590 H458"/>
+
+  <!-- LR3 -->
+  <rect x="458" y="558" width="150" height="48" rx="4" fill="#fff" stroke="#1f6fb2" stroke-width="1.8"/>
+  <text x="466" y="576" class="t" font-weight="700">LOSERS R3</text>
+  <text x="466" y="590" class="t">&gamma;-surv</text>
+  <text x="466" y="602" class="t">vs &delta;-surv</text>
+
+  <!-- LR3 -> LF -->
+  <path class="con" d="M608 582 H636"/>
+
+  <!-- Losers Final -->
+  <rect x="636" y="520" width="180" height="60" rx="4" fill="#fff" stroke="#1f6fb2" stroke-width="1.8"/>
+  <text x="644" y="538" class="t" font-weight="700">LOSERS FINAL</text>
+  <text x="644" y="552" class="t">LR3 survivor</text>
+  <text x="644" y="566" class="t">vs Winners-Final loser</text>
+
+  <!-- LF -> Grand Final -->
+  <path class="con" d="M816 550 H846 V420 H878" stroke="#1f6fb2" stroke-width="2"/>
+  <text x="700" y="600" class="sm" fill="#1f6fb2">Losers Champion &rarr; Grand Final</text>
+
+  <!-- drop arrows from winners into losers -->
+  <path class="drop" d="M93 352 V430 V468"/>
+  <polygon class="arrow" points="88,466 98,466 93,476"/>
+  <text x="100" y="446" class="sm" fill="#1f6fb2">8 R1 losers drop to LR1</text>
+
+  <path class="drop" d="M300 334 V430 V468"/>
+  <polygon class="arrow" points="295,466 305,466 300,476"/>
+  <text x="308" y="446" class="sm" fill="#1f6fb2">6 non-survivors drop to LR2</text>
+
+</svg>
+</div>
+
+<div class="two">
+  <div>
+    <h3><span class="badge b-w">W</span> Winners bracket &mdash; 11 games</h3>
+    <ul>
+      <li>R1 &middot; <b>1v1</b>: 8 games (all 16 teams)</li>
+      <li>R2 &middot; <b>4-team four-square</b>: 2 games (8 teams &rarr; 2 survive)</li>
+      <li>Winners Final &middot; 1v1: 1 game</li>
+    </ul>
+  </div>
+  <div>
+    <h3><span class="badge b-l">L</span> Losers bracket &mdash; 6 games</h3>
+    <ul>
+      <li>LR1 &middot; <b>4-square</b>: 2 (the 8 R1 losers)</li>
+      <li>LR2 &middot; <b>4-square</b>: 2 (LR1 survivors + 6 four-square drops)</li>
+      <li>LR3 &middot; 1v1: 1 &nbsp;&middot;&nbsp; Losers Final &middot; 1v1: 1</li>
+    </ul>
+  </div>
+</div>
+<p><b>Grand Final:</b> 1 game (+1 possible reset). <b>18&ndash;19 games total.</b> Every team is guaranteed at least two games; the champion plays up to six.</p>
+<div class="warn callout"><b>The Bracket Master is your single point of failure &mdash; staff it well.</b> One person owns the whiteboard, records each result the instant a ref calls it, and hands the staging marshal the next matchups. Four-square results are the trickiest to log &mdash; have the arena ref hand over a written &ldquo;surviving zone + 3 out&rdquo; slip every time.</div>
+
+<h2>Court Rules</h2>
+<h3>1v1 rounds (R1, Winners Final, LR3, Losers Final, Grand Final)</h3>
+<div class="two">
+  <div>
+    <ul>
+      <li><b>On court:</b> up to 12 a side; rotate the 13th in on the next game or via a catch-revive.</li>
+      <li><b>Balls:</b> 8 foam balls on the center line, opening rush on the horn.</li>
+      <li><b>Win:</b> eliminate all opponents, or at the <b>4:00 cap</b> the team with more players standing.</li>
+    </ul>
+  </div>
+  <div>
+    <ul>
+      <li><b>Out:</b> hit below the shoulders on the full, or your throw is caught.</li>
+      <li><b>Catch-to-revive:</b> a clean catch puts the thrower out <em>and</em> brings a teammate back &mdash; the teamwork engine.</li>
+      <li><b>Headshots</b> don&rsquo;t count against the player hit; intentional head-hunting = thrower out. Cross the line = out.</li>
+    </ul>
+  </div>
+</div>
+
+<h3>4-team four-square rounds (Winners R2, Losers R1 &amp; R2)</h3>
+<p>It&rsquo;s the schoolyard four-square you already know, scaled up to teams with dodgeballs. One big square, split into four quadrants by a &ldquo;+&rdquo; of lines. Each team owns one quadrant and <b>stays in it</b> &mdash; the game is territorial, not a pile-up in the middle.</p>
+
+<svg class="map" viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Four-square arena split into four team quadrants by a cross of lines">
+  <rect x="0" y="0" width="700" height="400" fill="#f5f7f9" stroke="#d6dce2"/>
+  <text x="350" y="24" font-family="Segoe UI,Arial" font-size="13" fill="#5f6b7a" text-anchor="middle">~50&ndash;60 ft square &middot; four ~25&ndash;30 ft quadrants</text>
+  <!-- outer square -->
+  <rect x="140" y="52" width="300" height="300" fill="#fff" stroke="#141d33" stroke-width="2.5"/>
+  <!-- cross -->
+  <line x1="290" y1="52" x2="290" y2="352" stroke="#f5411e" stroke-width="2.5"/>
+  <line x1="140" y1="202" x2="440" y2="202" stroke="#f5411e" stroke-width="2.5"/>
+  <!-- quadrant fills + labels -->
+  <g font-family="Segoe UI,Arial" text-anchor="middle">
+    <rect x="142" y="54" width="146" height="146" fill="#fdeae4" opacity="0.5"/>
+    <rect x="292" y="54" width="146" height="146" fill="#e7f1f9" opacity="0.6"/>
+    <rect x="142" y="204" width="146" height="146" fill="#fdf3e3" opacity="0.6"/>
+    <rect x="292" y="204" width="146" height="146" fill="#e9f6ec" opacity="0.7"/>
+    <text x="215" y="122" font-size="14" font-weight="700" fill="#141d33">TEAM A</text>
+    <text x="215" y="140" font-size="10" fill="#5f6b7a">holds this zone</text>
+    <text x="365" y="122" font-size="14" font-weight="700" fill="#141d33">TEAM B</text>
+    <text x="365" y="140" font-size="10" fill="#5f6b7a">holds this zone</text>
+    <text x="215" y="272" font-size="14" font-weight="700" fill="#141d33">TEAM C</text>
+    <text x="215" y="290" font-size="10" fill="#5f6b7a">holds this zone</text>
+    <text x="365" y="272" font-size="14" font-weight="700" fill="#141d33">TEAM D</text>
+    <text x="365" y="290" font-size="10" fill="#5f6b7a">holds this zone</text>
+  </g>
+  <!-- throw arrows (across lines only) -->
+  <g stroke="#1f6fb2" stroke-width="1.8" fill="none">
+    <path d="M250 127 H330" marker-end="url(#ar)"/>
+    <path d="M330 165 H250" marker-end="url(#ar)"/>
+    <path d="M215 165 V240" marker-end="url(#ar)"/>
+    <path d="M330 240 L255 130" marker-end="url(#ar)"/>
+  </g>
+  <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#1f6fb2"/></marker></defs>
+  <text x="565" y="120" font-family="Segoe UI,Arial" font-size="11" fill="#1f6fb2" text-anchor="middle">throw ACROSS a line</text>
+  <text x="565" y="136" font-family="Segoe UI,Arial" font-size="11" fill="#1f6fb2" text-anchor="middle">into any other zone</text>
+  <text x="565" y="152" font-family="Segoe UI,Arial" font-size="11" fill="#1f6fb2" text-anchor="middle">(sides or diagonal)</text>
+  <text x="350" y="378" font-family="Segoe UI,Arial" font-size="11" fill="#5f6b7a" text-anchor="middle">Orange &ldquo;+&rdquo; = the only lines that matter &middot; step over your line = you&rsquo;re out &middot; last zone standing survives</text>
+</svg>
+
+<ul>
+  <li><b>Stay in your quadrant.</b> Field <b>up to ~8&ndash;10 per team</b> in each zone; rotate the rest. Step across your own line and you&rsquo;re out (same rule as crossing center in a 1v1).</li>
+  <li><b>Throw across the lines</b> into any of the other three zones &mdash; sides or diagonal. Any ball that comes to rest in your quadrant is yours to pick up and throw. Start with <b>~12 balls</b> spread across the whole square.</li>
+  <li><b>Out:</b> hit below the shoulders on the full, or your throw is caught. Same catch-to-revive as the 1v1 games (catch &rarr; thrower out + one teammate back). Step off when you&rsquo;re out.</li>
+  <li><b>A zone is eliminated when its last player is out.</b> The <b>last quadrant with anyone standing survives</b> and advances; the other three take the loss. At the <b>5:00 cap</b>, the zone with the most players standing survives &mdash; a tie goes to a 60-second sudden death among only the tied zones.</li>
+  <li><b>Choose your target &mdash; that&rsquo;s the strategy.</b> Gang up on the strong quadrant, ignore the weak one, broker a quiet truce with a neighbor, then turn on them. All the alliance drama, none of the center-court pile-up. Refs call outs; they don&rsquo;t police diplomacy.</li>
+</ul>
+<div class="cool callout"><b>Roles turn a zone into a team.</b> In both formats, captains assign <b>blockers</b>, <b>catchers</b>, <b>retrievers</b>, and <b>snipers</b>. Once per game a captain may call a 15-second <b>&ldquo;power play&rdquo;</b> all-out blitz on one chosen neighbor (no revives). In four-square, a zone that defends its line and picks one target at a time outlasts three zones firing everywhere at once.</div>
+
+<h2>Run of Show (~75 min)</h2>
+<p>Best-of-1 games; 1v1 cap 4:00, four-square cap 5:00. A <b>staging marshal</b> queues the next wave court-side <em>during</em> the current game so transitions stay under a minute.
+<span class="badge b-w">W</span> winners &nbsp; <span class="badge b-l">L</span> losers &nbsp; <span class="badge b-show">SHOW</span> center showcase.</p>
+<table>
+  <thead><tr><th>Clock</th><th>Wave</th><th>Round</th><th class="c">Games</th><th>Where</th></tr></thead>
+  <tbody>
+    <tr><td>0:00&ndash;0:06</td><td>&mdash;</td><td>Brief, warm-up, demo of 1v1 <em>and</em> four-square rules, teams staged</td><td class="c">&mdash;</td><td>All</td></tr>
+    <tr class="wave-w"><td>0:06&ndash;0:11</td><td>1</td><td>Winners R1 &middot; 1v1 (M1&ndash;M4) <span class="badge b-w">W</span></td><td class="c">4</td><td>Courts 1&ndash;4</td></tr>
+    <tr class="wave-w"><td>0:11&ndash;0:16</td><td>2</td><td>Winners R1 &middot; 1v1 (M5&ndash;M8) <span class="badge b-w">W</span> &mdash; <em>every team has played once</em></td><td class="c">4</td><td>Courts 1&ndash;4</td></tr>
+    <tr class="wave-w"><td>0:16&ndash;0:22</td><td>3</td><td>Winners R2 &middot; 4-SQUARE &times;2 <span class="badge b-w">W</span> (2 survive, 6 drop)</td><td class="c">2</td><td>Arenas A &amp; B</td></tr>
+    <tr class="wave-l"><td>0:22&ndash;0:28</td><td>4</td><td>Losers R1 &middot; 4-SQUARE &times;2 <span class="badge b-l">L</span> (2 survive, 6 out) &mdash; <em>everyone has played twice</em></td><td class="c">2</td><td>Arenas A &amp; B</td></tr>
+    <tr class="wave-l"><td>0:28&ndash;0:34</td><td>5</td><td>Losers R2 &middot; 4-SQUARE &times;2 <span class="badge b-l">L</span> (2 survive, 6 out) &middot; Rumble opens</td><td class="c">2</td><td>Arenas A &amp; B</td></tr>
+    <tr><td>0:34&ndash;0:40</td><td>6</td><td>Winners Final &middot; 1v1 <span class="badge b-show">SHOW</span> (loser &rarr; Losers Final)</td><td class="c">1</td><td>Center</td></tr>
+    <tr><td>0:40&ndash;0:45</td><td>7</td><td>Losers R3 &middot; 1v1 <span class="badge b-show">SHOW</span></td><td class="c">1</td><td>Center</td></tr>
+    <tr><td>0:45&ndash;0:51</td><td>8</td><td>Losers Final &middot; 1v1 <span class="badge b-show">SHOW</span> (crowns Losers Champion)</td><td class="c">1</td><td>Center</td></tr>
+    <tr class="total-row"><td>0:51&ndash;0:57</td><td>9</td><td>GRAND FINAL &middot; 1v1 <span class="badge b-show">SHOW</span></td><td class="c">1</td><td>Center</td></tr>
+    <tr><td>0:57&ndash;1:03</td><td>10*</td><td>Grand Final reset (only if the losers-bracket team wins game 1)</td><td class="c">1</td><td>Center</td></tr>
+    <tr><td>1:03&ndash;1:12</td><td>&mdash;</td><td>Awards, champion crowning, all-camp photo</td><td class="c">&mdash;</td><td>Center</td></tr>
+  </tbody>
+</table>
+<p class="price">*Decide up front: allow the true double-elim reset, or make the Grand Final a single game to guarantee the finish inside 75. Redemption Rumble runs continuously from ~0:28 on the arenas as they free up, so eliminated teams keep playing until the awards.</p>
+
+<h2>Redemption Rumble (so &ldquo;all teams&rdquo; means all teams)</h2>
+<p>The moment a team takes its second loss, it rolls onto a freed arena for a rolling <b>king-of-the-court</b>: the team left standing holds, the next eliminated team rotates in. Track court-holds for a <b>Redemption Champion</b> called out at awards.</p>
+<ul>
+  <li><b>Rotating variant rules</b> (one per round &mdash; the creativity sandbox): <em>Medic</em> (a secret player revives by tag), <em>Protect the VIP</em> (guard one untouchable player), <em>Doctor Dodgeball</em> (team lives while its healer lives), <em>Blackout</em> (glow balls only, if you run it at night).</li>
+  <li><b>Why it matters:</b> a team knocked out by ~0:34 would otherwise stand idle for 30+ minutes. Here they keep playing 6&ndash;10 more short rounds. That is the &ldquo;max game time&rdquo; promise kept.</li>
+</ul>
+
+<h2>Materials &amp; Estimated Pricing (Aug 2026 ballpark &mdash; verify locally)</h2>
+<table>
+  <thead><tr><th>Item</th><th class="c">Qty</th><th>Notes</th><th class="r">Est&nbsp;$</th></tr></thead>
+  <tbody>
+    <tr><td>Foam dodgeballs (8.5&Prime;)</td><td class="c">~54</td><td>Four-square needs ~12 per arena; keep spares. Foam/cloth, not rubber.</td><td class="r">$270</td></tr>
+    <tr><td>Cones, two colors</td><td class="c">~120</td><td>One color for the 4 courts, one for the 2 arenas &mdash; both marked at once so nothing moves.</td><td class="r">$120</td></tr>
+    <tr><td>Team ID bands (per player)</td><td class="c">~210</td><td>16 distinct team colors &mdash; critical in a 4-way so refs and players can tell teams apart fast.</td><td class="r">$120</td></tr>
+    <tr><td>Ref whistles</td><td class="c">10</td><td>One per court/arena is enough; a busy four-square can use a second for the far quadrants.</td><td class="r">$20</td></tr>
+    <tr><td>Air horn + timers</td><td class="c">1&ndash;4</td><td>Horn to start/cap in unison; a timer per court/arena.</td><td class="r">$60</td></tr>
+    <tr><td>Bracket whiteboard + slips</td><td class="c">1</td><td>Pre-printed &ldquo;surviving zone + 3 out&rdquo; slips speed up logging.</td><td class="r">$35</td></tr>
+    <tr><td>PA / bullhorn for MC</td><td class="c">1</td><td>200 men outdoors &mdash; you need to be heard.</td><td class="r">$70</td></tr>
+    <tr><td>Water coolers + cups</td><td class="c">2&ndash;3</td><td>Non-negotiable for 75 min of sprints.</td><td class="r">$60</td></tr>
+    <tr class="total-row"><td colspan="3">Estimated total (excludes water refills / optional night glow)</td><td class="r">~$755</td></tr>
+  </tbody>
+</table>
+
+<h2>Volunteers &amp; Roles (~14 people)</h2>
+<table>
+  <thead><tr><th>Role</th><th class="c">#</th><th>Job</th></tr></thead>
+  <tbody>
+    <tr><td>Court / arena refs</td><td class="c">4&ndash;6</td><td>1&ndash;2 per four-square arena (one can cover two quadrants), 1 per 1v1 court. Start on the horn, call outs/catches, name the survivor.</td></tr>
+    <tr><td>Bracket Master</td><td class="c">1</td><td>Owns the whiteboard; logs every result instantly (incl. the surviving zone + the 3 dropped); feeds next matchups. Critical path.</td></tr>
+    <tr><td>Staging marshals</td><td class="c">2</td><td>Queue the next wave court-side <em>during</em> play. They are why waves stay ~5&ndash;6 min.</td></tr>
+    <tr><td>Ball wranglers</td><td class="c">2&ndash;3</td><td>Reset balls between games, chase strays, keep dead time near zero.</td></tr>
+    <tr><td>Redemption Rumble ref</td><td class="c">1&ndash;2</td><td>Runs continuous king-of-the-court, tracks holds, announces variant rules.</td></tr>
+    <tr><td>MC</td><td class="c">1</td><td>Demo, hype, calls the four-square rounds and showcase finals, runs the master clock, crowns the champion.</td></tr>
+    <tr><td>Medic / first aid</td><td class="c">1</td><td>Floats with a kit + phone. Sprains and collisions are the realistic injuries.</td></tr>
+  </tbody>
+</table>
+
+<h2>Safety</h2>
+<ul>
+  <li><b>Warm up first.</b> 200 men sprinting cold is how hamstrings pop. The opening brief includes a dynamic warm-up.</li>
+  <li><b>Four-square keeps teams apart</b> &mdash; the big collision risk of an open melee is gone, since each team holds its own quadrant. Still: no crossing lines, no diving into a neighbor&rsquo;s zone, and call &ldquo;hands clear&rdquo; before the opening horn.</li>
+  <li><b>Foam balls only.</b> Head-hunting penalized (thrower out); above-shoulder hits don&rsquo;t count against the player hit.</li>
+  <li><b>Keep the 15&ndash;20 ft buffers.</b> Don&rsquo;t let arenas or courts creep together as the field fills.</li>
+  <li><b>Footwear + ground check.</b> Walk every court/arena for holes and roots before you start; closed-toe shoes only; hydrate at the 25 / 50-minute marks.</li>
+</ul>
+
+<footer>
+  Dodgeball Double-Elimination Rumble &mdash; Station Guide &nbsp;&bull;&nbsp; 16 teams &bull; 1v1 &rarr; 4-team four-square &bull; ~75 min &bull; 4 courts / 2 arenas &rarr; 1 showcase
+  <br>Everybody plays, nobody stands still &mdash; survive the four-square or fight your way back.
+</footer>
+
+</div>
+</body>
+</html>

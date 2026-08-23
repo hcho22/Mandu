@@ -11,6 +11,27 @@ been repointed to firstmate. Note the GTM structure changed with v2:
 `gtm/07-thesis/` (was `05-thesis`), `gtm/08-redteam/` (was `06-redteam`), plus new
 `gtm/06-channels/` (the event-metric schema); front door `gtm/recap.html`.
 
+**🗓️ 2026-08-21 UPDATE (Purvia repo pulled + status re-synced).**
+Firstmate checkout of Purvia pulled to `origin/main` HEAD `14de073` (PR #120). Two things
+since 08-11, and one corrects the optimism below:
+- **New Luna model-migration workstream (US-120-124, PRs #115-120):** the retrieval eval
+  **answerer moved to `gpt-5.6-luna`** (#115) with **judges + aux-helpers deliberately unchanged**
+  (ADR-0012), a boot-time warning when an unpinned helper would inherit the temperature-refusing
+  answerer (#116), a model-neutral answerer/helper role-split doc (#118), and a new
+  **`JUDGE_REASONING_EFFORT` knob** on both runtime deflection gates (ADR-0013, #120). Eval-infra
+  work, not launch prep.
+- **⚠️ Precondition 1 regressed - correct the "effectively resolved" line below.** The auto-merge
+  publish (#109) **silently broke from 08-12** (`EVAL_PUBLISH_TOKEN` empty), stranding 17 nights of
+  receipts on branches with `main` frozen a week - kill-criterion-4 again. #111 backfilled them
+  byte-for-byte; #112 added a named-cause preflight + auto-filed alarm issue. **But it is stranded
+  again as of 08-21:** 08-20/08-21 nightlies sit on `eval-publish/*` branches, newest receipt on
+  `main` is 08-19, token still unfixed. The evals run **green** (08-21 permissions-scale = 1.000
+  across all cells on its stranded branch); only publishing-to-`main` fails. This time the alarm
+  **worked** - open issues **#113/#114** flag it. **Owner action:** set a valid fine-grained
+  `EVAL_PUBLISH_TOKEN` (Contents + PRs read/write), re-run, land the stranded snapshots, then
+  delete the branches. Preconditions 3 and 6 stay green; precondition 1 is **not** green until the
+  series publishes cleanly for several consecutive nights.
+
 **🗓️ 2026-08-11 UPDATE (both projects advanced the same day).**
 - **Rep Today** (firstmate `main`): **#93** pre-registered the **K8 wedge-comprehension coding
   rubric** in `gtm/` before the first cohort - this closes the marketing-checklist Track A "K8

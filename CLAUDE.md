@@ -34,7 +34,7 @@ Active skills:
 - `job-hunter`: scans target company career pages and ranks roles by fit against the resume.
 - `daily-log`: creates or opens today's daily log for a tracked project (defaults to HabitLoop).
 - `prd`: generates a Product Requirements Document for a new feature.
-- `ingest`: files one raw source into a wiki, updating every page it touches in a single pass.
+- `ingest` (global skill, lives at `~/.claude/skills/ingest/`, not in this repo): files one raw source into a wiki, updating every page it touches in a single pass. Still defaults to this project's wikis.
 
 Each skill folder also carries a `MEMORY.md` it reads at the start of each run and appends to only on explicit hcho feedback (kept under 100 lines). Skills are built organically as recurring workflows emerge; the backlog is in `.claude/skills/README.md`.
 
