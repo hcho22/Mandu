@@ -5,7 +5,7 @@ date: 2026-06-09
 title: "Evaluate AI Systems"
 author: "Chip Huyen"
 url: "n/a"
-concepts: [offline-vs-online-evals, classification-metrics, data-leakage-and-splits, llm-benchmarks-contamination, llm-as-judge, rag-evaluation, production-eval-tooling, hallucination-safety-redteam, agent-eval-and-stats, ci-eval-gates-and-drift]
+concepts: [offline-vs-online-evals, classification-metrics, data-leakage-and-splits, llm-benchmarks-contamination, llm-as-judge, rag-evaluation, production-eval-tooling, hallucination-safety-redteam, agent-eval-and-stats, ci-eval-gates-and-drift, error-analysis]
 ---
 
 # Evaluate AI Systems
@@ -43,6 +43,7 @@ Chip Huyen's "Evaluate AI Systems" chapter argues that AI applications should de
 - [[hallucination-safety-redteam]] - local/global factuality, hallucination-prone query slices, self-verification, SAFE, entailment scorers, safety categories, moderation classifiers, and toxicity benchmarks.
 - [[agent-eval-and-stats]] - task-level versus turn-level evaluation, multi-step task completion, bootstrap reliability, sample-size rules, metric correlation, and Simpson's paradox.
 - [[ci-eval-gates-and-drift]] - evals as regression gates, production monitoring, daily/manual sampling, user feedback, usefulness thresholds, and iteration discipline.
+- [[error-analysis]] - human-validated rubrics with examples, annotating and slicing data to localize failures, and sampled manual review (LinkedIn's up-to-500 daily conversations) as production error analysis.
 
 ## Source
 

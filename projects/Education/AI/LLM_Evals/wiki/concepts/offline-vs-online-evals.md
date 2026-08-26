@@ -2,7 +2,7 @@
 type: concept
 tags: [evals, offline-evals, online-evals, fundamentals]
 date: 2026-06-08
-source-count: 6
+source-count: 7
 status: seeded
 session: "S1 - What evals are and why they matter"
 ---
@@ -52,5 +52,12 @@ Clémentine Fourrier, Thibaud Frere, Guilherme Penedo & Thomas Wolf, [[evaluatio
 - **Two inference methods for offline benchmarks:** **log-likelihood** eval (score the probability of candidate answers - fast, gives small-model signal and a calibration proxy, ideal for multiple-choice, but slightly over-scores models that would have generated something off-list) and **generative** eval (let the model produce text - correlates with real fluency/reasoning, the only option for closed APIs that hide logprobs, but costlier and harder to score). Most 2025 evals are generative.
 - **Three task formulations** trade signal for difficulty: **MCF** (multiple-choice, compare A/B/C/D indices), **CF** (cloze, compare choice likelihoods without showing them), and **FG** (free-form generation). Recommendation: CF for small ablations (better early-training signal), MCF for the main run, FG for post-trained models.
 - These are all *offline* methods; online user feedback and monitoring (covered by the other sources here) remain a separate, later signal.
+
+Peter Yang, Hamel Husain & Shreya Shankar, [[ai-evals-error-analysis]], anchor the whole workflow in **error analysis** - reading your own real outputs before writing any eval:
+
+- **Start by looking at real data.** The durable first step, unchanged by agents, is reading logged customer traces and conversations to find where things go wrong; "there is no future, even with AGI, where you don't look at your data" if you are building a product. Agents now scale the tedious parts (building the review UI, clustering traces, distilling notes into a rubric) but cannot supply the taste.
+- **Top-down vs bottom-up evals.** *Top-down* criteria are derivable from the task in a vacuum (a domain expert's checklist); *bottom-up* criteria are the failure modes you discover only by reading lots of sample outputs. AI can generate top-down evals but is "very bad" at bottom-up ones - those come from the human. Keep the two explicitly separated so bottom-up coverage stays honest.
+- **Evals are iterative and never "done."** Seeing more examples surfaces more failure modes, which feed back into the evals - the offline error-analysis loop that precedes and sustains the online monitoring the other sources describe.
+- **The offline-to-online bridge is the rubric.** Once error analysis produces a rubric, each criterion becomes an LLM judge (see [[llm-as-judge]]) that can monitor live traces/outputs in real time, and the course extends this to drift monitoring over months of deployment (see [[ci-eval-gates-and-drift]]).
 
 ## In my own words (hcho)

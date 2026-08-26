@@ -2,6 +2,27 @@
 
 Event log for this wiki. Each entry begins with `## [YYYY-MM-DD] <op> | <title>` (op is `ingest`, `query`, `lint`, etc.) so entries are greppable and sort by date.
 
+## [2026-08-26] edit | Added error-analysis concept page (S11)
+
+- Created `concepts/error-analysis.md` (source-count 4; the read-your-data / build-a-rubric practice that fronts the eval workflow). Definition + `## From the sources`; `## In my own words (hcho)` left for hcho (mode: split).
+- Cited four sources that substantively cover reading outputs and building a rubric: `[[ai-evals-error-analysis]]` (primary - top-down vs bottom-up, Error Discovery Skill, free labeled set), `[[your-ai-product-needs-evals]]` (Level 2 trace review + binary labels), `[[evaluate-ai-systems]]` (human-validated rubrics, annotate/slice, sampled daily review), `[[patterns-for-building-llm-based-systems-and-products]]` (human vibe check, Eval-Driven Development).
+- Added bidirectional backlinks: `[[error-analysis]]` added to the `concepts:` frontmatter and `## Connections` of all four cited source pages.
+- Updated `index.md` (added S11 to the Concepts list).
+- Prompted by captain after the ingest below; folds the ingest's error-analysis material out of the four extended pages into a first-class concept.
+
+## [2026-08-26] ingest | Automating AI Evals the Right Way - with Error Analysis
+
+- Source already in `raw/ai-evals-error-analysis.md` (formatted notes on a YouTube podcast: Peter Yang interviewing Hamel Husain & Shreya Shankar, with a caption-correction appendix); used as-is, immutable.
+- Created `sources/ai-evals-error-analysis.md` (summary, key claims, connections, provenance). No stable URL captured in the raw source.
+- Practitioner/workflow source - extended four concept pages (each source-count +1):
+  - `[[llm-as-judge]]` (5 to 6): narrow criteria as the judge sweet spot, each failure mode becoming a judge, one sub-agent per criterion (agent-era jury), evaluating judges with the free labeled set.
+  - `[[production-eval-tooling]]` (3 to 4): the "do automated evals work?" benchmark (Braintrust Loop, Arize Alex, LangSmith, coding agents), bespoke agent-built review UIs vs generic eval SaaS.
+  - `[[classification-metrics]]` (5 to 6): precision-not-just-recall for the eval tools themselves (~80-90% precision, 10-20% red herrings), benchmarking a rubric against its labels, yes/no over numeric scores.
+  - `[[offline-vs-online-evals]]` (6 to 7): error analysis on real data as the durable first step, top-down vs bottom-up evals, evals as iterative and never "done."
+- Updated `index.md` (added the source; bumped S1, S2, S5, S7 counts). No `(stub)` markers to drop (all four already seeded).
+- Did not spread to S3 (data-leakage), S4 (contamination), S6 (rag), S9 (agent-eval), S10 (ci/drift), or S8 (safety) beyond cross-links: the source touches CI/drift and safety only via a one-line course-syllabus mention, so those stay as `[[links]]` from the four edited pages rather than thin standalone paragraphs.
+- `## In my own words (hcho)` sections left for hcho on all four pages (mode: split); `synthesis.md` untouched.
+
 ## [2026-06-15] ingest | The LLM Evaluation Guidebook
 
 - Source re-clipped into `raw/Evaluation Guidebook - a Hugging Face Space by OpenEvals.md` (full 1,555-line guidebook text; the prior clip captured only the iframe shell and was never ingested). Used as-is, immutable.

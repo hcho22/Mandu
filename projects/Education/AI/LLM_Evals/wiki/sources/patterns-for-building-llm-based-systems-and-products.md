@@ -5,7 +5,7 @@ date: 2026-06-08
 title: "Patterns for Building LLM-based Systems & Products"
 author: "Eugene Yan"
 url: "https://eugeneyan.com/writing/llm-patterns/"
-concepts: [classification-metrics, rag-evaluation, hallucination-safety-redteam, llm-as-judge, llm-benchmarks-contamination, offline-vs-online-evals, ci-eval-gates-and-drift]
+concepts: [classification-metrics, rag-evaluation, hallucination-safety-redteam, llm-as-judge, llm-benchmarks-contamination, offline-vs-online-evals, ci-eval-gates-and-drift, error-analysis]
 ---
 
 # Patterns for Building LLM-based Systems & Products
@@ -36,6 +36,7 @@ Eugene Yan surveys seven practical patterns for shipping LLM systems, organized 
 - [[llm-benchmarks-contamination]] - the major benchmark families and the implementation-sensitivity problem (same model, different scores).
 - [[offline-vs-online-evals]] - Eval-Driven Development and task-specific evals as the starting point; user feedback and monitoring as the online signal.
 - [[ci-eval-gates-and-drift]] - running task-specific evals on every change to catch regressions, plus the data flywheel and production monitoring.
+- [[error-analysis]] - the human "vibe check" (MosaicML's fixed-prompt watching) and Eval-Driven Development, both of which start from a human reading real outputs.
 
 ## Source
 

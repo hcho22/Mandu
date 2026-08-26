@@ -2,7 +2,7 @@
 type: concept
 tags: [evals, tooling, ci, observability]
 date: 2026-06-06
-source-count: 3
+source-count: 4
 status: seeded
 session: "S7 - Production tooling: Promptfoo, DeepEval, Phoenix"
 ---
@@ -37,5 +37,12 @@ Clémentine Fourrier, Thibaud Frere, Guilherme Penedo & Thomas Wolf, [[evaluatio
 - **Structured/constrained generation** (the `outlines` library, finite-state machines over a grammar/regex) reduces prompt variance and makes rankings more stable - though some research shows it can lower reasoning performance by moving the output distribution off the model's prior.
 - **Annotation tooling:** Argilla for building high-quality annotated datasets; distilabel for synthetic-data generation and judge pipelines.
 - **Report cost and efficiency** as first-class eval outputs: total **output tokens**, **monetary cost**, **wall-clock/inference time** (including rate-limit overhead), and increasingly the **environmental footprint**. Cost is decisive when choosing methods - an LLM judge may give better signal than automatic metrics but at ~100x cost, and pass@k/maj@n multiply cost by k (see [[classification-metrics]]).
+
+Peter Yang, Hamel Husain & Shreya Shankar, [[ai-evals-error-analysis]], survey the current "do-it-for-you" eval vendors and argue for bespoke, agent-built tooling:
+
+- **The "do automated evals work?" benchmark.** Hamel took a human-annotated dataset and measured how well each tool recovers the same errors: **Braintrust "Loop"** (trace viewer + chat), **Arize "Alex"**, **LangSmith**'s equivalent, and general **coding agents** (Claude, Codex). All recover many of the errors a human would, but **all miss the same class** - the non-obvious, taste-dependent errors (e.g. failing to handle a sales objection, or emitting markdown into a channel where it does not render).
+- **Coding agents performed about the same as dedicated eval tools.** The harness is thin - you are mostly invoking a model behind someone else's prompt - so to improve any tool you must steer the agent with a prior idea of what is good and bad, which requires doing error analysis first. If your traces already live in a tool like LangSmith, using its built-in eval feature is a no-brainer; the tools' real advantage is **integration, not superior judgment**.
+- **Bespoke interfaces beat spreadsheets and generic SaaS.** A purpose-built review app (Shreya's Error Discovery Skill builds a Python backend + HTML/JS front end, using Gestalt visual encoding) is far easier on human eyes than reviewing traces in Google Sheets, and fits your workflow in ways off-the-shelf products cannot. The counterpoint: this only works if you have a very clear idea of your own workflow. Each discovered failure mode becomes an LLM judge you can then use to **monitor traces/outputs in real time** (see [[llm-as-judge]] and [[offline-vs-online-evals]]).
+- **The course frames tooling around the team and time dimensions** the earlier sources gesture at: aligning multiple people on shared criteria, integrating evals into **CI/CD**, and monitoring **drift** over months of deployment (see [[ci-eval-gates-and-drift]]), plus a safety/adversarial track (e.g. not leaking tenant data; see [[hallucination-safety-redteam]]).
 
 ## In my own words (hcho)

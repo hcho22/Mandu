@@ -2,7 +2,7 @@
 type: concept
 tags: [evals, llm-as-judge, bias]
 date: 2026-06-08
-source-count: 5
+source-count: 6
 status: seeded
 session: "S5 - LLM-as-judge: the workhorse method"
 ---
@@ -51,5 +51,13 @@ Clémentine Fourrier, Thibaud Frere, Guilherme Penedo & Thomas Wolf, [[evaluatio
 - **Design rules:** pairwise comparison correlates with human preference better than absolute scoring; if scoring, use an integer scale with per-point descriptions or an additive rubric; emit reasoning *before* the score; one prompt per capability; a **jury** of several smaller judges beats one big judge.
 - **Evaluate your evaluator** before trusting it: pick a small (~50) representative + discriminative + high-quality baseline, pick a metric (accuracy/precision/recall are easy for binary or pairwise; score-correlation is hard), and set a threshold (80-95% pairwise accuracy, ~0.8 Pearson). Judges are notably **bad at detecting hallucinations**, especially partial ones, and correlate only weakly on summarization/faithfulness (see [[hallucination-safety-redteam]]).
 - **Reward models** as an alternative judge: Bradley-Terry pairwise models output sigmoid(score_b - score_a); they are fast, deterministic, position-bias-resistant, and need no prompt engineering, but require fine-tuning. For relative-score RMs use **win rates / win probabilities** against a reference rather than averaging raw rewards; tracking win-rate over training can flag degradation and select checkpoints (see [[ci-eval-gates-and-drift]]).
+
+Peter Yang, Hamel Husain & Shreya Shankar, [[ai-evals-error-analysis]], give the practitioner's operating picture of where judges fit in an error-analysis workflow:
+
+- **Narrow, well-defined criteria are the judge's sweet spot.** Hamel is now much more bullish on LLM judges than before precisely because they have gotten good at single, tightly-scoped questions ("is this output too long/short?", "does it follow this structure?"). This matches the wiki's "one prompt per capability" design rule above.
+- **Each discovered failure mode becomes its own judge.** The end state of error analysis is a rubric where every criterion can be turned into an LLM judge, and you can then monitor traces in real time against them (see [[production-eval-tooling]]).
+- **Fan out one sub-agent per criterion.** Handing a model one giant list of criteria causes it to get "washed out" and lazily skip some; a focused per-criterion sub-agent ("evaluate N2") keeps it honest. This is the practical, agent-era version of the guidebook's *jury* idea - decompose the judging rather than overload one prompt.
+- **Evaluate the judge with the free labeled set.** The annotation pass that produces the rubric also produces labels, so you can benchmark the judges' **precision and recall** rather than assuming the rubric is good - the same "evaluate your evaluator" discipline the guidebook and Yan insist on (see [[classification-metrics]]).
+- **Judges only scale taste; they do not supply it.** AI is good at *top-down* criteria derivable from the task but "very bad" at the *bottom-up* failure modes found only by reading real data - so the human still drives what is good or bad and the judge applies it across the dataset.
 
 ## In my own words (hcho)

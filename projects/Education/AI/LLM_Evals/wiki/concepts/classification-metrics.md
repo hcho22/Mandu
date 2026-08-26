@@ -2,7 +2,7 @@
 type: concept
 tags: [evals, metrics, classification]
 date: 2026-06-08
-source-count: 5
+source-count: 6
 status: seeded
 session: "S2 - Classical ML metric foundations"
 ---
@@ -53,5 +53,11 @@ Clémentine Fourrier, Thibaud Frere, Guilherme Penedo & Thomas Wolf, [[evaluatio
 - **Accuracy needs length normalization** in multiple-choice log-likelihood eval, or the model just prefers shorter answers: `acc_char`, `acc_token`, and `acc_pmi` (normalizes by the answer's unconditional probability - best for hard reasoning/knowledge tasks, ~2x costlier). Recommended default is max(acc_char, acc_token); F1 for generative tasks unless exact match is required.
 - **Sampling-based metrics** trade cost for robustness: **pass@k over n** (unbiased estimator), **maj@n** (majority vote, good for math/reasoning), **cot@n**, and **avg@n** (stable average). Always report temperature/top-p/k; avoid sampling in cheap ablations (use greedy + fixed seed), reserve it for post-training and inference-time-compute studies.
 - **Functional scorers** are the authors' favorite: instead of fuzzy-matching a reference, check whether output satisfies verifiable constraints (IFEval-style: "exactly 3 bullets", valid JSON), as unit tests do for code. They are unambiguous, fast, cheap, and contamination-resistant - preferred over model judges (see [[llm-as-judge]]) when feasible.
+
+Peter Yang, Hamel Husain & Shreya Shankar, [[ai-evals-error-analysis]], put the precision/recall lens on the *eval tools themselves*, not just the product model:
+
+- **Watch precision, not just recall, when trusting an automated eval tool.** In Hamel's benchmark, best-case precision from the "do-it-for-you" vendors is only ~**80-90%**, meaning **10-20% of flagged "errors" are red herrings** that can distort a product if accepted blindly. High recall alone is not enough - a tool that surfaces many real errors but also many false ones still needs a human to confirm the flagged set (see [[production-eval-tooling]]).
+- **Benchmark the rubric with a labeled set.** Error analysis produces annotated samples for free, so the rubric's judges can be scored with ordinary precision/recall against those labels - evals are not just a rubric, you have to measure whether the rubric is any good (the same "evaluate your evaluator" point on [[llm-as-judge]]).
+- **Prefer yes/no pass/fail criteria over invented numeric scores**, which reduces each criterion to a binary classification whose precision and recall are directly computable, rather than an uncalibrated 1-5 scale.
 
 ## In my own words (hcho)

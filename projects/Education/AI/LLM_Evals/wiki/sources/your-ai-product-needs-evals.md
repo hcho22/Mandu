@@ -5,7 +5,7 @@ date: 2026-06-06
 title: "Your AI Product Needs Evals"
 author: "Hamel Husain"
 url: "https://hamel.dev/blog/posts/evals/"
-concepts: [offline-vs-online-evals, llm-as-judge]
+concepts: [offline-vs-online-evals, llm-as-judge, error-analysis]
 ---
 
 # Your AI Product Needs Evals
@@ -26,6 +26,7 @@ Hamel Husain argues that what separates an LLM product that keeps improving from
 
 - [[offline-vs-online-evals]] - the three-level framework is the offline-to-online progression: Level 1 (offline CI assertions) and Level 2 (offline and sampled human + model eval) come before Level 3 (online A/B testing).
 - [[llm-as-judge]] - Level 2's "automated evaluation w/ LLMs": align the judge to human labels, pick a capable affordable judge model, run a mini-eval on the judge, and avoid raw-agreement metrics on imbalanced data.
+- [[error-analysis]] - Level 2's log-and-review step: build friction-free trace viewers and start with binary good/bad labels, discovering failure modes before automating the judge.
 
 ## Source
 
