@@ -206,6 +206,13 @@ companies:
     pitch: "AI-native frontend infrastructure; React Native + Expo background; v0 / AI SDK team"
     priority: high
 
+  - name: Linear
+    bucket: ai-native-larger
+    location: Remote (distributed)
+    careers_url: https://linear.app/careers
+    pitch: "AI-native project management with an agent surface (Linear MCP, agent-assigned issues) - React/Vite/Tailwind + TypeScript frontend background and agentic orchestration (CreativeBridge) map to their AI/agent product work"
+    priority: medium
+
   - name: Glean
     bucket: ai-native-larger
     location: ""
