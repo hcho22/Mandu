@@ -2,8 +2,8 @@
 type: area
 tags: [agentic-engineering, agents, craft, tooling, orchestration, verification]
 status: established
-source-count: 13
-last-updated: 2026-08-05
+source-count: 14
+last-updated: 2026-08-27
 ---
 
 # Agentic Engineering
@@ -45,6 +45,13 @@ What survives is [[ramble-then-structure]] (say the constraints, not the structu
 - [[product-overhang]] - capability nobody has built a product for, and the hobbling that hides it.
 - [[ramble-then-structure]] - exhaust the constraints; let the agent impose structure.
 - [[build-for-the-model-of-the-future]] - design for the next generation, not today's.
+
+### Training the memory file
+- [[agents-md-as-neural-net]] - treat the project `AGENTS.md` as weights: budget, forward pass, loss, backward pass.
+- [[two-level-agent-memory]] - handwrite the user-level file, train the project-level one; opposite treatment.
+- [[four-bad-memory-states]] - empty, bloated, stale, drifted, and the transactional-editing root cause.
+- [[skills-as-release-valve]] - the budget-triage rule for what stays, what becomes a skill, and what gets deleted.
+- [[self-updating-config]] - a skill that mines corrections and improves its own config; the same loop, given discipline and a tool ([[backpass]]).
 
 ### Planning and review
 - [[planning-is-removing-unknowns]] - planning as continuous exploration, not a phase.
@@ -88,7 +95,6 @@ What survives is [[ramble-then-structure]] (say the constraints, not the structu
 - [[skills-vs-plugins]] - a skill is one capability; a plugin bundles skills + MCP servers + scripts to share.
 - [[personal-voice-skill]] - a skill that writes in your voice, grounded in your own message history, tuned by audience.
 - [[browser-use-vs-computer-use]] - the two automation surfaces (logged-in web vs OS/app level) and when each applies.
-- [[self-updating-config]] - a skill that mines corrections and improves its own config.
 - [[design-system-not-a-design]] - a vocabulary, not a screen; let the design agent challenge the PRD.
 - [[code-as-sawdust]] - prompts and specs are durable; code is a regenerable byproduct.
 - [[ship-fast-learn-from-users]] - ship in days; real users reveal edge cases.
@@ -109,6 +115,7 @@ What survives is [[ramble-then-structure]] (say the constraints, not the structu
 - [[building-robust-apps-with-ai]] - Ross: why agent-operable infra makes any of this possible.
 - [[graph-engineering-isenberg]] - Greg Isenberg: names the work-design layer ("graph engineering") for a founder audience; independent operator-side confirmation of the split-doing-from-verifying and understand-before-automating pillars.
 - [[running-life-on-codex]] - Jason (OpenAI Codex): the OpenAI-side practitioner account - skills/plugins, browser vs computer use, the goal/plan/worklog build workflow, effort discipline, and taste as the remaining skill; the wiki's first non-Anthropic confirmation that these practices are converging across vendors.
+- [[agents-md-is-a-neural-net]] - Kun: treat the project memory file as weights and train it from session transcripts; the discipline behind [[self-updating-config]] and the tool ([[backpass]]) that runs it.
 
 ## Open tensions
 
@@ -120,7 +127,7 @@ The area is not internally consistent, and the disagreements are the interesting
 | **Is orchestration scaffolding necessary?** | [[verification-signal-picks-the-mechanism]] gives a selection rule; [[building-at-the-frontier]] says `/go` and `/loop` are "helpful but not required" now. Likely a model-tier difference. |
 | **Local or cloud?** | [[cloud-agents-over-local]] versus the local worktrees of [[building-5-ai-products-solo]] and [[inside-conductor-workflow]]. Filed under [[agent-operations]]. |
 | **More agents or fewer?** | [[dynamic-workflows-as-test-time-compute]] scales to thousands; [[designing-loops-and-workflows]] reports Tharic cutting from five sessions to one; [[one-orchestrator-agent]] keeps many agents but one interface. |
-| **Do instructions compound?** | [[building-skills]] and [[self-updating-config]] treat them as an asset; [[ablation-driven-development]] treats them as debt with a one-generation half-life. |
+| **Do instructions compound?** | [[building-skills]] and [[self-updating-config]] treat them as an asset; [[ablation-driven-development]] treats them as debt with a one-generation half-life. [[agents-md-as-neural-net]] proposes a third position: they are **weights**, trained continuously within a fixed budget - ablation is the periodic full retrain, the backward pass the weekly gradient step. |
 
 ## Synthesis
 

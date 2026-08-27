@@ -1,9 +1,9 @@
 ---
 type: concept
-tags: [prompting, context-engineering, claude-code, craft, anthropic]
+tags: [prompting, context-engineering, claude-code, craft, anthropic, agents-md]
 status: established
-source-count: 2
-last-updated: 2026-08-01
+source-count: 3
+last-updated: 2026-08-27
 ---
 
 # Principles Over Constraints
@@ -58,6 +58,12 @@ Three additions that sharpen the rule:
 The most extreme evidence is [[self-maintaining-codebase]]: Anthropic's dead-code and abstraction-police routines are **one-sentence prompts**, and the sophistication - deciding to run static *and* dynamic analysis - came from the model rather than the prompt.
 
 Boris's instruction to users, not just builders: **every six months, delete your `CLAUDE.md`, your skills, and your hooks and see what the model does.**
+
+## The economics stated as a budget (2026-08-27, [[agents-md-is-a-neural-net]])
+
+[[kun]] restates "every instruction is re-read on every invocation" as **model size**: a memory file is like the parameter count of a network, where a bigger file holds more but costs more at inference, so the budget has to be explicit.
+That converts this page's qualitative "too long" into a quantitative discipline - pick a token budget for the always-loaded file, and near it every addition is zero-sum against a removal or an extraction ([[skills-as-release-valve]]).
+It is the same argument this page makes ("instructions must earn their token cost") given a unit and a ceiling, and it supplies the *where does the trimmed content go* answer via [[agents-md-as-neural-net]] and skills.
 
 ## Synthesis
 

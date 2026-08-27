@@ -2,8 +2,8 @@
 type: concept
 tags: [claude-code, skills, agentic-engineering, workflow]
 status: established
-source-count: 5
-last-updated: 2026-08-21
+source-count: 6
+last-updated: 2026-08-27
 ---
 
 # Building Skills
@@ -51,6 +51,13 @@ Two smaller additions:
 
 - **Skills are for intake, not only for generation.** The source's most-used skill is `grill me`, whose entire job is to interview the human ([[agent-interviews-you-for-context]]). Discovery is a repeatable workflow and deserves the same treatment as a production recipe.
 - **A liked output plus a negative example is a cheap rubric.** "Like carousel 2, never carousel 3" is the raw material for a [[skill-eval-loop]] pass/fail check, captured at the moment the judgment is fresh.
+
+## Skills as the memory-budget release valve ([[agents-md-is-a-neural-net]], 2026-08-27)
+
+The sixth source gives skills a job the earlier five did not name: they are **the release valve on the always-loaded memory file's budget** ([[skills-as-release-valve]]).
+[[kun]]'s triage decides what becomes a skill by breadth and trigger - broad or safety-critical instructions stay in `AGENTS.md`, **narrow instructions with a detectable trigger become a skill**, and narrow ones with no trigger are deletion candidates.
+That is the same "use when XYZ" description this page already treats as a skill's core, now load-bearing for a different reason: the trigger is what lets the content leave the always-loaded context without being lost.
+So a skill is not only a reusable recipe, it is where you *extract to* when a unit is worth keeping but not worth paying for on every session - the mechanism that keeps a trained memory file inside budget indefinitely.
 
 ## Synthesis
 

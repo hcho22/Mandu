@@ -2,23 +2,25 @@
 type: entity
 tags: [person, agentic-engineering, tooling, solo-builder]
 status: developing
-source-count: 2
-last-updated: 2026-08-01
+source-count: 3
+last-updated: 2026-08-27
 ---
 
 # Kun
 
-Principal engineer (L8), ex-Meta, Microsoft, and Atlassian; builder of a small stack of open agent tooling.
+**Kun Chen.** Principal engineer (L8), ex-Meta, Microsoft, and Atlassian; builder of a small stack of open agent tooling.
+GitHub handle and personal domain: **kunchenguid** (`github.com/kunchenguid`, `blog.kunchenguid.com`).
 
 **Identification note:** the wiki previously recorded this person only as "solo L8 builder" in [[building-products-with-agents]].
-[[agentic-full-stack-build]] names him as **Kun**, and the two sources are the same author.
-His GitHub handle and personal domain were not recoverable from that source's auto-captions and are deliberately not guessed here.
+[[agentic-full-stack-build]] named him as **Kun**, and [[agents-md-is-a-neural-net]] - a first-party blog post rather than an auto-captioned transcript - supplies the full name **Kun Chen** and the previously-missing identifiers (`blog.kunchenguid.com`, and the `kunchenguid/backpass` repo).
+The earlier caution about not guessing them is now resolved by a byline, not an inference.
 
 ## His tools
 
 - **First Mate** - his open-source orchestrator. You (the "captain") talk to exactly one agent, which dispatches work to "crewmates." See [[one-orchestrator-agent]].
-- **Lavish** - renders plans as interactive HTML artifacts with per-element annotation and rendered diagrams. See [[review-plans-as-artifacts]].
+- **Lavish** - renders plans as interactive HTML artifacts with per-element annotation and rendered diagrams. See [[review-plans-as-artifacts]]. Reused as the human-review surface in backpass.
 - **No Mistakes** - a local validation pipeline that runs against every code change. He needs it precisely *because* he does not review code himself.
+- **backpass** - an MIT CLI that trains a project's `AGENTS.md` from agent session transcripts, one gradient step per run. See [[backpass]].
 
 ## What shows up in the wiki
 
@@ -27,6 +29,10 @@ His GitHub handle and personal domain were not recoverable from that source's au
 
 **From [[agentic-full-stack-build]] (the principles executed end to end):**
 [[one-orchestrator-agent]], [[review-plans-as-artifacts]], [[anchor-cost-in-real-pricing]], [[agent-over-engineering]], [[compaction-over-context-window]], [[define-the-end-to-end-gate]], [[design-system-not-a-design]], [[ramble-then-structure]], [[credential-vaults]].
+
+**From [[agents-md-is-a-neural-net]] (configuring the agent, not building with it):**
+[[agents-md-as-neural-net]], [[two-level-agent-memory]], [[four-bad-memory-states]], [[skills-as-release-valve]], and the tool [[backpass]].
+This is his first source that is purely about **maintaining the agent's memory** rather than shipping a product with it, and it is the one that most directly reaches hcho's own Mandu configuration.
 
 ## Why he's a useful source
 

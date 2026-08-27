@@ -1,8 +1,8 @@
 ---
 type: synthesis
-last-updated: 2026-08-21
+last-updated: 2026-08-27
 status: established
-source-count: 31
+source-count: 32
 ---
 
 # Synthesis
@@ -249,6 +249,21 @@ For hcho the transferable pieces are small, cheap, and mostly not about marketin
 Make any long-running agent loop [[make-the-agent-report-its-cost|emit its own cost line]] so [[loop-cost-discipline]]'s stop conditions come from measurement rather than estimate.
 Answer [[three-ps-business-context|Pain, Person, Promise]] in one sentence each for Purvia and Rep Today, and get [[agent-interviews-you-for-context|grilled on them rather than drafting them]], because a draft reproduces the framing he already holds.
 And note the mirror one more time: the argument that the durable asset is the context layer rather than the tool is the strongest available answer to why Mandu is worth the maintenance.
+
+## What the 2026-08-27 ingest added
+
+One source, [[agents-md-is-a-neural-net]] ([[kun]]), and it does something none of the 31 before it did: it resolves one of the wiki's own standing tensions rather than adding a new datum to one side.
+
+The tension was **"do instructions compound?"** - [[building-skills]] and [[self-updating-config]] treated accumulated instructions as an asset, [[ablation-driven-development]] treated them as debt with a one-to-three-generation half-life.
+Kun's answer is that they are neither: they are **weights**.
+[[agents-md-as-neural-net]] maps a project memory file onto a network you train - the file is the weights, the token budget is the model size, every session is a forward pass, the gap between what the agent did and what you wanted is the loss (sitting unread in the transcripts), and reading those transcripts to make small budgeted edits is the backward pass.
+Weights are neither kept forever nor deleted wholesale; they are retrained continuously within a fixed capacity.
+That makes ablation and the backward pass the same method at two timescales - ablation is the periodic full retrain keyed to a model release, the backward pass ([[backpass]]) is the weekly gradient step keyed to the sessions you just ran - and it promotes [[self-updating-config]] from a thin one-source seed to the disciplined, tooled version of a real practice (verbatim-quote evidence, batching, an explicit budget, [[skills-as-release-valve|skills as the release valve]], and a human gate that writes).
+
+Two second-order notes.
+First, it is a **mild dent in the vendor-concentration caveat** despite being a third [[kun]] source: the tool deliberately reads the transcript stores of Claude Code, Codex, pi, opencode, grok, and Cursor, so the method is stated as harness-agnostic rather than Claude-shaped.
+Second, and sharper for hcho, the whole source is **reflexive**: Mandu's own long, rule-dense `CLAUDE.md` and skill files are precisely the "weights edited transactionally from anecdotes" it warns about, and this ingest was itself run from inside First Mate, Kun's orchestrator - the tool doing the filing is built by the author being filed.
+The importable action is concrete and already half-implied by [[principles-over-constraints]] and [[ablation-driven-development]]: put an explicit token budget on the global `CLAUDE.md`, [[four-bad-memory-states|lint it for empty/bloated/stale/drifted]], separate the [[two-level-agent-memory|handwritten user file from the trainable project files]], and either run [[backpass]] or reproduce its budgeted-backward-pass discipline by hand.
 
 ## Open threads
 

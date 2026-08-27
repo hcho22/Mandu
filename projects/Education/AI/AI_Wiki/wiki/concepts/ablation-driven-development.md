@@ -52,3 +52,12 @@ That is closer to hardware bring-up than to software engineering, and it is a ra
 The tension worth watching is with [[building-skills]] and [[self-updating-config]], which treat accumulated instructions as a compounding asset.
 Boris's position is that they compound only until the next model, and that most people never pay the debt down.
 See also [[evals-saturate-and-get-replaced]], which makes the same argument about the artifact everyone assumes is durable.
+
+## The complement: the weekly gradient step (2026-08-27)
+
+[[agents-md-is-a-neural-net]] ([[kun]]) is the other half of this method rather than a competitor to it.
+Both are anti-bloat, evidence-driven, and budget-respecting; they differ in **cadence and step size**.
+Ablation is a periodic full reset keyed to **model releases** - zero the whole prompt layer and let only repeated failures re-accumulate, because a new model invalidates the last one's corrections.
+The backward pass ([[backpass]]) is a **weekly small step** keyed to **transcript loss** - nudge a handful of units on the model you have now, using the sessions that actually ran as the gradient.
+Read through [[agents-md-as-neural-net]], they are the same picture at two timescales: ablation is the occasional full retrain, backpass is the ongoing gradient descent between retrains.
+This partly answers the tension above - instructions are neither pure asset nor pure debt but **weights**, kept within a fixed capacity and retrained on two clocks - though Boris's stronger claim stands, that most accumulated configuration is debt against a model that no longer exists and only a delete-to-zero reliably surfaces it.

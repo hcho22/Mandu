@@ -1,6 +1,6 @@
 ---
 type: index
-last-updated: 2026-08-21
+last-updated: 2026-08-27
 ---
 
 # Index
@@ -10,7 +10,7 @@ Every page is listed once under its category with a one-line summary.
 Read this first when answering a query, then drill into the linked pages.
 Updated on every ingest.
 
-Counts: 31 sources, 10 areas, 149 concepts, 30 entities.
+Counts: 32 sources, 10 areas, 153 concepts, 31 entities.
 
 ## Areas
 
@@ -116,9 +116,13 @@ Counts: 31 sources, 10 areas, 149 concepts, 30 entities.
 - [[capabilities-not-instructions]] - remove the key; do not rely on an instruction for agent safety.
 - [[phased-autonomy]] - the bike method: grant autonomy in stages, only once earned.
 - [[building-skills]] - build skills forward or by reverse-engineering; evolve them every use.
-- [[self-updating-config]] - a skill that mines correction history and improves its own CLAUDE.md.
+- [[self-updating-config]] - a skill that mines correction history and improves its own CLAUDE.md; the same loop given discipline and a tool ([[backpass]]).
 - [[principles-over-constraints]] - smarter models need fewer rules and examples; Anthropic cut its own system prompt by 80%.
 - [[red-team-your-agent]] - deliberately attack your agent (prompt injection) to verify it holds.
+- [[agents-md-as-neural-net]] - treat the project AGENTS.md as weights: budget = model size, session = forward pass, transcript loss drives the backward pass.
+- [[two-level-agent-memory]] - handwrite the user-level file (your preferences), train the project-level file; opposite treatment.
+- [[four-bad-memory-states]] - empty, bloated, stale, drifted; the transactional-append habit is the shared root cause.
+- [[skills-as-release-valve]] - budget triage: broad/safety-critical stays, narrow-with-a-trigger becomes a skill, narrow-no-trigger is deleted.
 
 ### Agent operations
 - [[heartbeat-automation]] - a scheduled agent that reads all your inboxes on a cadence and returns one "what needs attention" briefing.
@@ -238,6 +242,7 @@ Counts: 31 sources, 10 areas, 149 concepts, 30 entities.
 - [[obsidian]] - local-first markdown notes app; in the wiki, a structured markdown store an agent reads for context (hcho's own tool of record).
 - [[nate-herk]] - AI automation creator teaching non-coders; the wiki's least technical voice, and unusually candid about his own output.
 - [[higgsfield]] - multi-model image/video aggregator with a Marketing Studio; driven over MCP rather than through its own UI.
+- [[backpass]] - Kun's MIT CLI that trains a project's AGENTS.md from agent session transcripts, one gradient step per run.
 
 ## Sources
 
@@ -272,6 +277,7 @@ Counts: 31 sources, 10 areas, 149 concepts, 30 entities.
 - [[graph-engineering-isenberg]] - Greg Isenberg: "graph engineering" as the work-design layer above prompt/context; agent graphs vs knowledge graphs; a manual-to-automated build ladder.
 - [[running-life-on-codex]] - Jason (OpenAI Codex): running work and life on Codex/ChatGPT Work - heartbeat automations, skills vs plugins, browser vs computer use, goal/plan/worklog, and taste as the remaining skill; the wiki's first inside-OpenAI source.
 - [[one-person-marketing-team]] - Nate Herk: a Claude Code project driving Higgsfield to produce a brand's full asset set. **The wiki's weakest evidence on distribution and its only itemized creative-production costs.** Fictional brand, nothing published.
+- [[agents-md-is-a-neural-net]] - Kun Chen: treat the project AGENTS.md as a neural net you train from session transcripts (weights, budget, forward/backward pass); ships [[backpass]] (MIT). The wiki's third Kun source and its first on maintaining the agent's memory rather than building with it.
 
 ## Pending pages (linked, not yet written)
 
@@ -287,7 +293,7 @@ The 2026-08-01 batch introduced real disagreements between sources. They are rec
 | **Local or cloud agents?** | [[cloud-agents-over-local]] vs the local worktrees of [[building-5-ai-products-solo]] and [[inside-conductor-workflow]] | [[agent-operations]] |
 | **Is orchestration scaffolding necessary?** | [[verification-signal-picks-the-mechanism]] gives a selection rule; [[building-at-the-frontier]] says `/go` and `/loop` are "helpful but not required" now | [[agentic-engineering]] |
 | **Do evals compound?** | The [[evals]] area treats the suite as the compounding asset; [[evals-saturate-and-get-replaced]] gives it a 1-3 generation half-life | [[evals]] |
-| **Do instructions compound?** | [[building-skills]] and [[self-updating-config]] treat them as an asset; [[ablation-driven-development]] treats them as debt | [[agentic-engineering]] |
+| **Do instructions compound?** | [[building-skills]] and [[self-updating-config]] treat them as an asset; [[ablation-driven-development]] treats them as debt; [[agents-md-as-neural-net]] calls them weights trained within a budget (ablation = full retrain, backward pass = weekly step) | [[agentic-engineering]] |
 | **Is prompt injection still the threat model?** | [[red-team-your-agent]] assumes yes; [[building-at-the-frontier]] says Opus 5 is not demonstrably injectable, with caveats | [[red-team-your-agent]] |
 | **Do you still read the agent's code?** | [[read-what-the-agent-writes]] says reading is how you keep judgment; [[running-life-on-codex]] says "a lot of us don't review code anymore" - verification moved onto verifiable-goal oracles, not abandoned | [[read-what-the-agent-writes]] |
 | **Manager, or director of taste?** | [[manager-of-agents]] (Ryan Carson, Cody Schneider) says you manage agents now; [[running-life-on-codex]] (Jason, OpenAI) rejects the manager frame and calls the job articulating taste | [[manager-of-agents]] |

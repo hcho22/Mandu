@@ -30,6 +30,11 @@ Every agent stack has a "one capability" unit and a "packaged bundle" unit; only
 | Claude Code | skill | plugin / marketplace bundle |
 | Generic | tool / instruction file | MCP server + skill set |
 
+## The atom also has a budget role ([[agents-md-is-a-neural-net]], 2026-08-27)
+
+[[kun]] adds a use for the skill-as-atom this page did not have: it is the unit you **extract to** when trimming an always-loaded memory file to its budget ([[skills-as-release-valve]]).
+Narrow-but-triggerable instructions move out of `AGENTS.md` and into a skill, which is why the atom/molecule distinction matters operationally and not just for distribution - the atom is the release valve, the molecule (plugin) is how you share a set of them.
+
 ## Synthesis
 
 A small but clarifying distinction: the wiki's [[building-skills]] and [[self-updating-config]] pages treat the *skill* as the atom, and this source names the molecule above it and, usefully, ties the review/trust bar to it - MCP-bearing bundles are audited harder because they carry executable reach, which is the [[credential-vaults]] / [[capabilities-not-instructions]] security instinct applied to distribution.
