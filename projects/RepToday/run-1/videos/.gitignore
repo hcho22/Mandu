@@ -1,5 +1,0 @@
-# Frame sources are ~90MB of PNGs, fully reproducible from frame.html via
-# render-frames.sh; the encoded mp4s are committed. (spike/frames stays
-# tracked: 6 tiny files proving the rig.)
-launch/frames/
-founder/frames/
