@@ -66,7 +66,7 @@ The content calendar will not assign a real date to a single post until these ar
 
 **Phase 2 source of truth:** `projects/Purvia/raw/PRD_phase2_agentic_rag_kit.md` (copied from `/Users/hcho/Developer/Purvia/.claude/agent/tasks/PRD_phase2_agentic_rag_kit.md`).
 
-**Go-to-market source of truth:** `/Users/hcho/Developer/Purvia/.claude/launch/` - `THESIS.md` (bet, preconditions, kill criteria, weaknesses), `RED_TEAM.md`, `BUILD_LOG.md` (decisions and cuts), `evidence/claims.md` (the per-claim ledger every load-bearing statement cites).
+**Go-to-market source of truth:** `projects/Purvia/launch/` (the complete 2026-08-27 package, now the canonical in-repo copy; the older `/Users/hcho/Developer/Purvia/.claude/launch/` package is superseded and retired) - `THESIS.md` (bet, preconditions, kill criteria, weaknesses), `RED-TEAM.md`, `BUILD-LOG.md` (decisions and cuts), `CLAIMS.md` (the per-claim ledger every load-bearing statement cites).
 
 ## Why this project / how it fits
 

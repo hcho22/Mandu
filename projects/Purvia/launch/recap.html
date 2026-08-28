@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Purvia launch — recap</title>
+<style>
+:root{--ink:#101A2B;--paper:#F7F5F0;--predicate:#1E4FD8;--alarm:#C8372D;--measured:#1F7A45;--slate:#5B6472;--grid:#D8D4CC;
+--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;--sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);color:var(--ink);background:var(--paper);font-size:16.5px;line-height:1.6;padding-bottom:60px}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px}
+header{background:var(--ink);color:var(--paper);padding:44px 0;margin-bottom:40px}
+header .kicker{font-family:var(--mono);font-size:13px;color:#8FA3C8}
+header h1{font-size:34px;margin-top:10px;letter-spacing:-0.01em}
+header p{color:#C8CFDC;margin-top:10px;max-width:640px}
+h2{font-size:24px;margin:40px 0 12px;letter-spacing:-0.01em}
+h3{font-size:18px;margin:22px 0 8px}
+p+p{margin-top:10px}
+a{color:var(--predicate)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;margin-top:12px}
+th,td{border:1px solid var(--grid);padding:7px 11px;text-align:left;vertical-align:top}
+th{background:#EFEBE2;font-weight:650}
+td.mono,.mono{font-family:var(--mono);font-size:13.5px}
+.ok{color:var(--measured);font-weight:650}
+.warn{color:var(--alarm);font-weight:650}
+blockquote{border-left:3px solid var(--predicate);padding:8px 16px;margin:14px 0;color:var(--slate)}
+.confess{border-left-color:var(--alarm)}
+ul{padding-left:24px;margin-top:8px}
+li{margin-bottom:7px}
+.caption{font-family:var(--mono);font-size:12px;color:var(--slate);margin-top:6px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:14px}
+.card{border:1px solid var(--grid);border-radius:8px;padding:16px;background:#FBFAF7}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<div class="kicker">launch package recap · built 2026-08-27 · everything local, nothing published</div>
+<h1>Purvia go-to-market: the business in five minutes</h1>
+<p>A permissions-aware RAG platform goes to market on its most defensible asset: an eval harness honest enough to have caught its own 42-day failure — and every claim in this package traces to a file, a line, or a fetched URL.</p>
+</div></header>
+<div class="wrap">
+
+<h2>1. The business</h2>
+<p><strong>Product:</strong> Purvia (name settled, <span class="mono">docs/adr/0011-product-name.md</span>) — per-document sharing enforced inside the SQL retrieval predicate, two surfaces (knowledge assistant + white-label support widget), shipped eval harness. MIT core.</p>
+<p><strong>Buyer:</strong> an engineer adding RAG to a multi-user product. <strong>Model:</strong> open-core kit — free core (the whole current repo), Pro tier $199 one-time (adoption pack: authoring workbook, deployment playbooks, 12-month prioritized support, theming presets), sold as a labeled founding preorder until its deliverables exist.</p>
+<p><strong>Positioning (tournament winner):</strong> the receipts, carried by the predicate. Alternatives were scored and their losses became the objection bank — the disqualified one (hosted SaaS) violated ground truth by construction.</p>
+<blockquote class="confess"><p>The lead asset: for 42 days the scale benchmark measured a real 0.000 under a green hand-copied table, alarm firing nightly. The reporting was rebuilt so "measured nothing" is unpublishable. No competitor will write that paragraph about themselves — ours is in the README with dates.</p></blockquote>
+
+<h2>2. The thesis (falsifiable)</h2>
+<p>Engineers will pay $199 one-time for a permissions-aware RAG codebase whose security property is <em>proved by a shipped harness</em>, because the alternatives are a DIY pattern guide with no proof (Supabase docs), an internal-search product that paywalls permissioning (Onyx EE — fetched), or frameworks they already distrust.</p>
+<p><strong>Kill criteria (one week, from <a href="THESIS.md">THESIS.md</a>):</strong> under 20k impressions/50 engineer replies on the failure-story thread → re-lead with the predicate angle; under 30 signups per 500 visitors → kill the paid tier, keep the portfolio; 5-of-10 inbound asking for Slack/Drive connectors → wrong market, stop; zero preorders despite signups → the Pro boundary is unwanted, one retry then stop. Two tripwires firing kills paid-tier plans this quarter.</p>
+
+<h2>3. Deliverables map (all under <span class="mono">launch/</span>)</h2>
+<table>
+<tr><th>Artifact</th><th>What it is</th></tr>
+<tr><td class="mono"><a href="INVENTORY.md">INVENTORY.md</a></td><td>Capability inventory proved from source; shipped vs specced vs cut; the ten numbers with denominators; the claim caps in the docs' own words</td></tr>
+<tr><td class="mono"><a href="CLAIMS.md">CLAIMS.md</a></td><td>The claim ledger: 30 rows, each with evidence and its mandatory traveling caveat, plus the banned-claims list. No row, no ship</td></tr>
+<tr><td class="mono"><a href="POSITIONING.md">POSITIONING.md</a> · <a href="THESIS.md">THESIS.md</a></td><td>Tournament scorecard, winner, objection bank from the losers; the falsifiable bet and its kill criteria</td></tr>
+<tr><td class="mono"><a href="BRAND.md">BRAND.md</a></td><td>Identity + voice book: pillars, voice rules with calibration pairs, palette/type/mark, layout grammar, asset checklist</td></tr>
+<tr><td class="mono"><a href="site/index.html">site/index.html</a></td><td>The site — failure story above the fold, denominator-captioned tables, who-should-not-buy, engineer FAQ, honest pricing. Screenshot-verified desktop + mobile (<a href="checkpoints/site-desktop-full.png">desktop</a>, <a href="checkpoints/site-mobile-full.png">mobile</a>)</td></tr>
+<tr><td class="mono"><a href="social/x-thread.md">social/x-thread.md</a></td><td>X: the outage thread (runs first), three follow-up posts, prepared replies</td></tr>
+<tr><td class="mono"><a href="social/linkedin.md">social/linkedin.md</a></td><td>LinkedIn long-form post</td></tr>
+<tr><td class="mono"><a href="social/instagram/">social/instagram/</a></td><td>Four rendered 1080×1080 cards (<a href="social/instagram/card1-failure.png">failure</a>, <a href="social/instagram/card2-security.png">security</a>, <a href="social/instagram/card3-regression.png">regression</a>, <a href="social/instagram/card4-notbuy.png">not-buy</a>) + <a href="social/instagram/captions.md">captions</a>; HTML sources beside each PNG</td></tr>
+<tr><td class="mono"><a href="social/tiktok-shotlists.md">social/tiktok-shotlists.md</a></td><td>Three TikTok shot lists (shot lists only, per brief)</td></tr>
+<tr><td class="mono"><a href="social/video-scripts.md">social/video-scripts.md</a></td><td>Two video scripts; footage deliberately not fabricated (DECISIONS.md D12)</td></tr>
+<tr><td class="mono"><a href="social/profile/">social/profile/</a></td><td>Profile assets: <a href="social/profile/avatar.png">avatar</a> + <a href="social/profile/banner.png">banner</a></td></tr>
+<tr><td class="mono"><a href="RED-TEAM.md">RED-TEAM.md</a></td><td>Four adversaries; two confirmed defects fixed in the assets, two objections folded into the site FAQ, four residual risks</td></tr>
+<tr><td class="mono"><a href="DECISIONS.md">DECISIONS.md</a></td><td>Twelve decisions with reasoning, in lieu of questions (never-ask rule)</td></tr>
+<tr><td class="mono"><a href="bin/claimlint.sh">bin/claimlint.sh</a></td><td>The marketing-speak / overclaim / placeholder grep linter; all assets pass clean</td></tr>
+<tr><td class="mono"><a href="../README.proposed.md">../README.proposed.md</a></td><td>The one proposed product change: fixes the README's RAGAS overclaim, adds "Who should not use this"</td></tr>
+<tr><td class="mono"><a href="BUILD-LOG.md">BUILD-LOG.md</a> · <a href="checkpoints/">checkpoints/</a></td><td>Run journal, phase checkpoints, research citations, verification screenshots</td></tr>
+</table>
+
+<h2>4. Red-team outcome</h2>
+<div class="grid2">
+<div class="card"><h3 class="ok">Fixed in the assets</h3>
+<ul>
+<li>"Hybrid ≥ vector in every category" was false for MRR (paraphrase 0.767 vs 1.000) — corrected everywhere, now cited as the harness keeping score on us</li>
+<li>"Every PR" on the security card → "every relevant PR and on main"</li>
+<li>Two hardest true attacks (own-permissions broke own eval; hand-copied table) folded into the site FAQ as answers, not omissions</li>
+</ul></div>
+<div class="card"><h3 class="warn">Residual (needs the captain)</h3>
+<ul>
+<li><strong>R1:</strong> the live README's RAGAS bullet overclaims — land <span class="mono">README.proposed.md</span> before the thread runs</li>
+<li><strong>R2:</strong> trademark clearance pending (ADR-0011)</li>
+<li><strong>R3:</strong> purvia.ai unregistered (no-spend rule; assets link the repo instead)</li>
+<li><strong>R4:</strong> single-maintainer bus factor; MIT is the honest mitigation</li>
+</ul></div>
+</div>
+
+<h2>5. Run order (this month)</h2>
+<ul>
+<li>Land <span class="mono">README.proposed.md</span> on main (clears R1).</li>
+<li>Put <span class="mono">launch/site/</span> behind any static host when ready to publish (it is self-contained; publishing was out of scope for this run).</li>
+<li>Run X thread 1 (the outage story) → post 2 at day 2–3 → post 3 at ~1 week → post 4 at ~day 10; LinkedIn post after thread 1 settles; Instagram cards on the captions.md schedule.</li>
+<li>Record the two video scripts against a local stack when convenient; TikTok only after footage exists.</li>
+<li>Day 7: score the four kill criteria in <a href="THESIS.md">THESIS.md</a> and act on whichever fired.</li>
+</ul>
+
+<h2>6. Build log</h2>
+<table>
+<tr><th>Phase</th><th>Result</th></tr>
+<tr><td>0 Inventory</td><td>Repo read against brief; two brief premises corrected from source (retrieval-quality PRD is complete; RAGAS is a scaffold) — DECISIONS D2/D5. Ledger seeded with 30 rows.</td></tr>
+<tr><td>1 Positioning</td><td>Landscape/complaints/pricing research with fetched primary URLs (Onyx EE paywall, Supabase DIY gaps, ShipFast $199/$249, Pegasus free-core + $449); six-angle tournament; price fixed at $199.</td></tr>
+<tr><td>2 Brand</td><td>BRAND.md complete for stranger-use; linter extended and all assets kept clean.</td></tr>
+<tr><td>3 Site</td><td>Built, then verified: mobile overflow bug found in screenshots and fixed; 390px viewport re-verified programmatically (scrollWidth = innerWidth = 390) plus visual passes at 500px and 1440px.</td></tr>
+<tr><td>4 Social</td><td>Thread, posts, four rendered cards, profile assets; video kept to scripts (no footage to capture honestly — D12).</td></tr>
+<tr><td>5 Red team</td><td>Four adversaries; 2 confirmed defects fixed, 2 objections folded into customer-facing FAQ, 4 residual risks logged.</td></tr>
+<tr><td>6 Package</td><td>This page; every relative link verified against the filesystem.</td></tr>
+</table>
+<p class="caption">orchestration note: harness delegation tools were blocked by the environment; the multi-agent structure (fan-out readers, tournament, four adversaries) ran as independent sequential passes, checkpointed to disk (DECISIONS.md D7)</p>
+
+<p style="margin-top:36px" class="caption">claims discipline: every number on this page travels with its denominator at its point of use in the linked assets · ledger: <a href="CLAIMS.md">CLAIMS.md</a> · repo: <a href="https://github.com/hcho22/Purvia">github.com/hcho22/Purvia</a></p>
+</div>
+</body>
+</html>

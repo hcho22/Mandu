@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Purvia — permissions-aware RAG, measured in public</title>
+<meta name="description" content="Per-document sharing inside the SQL retrieval predicate, proved by an eval harness that once caught our own benchmark reading 0.000 for 42 days.">
+<style>
+:root{
+  --ink:#101A2B; --paper:#F7F5F0; --predicate:#1E4FD8; --alarm:#C8372D;
+  --measured:#1F7A45; --slate:#5B6472; --grid:#D8D4CC; --grid-dark:#243247;
+  --mono:ui-monospace,"SF Mono","Cascadia Code",Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);color:var(--ink);background:var(--paper);font-size:17px;line-height:1.6}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+.wrap-wide{max-width:880px;margin:0 auto;padding:0 20px}
+header.site{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand b{font-weight:700;font-size:20px;letter-spacing:-0.01em}
+nav a{color:var(--slate);text-decoration:none;margin-left:18px;font-size:15px}
+nav a:hover{color:var(--predicate)}
+.hero{background:var(--ink);color:var(--paper);padding:64px 0 56px}
+.hero .kicker{font-family:var(--mono);font-size:13px;color:#8FA3C8;letter-spacing:.04em}
+.hero h1{font-size:44px;line-height:1.15;font-weight:700;margin:14px 0 8px;letter-spacing:-0.015em}
+.hero h1 .zero{color:#E4685F;font-family:var(--mono)}
+.hero p.sub{font-size:19px;color:#C8CFDC;max-width:620px;margin-top:10px}
+.hero .story{border-left:3px solid var(--alarm);padding:10px 16px;margin:26px 0 8px;background:rgba(200,55,45,.08)}
+.hero .story p{font-family:var(--mono);font-size:14.5px;line-height:1.75;color:#E8E4DC}
+.cta-row{margin-top:28px;display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-block;padding:11px 20px;border-radius:6px;text-decoration:none;font-weight:650;font-size:15.5px}
+.btn.primary{background:var(--predicate);color:#fff}
+.btn.ghost{border:1px solid #40507A;color:#DCE2EE}
+.btn:hover{filter:brightness(1.1)}
+section{padding:56px 0;border-bottom:1px solid var(--grid)}
+h2{font-size:32px;line-height:1.2;letter-spacing:-0.01em;margin-bottom:18px;font-weight:700}
+h3{font-size:20px;margin:26px 0 8px;font-weight:650}
+p+p{margin-top:12px}
+a{color:var(--predicate)}
+.caption{font-family:var(--mono);font-size:12.5px;color:var(--slate);margin-top:8px;line-height:1.5}
+.tablebox{overflow-x:auto;margin-top:16px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border:1px solid var(--grid);padding:7px 12px;text-align:left;white-space:nowrap}
+th{font-family:var(--sans);font-weight:650;background:#EFEBE2}
+td{font-family:var(--mono);font-size:14px}
+td.g{color:var(--measured);font-weight:600}
+td.r{color:var(--alarm);font-weight:600}
+blockquote.doc{border-left:3px solid var(--predicate);padding:8px 16px;margin:16px 0;color:var(--slate);font-size:15.5px}
+blockquote.confess{border-left:3px solid var(--alarm);padding:8px 16px;margin:16px 0}
+code,.mono{font-family:var(--mono);font-size:.92em}
+pre{background:var(--ink);color:#DCE2EE;font-family:var(--mono);font-size:13.5px;line-height:1.6;padding:16px 18px;border-radius:8px;overflow-x:auto;margin-top:14px}
+pre .k{color:#7FB0FF}.hl{color:#E4685F}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:18px}
+.card{border:1px solid var(--grid);border-radius:8px;padding:20px;background:#FBFAF7}
+.card h3{margin-top:0}
+ul.tight{padding-left:22px;margin-top:10px}
+ul.tight li{margin-bottom:8px}
+.notbuy li::marker{color:var(--alarm)}
+.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:20px}
+.price h3{font-size:24px}
+.price .amount{font-family:var(--mono);font-size:34px;font-weight:700;margin:6px 0 2px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11.5px;padding:2px 8px;border-radius:4px;margin-left:8px;vertical-align:middle}
+.badge.pre{background:#F3E3C2;color:#7A5A12}
+.badge.live{background:#DDEBE1;color:var(--measured)}
+details{border:1px solid var(--grid);border-radius:8px;padding:14px 18px;margin-top:12px;background:#FBFAF7}
+summary{font-weight:650;cursor:pointer}
+details p{margin-top:10px}
+footer{padding:36px 0 48px;color:var(--slate);font-size:14px}
+footer .claims{font-family:var(--mono);font-size:12px;margin-top:8px}
+@media (max-width:640px){
+  body{font-size:16px}
+  .hero h1{font-size:30px;overflow-wrap:break-word}
+  .hero p.sub{font-size:16.5px}
+  .hero .story p{font-size:13px}
+  h2{font-size:25px}
+  h3{font-size:18px}
+  .cols,.price-grid{grid-template-columns:1fr}
+  header.site{flex-wrap:wrap;gap:6px}
+  nav a{margin-left:0;margin-right:14px;font-size:13.5px}
+  nav a.hide-m{display:none}
+  .btn{font-size:14.5px;padding:10px 16px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap-wide">
+<header class="site">
+  <a class="brand" href="#top" aria-label="Purvia home">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M8 3H4.5A1.5 1.5 0 0 0 3 4.5V8M16 3h3.5A1.5 1.5 0 0 1 21 4.5V8M8 21H4.5A1.5 1.5 0 0 1 3 19.5V16M16 21h3.5a1.5 1.5 0 0 0 1.5-1.5V16" stroke="#1E4FD8" stroke-width="2.5" stroke-linecap="round"/>
+      <rect x="8" y="8" width="8" height="8" rx="1" fill="#1F7A45"/>
+    </svg>
+    <b>purvia</b>
+  </a>
+  <nav>
+    <a href="#numbers">Numbers</a>
+    <a href="#product" class="hide-m">Product</a>
+    <a href="#notbuy">Who shouldn't buy</a>
+    <a href="#pricing">Pricing</a>
+  </nav>
+</header>
+</div>
+
+<div class="hero" id="top">
+  <div class="wrap">
+    <div class="kicker">permissions-aware RAG · MIT core · no LLM framework in the stack</div>
+    <h1>For 42 days our benchmark measured <span class="zero">0.000</span>.<br>The table on our README stayed green.</h1>
+    <p class="sub">The alarm fired every night. The retrieval predicate never leaked — the <em>reporting</em> was the failure. We fixed it so a run that measures nothing can never publish a number again, and we wrote the whole thing down.</p>
+    <div class="story">
+      <p>2026-06-19 → 2026-07-30 &nbsp;·&nbsp; permissions scale benchmark: every cell a real, measured 0.000<br>
+      cause: eval viewers had no workspace_membership row — tenant isolation hid the whole corpus<br>
+      2026-07-31 &nbsp;·&nbsp; seeding fixed, publish-a-zero path removed; all-1.000 re-measured nightly since<br>
+      source: README.md, “The permissions story, in numbers”</p>
+    </div>
+    <div class="cta-row">
+      <a class="btn primary" href="https://github.com/hcho22/Purvia">Read the code — MIT</a>
+      <a class="btn ghost" href="#numbers">See the numbers, with denominators</a>
+    </div>
+  </div>
+</div>
+
+<section id="why">
+  <div class="wrap">
+    <h2>Sharing belongs in the retrieval predicate, not in a filter after it</h2>
+    <p>The usual way to add per-document permissions to RAG is to post-filter: pull top-k by similarity, then drop what the viewer can’t see. The math kills it. If a viewer can see 5% of the corpus and you ask for top-10, the expected number of visible chunks in that result is <code>k × selectivity = 10 × 0.05 = 0.5</code> — half a chunk. Multi-hop questions that need two chunks become unanswerable.</p>
+    <p>Purvia pushes the ACL check <strong>into the SQL predicate</strong>, so the planner ranks only chunks the viewer is authorized to see. Every retrieval call runs under the viewer’s JWT. A workspace tenant boundary sits above per-document sharing, AND-ed into the same predicate — resolved from the JWT, never a backend-passed tenant id.</p>
+<pre><code><span class="k">-- the shape of the thing (see docs/permissions-aware-rag.md §3)</span>
+SELECT chunk_id, content, embedding &lt;=&gt; :query AS distance
+FROM chunks
+WHERE <span class="hl">workspace_membership(auth.uid(), workspace_id)</span>   <span class="k">-- tenant boundary</span>
+  AND (<span class="hl">owner = auth.uid() OR acl_grant(auth.uid(), chunk_id)</span>)  <span class="k">-- owner-OR-ACL</span>
+ORDER BY distance LIMIT :k;</code></pre>
+    <p class="caption">Illustrative shape, not the shipped SQL — the real predicate lives in match_chunks / keyword_search with SECURITY INVOKER and mirrored RLS.</p>
+    <p>The chat UI then shows <em>why</em> the viewer can see each retrieved chunk — a per-chunk badge: “via owner”, “via direct grant”, “via {group}”.</p>
+  </div>
+</section>
+
+<section id="numbers">
+  <div class="wrap">
+    <h2>The numbers — every one travels with its denominator</h2>
+
+    <h3>Security: fraction of no-access runs that returned zero gold chunks</h3>
+    <div class="tablebox">
+    <table>
+      <tr><th>Mode</th><th>Pre-filter</th><th>Post-filter</th></tr>
+      <tr><td>vector</td><td class="g">1.000</td><td class="g">1.000</td></tr>
+      <tr><td>keyword</td><td class="g">1.000</td><td class="g">1.000</td></tr>
+      <tr><td>hybrid</td><td class="g">1.000</td><td class="g">1.000</td></tr>
+    </table>
+    </div>
+    <p class="caption">n = 60 questions × 3 modes × 3 viewer setups on the shipped 16-chunk / 8-document demo corpus (docs/nightly/2026-08-27.md). A correctness proof at small scale — not a scale result. Pre-filter is the load-bearing row: security enforced in SQL, not a Python drop.</p>
+    <p>This table is hard-asserted in CI on every relevant PR and on main: a fresh <code>seed → eval</code> on the shipped artifacts must reproduce it with zero authoring, or the build fails (<code>ship-green.yml</code>). The gate is pinned <code>fail</code> and has no off switch — the only way to silence it is to delete the eval, which is a tracked diff.</p>
+
+    <h3>The catch that proves the harness: Δ −0.510 in 4 minutes</h3>
+    <p>To show the CI actually surfaces a regression, a one-line chunk-size change (500 → 100 tokens) was pushed on a throwaway PR. The workflow ran PR-head against main and posted the red table — no human in the loop:</p>
+    <div class="tablebox">
+    <table>
+      <tr><th>Mode</th><th>recall@5</th><th>MRR</th><th>nDCG@5</th></tr>
+      <tr><td>vector</td><td class="r">0.350 (−0.510)</td><td class="r">0.194 (−0.578)</td><td class="r">0.198 (−0.581)</td></tr>
+      <tr><td>keyword</td><td class="r">0.040 (−0.070)</td><td class="r">0.040 (−0.080)</td><td class="r">0.040 (−0.072)</td></tr>
+      <tr><td>hybrid</td><td class="r">0.350 (−0.510)</td><td class="r">0.208 (−0.551)</td><td class="r">0.208 (−0.561)</td></tr>
+    </table>
+    </div>
+    <p class="caption">Staged regression on PR #14 (closed unmerged): cause contrived, catch real. 50 questions × 3 modes at the time; posted in 4 minutes end-to-end (docs/evals.md §4).</p>
+
+    <h3>The harness also caught us</h3>
+    <blockquote class="confess">
+      <p>Our hybrid stack was losing to its own vector leg: keyword recall@5 was <span class="mono">0.140</span> overall and <span class="mono">0.000</span> on paraphrase questions, because strict AND matching zeroed any query with one missing word. Fused in, the dead leg dragged hybrid MRR to <span class="mono">0.786</span> vs vector’s <span class="mono">0.796</span>.</p>
+      <p>The nightly made it undeniable; the fix (OR-fallback + query-adaptive fusion) was then measured by the same harness: keyword paraphrase recall@5 <span class="mono">0.800</span>, exact-token queries <span class="mono">1.000</span>, hybrid recall@5 ≥ vector in every category (MRR still trails vector on paraphrase, 0.767 vs 1.000 — the harness keeps score on us either way).</p>
+    </blockquote>
+    <p class="caption">Before: nightly 2026-07-09, 50-question set. After: nightly 2026-08-27, 60-question set, same 16-chunk demo corpus. We are not selling you hybrid retrieval; we are selling the harness that refused to let us believe in it.</p>
+
+    <h3>What a run that measured nothing does</h3>
+    <p>It refuses. Empty gold raises a hard error naming the question. A degenerate scale run publishes a <code>DEGENERATE RUN</code> notice instead of a table. A weekly that produces no snapshot is a third state — <strong>UNMEASURED</strong> — a failed job plus a filed issue, never a green. Those guards are themselves pinned by an offline CI job, because the edit that must never escape a guard is the edit that weakens it.</p>
+  </div>
+</section>
+
+<section id="product">
+  <div class="wrap">
+    <h2>What you get</h2>
+    <div class="cols">
+      <div class="card">
+        <h3>The knowledge assistant</h3>
+        <p>Streaming chat over your documents under each viewer’s JWT. Drag-and-drop ingestion (<code>.txt .md .pdf .docx .html</code>), share dialog with per-user and per-group grants, per-chunk “why can I see this” badges, text-to-SQL over an allowlisted read-only schema, web-search fallback, document sub-agents.</p>
+      </div>
+      <div class="card">
+        <h3>The support widget</h3>
+        <p>A white-labeled, embeddable support bot that answers only from documents an owner explicitly published to it — and knows when to shut up. Escalate-vs-answer is deterministic control flow with two fail-closed judged gates; a grounded “I don’t know” escalates instead of auto-sending. Your brand on the widget, never ours.</p>
+      </div>
+      <div class="card">
+        <h3>The eval harness</h3>
+        <p>A 60-question content-anchored golden set you replace with your own; the permission-leak matrix and the no-access replay are <em>derived free</em> from your gold labels. Leak gates hard-fail CI. Nightly and weekly snapshots publish through guarded PRs with three outcomes: green, red, unmeasured.</p>
+      </div>
+      <div class="card">
+        <h3>The stack, readable</h3>
+        <p>Raw OpenAI SDK + Pydantic — no LLM framework. FastAPI backend, React/Vite/Tailwind frontend, Supabase (Postgres + pgvector + Auth + Storage + Realtime). Provider binds per role (answerer / embedder / judge); OpenAI and Azure tested, any OpenAI-compatible <code>base_url</code> accepted.</p>
+      </div>
+    </div>
+    <p style="margin-top:18px">Measured escalation behavior, current weekly sweep: false-resolve <span class="mono">0% (0/9)</span> against a 5% ceiling; every no-context question escalated <span class="mono">(3/3)</span>; zero gold chunks leaked to no-access viewers <span class="mono">(0/4)</span>; and the bytes a no-access customer sees are identical to the generic deferral — so an escalation can’t disclose that restricted content exists.</p>
+    <p class="caption">docs/escalation-weekly/2026-08-27.md. Small populations by design (3/4/9 rows) — read them as a working tripwire, not a benchmark. The LLM-judged leg runs weekly; regressions there carry an accepted up-to-a-week detection latency, mitigated by the deterministic per-PR tripwire.</p>
+  </div>
+</section>
+
+<section id="notbuy">
+  <div class="wrap">
+    <h2>Who should not buy this</h2>
+    <ul class="tight notbuy">
+      <li><strong>You need owner/editor/viewer role tiers.</strong> Every Purvia grant is read access; there is no write-permission hierarchy (docs/permissions-aware-rag.md §6).</li>
+      <li><strong>You need nested groups.</strong> Groups are flat in v0; a group cannot contain a group.</li>
+      <li><strong>You need proven recall at 100k+ visible chunks per query.</strong> Our scale benchmark runs at 10k chunks, where the planner sidesteps HNSW and every cell reads a trivially-perfect 1.000. The instrumentation and the regression alarm for the day that flips are shipped; the curve itself is unmeasured.</li>
+      <li><strong>You want internal search across Slack / Drive / Confluence.</strong> Purvia has no SaaS connectors. Buy Onyx or Glean for that job — Purvia is the retrieval layer inside a product <em>you</em> are building.</li>
+      <li><strong>You want a hosted service.</strong> Purvia is a codebase you run on your own Supabase + backend host.</li>
+      <li><strong>You expect your corpus to work with our golden set.</strong> It won’t, loudly, by design: the example anchors are quoted from the demo corpus, so swapping in your documents means authoring your own golden set — the docs walk you through it, and the leak matrix derives from your labels for free.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="objections">
+  <div class="wrap">
+    <h2>The questions an engineer should ask</h2>
+    <details>
+      <summary>Your security table is 60 questions on 16 chunks. Why should that impress me?</summary>
+      <p>It shouldn’t, on its own — the README says the same above the table. What should: the property is re-proved from a cold seed on every relevant PR and on main, the gate cannot be configured off, and the harness refuses vacuous passes (a no-access sweep that produced zero cells fails the run rather than passing silently). The denominator is small; the discipline is not.</p>
+    </details>
+    <details>
+      <summary>It failed for 42 days. Why trust it?</summary>
+      <p>The predicate never leaked — the benchmark’s <em>reporting</em> failed while its alarm fired nightly. The fix removed the publish-a-zero path entirely: “measured nothing” is now unpublishable as a number anywhere in the harness. Ask your current stack what its eval does when it measures nothing.</p>
+    </details>
+    <details>
+      <summary>Your own permissions system broke your own eval. Isn’t that the whole pitch failing?</summary>
+      <p>It’s the pitch working in the only acceptable direction. The seeding bug removed the eval users’ workspace memberships, and the boundary responded by hiding <em>everything</em> from them — it failed closed. A permissions system that fails by showing nothing is annoying; one that fails by showing too much is a breach. The part that deserved the embarrassment was the reporting, and that’s the part that got rebuilt.</p>
+    </details>
+    <details>
+      <summary>Is the README table automated now?</summary>
+      <p>No — and the README says so. The hand-transcribed table is explicitly labeled as a deliberate manual step, and it names <code>docs/permissions-scale-nightly/</code> as the automated source of truth that now corroborates it nightly. What changed is that the automated source can no longer publish an unmeasured number for the manual copy to drift from.</p>
+    </details>
+    <details>
+      <summary>Why not Onyx? It has 40+ connectors.</summary>
+      <p>Different job. Onyx deploys internal search over your SaaS tools and mirrors their ACLs — and its permission-aware retrieval is an Enterprise Edition feature. Purvia is MIT and it is the predicate inside your own product. If your problem is “search our Slack”, buy Onyx.</p>
+    </details>
+    <details>
+      <summary>Supabase’s docs show RLS-for-RAG patterns for free. Why pay?</summary>
+      <p>We build on exactly that foundation, and the core is free too. The guide stops at schema patterns; it ships no eval that proves the property on your corpus, no tenant boundary above sharing, no share UI, no escalation pipeline. The predicate is a pattern. The proof is the product.</p>
+    </details>
+    <details>
+      <summary>Is “single-family eval” proof?</summary>
+      <p>No, and our docs forbid us to call it that: a same-family judge is a weaker proof you must not cite as “proven.” The kit’s default corroborates quality drops across two vendor families (an OpenAI generator judged by Claude — current read: faithfulness 4.83/5, helpfulness 4.00/5, n=60) and tags anything single-judged so a reader can’t mistake it for corroborated.</p>
+    </details>
+    <details>
+      <summary>Is this a support bot?</summary>
+      <p>The widget is one of two surfaces on one platform. Both stand on the same property: per-document authorization inside the retrieval predicate, with a hard workspace boundary above it, kept as two deliberately separate trust models.</p>
+    </details>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <h2>Pricing</h2>
+    <div class="price-grid">
+      <div class="card price">
+        <h3>Core <span class="badge live">available now</span></h3>
+        <div class="amount">$0</div>
+        <p class="caption">MIT license, forever</p>
+        <ul class="tight">
+          <li>The entire repository: both surfaces, the eval harness, all documentation</li>
+          <li>Ships green out of the box: fresh seed → eval reproduces the 1.000 no-leak table with zero authoring</li>
+          <li>Golden-set authoring guide, generic corpus seeder, parser adapters</li>
+        </ul>
+      </div>
+      <div class="card price">
+        <h3>Pro <span class="badge pre">founding preorder — not yet shipped</span></h3>
+        <div class="amount">$199</div>
+        <p class="caption">one-time, per team</p>
+        <ul class="tight">
+          <li>“Your corpus, proven”: guided golden-set authoring workbook + review checklists</li>
+          <li>Deployment hardening playbooks (Supabase / Railway / Fly / Vercel)</li>
+          <li>12 months of prioritized issue response</li>
+          <li>Widget theming preset pack</li>
+        </ul>
+        <p class="caption">Honesty note: Pro is a preorder until every deliverable above exists as a file. Nothing that is public today ever moves behind this paywall.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Purvia — a permissions-aware knowledge platform. Raw SDK + Pydantic, FastAPI, React, Supabase.</p>
+    <p style="margin-top:6px">MIT core · <a href="https://github.com/hcho22/Purvia">github.com/hcho22/Purvia</a></p>
+    <p class="claims">claims: C1 C2 C3 C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 C14 C15 C16 C17 C19 C20 C21 C23 C24 C25 C26 C27 · every number above carries its denominator; the ledger lives in launch/CLAIMS.md</p>
+  </div>
+</footer>
+
+</body>
+</html>
