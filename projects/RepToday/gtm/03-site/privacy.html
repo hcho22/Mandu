@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Rep Today - Privacy Policy</title>
-<meta name="description" content="How Rep Today handles your data: on-device by default, optional private iCloud sync, opt-out anonymous usage measurement, and no ads or third-party tracking.">
+<meta name="description" content="How Rep Today handles your data: an on-device core, optional AI Coach processing through OpenAI, optional private iCloud sync, and opt-out anonymous usage measurement.">
 <meta name="robots" content="index, follow">
 
 <!--
@@ -233,7 +233,7 @@
     <div class="doc-head">
       <p class="overline">Privacy</p>
       <h1 class="display">Privacy Policy</h1>
-      <p class="updated small"><strong>Last updated:</strong> August 10, 2026</p>
+      <p class="updated small"><strong>Last updated:</strong> September 1, 2026</p>
 
       <!-- Visible, prominent NOT-LEGAL-ADVICE notice. Keep in sync with the HTML
            comment at the top of the file. -->
@@ -242,7 +242,7 @@
         <p>This document is an engineering draft written from how the Rep Today app actually handles data. It has not yet been reviewed by a lawyer and must get a legal review before it is relied on. It describes practices plainly and does not make legal compliance claims.</p>
       </div>
 
-      <p class="lede">Rep Today is a bodyweight micro-workout app built to work on your device. It needs no account and no network to generate and run a workout, and it does not sell your data or show ads. This page explains what the app and this website do collect, why, and how you stay in control.</p>
+      <p class="lede">Rep Today is a bodyweight micro-workout app whose core workout generator and history work on your device. It needs no account and no network to generate and run a workout. Its optional AI Coach uses a network service when you choose to use it. Rep Today does not sell your data or show ads. This page explains what the app and this website collect and process, why, and how you stay in control.</p>
     </div>
 
     <nav class="toc" aria-label="Contents">
@@ -253,6 +253,7 @@
         <li><a href="#icloud">Optional private iCloud sync</a></li>
         <li><a href="#apple-signin">Sign in with Apple</a></li>
         <li><a href="#health">Apple Health (write-only, optional)</a></li>
+        <li><a href="#ai-coach">AI Coach (optional network feature)</a></li>
         <li><a href="#telemetry">Anonymous usage measurement</a></li>
         <li><a href="#not-do">What we do not do</a></li>
         <li><a href="#deletion">Deleting your data</a></li>
@@ -267,8 +268,9 @@
     <section class="policy" id="summary">
       <h2 class="h2">1. The short version</h2>
       <ul class="plain">
-        <li>The core app works <strong>fully offline</strong> and needs <strong>no account</strong>. Your workout history is stored on your device.</li>
-        <li>There is <strong>no Rep Today server</strong> behind your workouts. Optional sync goes to <strong>your own private iCloud</strong>, which we cannot read.</li>
+        <li>The core workout generator and history work <strong>fully offline</strong> and need <strong>no account</strong>. Your workout history is stored on your device.</li>
+        <li>The optional <strong>AI Coach is a network feature</strong>. When you use it, your prompt and necessary workout context go through Rep Today's service to OpenAI to generate a response.</li>
+        <li>Optional sync goes to <strong>your own private iCloud</strong>, which we cannot read.</li>
         <li>The app collects <strong>anonymous, opt-out usage measurement</strong> tied to a random per-install identifier - never your name, email, or an advertising ID.</li>
         <li>There are <strong>no ads, no third-party trackers, no advertising identifier, and no cross-app tracking</strong>. We do not sell your data.</li>
         <li>You can turn usage measurement off in Settings, and you can delete your account and data from within the app.</li>
@@ -277,8 +279,8 @@
 
     <section class="policy" id="on-device">
       <h2 class="h2">2. Your workout data lives on your device</h2>
-      <p>Rep Today generates every workout on your phone, with no network call. Your profile and your workout history are stored locally on your device. The app does not send this information to any Rep Today server, because there is no Rep Today server behind the core experience.</p>
-      <p>If you never turn on iCloud sync or Apple Health, and you leave anonymous usage measurement on its default, the only information that leaves your device is the anonymous usage measurement described in section 6.</p>
+      <p>Rep Today generates every workout on your phone, with no network call. Your profile and your workout history are stored locally on your device. The core workout experience does not send this information to Rep Today's service.</p>
+      <p>The AI Coach described in section 6 is separate and optional. It sends only the prompt and workout context needed for the Coach response when you choose to use it. If you do not use the AI Coach, turn on iCloud sync, or use Apple Health, the only information that leaves your device is the anonymous usage measurement described in section 7 (unless you turn that off).</p>
     </section>
 
     <section class="policy" id="icloud">
@@ -290,7 +292,7 @@
     <section class="policy" id="apple-signin">
       <h2 class="h2">4. Sign in with Apple</h2>
       <p>Sign in with Apple is <strong>optional</strong> and exists only to associate your private iCloud sync with your Apple account. The app does not require it to generate or run a workout.</p>
-      <p>When you use it, the app stores an Apple-provided user identifier in your device's <strong>Keychain</strong>. The app does not collect your name or email address through this flow, and it does not use this identifier for advertising or tracking. When you delete your account (section 8), this stored identifier is removed from the device.</p>
+      <p>When you use it, the app stores an Apple-provided user identifier in your device's <strong>Keychain</strong>. The app does not collect your name or email address through this flow, and it does not use this identifier for advertising or tracking. When you delete your account (section 9), this stored identifier is removed from the device.</p>
     </section>
 
     <section class="policy" id="health">
@@ -299,8 +301,21 @@
       <p>iOS asks for this permission separately, and the app functions normally if you decline.</p>
     </section>
 
+    <section class="policy" id="ai-coach">
+      <h2 class="h2">6. AI Coach (optional network feature)</h2>
+      <p>The AI Coach is optional. The core workout generator and workout history continue to work on your device if you never use it.</p>
+      <p>When you use the AI Coach, Rep Today sends <strong>your Coach prompt and the workout context necessary to answer it</strong> through Rep Today's service to <strong>OpenAI</strong> for response generation. Rep Today's service keeps the OpenAI API credential off your device and passes the response back to the app.</p>
+      <p class="h3">OpenAI storage and retention</p>
+      <p>Rep Today sends Coach requests with <code>store: false</code>. This means the response is not stored as OpenAI Responses API application state. It does <strong>not</strong> mean that no copy can be retained: under OpenAI's standard API data controls, prompts and responses may still appear in abuse-monitoring logs retained for <strong>up to 30 days</strong>.</p>
+      <p>OpenAI does not use API data to train its models by default unless the customer opts in.</p>
+      <p class="h3">Privacy-preserving safety identifier</p>
+      <p>For abuse detection, Rep Today sends OpenAI a stable, privacy-preserving safety pseudonym. It is derived without sending the raw installation identifier, your name, email address, Apple ID, advertising identifier, or another direct identifier. If you delete your account, Rep Today rotates the underlying installation identity, which also rotates this safety pseudonym.</p>
+      <p class="h3">Safety refusals</p>
+      <p>If OpenAI refuses a request for safety reasons, Rep Today shows a stable safety message written by Rep Today. The app does not expose OpenAI's raw refusal text.</p>
+    </section>
+
     <section class="policy" id="telemetry">
-      <h2 class="h2">6. Anonymous usage measurement</h2>
+      <h2 class="h2">7. Anonymous usage measurement</h2>
       <p>To understand how the app is used and improve it, Rep Today collects a small amount of <strong>anonymous product usage data</strong>. This is sent to Rep Today's own usage-data endpoint. It is designed not to identify you.</p>
       <p class="h3">What is collected</p>
       <ul class="plain">
@@ -316,36 +331,36 @@
     </section>
 
     <section class="policy" id="not-do">
-      <h2 class="h2">7. What we do not do</h2>
+      <h2 class="h2">8. What we do not do</h2>
       <ul class="plain">
         <li>We do <strong>not sell</strong> your personal data.</li>
         <li>We show <strong>no ads</strong> and include <strong>no advertising SDKs</strong>.</li>
-        <li>We use <strong>no third-party analytics or tracking SDKs</strong> - the anonymous measurement above goes only to Rep Today's own endpoint.</li>
+        <li>We use <strong>no third-party analytics or tracking SDKs</strong> - the anonymous measurement above goes only to Rep Today's own endpoint. OpenAI processes optional AI Coach requests as described in section 6; it is not an analytics or tracking provider.</li>
         <li>We do <strong>not</strong> use the iOS advertising identifier (IDFA), and the app presents <strong>no App Tracking Transparency prompt</strong> because it does not track you across other companies' apps or websites.</li>
         <li>We do <strong>not</strong> run a server that holds your workout history; sync uses your own private iCloud.</li>
       </ul>
     </section>
 
     <section class="policy" id="deletion">
-      <h2 class="h2">8. Deleting your data</h2>
+      <h2 class="h2">9. Deleting your data</h2>
       <p>You are in control of your data:</p>
       <ul class="plain">
         <li><strong>Delete your account and data in the app.</strong> Rep Today provides an in-app account-deletion flow that removes your profile and workout history and clears the Sign in with Apple identifier stored in the device Keychain.</li>
-        <li><strong>Delete the app.</strong> Removing the app from your device removes its local storage, including the random per-install identifier described in section 6 (subject to the backup note there).</li>
+        <li><strong>Delete the app.</strong> Removing the app from your device removes its local storage, including the random per-install identifier described in section 7 (subject to the backup note there).</li>
         <li><strong>iCloud data</strong> lives in your own private iCloud account; you can also manage or remove app data through your device's iCloud settings.</li>
         <li><strong>Turn off usage measurement</strong> at any time in Settings to stop sending anonymous events.</li>
       </ul>
     </section>
 
     <section class="policy" id="website">
-      <h2 class="h2">9. This website and the waitlist</h2>
+      <h2 class="h2">10. This website and the waitlist</h2>
       <p>This section covers <strong>this website</strong> (reptoday.app), which is separate from the app.</p>
       <p>If you join the pre-launch <strong>waitlist</strong>, the email address you enter is collected and stored by our email provider (Kit) so we can email you when the app launches. We use it for that purpose. This is distinct from the app, which never asks for your email.</p>
       <p class="muted small">This website is static. Any additional processing performed by the hosting or email provider is governed by that provider's own privacy terms.</p>
     </section>
 
     <section class="policy" id="children">
-      <h2 class="h2">10. Children's privacy</h2>
+      <h2 class="h2">11. Children's privacy</h2>
       <p>Rep Today is a general-audience fitness app and is not directed at children.</p>
       <div class="legal-flag" role="note">
         <strong>Flagged for legal review.</strong> A minimum age of use and any children's-privacy commitments (for example under COPPA or the App Store age rating) have not been set here and should be determined with counsel before publish.
@@ -353,20 +368,20 @@
     </section>
 
     <section class="policy" id="rights">
-      <h2 class="h2">11. Your privacy rights</h2>
-      <p>Depending on where you live, you may have rights over personal data, such as the right to access or delete it. Because Rep Today keeps your workout data on your device and in your own iCloud, and collects only anonymous usage measurement you can turn off, you can already exercise the core of these controls yourself through the app (section 8).</p>
+      <h2 class="h2">12. Your privacy rights</h2>
+      <p>Depending on where you live, you may have rights over personal data, such as the right to access or delete it. Rep Today keeps your workout history on your device and in your own iCloud, provides controls for anonymous usage measurement, and provides the deletion controls described in section 9. Optional AI Coach processing is described separately in section 6.</p>
       <div class="legal-flag" role="note">
         <strong>Flagged for legal review.</strong> This policy does <strong>not</strong> assert compliance with GDPR, UK GDPR, CCPA/CPRA, or any other specific regime, and does not describe a formal rights-request process, legal bases, data-processing agreements, or a data-retention schedule. Whether any of these apply, and the exact rights and processes to publish, should be determined with counsel for the app's intended markets.
       </div>
     </section>
 
     <section class="policy" id="changes">
-      <h2 class="h2">12. Changes to this policy</h2>
+      <h2 class="h2">13. Changes to this policy</h2>
       <p>If our data practices change, we will update this page and revise the "Last updated" date above. Because Rep Today is pre-launch, this policy will be reviewed and finalized before the app is distributed on the App Store.</p>
     </section>
 
     <section class="policy" id="contact">
-      <h2 class="h2">13. Contact</h2>
+      <h2 class="h2">14. Contact</h2>
       <p>Questions about privacy or this policy? Contact us at <a href="mailto:reptoday.app@gmail.com">reptoday.app@gmail.com</a>.</p>
     </section>
 
