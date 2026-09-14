@@ -1,15 +1,35 @@
 # Current Priorities
 
-_Last updated: 2026-08-05. Update this file when your focus shifts._
+_Last updated: 2026-09-14. Update this file when your focus shifts._
 
 **📍 CANONICAL REPO: `/Users/hcho/firstmate/projects/RepToday`** (decided 2026-08-05).
-Active Rep Today development lives here (branch `main`, at PR #73), driven by the `firstmate`
-tool; it carries the GTM v2 restructure (commit `1aca10b`) and all instrumentation work. The
+Active Rep Today development lives here (branch `main`, through PR #155 / `0ee5088`), driven by the `firstmate`
+tool. The
 old checkout `/Users/hcho/Developer/RepToday` is **retired/stale** (frozen at PR #68,
 2026-07-31) - do not use it; sync or delete it at will. Path references across these docs have
-been repointed to firstmate. Note the GTM structure changed with v2:
-`gtm/07-thesis/` (was `05-thesis`), `gtm/08-redteam/` (was `06-redteam`), plus new
-`gtm/06-channels/` (the event-metric schema); front door `gtm/recap.html`.
+been repointed to firstmate. The full private GTM package now lives in Mandu at
+`projects/RepToday/gtm/`; the development repo retains `gtm/03-site/` as the canonical deployable
+public-site source.
+
+**🗓️ 2026-09-14 UPDATE (RepToday synced through PR #155).**
+- **Production telemetry is live-wired (#154).** Release targets Convex production deployment
+  `sensible-spider-810`; the private token stays in the captain-owned macOS Keychain and is injected
+  only by `tools/archive-release.sh`. Production and optimized Release validation proved opted-in
+  rows persist and opt-out creates zero requests. Remaining measurement work is the TestFlight
+  US-T13 reconciliation; known undercounts remain for in-flight events lost on suspension and later
+  trial-to-paid conversions.
+- **The premium Coach moved to OpenAI `gpt-5.6-luna` (#153).** The stateless, bounded boundary is
+  unchanged in spirit: the deterministic engine owns every workout; Coach content and a separate
+  rotating safety pseudonym go through Rep Today's proxy; `store: false` and standard retention are
+  disclosed. The production Coach endpoint is still empty, so the feature remains unavailable in
+  shipping builds until deployed.
+- **Earned Strength Phase now persists (#155).** Completion writes a newly earned phase, app-open
+  reconciliation repairs pre-existing qualified histories before phase-dependent tabs load, and the
+  shared user persistence boundary prevents `.strength` from being downgraded by stale aggregate
+  saves. Earning criteria are unchanged.
+- **Active focus:** submission and PMF execution, not another product wave - publish the reviewed
+  privacy source, finish legal/App Store fields, capture real-device screenshots and the iPhone XS
+  latency result, decide whether to deploy the optional Coach, then run TestFlight + US-T13/K8.
 
 **🗓️ 2026-08-21 UPDATE (Purvia repo pulled + status re-synced).**
 Firstmate checkout of Purvia pulled to `origin/main` HEAD `14de073` (PR #120). Two things
@@ -84,15 +104,13 @@ and **US-AD05 as Option (a)** (`getCredentialState` + on-device Apple-ID guidanc
 proxy), with service/view-model/UI tests. That was the last App Store 5.1.1(v) blocker, and with
 instrumentation (US-T01-T13) already done, **no mandatory code build remains.**
 
-**⭐ ACTIVE FOCUS is now PROVISIONING + ASSETS, not building.** The path to actually submitting
+**⭐ ACTIVE FOCUS is now SUBMISSION + ASSETS, not building.** The path to actually submitting
 and running the PMF test:
 - ⬜ **Capture the iPhone XS / iOS 17 real-hardware p95** to substantiate "under 100ms" (or change
   the number everywhere). #92 landed the harness + a strong Simulator-proxy signal, but that is
   explicitly not device evidence; it blocks every asset carrying the claim, incl. the App Store
   listing.
-- ⬜ **Provision the production Convex deployment + `ANALYTICS_SHARED_SECRET`/`REPTODAY_ANALYTICS_SECRET`**
-  - the Release analytics endpoint points at nothing by design, so a shipping build collects
-  nothing until this is set.
+- ✅ **Production Convex deployment + private Release token are provisioned and validated** (#154).
 - ⬜ **App Store submission mechanics:** real on-device screenshots (Guideline 2.3.3), confirm
   pricing, enter the authored nutrition labels into App Store Connect (record + name already
   reserved).
@@ -110,8 +128,9 @@ also means **`reptoday.app` is now registered and live**, closing the Gate 0 dom
 (2) 🔄 **Site FAQ + event schema + nutrition label reconciled to one story** - largely done: FAQ
 now links the hosted policy (#90), label spec authored (#91); remaining is confirming the FAQ names
 the opt-out on the final emitting build and entering the labels at submission.
-(3) ⬜ **Production Convex deployment + `ANALYTICS_SHARED_SECRET` / `REPTODAY_ANALYTICS_SECRET` still
-to be provisioned** - the Release analytics endpoint points at nothing by design.
+(3) ✅ **Production Convex deployment + private Release token provisioned and validated** (#154,
+2026-09-01). The source keeps the Release token empty; `tools/archive-release.sh` injects it from
+the captain-owned Keychain without committing or printing it.
 **Also (Gate 1, still open):** the "under 100ms" benchmark got a re-runnable harness + a strong
 Simulator-proxy signal (p95 ~2.7ms, ≈36x margin) in #92, but the record is explicit the proxy is
 "not evidence for a device latency claim" - the **iPhone XS / iOS 17 real-hardware p95 is still the
