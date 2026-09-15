@@ -48,4 +48,4 @@ It sits underneath several pages that previously read as unconnected advice.
 [[elicitation-over-prompt-engineering]] is the skill that finds overhang.
 
 For hcho the operational reading is uncomfortable but useful: **a standing hard problem is an asset**, and the discipline is to keep a list of things the model recently could not do and re-test it every release, rather than filing them as settled limitations.
-The Agentic RAG flagship's harder open questions (see the Agentic RAG wiki, `projects/Agentic_RAG/wiki/`) belong on that list rather than in the "not feasible" bucket.
+Purvia's harder open questions (see `projects/Purvia/wiki/`) belong on that list rather than in the "not feasible" bucket.

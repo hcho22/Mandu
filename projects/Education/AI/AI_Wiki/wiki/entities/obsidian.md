@@ -17,6 +17,6 @@ In the wiki it appears less as a notes UI and more as **a structured markdown st
 
 ## Notes
 
-Obsidian is also hcho's own tool of record: every Mandu wiki (this one, the evals pilot, Purvia's) is an Obsidian vault, read and edited in Obsidian while Claude maintains the pages.
+Obsidian is also hcho's own tool of record: AI_Wiki and the project-specific Mandu wikis are read in Obsidian while Claude maintains the pages.
 So Jason's setup is a near-exact mirror of hcho's - a markdown vault as the agent's single source of truth, browsed by a human in Obsidian, written by an agent - which makes [[running-life-on-codex]] an unusually direct outside validation of the [[ai-operating-system]] pattern hcho already runs.
 The durable point is that the value is the **plain-markdown-as-agent-memory** discipline, not the app; Obsidian just makes the same files pleasant for a human to browse (rendered images, backlinks, graph view).

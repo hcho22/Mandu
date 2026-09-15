@@ -1,8 +1,8 @@
 ---
 type: synthesis
-last-updated: 2026-08-27
+last-updated: 2026-09-15
 status: established
-source-count: 32
+source-count: 34
 ---
 
 # Synthesis
@@ -265,21 +265,29 @@ First, it is a **mild dent in the vendor-concentration caveat** despite being a 
 Second, and sharper for hcho, the whole source is **reflexive**: Mandu's own long, rule-dense `CLAUDE.md` and skill files are precisely the "weights edited transactionally from anecdotes" it warns about, and this ingest was itself run from inside First Mate, Kun's orchestrator - the tool doing the filing is built by the author being filed.
 The importable action is concrete and already half-implied by [[principles-over-constraints]] and [[ablation-driven-development]]: put an explicit token budget on the global `CLAUDE.md`, [[four-bad-memory-states|lint it for empty/bloated/stale/drifted]], separate the [[two-level-agent-memory|handwritten user file from the trainable project files]], and either run [[backpass]] or reproduce its budgeted-backward-pass discipline by hand.
 
+## What the 2026-09-15 wiki consolidation added
+
+The former LLM_Evals wiki is now part of this graph rather than a parallel interpretation of the same sources.
+Seven raw documents were byte-identical to files already here; the two unique sources add the classical single-threshold metric foundation ([[classification-accuracy-precision-recall]]) and a human-centered error-analysis workflow ([[ai-evals-error-analysis]]).
+Five reusable concepts fill gaps that had remained scattered across area prose: [[offline-vs-online-evals]], [[error-analysis]], [[rag-evaluation]], [[agent-eval-and-stats]], and [[ci-eval-gates-and-drift]].
+The most important structural result is the rule that one concept has one canonical page even when several areas use it.
+The sibling `LLM_Evals/` folder can therefore remain useful as a curriculum without becoming a second knowledge graph.
+
 ## Open threads
 
 - The [[rag]] and [[production-llm]] hubs are now open and substantive; the prompting hub is still empty (folded loosely into production-llm and the career curriculum for now).
-- The eval area is [[evals|established]] (12 sources) with a coherent stance: define criteria up front, prefer functional testing, triangulate methods, measure reproducibly, and evaluate on your own uncontaminated data - now with the added caveat that the suite itself has a one-to-three-generation half-life.
+- The eval area is [[evals|established]] (14 sources) with a coherent stance: define criteria up front, prefer functional testing, triangulate methods, measure reproducibly, and evaluate on your own uncontaminated data - now with the added caveat that the suite itself has a one-to-three-generation half-life.
 - **`raw/` is empty of unprocessed sources.** All 31 sources have been ingested as of 2026-08-21. The next ingest needs new material curated in. (Two non-wiki files landed in `raw/` on 2026-08-21 - a dodgeball tournament guide and a camp scoreboard - and were deliberately left unprocessed; they need a home elsewhere in Mandu.)
 - **Build the missing half of the distribution system.** [[building-marketing-agents]] and [[one-person-marketing-team]] are opposite halves - loop-plus-data and context-layer - and nothing documents the union. The cheap half is a weekend of markdown; the expensive half only matters at real spend. This is the most concrete build target the distribution material has produced.
 - **Confirm or drop the [[nate-herk]] identification.** The "Nate" of [[ai-operating-system-tutorial]] (2026-07-08) is probably the same creator, on style, audience, and subject matter, but neither raw file states the earlier surname. If confirmed, that entity goes to two sources and the two form one arc from personal AI OS to business production system. Currently annotated, not merged.
 - **Instrument cost by default.** [[make-the-agent-report-its-cost]] is the cheapest unadopted practice in the wiki: one clause in a prompt, and it is the prerequisite for every later cost analysis. Worth applying to hcho's own long-running loops before it is needed.
 - **Vendor bias: first correction landed, keep going.** [[running-life-on-codex]] (2026-08-05) is the wiki's first inside-OpenAI/Codex source, and it reports the *same* craft (compaction, skills, verifiable goals, taste, markdown-vault memory) - early evidence the conclusions here generalize beyond Claude Code rather than being harness-specific. Still wanted: the independent agent labs (Amp, Cognition, Factory) and open-model tooling. [[independent-agent-lab-vs-frontier-lab]] remains the sharpest structural counter-position.
 - ~~[[agentic-engineering]] should graduate into its own area hub.~~ **Done 2026-08-01**, along with the creation of [[agent-operations]].
-- Next natural growth: a **prompting** hub (still empty) and dedicated **agent-eval / retrieval-eval** concepts (Huyen Ch. 6 territory; the guidebook's tool-calling/assistant/agentic benchmarks). Agent evaluation is now conspicuously under-covered relative to how much agent *building* the wiki holds.
+- Next natural growth: a **prompting** hub and deeper evidence for the new [[agent-eval-and-stats]] and [[rag-evaluation]] concepts.
 - **A lint pass is now overdue.** The 2026-08-01 batch added 37 concepts, 2 areas, and 3 entities in one pass; it should be checked for orphans, broken links, stale cross-references, and pages whose claims a newer source has superseded.
 - The career hub folds ~50 tips; a few (e.g. [[own-the-problem-not-the-code]], [[build-for-the-model-of-the-future]]) are link-markers awaiting reinforcement before becoming full pages.
 - Anthropic's actual "building effective agents" guidance underlies [[start-as-a-workflow]]. The first primary Anthropic voice is now in ([[tharic]], [[designing-loops-and-workflows]]) and is consistent with it, but the published guidance document itself is still not a source; worth ingesting directly.
 - **Audit Mandu's own configuration.** [[principles-over-constraints]] argued most `CLAUDE.md` files and skills are too long; [[ablation-driven-development]] now supplies the procedure (delete, use, observe, add back only repeated failures) and Boris Cherny's blunt instruction to users: every six months, delete your `CLAUDE.md`, skills, and hooks and see what the model does. This sits in tension with [[context-is-king]]; the working reconciliation (load domain context heavily, behavioral instructions sparingly) should be tested rather than assumed.
 - **Cross-project actions this batch generated**, which belong outside this wiki and are noted here only so they are not lost: an FDE role page in the Job-Search Roles wiki (`projects/Job_Search/wiki/`, which covers Applied AI Engineer but not FDE); FDE-titled roles added to the job-hunter target list; [[solve-for-the-exceptions]] and the carpenter analogy from [[manager-of-agents]] added to `projects/job-search/interview-prep.md`; and an assessment of the Agentic RAG work against the [[do-the-job-before-the-title]] checklist.
 - **Test [[creative-entropy]] against the wiki's own loops.** It is the batch's least-corroborated finding (one source) and its most broadly applicable. If it holds, every scheduled agent in [[agent-operations]] needs a deliberate external-input step.
-- Cross-wiki: keep this reference layer linked to, not duplicating, hcho's own eval synthesis in the evals pilot wiki.
+- Keep the parked `LLM_Evals/` curriculum linked to this graph rather than recreating concept pages there.

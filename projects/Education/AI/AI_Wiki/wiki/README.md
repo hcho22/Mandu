@@ -9,8 +9,9 @@ date: 2026-07-08
 A persistent, compounding, interlinked set of markdown pages that Claude builds and maintains from immutable raw sources, read and edited in Obsidian.
 The domain is AI engineering practice and hcho's transition into an AI-native career: the craft (LLMs, agents, RAG, evals, prompting, production-AI patterns) and the career (solo building, positioning, the job market, the skills that matter).
 
-This is hcho's broad AI-engineering knowledge base and primary second brain for the pivot.
-It is the reference layer that cross-links to the specialized wikis (evals pilot, Agentic RAG) rather than duplicating them, and it absorbed the scope of the planned YouTube-transcript wiki (folded in 2026-07-08): AI-engineering talk and transcript material lives here.
+This is hcho's single general AI knowledge graph and primary second brain for the pivot.
+It includes evals, models, RAG, agentic programming, production AI, and AI-career material.
+The sibling `LLM_Evals/` directory retains only the curriculum, exercises, and study history.
 
 ## The schema lives in CLAUDE.md
 

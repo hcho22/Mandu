@@ -2,8 +2,8 @@
 type: area
 tags: [evals, testing, llm, quality]
 status: established
-source-count: 12
-last-updated: 2026-08-01
+source-count: 14
+last-updated: 2026-09-15
 ---
 
 # Evals
@@ -40,10 +40,17 @@ Evals turn "the model feels better now" into a measurable, repeatable signal, an
 - [[contamination-detection]] - the three flavors and five methods for catching benchmark contamination without corpus access.
 - [[self-referential-bias]] - a model grades its own output too leniently; vary the model and the context of the verifier.
 - [[evals-saturate-and-get-replaced]] - your own product evals decay too, over one to three model generations. **See the tension below.**
+- [[offline-vs-online-evals]] - fixed pre-deploy evaluation and live production evaluation as complementary feedback loops.
+- [[error-analysis]] - human review of real outputs to discover the bottom-up failure modes a rubric must encode.
+- [[rag-evaluation]] - faithfulness, answer relevance, and context precision/recall, measured separately.
+- [[agent-eval-and-stats]] - task success, tool use, trajectories, confidence intervals, and sample-size discipline for agents.
+- [[ci-eval-gates-and-drift]] - regression gates before deployment and drift monitoring after deployment.
 
 ## Sources
 
 - [[your-ai-product-needs-evals]] - Hamel Husain's foundational three-level framework.
+- [[ai-evals-error-analysis]] - Hamel Husain and Shreya Shankar on human-led error discovery, binary rubrics, and measuring automated evaluators.
+- [[classification-accuracy-precision-recall]] - Google ML Crash Course definitions for accuracy, precision, recall, F1, and class-imbalance failure.
 - [[agents-are-the-new-saas]] - reframes an eval set (50 real examples of the job) as the agent's "gym" and a sales asset; ties evals to the [[agent-saas]] business model.
 - [[ai-era-50-career-tips]] - restates the eval discipline as a career edge: "learn where the AI fails, keep a log," and lists "agentic validations" as a core skill of [[agentic-engineering]].
 - [[ai-skill-from-scratch]] - evals applied inside a skill: a self-grading loop with pass/fail checks run by a separate agent until the output passes.
@@ -101,4 +108,4 @@ As of twelve sources the area's most important claim for hcho's positioning is o
 [[elicitation-over-prompt-engineering]] names it as "the single most important thing that people do not get right"; [[verification-signal-picks-the-mechanism]] makes it decide which orchestration primitive is even available; [[long-horizon-agent-runs]] shows an 11-day autonomous rewrite that worked only because a test suite existed.
 That makes this area upstream of [[agentic-engineering]] rather than adjacent to it - **what you can measure determines what you can automate** - and it is the strongest available argument that hcho's validation background is a first-class AI-engineering skill rather than a differentiator he has to keep justifying.
 
-Cross-wiki: hcho's own hand-written eval synthesis lives in the evals pilot wiki (`projects/Learning/AI_Engineer/evals/`, split mode); this hub is the broad reference layer that cross-links to it.
+The parked `LLM_Evals/` learning track links here for canonical eval knowledge while retaining its curriculum, exercises, and study history.

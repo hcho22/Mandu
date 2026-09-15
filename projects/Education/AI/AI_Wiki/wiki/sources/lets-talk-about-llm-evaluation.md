@@ -37,7 +37,7 @@ Two organizing frames: three *methods* of evaluation ([[three-eval-methods]]) an
 - [[llm-as-judge]] - extended (self-preference, inconsistent scores, reasoning-before-score).
 - [[pass-fail-over-score-evals]] - "ask the model to reason before scoring" is the same fix for score noise.
 - [[looking-at-your-data]] / [[eval-driven-development]] - the practitioner comment agrees: nothing beats testing on your own use case with your own metrics.
-- Cross-wiki: this taxonomy underlies hcho's own eval synthesis in the evals-pilot wiki; cross-link, don't duplicate.
+- This taxonomy is canonical for the parked `LLM_Evals/` curriculum, which links back to the [[evals]] area.
 
 ## Source
 

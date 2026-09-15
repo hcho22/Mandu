@@ -34,7 +34,7 @@ The running case study is Lucy, Rechat's real-estate AI assistant, whose prompt-
 - [[llm-as-judge]] - the Level 2 automated-eval technique, plus the agreement/precision-recall caveat.
 - [[looking-at-your-data]] - the "remove all friction from data inspection" principle that recurs across the eval literature.
 - [[hamel-husain]] - author.
-- Cross-wiki: hcho's own eval synthesis lives in the evals pilot wiki (`projects/Learning/AI_Engineer/evals/`, split mode); this page is the broad reference layer.
+- The parked `LLM_Evals/` learning track points to this wiki for canonical eval knowledge.
 
 ## Source
 

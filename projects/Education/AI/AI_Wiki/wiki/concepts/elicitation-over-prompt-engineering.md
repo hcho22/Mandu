@@ -62,4 +62,4 @@ This is the clearest single argument in the wiki that hcho's validation backgrou
 The scarce capability is designing a check the machine can run on itself.
 That is what a validation engineer does, and the frontier's creator of [[claude-code]] names it as the number-one thing practitioners get wrong.
 
-It also sets the bar for the Agentic RAG eval harness (`projects/Agentic_RAG/wiki/`): the question is not "do we have evals" but "can the agent run them itself, mid-task, without a human in the path."
+It also sets the bar for the Purvia eval harness (`projects/Purvia/wiki/`): the question is not "do we have evals" but "can the agent run them itself, mid-task, without a human in the path."

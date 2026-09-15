@@ -3,7 +3,7 @@ type: concept
 tags: [evals, contamination, benchmarks, leakage, validity]
 status: established
 source-count: 4
-last-updated: 2026-07-08
+last-updated: 2026-09-15
 ---
 
 # Data Contamination
@@ -40,3 +40,16 @@ Assume any public-internet dataset is or will be contaminated. Beyond canary str
 Contamination is the validity threat that undermines the whole benchmark method in [[three-eval-methods]]: a high score can be memorization, not capability, so it is the deeper cousin of [[benchmark-sensitivity]] (both mean a leaderboard number may not mean what it claims).
 It is the reason human eval and your-own-task-specific evals ([[eval-driven-development]]) matter - fresh prompts can't have leaked.
 This is exactly hcho's territory: contamination is a test-set-hygiene problem, the same "don't validate against data you trained/tuned on" discipline from ML and QA - now with concrete detection tools (n-gram overlap, perplexity). The dedicated contaminated-LLM source deepens this page further.
+
+## In my own words (hcho)
+Why this matters for LLMs: contamination
+For LLMs, the "training set" is most of the internet — so the test set can accidentally leak into training. Two well-documented cases:
+1. GSM8K leakage detected by ConStat (2024). Researchers at ETH Zurich built ConStat, a statistical test that compares a model's performance on a famous benchmark against its performance on a freshly rephrased or synthetic equivalent of the same difficulty. A clean model should score similarly on both; a contaminated one scores suspiciously higher on the original. Their analysis found statistically significant contamination evidence on GSM8K (a grade-school math benchmark) for several popular open models, including models in the Mistral and Phi families — suggesting the benchmark's problems (or close paraphrases) had seeped into their training data, inflating reported math ability.
+2. The GPT-4 Codeforces cliff. Shortly after GPT-4's release, researchers (notably Horace He) tested it on Codeforces competitive programming problems. GPT-4 solved problems published before its training cutoff at a high rate — but its solve rate collapsed to roughly zero on problems published after the cutoff, even at comparable difficulty. If the model had genuinely learned to solve these problems, the publication date shouldn't matter. The cliff is a smoking gun for memorization: it had seen the old problems (and their public solutions) during training.
+The beginner takeaway
+Both failures are the same sin from the first diagram: the test set touched the training data. The detection tricks map nicely to the eval concepts:
+
+ConStat is essentially asking "does the model do better on the exact test set than on a fresh equivalent?" — a contamination-robust validation idea.
+The Codeforces cliff uses time as a natural train/test split: anything after the cutoff is guaranteed-clean test data.
+
+This is why modern eval practice favors private held-out sets, regularly refreshed benchmarks (e.g. LiveBench, LiveCodeBench), and post-cutoff data — recreating, at internet scale, the discipline of "the test set is touched once and never trained on."

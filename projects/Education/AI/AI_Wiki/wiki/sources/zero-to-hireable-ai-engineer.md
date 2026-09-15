@@ -32,7 +32,7 @@ It defines the job ([[ai-engineer-is-a-builder]]), names the four mistakes that 
 - [[ai-career]] - deepened with the PwC/Glassdoor data and the four-month arc.
 - [[build-in-public]] (public from day 1; the honest README), [[t-shaped-portfolio]] (Month-4 "pick a direction": AI product engineer / applied ML / AI automation), [[evals]] (20-30 case sets, DeepEval/Ragas, "every prompt change without evals is a gamble"), [[model-selection]] ("don't use the biggest model for simple tasks"), [[start-as-a-workflow]] / [[minimal-useful-agent]] (the simplest-thing-that-works instinct).
 - [[anthropic]] - "Building Effective Agents" named as the must-read before writing agent code; Anthropic/OpenAI docs are the prompting/tool-use references.
-- Cross-wiki: this is a canonical RAG primer; hcho's flagship Agentic RAG wiki owns that product's specific RAG decisions, and the evals pilot owns his hand-written eval synthesis.
+- This is the canonical general RAG primer; the Purvia wiki owns that product's specific RAG decisions, while reusable eval knowledge lives in AI_Wiki.
 
 ## Source
 

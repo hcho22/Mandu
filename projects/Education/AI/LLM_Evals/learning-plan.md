@@ -1,5 +1,9 @@
 # A 20-Hour Learning Plan for AI Eval/QA (2026 Edition)
 
+> This file is the curriculum for the parked LLM_Evals learning track.
+> Canonical source summaries and reusable concepts live in the [AI_Wiki evals area](../AI_Wiki/wiki/areas/evals.md).
+> Exercises belong in `Exercise/`; study history belongs in `log/`.
+
 ## TL;DR
 - **The fastest path to competence in AI eval/QA is to master ~10 high-leverage concepts** (the offline/online split, golden datasets, classification metrics with class imbalance, LLM-as-judge with its biases, RAG metrics, regression testing, drift, agent trajectory eval, statistical noise, and red-teaming) and to practice each in a real tool — **Promptfoo + DeepEval + RAGAS + Arize Phoenix or LangSmith** cover the vast majority of production needs.
 - **The single most-cited modern playbook is Hamel Husain's "Your AI Product Needs Evals" plus his Maven course with Shreya Shankar**; pair it with Chip Huyen's *AI Engineering* (2025) Chapters 3–4 for foundation, and Clémentine Fourrier's Hugging Face Evaluation Guidebook for benchmark theory. These three sources alone deliver the Pareto-80%.

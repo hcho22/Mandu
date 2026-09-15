@@ -1,10 +1,9 @@
 ---
 type: concept
 tags: [evals, agents, statistics]
-date: 2026-06-08
 source-count: 3
-status: seeded
-session: "S9 - Agent evaluation + statistical rigor"
+status: developing
+last-updated: 2026-09-15
 ---
 
 # Agent Evaluation and Statistics
@@ -29,10 +28,8 @@ Chip Huyen, [[evaluate-ai-systems]], adds task/turn structure and statistical ch
 - Slice-based evaluation prevents aggregate metrics from hiding failures and helps avoid Simpson's paradox, where one model can look better overall while losing in every subgroup.
 - Evaluation pipelines should be tested for reproducibility, metric correlation, and sensitivity to configuration. Judge temperature, data version, rubrics, prompts, sampling settings, and model versions should be tracked.
 
-Clémentine Fourrier, Thibaud Frere, Guilherme Penedo & Thomas Wolf, [[evaluation-guidebook]], cover both halves of this concept - agent benchmarks and statistical rigor:
+Clémentine Fourrier, Thibaud Frere, Guilherme Penedo & Thomas Wolf, [[llm-evaluation-guidebook]], cover both halves of this concept - agent benchmarks and statistical rigor:
 
-- **Tool-calling and agent benchmarks (2025):** TauBench (retail/airline DB tasks, user mocked by an LLM), BFCL (AST + execution + state matching across single-turn/multi-turn/agentic subsets), and the MCP family - MCPBench, **MCP-Universe** (strict format + static/dynamic execution-based evaluators rather than an LLM judge), LiveMCPBench (tool discrimination over large tool lists). Integrated **assistant tasks** (GAIA/GAIA2, DABStep, SciCode) test orchestration of reasoning + tools + long context, scoring the end result rather than the exact path (see [[llm-benchmarks-contamination]]).
+- **Tool-calling and agent benchmarks (2025):** TauBench (retail/airline DB tasks, user mocked by an LLM), BFCL (AST + execution + state matching across single-turn/multi-turn/agentic subsets), and the MCP family - MCPBench, **MCP-Universe** (strict format + static/dynamic execution-based evaluators rather than an LLM judge), LiveMCPBench (tool discrimination over large tool lists). Integrated **assistant tasks** (GAIA/GAIA2, DABStep, SciCode) test orchestration of reasoning + tools + long context, scoring the end result rather than the exact path (see [[data-contamination]]).
 - **Statistical validity is a "forgotten child":** always report **confidence intervals** alongside point estimates, obtained from score standard deviations or **bootstrapping** (trivial for automatic metrics; bias-corrected estimators for judge models; inter-annotator agreement for human eval). CIs can also be estimated by re-running with prompt-format variations.
 - A caution that extends to agents: arena/market experiments run **once per model** (e.g. trading agents) give no statistical significance - a single run of an expensive agent is anecdote, not measurement.
-
-## In my own words (hcho)

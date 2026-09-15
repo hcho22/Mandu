@@ -48,4 +48,4 @@ The transferable claim is the loop - observe failures, build the check, gate on 
 
 It also argues against gold-plating: an eval suite built to last three years is built for a horizon that does not exist.
 Build it to be cheap to rebuild.
-For the Agentic RAG eval harness (`projects/Agentic_RAG/wiki/`), that means investing in the *generator* - the path from observed failure to new test case - over the test cases themselves.
+For the Purvia eval harness (`projects/Purvia/wiki/`), that means investing in the *generator* - the path from observed failure to new test case - over the test cases themselves.

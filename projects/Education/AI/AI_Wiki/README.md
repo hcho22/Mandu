@@ -7,7 +7,8 @@ hcho's broad AI-engineering knowledge base and primary "second brain" for the AI
 Domain: the craft (LLMs, agents, RAG, evals, prompting, production-AI patterns) and the career (solo building, positioning, the job market, the skills that matter).
 Claude builds and maintains every page from immutable raw sources; hcho curates sources and reads the results in Obsidian (this directory is its own vault).
 
-Reference layer that cross-links to the specialized wikis (evals pilot, Agentic RAG, YouTube-transcript) rather than duplicating them.
+The single AI knowledge graph, including evals, agentic programming, RAG, models, and production AI.
+The sibling `LLM_Evals/` directory is a learning track only: curriculum, exercises, and study history.
 
 ## Layout
 
@@ -17,7 +18,7 @@ Reference layer that cross-links to the specialized wikis (evals pilot, Agentic 
 - `wiki/log.md` - append-only event log.
 - `wiki/synthesis.md` - the top-level through-line.
 - `wiki/{sources,entities,concepts,areas}/` - the pages.
-- `raw/` - immutable source inbox (with `raw/assets/` for images). 22 sources curated, ingesting one at a time.
+- `raw/` - immutable source inbox (with `raw/assets/` for images).
 
 ## Operations
 
@@ -28,3 +29,4 @@ Reference layer that cross-links to the specialized wikis (evals pilot, Agentic 
 ## Key dates
 
 - 2026-07-08: schema retuned from the generic Second Brain scaffold to an AI-engineering + AI-career KB; consolidated onto this directory (the empty `projects/SecondBrain/` dup retired). First source ingested (Hamel Husain, "Your AI Product Needs Evals").
+- 2026-09-15: folded the LLM_Evals wiki into this knowledge graph while retaining LLM_Evals as a separate learning track.

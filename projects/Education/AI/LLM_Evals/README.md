@@ -1,10 +1,18 @@
-# Evals (AI Eval / QA)
+# LLM Evals Learning Track
 
-**One-liner:** Learning track for AI evaluation and quality engineering, the core skill for the target role. Working through a 20-hour, 10-session plan.
+**One-liner:** Curriculum, exercises, and study history for AI evaluation and quality engineering.
 
-**Status:** Parked as of 2026-06-18. Folded into the Agentic RAG flagship: evals are now pursued as the differentiating edge via that project's eval harness (golden set, leak suite, escalation golden set, CI gate), not as a standalone 20-hour study track. Resume this track if the strategy shifts back to study. Originally started 2026-06-03. See the 2026-06-18 north-star reframe in `decisions/log.md`.
+**Status:** Parked as of 2026-06-18.
+Evals are now pursued as Purvia's differentiating edge rather than as a standalone study workstream.
+Resume this track if the strategy shifts back to study.
+Originally started 2026-06-03.
+See the 2026-06-18 north-star reframe in `decisions/log.md`.
 
 **Plan:** `learning-plan.md` (full 20-hour plan: 10 sessions, one-page cheat sheet, 10-question quiz, 5-level ladder, top-5 resources, Feynman walkthrough).
+
+**Canonical knowledge:** [AI_Wiki evals area](../AI_Wiki/wiki/areas/evals.md).
+This directory is not a wiki.
+Reusable source summaries and concepts live in AI_Wiki; this track retains only the plan, `Exercise/`, and `log/`.
 
 ## Why evals specifically
 
@@ -12,14 +20,15 @@ Highest-leverage topic for the AI Evals / Quality role target. The plan's thesis
 
 ## Portfolio synergy
 
-Agentic RAG already implements much of this in production form, so the study and the portfolio reinforce each other. Use this track to fill the theory gaps behind that work and turn it into crisp interview talking points.
+Purvia already implements much of this in production form, so the study and the portfolio reinforce each other.
+Use this track to fill theory gaps behind that work and turn them into crisp interview talking points.
 
 | Concept (this track) | Where it already exists in the portfolio |
 | --- | --- |
-| Golden set + recall@k / MRR / nDCG | Agentic RAG: 50-question golden set, retrieval eval suite |
-| CI eval gating + regression catch | Agentic RAG: PR workflow that caught a Δ -0.510 recall@5 drop |
-| RAGAS metrics (faithfulness, answer relevancy, context precision/recall) | Agentic RAG: computed weekly |
-| Security property proven by an eval | Agentic RAG: ACL no-access eval (fraction returning zero gold chunks = 1.000) |
+| Golden set + recall@k / MRR / nDCG | Purvia: 50-question golden set, retrieval eval suite |
+| CI eval gating + regression catch | Purvia: PR workflow that caught a Δ -0.510 recall@5 drop |
+| RAGAS metrics (faithfulness, answer relevancy, context precision/recall) | Purvia: computed weekly |
+| Security property proven by an eval | Purvia: ACL no-access eval (fraction returning zero gold chunks = 1.000) |
 
 ## Session progress (10 x 2-hour sessions)
 

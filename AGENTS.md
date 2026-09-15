@@ -60,9 +60,10 @@ Memory plus context files plus the decision log means your assistant gets smarte
 
 ## Projects
 
-Active workstreams live in `projects/`. Each project is a folder with its own `README.md` (description, status, key dates). The flagship is `projects/Agentic_RAG/` (the income + portfolio bet); `projects/job-search/` runs as the parallel hedge. Demoted/paused: `projects/CreativeBridge/` (portfolio-only) and `projects/CompeteIntel/` (backlog). `projects/Learning/` is parked (see below). The live priority ranking is in `context/current-priorities.md`. Completed and archived: `archives/HabitLoop/`, `archives/F2F/`.
+Active workstreams live in `projects/`. Each project is a folder with its own `README.md` (description, status, key dates). The live priority ranking is in `context/current-priorities.md`.
 
-`projects/Learning/` is a continuous learning-tracking project organized as career track → topic (e.g., `AI_Engineer/evals/`), each with its own README, plan, and `log/`. As of 2026-06-18 it is parked: the evals track is now pursued as the edge expressed through Agentic RAG's eval harness, not as a standalone study workstream. When active, Codex acts as a study partner (explain, quiz, review), not a doer.
+`projects/Education/` contains learning tracks and durable knowledge bases.
+`projects/Education/AI/LLM_Evals/` is the parked eval curriculum with its plan, exercises, and study log; its reusable knowledge lives in `projects/Education/AI/AI_Wiki/`.
 
 ## Wikis
 
@@ -89,8 +90,9 @@ De-duplication, so the wiki does not become a fifth redundant memory layer:
 Interview talking points from wiki work consolidate to `projects/job-search/interview-prep.md`, not per-wiki duplicate lists.
 
 Active wikis:
-- Evals pilot: `projects/Learning/AI_Engineer/evals/wiki/` (mode: split).
-- Agentic RAG: `projects/Agentic_RAG/wiki/` (mode: full).
+- Purvia (formerly Agentic RAG): `projects/Purvia/wiki/` (mode: full).
+- AI_Wiki: `projects/Education/AI/AI_Wiki/wiki/` (mode: full; the only general AI wiki, including evals, models, RAG, and agentic engineering).
+- Job-Search Roles: `projects/Job_Search/wiki/` (mode: full).
 
 ## Templates
 

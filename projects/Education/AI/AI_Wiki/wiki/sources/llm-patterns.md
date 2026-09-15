@@ -44,7 +44,7 @@ The framing quote (Karpathy) sets the theme: demos are easy, products are hard.
 - [[single-call-workflow-or-agent]] / [[retrieval-augmented-generation]] - the prompt -> retrieve -> fine-tune ladder (fine-tune last) is shared with [[zero-to-hireable-ai-engineer]].
 - [[ml-metrics]] ([[precision-recall]]) - the classification-metric foundations under eval choice.
 - [[eugene-yan]] - author entity.
-- Cross-wiki: this is the canonical broad reference; hcho's own eval synthesis lives in the evals-pilot wiki, and Agentic-RAG-specific decisions in that wiki.
+- This is the canonical broad reference; Purvia-specific decisions remain in that project's wiki.
 
 ## Source
 

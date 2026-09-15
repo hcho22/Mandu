@@ -1,11 +1,12 @@
 ---
 type: source
-tags: [evals, error-analysis, llm-as-judge, tooling, workflow]
-date: 2026-08-26
 title: "Automating AI Evals the Right Way - with Error Analysis"
+source-type: podcast
 author: "Peter Yang (host), with Hamel Husain and Shreya Shankar"
-url: ""
-concepts: [error-analysis, llm-as-judge, production-eval-tooling, classification-metrics, offline-vs-online-evals]
+url: local
+date-ingested: 2026-08-26
+date-created: unknown
+tags: [evals, error-analysis, llm-as-judge, tooling, workflow]
 ---
 
 # Automating AI Evals the Right Way - with Error Analysis
@@ -34,8 +35,8 @@ The centerpiece is a demo of Shreya's free **Error Discovery Skill**, and the ep
 
 - [[error-analysis]] - the source's central subject: reading real outputs to discover failure modes, the top-down vs bottom-up split, and turning annotations into a rubric.
 - [[llm-as-judge]] - narrow well-defined criteria are the sweet spot for judges; each discovered failure mode becomes a judge; fan out one sub-agent per criterion to avoid wash-out; measure the judges' precision/recall against the free labeled set.
-- [[production-eval-tooling]] - the "do automated evals work?" benchmark of Braintrust, Arize, and LangSmith; bespoke agent-built review interfaces vs off-the-shelf eval SaaS; coding agents as a thin eval harness.
-- [[classification-metrics]] - precision vs recall of automated eval tools (~80-90% precision, 10-20% red herrings); benchmarking a rubric with an annotated dataset to check whether the evals themselves are any good.
+- [[evaluation-pipeline]] - the "do automated evals work?" benchmark of Braintrust, Arize, and LangSmith; bespoke agent-built review interfaces vs off-the-shelf eval SaaS; coding agents as a thin eval harness.
+- [[precision-recall]] - precision vs recall of automated eval tools (~80-90% precision, 10-20% red herrings); benchmarking a rubric with an annotated dataset to check whether the evals themselves are any good.
 - [[offline-vs-online-evals]] - error analysis over real logged/production traces as the starting point; the review-and-monitor loop; evals as iterative and never "done."
 
 ## Source
@@ -43,5 +44,5 @@ The centerpiece is a demo of Shreya's free **Error Discovery Skill**, and the ep
 - **Author:** Peter Yang (host), with Hamel Husain and Shreya Shankar
 - **Title:** Automating AI Evals the Right Way - with Error Analysis
 - **URL:** (YouTube podcast; episode-description link not captured in the raw source)
-- **Raw:** [[ai-evals-error-analysis]] (saved verbatim in `raw/`, immutable)
+- **Raw:** `raw/ai-evals-error-analysis.md` (saved verbatim, immutable)
 - **Ingested:** 2026-08-26

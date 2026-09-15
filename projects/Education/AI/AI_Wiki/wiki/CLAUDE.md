@@ -27,10 +27,11 @@ It absorbed the scope of the planned YouTube-transcript wiki (folded in 2026-07-
 
 ## Relationship to the other Mandu wikis
 
-AI_Wiki is the **broad AI-engineering reference layer**. It cross-links to, and does not silently duplicate, the more specialized wikis:
+AI_Wiki is the **single general AI knowledge graph**.
+It owns reusable knowledge about evals, models, RAG, agentic programming, production AI, and AI careers.
 
-- **Evals pilot** (`projects/Learning/AI_Engineer/evals/`, mode: split) - hcho's own hand-written eval synthesis. When a concept here overlaps, `[[link]]` across; keep hcho's synthesis there, keep the broad reference here.
-- **Agentic RAG** (`projects/Agentic_RAG/`, mode: full) - the flagship product's own project knowledge. Product-specific decisions live there; general RAG/agent craft lives here.
+- **LLM_Evals** (`projects/Education/AI/LLM_Evals/`) is a learning track, not a wiki. It keeps the curriculum, exercises, and study history while linking here for canonical concepts.
+- **Purvia** (`projects/Purvia/`, mode: full) owns project-specific RAG decisions. General RAG and agent craft lives here.
 The planned **YouTube-transcript wiki** was folded into AI_Wiki on 2026-07-08 (it was never physically built as a separate directory). AI-engineering talk, tutorial, and video-transcript material is ingested here directly; there is no separate transcript wiki.
 
 There is no "route technical material elsewhere" rule here: technical AI-engineering content is exactly what this wiki is for.
@@ -45,7 +46,6 @@ There is no "route technical material elsewhere" rule here: technical AI-enginee
 This wiki runs in `mode: full`.
 You draft and maintain **every** page, including the `## Synthesis` sections and `synthesis.md`.
 hcho reviews and refines rather than authoring from scratch.
-(This differs from the split-mode evals pilot, where hcho writes the synthesis. Do not apply split-mode rules here.)
 
 ## Architecture (three layers)
 
@@ -56,7 +56,7 @@ hcho reviews and refines rather than authoring from scratch.
 ## Directory layout
 
 ```
-projects/Learning/AI_Engineer/AI_Wiki/
+projects/Education/AI/AI_Wiki/
   raw/              immutable source inbox (read-only after first save)
     assets/         downloaded images referenced by sources
   wiki/
@@ -82,6 +82,9 @@ projects/Learning/AI_Engineer/AI_Wiki/
 - **`synthesis.md`** - the top-level thesis. Start here for the big picture.
 
 `concepts/` and `areas/` ship empty and grow organically. Do not pre-seed a backbone. Early on the index will be short. That is expected.
+One concept gets one canonical page, but any number of area pages may index and discuss it.
+Model- and vendor-specific facts belong on entity pages; reusable ideas such as routing or reasoning-effort selection belong on concept pages.
+Time-sensitive model facts must carry an explicit as-of date.
 
 ## Conventions
 
@@ -157,7 +160,7 @@ Check for and report:
 - Stale claims a newer source has superseded.
 - Orphan pages with no inbound `[[links]]`.
 - Concepts mentioned repeatedly but lacking their own page.
-- Missing cross-references between related pages, including cross-wiki links to the evals and Agentic RAG wikis.
+- Missing cross-references between related pages and links from the LLM_Evals curriculum into canonical AI_Wiki concepts.
 - Data gaps a targeted web search or new source could fill.
 
 Propose new questions to investigate and sources to seek. Do not auto-fix structural changes without confirming; small link repairs are fine to just do. Log the pass.
@@ -184,7 +187,8 @@ It is not a fifth copy of the operational memory layers. Keep the lines clean:
 | `context/*.md` | operational assistant config (goals, priorities, positioning) | the craft and career knowledge behind the positioning, drawn from sources |
 | `decisions/log.md` | hard-to-reverse Mandu decisions | wiki events (ingests, lint) go to this wiki's own `log.md` |
 | daily `log/<date>.md` | what hcho did today | durable knowledge; the daily log only points here |
-| evals / Agentic RAG wikis | specialized or project-specific knowledge | the broad reference layer; cross-link, do not silently duplicate |
+| `LLM_Evals/` learning track | curriculum, exercises, and study history | canonical reusable eval knowledge |
+| Purvia wiki | project-specific RAG decisions | general RAG and agent-engineering knowledge |
 
 If a source only restates something another layer already owns, do not create a page for it.
 Create a page only when the source adds durable, synthesized understanding those layers do not carry.

@@ -1,11 +1,12 @@
 ---
 type: source
-tags: [evals, metrics, classification, precision, recall, f1, class-imbalance]
-date: 2026-06-08
 title: "Classification: Accuracy, recall, precision, and related metrics"
+source-type: tutorial
 author: "Google Machine Learning Crash Course"
 url: "https://developers.google.com/machine-learning/crash-course/classification/accuracy-precision-recall"
-concepts: [classification-metrics]
+date-ingested: 2026-06-08
+date-created: unknown
+tags: [evals, metrics, classification, precision, recall, f1, class-imbalance]
 ---
 
 # Classification: Accuracy, recall, precision, and related metrics
@@ -26,7 +27,7 @@ A Google Machine Learning Crash Course page that defines the core single-thresho
 
 ## Connections
 
-- [[classification-metrics]] - this is the foundational definition source for the S2 page: the confusion-matrix metrics (accuracy, recall/TPR, FPR, precision, F1), the precision-recall tradeoff, and the class-imbalance failure of accuracy. Grounds the LLM-specific guidance (use precision/recall, not raw accuracy, on imbalanced data) that [[llm-as-judge]] and [[patterns-for-building-llm-based-systems-and-products]] state without deriving.
+- [[precision-recall]] - this is the foundational definition source for the S2 page: the confusion-matrix metrics (accuracy, recall/TPR, FPR, precision, F1), the precision-recall tradeoff, and the class-imbalance failure of accuracy. Grounds the LLM-specific guidance (use precision/recall, not raw accuracy, on imbalanced data) that [[llm-as-judge]] and [[llm-patterns]] state without deriving.
 
 ## Source
 

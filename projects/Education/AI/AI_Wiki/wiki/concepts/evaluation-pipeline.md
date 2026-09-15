@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [evals, pipeline, methodology, ci, production]
-status: developing
-source-count: 2
-last-updated: 2026-07-08
+status: established
+source-count: 4
+last-updated: 2026-09-15
 ---
 
 # Designing an Evaluation Pipeline
@@ -22,6 +22,13 @@ From [[evaluate-ai-systems]] ([[chip-huyen]]) and [[llm-evaluation-guidebook]]: 
 - **Sampling metrics** for robustness: pass@k, maj@n (majority vote), cot@n, avg@n - avoid in cheap ablations, use for post-training/inference; report all sampling params (they multiply cost by k).
 - **Statistical validity** (the "forgotten children"): report confidence intervals (bootstrapping), and report cost/time/environmental footprint alongside scores so a 100x-pricier judge is justified against its signal.
 - Prefer [[functional-scorers|functional]] scoring over judges wherever a constraint is programmatically checkable.
+
+## Production tooling and error discovery ([[ai-evals-error-analysis]])
+
+Production eval tooling should make the human review loop fast: render traces in a task-specific interface, select a diverse sample, collect open-ended annotations, cluster recurring failures, and distill them into binary rubric criteria.
+Dedicated tools such as Braintrust, Arize, and LangSmith mainly win on integration; general coding agents can recover similar obvious errors.
+Neither class reliably discovers non-obvious, product-specific failures without human judgment, and automated findings still need review because false positives can distort the product.
+Track eval data, prompts, model versions, sampling settings, cost, latency, and criterion-level precision and recall so a score change is attributable.
 
 ## Synthesis
 

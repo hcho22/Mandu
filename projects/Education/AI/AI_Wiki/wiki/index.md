@@ -1,6 +1,6 @@
 ---
 type: index
-last-updated: 2026-08-27
+last-updated: 2026-09-15
 ---
 
 # Index
@@ -10,11 +10,11 @@ Every page is listed once under its category with a one-line summary.
 Read this first when answering a query, then drill into the linked pages.
 Updated on every ingest.
 
-Counts: 32 sources, 10 areas, 153 concepts, 31 entities.
+Counts: 34 sources, 10 areas, 158 concepts, 31 entities.
 
 ## Areas
 
-- [[evals]] - how you measure whether an LLM product works and keep improving it past the demo stage. (12 sources)
+- [[evals]] - how you measure whether an LLM product works and keep improving it past the demo stage. (14 sources)
 - [[agentic-engineering]] - building software *with* agents: direction, orchestration, verification, context, cost, and what the human is still for. (11 sources)
 - [[agent-operations]] - running things *with* agents continuously: loops, routines, fleets, self-improvement, and agents pointed at distribution. (8 sources)
 - [[ai-career]] - navigating an AI-native tech career: staying valuable, positioning, growth, and the forward-deployed-engineer role. (4 sources)
@@ -50,6 +50,11 @@ Counts: 32 sources, 10 areas, 153 concepts, 31 entities.
 - [[contamination-detection]] - the three flavors and five methods for catching benchmark contamination.
 - [[self-referential-bias]] - a model grades its own output too leniently; vary both the model and the context of the verifier.
 - [[evals-saturate-and-get-replaced]] - your own product evals decay too (1-3 model generations); budget for replacement, not maintenance.
+- [[offline-vs-online-evals]] - fixed pre-deploy evaluation and live production evaluation as complementary loops.
+- [[error-analysis]] - read real outputs, classify bottom-up failures, and turn them into a binary rubric.
+- [[rag-evaluation]] - evaluate faithfulness, answer relevance, and context precision/recall separately.
+- [[agent-eval-and-stats]] - evaluate task completion, tool calls, trajectories, uncertainty, and sample size.
+- [[ci-eval-gates-and-drift]] - block regressions in CI and monitor post-deploy distribution and quality drift.
 
 ### Agent SaaS
 - [[agent-saas-sells-work]] - sell the job that disappears, not the tool; the market is labor, not seats.
@@ -247,6 +252,7 @@ Counts: 32 sources, 10 areas, 153 concepts, 31 entities.
 ## Sources
 
 - [[your-ai-product-needs-evals]] - Hamel Husain (2024-03-29): the three-level eval framework and why evals unlock iteration.
+- [[ai-evals-error-analysis]] - Peter Yang with Hamel Husain and Shreya Shankar: human-led error discovery, narrow binary judges, and automated-evaluator precision.
 - [[agents-are-the-new-saas]] - Startup Ideas Podcast: an 8-part playbook for building and selling agent-SaaS.
 - [[ai-era-50-career-tips]] - Meta Staff Engineer / creator: 50 tips for an AI-era career (judgment, taste, agentic-tool mastery).
 - [[ai-operating-system-tutorial]] - Nate: building a personal AI OS / second brain in Claude Code (Four C's, agent safety, skills).
@@ -255,6 +261,7 @@ Counts: 32 sources, 10 areas, 153 concepts, 31 entities.
 - [[one-person-company-with-agents]] - Ryan Carson: running a whole company on agents (cron + markdown, agents-as-employees, build the machine first).
 - [[building-products-with-agents]] - solo L8 builder: get out of the loop, plan-code-validate, fresh-context review (Lavish / No Mistakes).
 - [[classification-roc-and-auc]] - Google ML Crash Course: ROC/AUC and evaluating a classifier across thresholds.
+- [[classification-accuracy-precision-recall]] - Google ML Crash Course: confusion-matrix metrics at one threshold and why accuracy fails under class imbalance.
 - [[production-agent-with-cma]] - Anthropic workshop: building on Claude Managed Agents (primitives, outcomes, vaults, observability).
 - [[every-claude-feature-ranked]] - 500-hour tier-ranking of Claude features (Skills #1; a broad tour of the ecosystem).
 - [[inside-conductor-workflow]] - Conductor co-founder: voice-first parallel orchestration; slop-free zones; code-as-sawdust.
@@ -307,11 +314,12 @@ The 2026-07-28 plan to graduate `agentic-engineering` from a concept to an area 
 It is now [[agentic-engineering]] (area, 11 sources), and a sibling area [[agent-operations]] was created to hold the distinct activity of running things with agents continuously rather than building software with them.
 The boundary between them is documented at the top of [[agent-operations]].
 
-`raw/` is now empty of unprocessed sources - all 28 have been ingested.
+`raw/` has no unprocessed AI sources from the LLM_Evals merge.
 
 ## Raw inbox status (2026-08-21)
 
-All 31 AI-engineering sources in `raw/` have been ingested.
+All canonical AI-engineering sources currently in `raw/` have source summaries.
+The 2026-09-15 LLM_Evals merge added two unique raw sources and removed seven byte-identical copies.
 
 Two files added to `raw/` on 2026-08-21 are **not wiki material and were deliberately not ingested**: `dodgeball_double_elim_guide.html` (a tournament station guide) and `MM26_camp_scoreboard.xlsx` (a camp scoreboard).
 They are outside this wiki's domain entirely and appear to have been filed here by accident.

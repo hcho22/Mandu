@@ -242,3 +242,11 @@ Counts now 28 sources, 10 areas, 137 concepts, 24 entities.
 - **Reflexive note (recorded in [[synthesis]]):** the source describes exactly Mandu's own long `CLAUDE.md`/skill files, and the ingest was run from inside First Mate (Kun's orchestrator). Also a mild dent in the vendor-concentration caveat: backpass reads Claude Code, Codex, pi, opencode, grok, and Cursor transcripts, so the method is stated harness-agnostic despite being a third Kun source.
 - Areas: [[agentic-engineering]] (+4 concepts in a new "Training the memory file" cluster, +source, now 14; removed a duplicate [[self-updating-config]] listing). Updated [[index]] (counts now 32 sources / 153 concepts / 31 entities) and [[synthesis]].
 - **Action surfaced for hcho, not executed:** put a token budget on the global `CLAUDE.md`, lint it against [[four-bad-memory-states]], separate the handwritten user file from the trainable project files ([[two-level-agent-memory]]), and either run [[backpass]] or reproduce its budgeted backward pass by hand. Fits the already-open "audit Mandu's own configuration" thread.
+
+## [2026-09-15] merge | Fold LLM_Evals into the canonical AI knowledge graph
+- Moved the two unique raw sources and their summaries into AI_Wiki; removed seven byte-identical raw copies.
+- Added [[agent-eval-and-stats]], [[ci-eval-gates-and-drift]], [[error-analysis]], [[offline-vs-online-evals]], and [[rag-evaluation]] as canonical concepts.
+- Folded overlapping classification, contamination, safety, judge, and production-tooling pages into their existing canonical concepts.
+- Preserved hcho's `## In my own words (hcho)` contamination section verbatim in [[data-contamination]].
+- Retired the parallel `LLM_Evals/wiki/`; `LLM_Evals/` now retains only its curriculum, `Exercise/`, and `log/`.
+- Updated [[evals]], [[index]], [[synthesis]], the wiki schema, and Mandu's active-wiki registry.

@@ -60,9 +60,10 @@ Memory plus context files plus the decision log means your assistant gets smarte
 
 ## Projects
 
-Active workstreams live in `projects/`. Each project is a folder with its own `README.md` (description, status, key dates). **As of 2026-08-02 the top focus is `projects/RepToday/`** (the primary near-term income bet: a B2C freemium iOS micro-workout app, MVP complete, being shipped to the App Store to test PMF); `projects/Purvia/` (formerly `Agentic_RAG/`) is the second income bet and the lead portfolio piece (a paid permission-aware RAG starter kit, build complete, in buyer validation); `projects/job-search/` runs as the parallel hedge. Demoted/paused: `projects/CreativeBridge/` (portfolio-only) and `projects/CompeteIntel/` (backlog). `projects/Learning/` is parked (see below), though its `AI_Engineer/AI_Wiki/` is an active AI-engineering + AI-career knowledge wiki and hcho's primary second brain (an enabler, maintained not pushed; see the Wikis section). The live priority ranking is in `context/current-priorities.md`. Completed and archived: `archives/HabitLoop/`, `archives/F2F/`.
+Active workstreams live in `projects/`. Each project is a folder with its own `README.md` (description, status, key dates). **As of 2026-08-02 the top focus is `projects/RepToday/`** (the primary near-term income bet: a B2C freemium iOS micro-workout app, MVP complete, being shipped to the App Store to test PMF); `projects/Purvia/` (formerly `Agentic_RAG/`) is the second income bet and the lead portfolio piece (a paid permission-aware RAG starter kit, build complete, in buyer validation); `projects/job-search/` runs as the parallel hedge. Demoted/paused: `projects/CreativeBridge/` (portfolio-only) and `projects/CompeteIntel/` (backlog). `projects/Education/AI/LLM_Evals/` is a parked learning track, while `projects/Education/AI/AI_Wiki/` remains the active AI-engineering + AI-career knowledge graph and hcho's primary second brain. The live priority ranking is in `context/current-priorities.md`. Completed and archived: `archives/HabitLoop/`, `archives/F2F/`.
 
-`projects/Learning/` is a continuous learning-tracking project organized as career track → topic (e.g., `AI_Engineer/evals/`), each with its own README, plan, and `log/`. As of 2026-06-18 it is parked: the evals track is now pursued as the edge expressed through Agentic RAG's eval harness, not as a standalone study workstream. When active, Claude acts as a study partner (explain, quiz, review), not a doer.
+`projects/Education/` contains learning tracks and durable knowledge bases.
+`projects/Education/AI/LLM_Evals/` is the parked eval curriculum with its plan, exercises, and study log; its reusable knowledge lives in `projects/Education/AI/AI_Wiki/`.
 
 ## Wikis
 
@@ -89,9 +90,8 @@ De-duplication, so the wiki does not become a fifth redundant memory layer:
 Interview talking points from wiki work consolidate to `projects/job-search/interview-prep.md`, not per-wiki duplicate lists.
 
 Active wikis:
-- Evals pilot: `projects/Education/AI/LLM_Evals/wiki/` (mode: split).
 - Purvia (formerly Agentic RAG): `projects/Purvia/wiki/` (mode: full).
-- AI_Wiki: `projects/Education/AI/AI_Wiki/wiki/` (mode: full; broad AI-engineering + AI-career KB and hcho's primary "second brain" for the pivot; own vault, own schema in `wiki/CLAUDE.md`). The reference layer that cross-links to the evals and Agentic RAG wikis. Subsumes the planned YouTube-transcript wiki (folded in 2026-07-08, which was never physically built): AI_Wiki owns the AI-engineering talk/tutorial/transcript diet.
+- AI_Wiki: `projects/Education/AI/AI_Wiki/wiki/` (mode: full; the only general AI wiki, including evals, models, RAG, agentic engineering, production AI, and AI-career material; own vault and schema in `wiki/CLAUDE.md`). The sibling `LLM_Evals/` directory is a learning track, not a wiki.
 - Job-Search Roles: `projects/Job_Search/wiki/` (mode: full; own schema in `wiki/CLAUDE.md`, sibling `raw/` inbox). Maps target roles, their qualifications/skills, and hcho's path into each (both buckets: AI builder + AI evals/quality). Distinct from AI_Wiki (AI-engineering craft/career KB) and from the operational job-search layers: it cross-links to `.claude/skills/job-hunter/assets/companies.yaml`, `scans/`, and `../interview-prep.md` rather than duplicating them.
 
 ## Templates

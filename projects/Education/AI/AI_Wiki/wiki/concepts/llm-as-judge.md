@@ -2,8 +2,8 @@
 type: concept
 tags: [evals, llm-as-judge, model-based-eval, alignment]
 status: established
-source-count: 6
-last-updated: 2026-07-28
+source-count: 7
+last-updated: 2026-09-15
 ---
 
 # LLM-as-Judge
@@ -35,6 +35,13 @@ First filed from [[your-ai-product-needs-evals]] by [[hamel-husain]]; extended b
 Seven documented judge biases, each with a mitigation: no internal consistency (self-consistency prompting, majority vote), no consistent score ranges (use binary/pairwise), self-preference (use a jury), blindness to input perturbation (reason before scoring), position bias (swap orderings / use logprobs), verbosity bias (control for length), and format bias (match the judge's training prompt format).
 Practical guidance: **pairwise comparison correlates with humans better than scoring**; use one prompt per capability; a **jury** of several (even small) judges beats one big model; and always **evaluate your evaluator** against a small (~50) representative baseline before trusting it. Judges are notably **bad at detecting hallucinations** (especially partial ones), so don't lean on them for [[factual-consistency]].
 Related: **reward models** (Bradley-Terry pairwise or absolute-score) are fast, deterministic, position-bias-free, and prompt-free, but need fine-tuning; use win rates/probabilities, not raw averages.
+
+## Judges after error analysis ([[ai-evals-error-analysis]])
+
+Narrow, binary criteria are the judge's sweet spot.
+Each bottom-up failure mode discovered by a human can become one focused judge, while a single prompt containing many criteria tends to wash out individual checks.
+Fan out one judge per criterion, and score every judge against the labeled examples produced during annotation with precision and recall.
+The judge scales the team's taste; it does not invent the product-specific taste that only comes from reading real outputs.
 
 ## Synthesis
 
