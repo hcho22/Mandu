@@ -367,8 +367,10 @@ With that closed there is now zero in-flight build; Agentic RAG is purely valida
    the ruleset. The cheapest-credibility maintenance debt is largely paid down.]** Restarting and
    annotating them was launch preconditions 1 and 2.
 3. **Job search as the parallel income hedge:** sustained applications at 5/week against
-   Tier A/B/C, plus interview prep. Non-negotiable minimum given the 6-12 month runway.
-   Two-bucket targeting (AI builder + AI evals/quality), pitched on validation rigor.
+   the verified target list, plus interview prep. Non-negotiable minimum given the 6-12 month runway.
+   Three-lane targeting: software quality/systems validation; AI quality/evaluation; and
+   AI product/integration/technical delivery. Start with an approximate 40/35/25 mix without
+   padding weak matches; preserve qualified AI-builder roles and pitch the validation-to-software bridge honestly.
 4. **Evals as the edge, not a study track:** express it through Purvia's eval harness
    (leak suite, escalation golden set, CI gate), not a standalone 20-hour study plan.
    Note the harness is currently unattended - see the maintenance-debt note in item 1. An

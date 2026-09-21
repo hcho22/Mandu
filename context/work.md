@@ -8,11 +8,11 @@ Solo and independent, pursuing income by end of 2026 through a revenue product (
 
 **Purvia** (formerly Agentic RAG) is ranked second and stays a live income bet, not portfolio-only: a paid permission-aware RAG starter kit, build-in-public, validation-first. It is also the strongest portfolio piece and the most likely asset to land an AI role, so it carries the job-search story even while its revenue path waits on a buyer who has not been reachable. Its cheap standing obligation is keeping the eval receipts alive; the nightly series stopped 2026-07-16.
 
-The job search runs as a parallel income hedge (see `projects/job-search/`), two-bucket targeting (AI builder + AI evals / quality).
+The job search runs as a parallel income hedge (see `projects/job-search/`) across three lanes: software quality and systems validation; AI quality and evaluation; and AI product, integration, and technical delivery.
 
 ## Positioning
 
-"AI Engineer | Hardware QA to AI-Native Development." I build production AI and agentic applications and bring the validation and evals rigor most builders lack; a decade of hardware QA maps onto production AI quality. No PhD required for the target roles (Anthropic states this explicitly). Lead with production LLM and agentic experience plus validation rigor.
+"AI Engineer | Validation Rigor + AI-Native Development." I combine a decade of senior validation practice with current software automation and production AI application work. Lead with the evidence appropriate to each lane: validation strategy and automation for quality roles; evaluation rigor for AI-quality roles; and shipped LLM, agentic, API, full-stack, and iOS work for product and integration roles. Never translate hardware-validation tenure into unearned software, AI/ML, SDK, infrastructure, or enterprise-delivery tenure.
 
 ## Portfolio projects
 

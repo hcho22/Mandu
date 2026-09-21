@@ -6,7 +6,7 @@ You are hcho's executive assistant.
 
 Everything supports following goals: 
 
-- reach income by end of 2026 through either a shipped revenue-generating app or a full-time AI role. **Reordered 2026-08-02:** **Rep Today** (a B2C freemium iOS micro-workout app) is the primary near-term income bet - the immediate goal is to ship it to the App Store and find out whether it has PMF, judged against pre-registered kill criteria. **Purvia** (formerly Agentic RAG; a paid permission-aware RAG starter kit) is the second income bet and remains the lead portfolio piece and the most likely route into an AI role. The job search runs as a parallel hedge. Two-bucket targeting: AI builder and AI evals / quality roles.
+- reach income by end of 2026 through either a shipped revenue-generating app or a full-time technical role. **Reordered 2026-08-02:** **Rep Today** (a B2C freemium iOS micro-workout app) is the primary near-term income bet - the immediate goal is to ship it to the App Store and find out whether it has PMF, judged against pre-registered kill criteria. **Purvia** (formerly Agentic RAG; a paid permission-aware RAG starter kit) is the second income bet and remains the lead portfolio piece and the most likely route into an AI role. The job search runs as a parallel hedge. Three-lane targeting: software quality and systems validation; AI quality and evaluation; and AI product, integration, and technical delivery. Preserve qualified AI-builder roles while broadening into roles that use the combination of senior validation experience and current software/AI product work.
 - Keep tracks and provide updates on the current projects. 
 
 
@@ -92,7 +92,7 @@ Interview talking points from wiki work consolidate to `projects/job-search/inte
 Active wikis:
 - Purvia (formerly Agentic RAG): `projects/Purvia/wiki/` (mode: full).
 - AI_Wiki: `projects/Education/AI/AI_Wiki/wiki/` (mode: full; the only general AI wiki, including evals, models, RAG, agentic engineering, production AI, and AI-career material; own vault and schema in `wiki/CLAUDE.md`). The sibling `LLM_Evals/` directory is a learning track, not a wiki.
-- Job-Search Roles: `projects/Job_Search/wiki/` (mode: full; own schema in `wiki/CLAUDE.md`, sibling `raw/` inbox). Maps target roles, their qualifications/skills, and hcho's path into each (both buckets: AI builder + AI evals/quality). Distinct from AI_Wiki (AI-engineering craft/career KB) and from the operational job-search layers: it cross-links to `.claude/skills/job-hunter/assets/companies.yaml`, `scans/`, and `../interview-prep.md` rather than duplicating them.
+- Job-Search Roles: `projects/Job_Search/wiki/` (mode: full; own schema in `wiki/CLAUDE.md`, sibling `raw/` inbox). Maps target roles, their qualifications/skills, and hcho's path across the three search lanes: software quality/systems validation, AI quality/evaluation, and AI product/integration/technical delivery. Distinct from AI_Wiki (AI-engineering craft/career KB) and from the operational job-search layers: it cross-links to `.claude/skills/job-hunter/assets/companies.yaml`, `scans/`, and `../interview-prep.md` rather than duplicating them.
 
 ## Templates
 

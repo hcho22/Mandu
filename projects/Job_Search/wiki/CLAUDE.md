@@ -19,7 +19,7 @@ Knowledge is compiled once per source and then kept current, so cross-references
 The domain is **the job market hcho is hiring into, and the path from his profile into a target role**.
 Concretely, the wiki answers three linked questions and keeps the answers current as new sources land:
 
-- **Roles:** what specific roles exist in hcho's two buckets (AI builder and AI evals / quality), what each one actually does day to day, and how they differ.
+- **Roles:** what specific roles exist across hcho's three lanes (software quality/systems validation, AI quality/evaluation, and AI product/integration/technical delivery), what each one actually does day to day, and how they differ.
 - **Qualifications and skills:** what each role requires - the hard skills, domain knowledge, credentials, and portfolio evidence - and which of those are shared across roles.
 - **How to become one:** the concrete gap between hcho's current profile and each target role, and the highest-leverage way to close it.
 
@@ -31,7 +31,7 @@ This is hcho's working map of the roles he is targeting and what it takes to lan
 Every role and skill page is evaluated against hcho's actual profile, so keep this in mind when writing fit and gap sections:
 
 - ~10 years Senior Hardware Validation / QA Engineer (Zebra Technologies), independent since June 2025.
-- Pivoting into AI-native development; two target buckets: **AI builder** (AI Builder / AI Product Engineer / Applied AI Engineer / FDE) and **AI evals / quality**.
+- Combining a senior hardware-validation career with current software and AI-product work; three target lanes: **software quality/systems validation**, **AI quality/evaluation**, and **AI product/integration/technical delivery**.
 - Core thesis: builds production AI and agentic apps AND brings validation/evals rigor most builders lack; a decade of hardware QA maps onto production AI quality. No PhD required for the targets.
 - Portfolio: Agentic RAG (FastAPI + pgvector, evals harness), FitSnack (SwiftUI iOS), CreativeBridge (RN/Expo, multi-AI, TestFlight), Omdena (CV + fine-tuned LLMs).
 - B.S. Electrical Engineering (Cal Poly SLO); DeepLearning.AI, FourthBrain ML Engineering, Google Advanced Data Analytics.
@@ -81,7 +81,7 @@ projects/Job_Search/
 - **`sources/<slug>.md`** - one summary per ingested source. Key claims, requirements extracted, and full provenance. Revise only to fix errors or add backlinks, not to re-interpret.
 - **`index.md`** - content-oriented catalog. Read it first when answering a query.
 - **`log.md`** - chronological, append-only event record.
-- **`synthesis.md`** - the top-level plan. Across both buckets: which roles are the strongest fit, which skills are the highest-leverage gaps to close, and the recommended sequence. Start here for the big picture.
+- **`synthesis.md`** - the top-level plan. Across all three lanes: which roles are the strongest fit, which skills are the highest-leverage gaps to close, and the recommended sequence. Start here for the big picture.
 
 `roles/`, `skills/`, and `companies/` ship empty and grow organically. Do not pre-seed a backbone. Early on the index will be short. That is expected.
 

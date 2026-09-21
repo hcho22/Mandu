@@ -15,7 +15,7 @@ tags: [ai-content-engineer, benchmarks, evals, technical-writing, build-in-publi
 A hybrid of ML engineer, benchmark builder, and technical writer.
 Builds real benchmarks and runs real experiments, then publishes the findings as technical content at high velocity (blog pace, not paper pace).
 Explicitly not DevRel or marketing - it is engineering work whose output happens to be published.
-Straddles both buckets: it is builder work grounded in an evals/benchmarking core, plus a public-writing surface.
+Fits the AI product/integration/technical-delivery lane while drawing heavily on AI evaluation and benchmarking, plus a public-writing surface.
 
 ## Day-to-day
 - Design, build, and maintain benchmarks (LlamaIndex: document parsing/understanding).

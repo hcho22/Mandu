@@ -15,7 +15,7 @@ tags: [python, baseline, ai-builder]
 The baseline programming language for AI engineering work: backend orchestration, data, LLM app code.
 
 ## Why roles want it
-A non-negotiable baseline for [[applied-ai-engineer]] and essentially every role in both buckets.
+A non-negotiable baseline for [[applied-ai-engineer]] and most automation-heavy roles across all three lanes.
 Rarely a differentiator on its own; its absence is disqualifying.
 
 ## How to acquire or demonstrate

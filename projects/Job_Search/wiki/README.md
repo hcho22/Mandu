@@ -17,7 +17,7 @@ This wiki maps the roles hcho is targeting, the qualifications and skills each o
 
 ## The three questions this wiki answers
 
-1. **Roles** - what each target role (AI builder + AI evals / quality buckets) actually is and does.
+1. **Roles** - what each target role across software quality/systems validation, AI quality/evaluation, and AI product/integration/technical delivery actually is and does.
 2. **Requirements** - the qualifications, skills, and portfolio evidence each role wants.
 3. **Path** - the gap between hcho's profile and each role, and how to close it fastest.
 

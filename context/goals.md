@@ -16,7 +16,7 @@ attention, not about abandoning either.
 ## By end of 2026
 
 - Income secured: Rep Today or the Purvia starter kit generating revenue, OR a
-  full-time AI builder / evals-quality role landed.
+  full-time technical role landed in one of the three job-search lanes.
 - Rep Today shipped to the App Store with the StoreKit 2 premium tier live, and its
   90-day kill-criteria review published - a clear negative counts as a completed goal,
   since the point is to get a real answer rather than to protect the bet.
@@ -35,8 +35,10 @@ attention, not about abandoning either.
   kill criterion 4.
 - Purvia buyer validation continues at lower intensity: the 10 interviews stay on the
   board, behind Rep Today's launch.
-- Job-search hedge: sustained applications at 5/week against the Tier A/B/C list, plus
-  interview prep, now leaning on Purvia as the lead technical artifact.
+- Job-search hedge: sustained applications at 5/week across software quality/systems
+  validation, AI quality/evaluation, and AI product/integration/technical delivery,
+  plus interview prep. Start with an approximate 40/35/25 mix without padding a lane;
+  use Purvia as the lead AI technical artifact and validation automation as the durable bridge.
 
 ## Q2 2026 (closing)
 

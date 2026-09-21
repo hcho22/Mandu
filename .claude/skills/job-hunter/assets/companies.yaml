@@ -1,4 +1,4 @@
-# Target list — YC-backed AI startups + Series A–C AI-native companies
+# Target list — YC-backed AI startups, Series A–C AI-native companies, and captain-selected three-lane expansion targets
 # known for practical interviews (take-homes + system design vs. LeetCode).
 # Plus the AI Evals Job Application Strategy (Tier A/B/C) — see section near bottom.
 # Edit freely. URLs marked "" are TODOs — the skill will resolve them at runtime.
@@ -523,7 +523,7 @@ companies:
   # already captured Hebbia/Credal/EliseAI/Deepgram/Sendbird/Regal/Notion/Webflow/GC AI/Product.ai/Hedra/Tempus/Superblocks).
   # Skipped as before: megacaps + non-AI-native incumbents (Google/NVIDIA/MSFT/Meta/Oracle/IBM/Amazon/Palantir/CrowdStrike/
   # Samsara/Celonis/Klaviyo/Coupa/Boomi/Kensho/Dynatrace/LogicMonitor/Cisco/Genius Sports/Riskified/System1/Motive/Atlassian/
-  # GM/Northwestern Mutual/PwC), robotics/CV/hardware (AMP/GrayMatter/Metropolis/True Anomaly/Air Space Intelligence/STR/
+  # GM/Northwestern Mutual/PwC), robotics/CV/hardware (AMP/Metropolis/True Anomaly/Air Space Intelligence/STR/
   # Inspiren/Graphcore), consultancies (Northslope/Quantum Rise), fintech-where-AI-isn't-the-build-surface (Airwallex/Gynger),
   # classical-ML verticals (Gradient AI/Laudio), captioning (3Play), non-US adtech (Smartly), labor marketplace (WorkWhile).
   - name: Mistral AI
@@ -634,6 +634,71 @@ companies:
     careers_url: https://boards.greenhouse.io/himarley
     pitch: "P&C insurance conversational-AI platform - regulated-vertical conversational AI; validation-against-regulated-systems pitch applies; narrow"
     priority: low
+
+  # === Captain-selected three-lane expansion targets (added 2026-09-20) ===
+  # Source discovery: BuiltIn referral links supplied by hcho; homepage URLs normalized and official career pages verified.
+  - name: GrayMatter Robotics
+    bucket: quality-systems-validation
+    location: Los Angeles, CA
+    website_url: https://factory.graymatter-robotics.com/
+    careers_url: https://jobs.ashbyhq.com/graymatter-robotics
+    pitch: "Physical-AI robotics for factory finishing and inspection - LA-local systems validation, test automation, perception/planning/control, and hardware-software integration map directly to the broadened validation lane"
+    watch_outs: "Robotics roles may require specialized controls, perception, or embedded depth. Score validation/test/integration responsibilities separately from research or robotics-algorithm requirements."
+    priority: high
+
+  - name: Revel
+    bucket: quality-systems-validation
+    location: Los Angeles, CA
+    website_url: https://www.revel.io/
+    careers_url: https://www.revel.io/careers
+    pitch: "Software platform for hardware test, command/control, telemetry, runtime verification, and debugging - unusually direct bridge from senior hardware validation into software quality and systems tooling"
+    watch_outs: "The official careers landing page may not expose its live inventory; check the underlying Ashby board. Current forward-deployed roles require role-specific compensation verification, and some require ITAR eligibility."
+    priority: high
+
+  - name: Xperteez Technology
+    bucket: job-source
+    location: India / Remote (role-specific)
+    website_url: https://www.xperteez.co.in/
+    careers_url: https://www.xperteez.co.in/job-listings
+    pitch: "Recruiting and staffing marketplace with software, automation, cloud, and systems listings - treat as an additional job source for the broadened lanes, not as a single target employer"
+    watch_outs: "India-focused marketplace and third-party recruiter; US eligibility, direct-employer identity, compensation currency, and remote geography must be verified per posting before scoring."
+    priority: low
+
+  - name: Collinear
+    bucket: ai-quality-evaluation
+    location: San Francisco Bay Area / Bengaluru, India
+    website_url: https://www.collinear.ai/
+    careers_url: https://www.collinear.ai/careers
+    pitch: "AI simulation lab building task suites, benchmarks, environments, rubrics, graders, and programmatic verification for frontier-model training and evaluation"
+    watch_outs: "Current roles are in Sunnyvale/San Francisco or Bengaluru; no Burbank-local or US-remote eligibility was shown when added. Staff/research depth may also exceed the honest-fit gate."
+    priority: low
+
+  - name: Bretton AI
+    bucket: ai-product-integration
+    location: ""
+    website_url: https://www.bretton.com/
+    careers_url: https://www.bretton.com/careers
+    pitch: "AI-native financial back-office operations with agentic infrastructure and dedicated deployment teams - potential product, integration, implementation, and customer-engineering surface"
+    watch_outs: "Official careers page did not expose location or parseable open-role details when added; verify the underlying posting, US eligibility, customer-facing spine, and compensation before scoring."
+    priority: medium
+
+  - name: Machinify
+    bucket: ai-product-integration
+    location: ""
+    website_url: https://www.machinify.com/
+    careers_url: https://www.machinify.com/careers
+    pitch: "Healthcare payment-integrity AI operating system using unified data, foundation models, task-specific agents, and feedback loops - regulated quality plus applied-AI product/integration fit"
+    watch_outs: "Location and role requirements vary on the linked Greenhouse board; healthcare-domain, data-science, or deep platform requirements must not be waived merely because the product is AI-native."
+    priority: medium
+
+  - name: Canonical
+    bucket: developer-tools-support
+    location: Remote (global; role-specific regions)
+    website_url: https://canonical.com/
+    careers_url: https://canonical.com/careers
+    pitch: "Ubuntu/open-source developer, IoT, edge, certified-hardware, support-engineering, and quality surfaces - potential systems validation, developer support, product quality, and technical-delivery matches"
+    watch_outs: "Many engineering roles center on Linux infrastructure, cloud, Kubernetes, SRE, or specialist systems depth. Keep only roles that clear the broadened lane and region gates without inventing infrastructure tenure."
+    priority: medium
 
   # === AI Evals Job Application Strategy — Tier A/B/C (added 2026-05-30 from strategy doc) ===
   # Focus: AI Evals / Quality / Validation roles — direct map from the hardware QA decade.

@@ -7,15 +7,18 @@ status: developing
 # Synthesis: which role, and how to get there
 
 The top-level plan.
-This page answers: across hcho's two buckets, which roles are the strongest fit, which skills are the highest-leverage gaps to close, and in what order.
+This page answers: across hcho's target lanes, which roles are the strongest fit, which skills are the highest-leverage gaps to close, and in what order.
 It is rewritten as ingests shift the picture.
 
-## The two buckets
+> **Strategy note (2026-09-20):** the operational search broadened after the narrow strategy produced too few useful results. The role ranking below predates this expansion and should be refreshed as new sources are ingested.
 
-- **AI builder** - AI Builder / AI Product Engineer / Applied AI Engineer / Forward Deployed Engineer.
-- **AI evals / quality** - roles centered on evaluating and assuring production AI systems.
+## The three search lanes
 
-The cross-cutting differentiator in both is **validation / evals rigor** from a decade of hardware QA.
+- **Software quality and systems validation** - automation-heavy SDET, systems/product validation, test infrastructure, API/backend automation, mobile/iOS test, and release quality.
+- **AI quality and evaluation** - roles centered on evaluating and assuring production AI systems.
+- **AI product, integration, and technical delivery** - AI product engineering plus hands-on integration, implementation, customer engineering, developer support, and forward-deployed delivery.
+
+The cross-cutting differentiator is **validation / evals rigor** from a decade of hardware QA, paired with current software automation and shipped AI/product work.
 The 2026-07-08 posting batch confirmed this is the right bet: evaluation is a named requirement in nearly every posting, across companies and role types.
 
 ## Best-fit roles (ranked)

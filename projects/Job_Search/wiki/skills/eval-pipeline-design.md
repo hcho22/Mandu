@@ -27,7 +27,7 @@ Be able to speak to metric choice and to LLM-as-judge reliability.
 
 ## hcho's current level: strong (this is the differentiator)
 Evidence: a decade of hardware QA / validation maps directly onto production AI quality, plus the Agentic RAG eval harness (leak suite, escalation golden set, CI eval gate).
-This is hcho's single strongest positioning asset across both buckets.
+This is hcho's strongest positioning asset across the AI-quality lane and a differentiator in the other two lanes.
 
 ## Gap and how to close
 Skill is present; the gap is visibility.
