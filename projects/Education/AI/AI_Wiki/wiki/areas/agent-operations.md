@@ -2,8 +2,8 @@
 type: area
 tags: [agent-operations, agents, loops, automation, cost, business]
 status: developing
-source-count: 8
-last-updated: 2026-08-21
+source-count: 9
+last-updated: 2026-09-16
 ---
 
 # Agent Operations
@@ -74,6 +74,7 @@ People routinely span both - [[ryan-carson]] runs a cloud engineering fleet *and
 
 ## Sources
 
+- [[kun-agentic-app-development-workflow]] - local secondary reconstruction of four talks, with explicitly identified beginner adaptations.
 - [[one-person-company-with-agents]] - Ryan Carson: the original cron-plus-markdown account of running a company on agents.
 - [[running-teams-of-ai-agents]] - Ryan Carson again, post-PMF: cloud fleets, three production automations, vendor strategy, token economics.
 - [[loops-to-run-your-business]] - the loop primitive pointed at SEO, ads, and product KPIs over months.
@@ -113,6 +114,11 @@ That asymmetry is now the binding constraint on every loop in this area, and it 
 - **Local versus cloud** ([[cloud-agents-over-local]]): [[running-teams-of-ai-agents]] calls local development a "caveman" practice; [[building-5-ai-products-solo]] and [[inside-conductor-workflow]] both run local worktrees deliberately. Ryan's evidence is real but is *n* of 1 from a paying Devin customer at PMF scale.
 - **How much infrastructure a real agent needs**: [[agents-as-cron-plus-markdown]] says a cron and a markdown file; [[marketing-agent]] says that is insufficient without a unified data warehouse. Probably resolved by whether the decision needs cross-channel context.
 - **Spend posture**: [[running-teams-of-ai-agents]] reports ~$20K/month and says spend first, optimize later; [[loop-cost-discipline]] says a well-scoped loop is under $5 a run. Both are right at their own scale.
+
+## Workflow reconstruction (2026-09-16)
+
+[[kun-agentic-app-development-workflow]] contributes project-scoped managers, remote placement, task-dependent dispatch, and fleet digests as ways to reduce human coordination load.
+Read these with [[one-orchestrator-agent]] and [[risk-based-agent-governance]]; they do not establish that hierarchy, remote compute, or automatic merging is appropriate for every workload.
 
 ## Synthesis
 

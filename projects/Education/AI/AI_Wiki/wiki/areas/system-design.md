@@ -2,8 +2,8 @@
 type: area
 tags: [system-design, architecture, production, agents, infrastructure]
 status: developing
-source-count: 1
-last-updated: 2026-07-08
+source-count: 2
+last-updated: 2026-09-16
 ---
 
 # System Design (in the AI era)
@@ -40,7 +40,14 @@ Design is choosing which trade-offs you will accept, not chasing a mythical best
 
 ## Sources
 
+- [[kun-agentic-app-development-workflow]] - local secondary reconstruction of four talks, with explicitly identified beginner adaptations.
 - [[building-robust-apps-with-ai]] - Ross (Hey Fabrica): agentic system design taught through the Pluto architecture.
+
+## Workflow reconstruction (2026-09-16)
+
+[[kun-agentic-app-development-workflow]] adds explicit sources of truth, domain-action APIs, identity/permission separation, offline/recovery questions, and a thin integrated first slice.
+Its architecture checklist is a compiler-authored teaching aid, not a mandatory stack or document list.
+The server-authority example complements [[client-never-touches-the-database]] without proving the earlier universal claim about all direct client database access.
 
 ## Synthesis
 

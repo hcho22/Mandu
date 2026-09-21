@@ -2,8 +2,8 @@
 type: concept
 tags: [agentic-engineering, testing, verification, scope, e2e]
 status: developing
-source-count: 1
-last-updated: 2026-08-01
+source-count: 2
+last-updated: 2026-09-16
 ---
 
 # Define the End-to-End Gate
@@ -36,6 +36,11 @@ The actual final run was exactly the gate: sign in with Apple using his real acc
 - Every shortcut the agent took - mock data, wrong hostname, missing DNS - is invisible to a status report and fatal to the gate.
 - The gate names the **real** dependencies (real Apple ID, real VPS, real HTTPS), so the plan cannot satisfy it with a stub.
 - It is stated **before** the work, so it shapes the plan rather than auditing it afterward.
+
+## Workflow reconstruction (2026-09-16)
+
+[[kun-agentic-app-development-workflow]] generalizes the real wallet journey into a beginner acceptance pattern: actual app, actual authority/integration path, a durable action, retrieval, and the important failure case.
+Its prompts explicitly distinguish unit checks and compilation from evidence that the product journey works.
 
 ## Synthesis
 

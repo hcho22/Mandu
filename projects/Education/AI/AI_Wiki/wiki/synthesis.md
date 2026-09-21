@@ -1,8 +1,8 @@
 ---
 type: synthesis
-last-updated: 2026-09-15
+last-updated: 2026-09-16
 status: established
-source-count: 34
+source-count: 35
 ---
 
 # Synthesis
@@ -273,11 +273,23 @@ Five reusable concepts fill gaps that had remained scattered across area prose: 
 The most important structural result is the rule that one concept has one canonical page even when several areas use it.
 The sibling `LLM_Evals/` folder can therefore remain useful as a curriculum without becoming a second knowledge graph.
 
+## What the 2026-09-16 workflow ingest added
+
+[[kun-agentic-app-development-workflow]] makes the existing engineering spine easier to teach, rather than adding an independently tested operating model.
+Its contribution is an ordered path from intent and architecture to a thin real integration, independent evidence, and a risk decision.
+[[risk-based-agent-governance]] makes explicit that validation evidence and authority to merge or deploy are separate questions.
+[[reproducible-agent-environment]] supplies the environment counterpart: reconstructible tooling and minimal shared onboarding support the workflow without proving product correctness.
+The guide's project managers and fleet digests sharpen [[one-orchestrator-agent]] as protection for human attention, with hierarchy earned by a coordination bottleneck.
+
+The evidence caveat matters here: a local reconstruction of four undated talks can be useful without counting as four additional corroborations.
+Its documentation package and beginner team sizes are the compiler's recommendations, and likely overlap with earlier Kun sources remains unmapped.
+The architecture checklist is therefore a teaching aid, not a new obligation to add more infrastructure or to skip continuing discovery during implementation.
+
 ## Open threads
 
 - The [[rag]] and [[production-llm]] hubs are now open and substantive; the prompting hub is still empty (folded loosely into production-llm and the career curriculum for now).
 - The eval area is [[evals|established]] (14 sources) with a coherent stance: define criteria up front, prefer functional testing, triangulate methods, measure reproducibly, and evaluate on your own uncontaminated data - now with the added caveat that the suite itself has a one-to-three-generation half-life.
-- **`raw/` is empty of unprocessed sources.** All 31 sources have been ingested as of 2026-08-21. The next ingest needs new material curated in. (Two non-wiki files landed in `raw/` on 2026-08-21 - a dodgeball tournament guide and a camp scoreboard - and were deliberately left unprocessed; they need a home elsewhere in Mandu.)
+- **Canonical AI sources in `raw/` are processed as of 2026-09-16.** The wiki now catalogs 35 sources, including the local Kun workflow reconstruction. The next ingest needs new material curated in. (Two non-wiki files landed in `raw/` on 2026-08-21 - a dodgeball tournament guide and a camp scoreboard - and were deliberately left unprocessed; they need a home elsewhere in Mandu.)
 - **Build the missing half of the distribution system.** [[building-marketing-agents]] and [[one-person-marketing-team]] are opposite halves - loop-plus-data and context-layer - and nothing documents the union. The cheap half is a weekend of markdown; the expensive half only matters at real spend. This is the most concrete build target the distribution material has produced.
 - **Confirm or drop the [[nate-herk]] identification.** The "Nate" of [[ai-operating-system-tutorial]] (2026-07-08) is probably the same creator, on style, audience, and subject matter, but neither raw file states the earlier surname. If confirmed, that entity goes to two sources and the two form one arc from personal AI OS to business production system. Currently annotated, not merged.
 - **Instrument cost by default.** [[make-the-agent-report-its-cost]] is the cheapest unadopted practice in the wiki: one clause in a prompt, and it is the prerequisite for every later cost analysis. Worth applying to hcho's own long-running loops before it is needed.

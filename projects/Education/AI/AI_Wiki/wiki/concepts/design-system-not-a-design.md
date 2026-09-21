@@ -2,8 +2,8 @@
 type: concept
 tags: [agentic-engineering, design, ui, taste]
 status: developing
-source-count: 2
-last-updated: 2026-08-21
+source-count: 3
+last-updated: 2026-09-16
 ---
 
 # Create a Design System, Not a Design
@@ -56,6 +56,11 @@ Two things that adds to this page:
 The second point cuts both ways.
 Unprompted consistency is the goal here and delightful when the system is right.
 It also means an error or a dated convention in the guidelines propagates silently across every deliverable, and there is no review step where anyone re-decides.
+
+## Workflow reconstruction (2026-09-16)
+
+[[kun-agentic-app-development-workflow]] distinguishes clickable journey prototypes from the reusable design vocabulary used for production UI.
+The reported sequence preserves human feedback on behavior and tone; consistency alone still cannot establish usability.
 
 ## Synthesis
 

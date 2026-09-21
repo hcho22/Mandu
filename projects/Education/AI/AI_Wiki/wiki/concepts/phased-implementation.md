@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [workflow, agentic-engineering, code, worktrees]
-status: seed
-source-count: 1
-last-updated: 2026-07-08
+status: developing
+source-count: 2
+last-updated: 2026-09-16
 ---
 
 # Phased Implementation
@@ -17,6 +17,11 @@ The build method from [[building-5-ai-products-solo]]: research, then plan, then
 - Each phase runs in a **fresh, isolated git worktree** - a shippable unit and a rollback checkpoint - which reduces [[context-rot]].
 - A **progress/decisions file** carries context across phases so fresh agent sessions know where they are and do not repeat mistakes.
 - Review the plan's **objectives**, not just its task list.
+
+## Workflow reconstruction (2026-09-16)
+
+[[kun-agentic-app-development-workflow]] recommends proving one thin end-to-end path before expanding features across UI, domain/API logic, persistence, and tests.
+Its beginner adaptation favors integrated vertical slices over completing a mock frontend and connecting the backend later.
 
 ## Synthesis
 

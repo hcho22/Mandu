@@ -2,8 +2,8 @@
 type: concept
 tags: [agentic-engineering, planning, review, artifacts, ux]
 status: developing
-source-count: 2
-last-updated: 2026-08-01
+source-count: 3
+last-updated: 2026-09-16
 ---
 
 # Review Plans as Artifacts, Not Markdown
@@ -39,6 +39,11 @@ The insight here is that **discipline is the wrong instrument.**
 Telling yourself to read a 351-line report does not work reliably.
 Changing the artifact so that reviewing it is faster than skipping it does.
 HTML reports are used broadly at Anthropic for exactly this - plans, PRs, status reports, incident reports.
+
+## Workflow reconstruction (2026-09-16)
+
+[[kun-agentic-app-development-workflow]] combines architecture diagrams and explicit decisions with clickable user-flow prototypes before implementation.
+The beginner reconstruction makes each component and authority boundary explainable, rather than treating an attractive artifact as an approval by itself.
 
 ## Synthesis
 

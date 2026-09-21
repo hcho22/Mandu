@@ -1,6 +1,6 @@
 ---
 type: index
-last-updated: 2026-09-15
+last-updated: 2026-09-16
 ---
 
 # Index
@@ -10,17 +10,17 @@ Every page is listed once under its category with a one-line summary.
 Read this first when answering a query, then drill into the linked pages.
 Updated on every ingest.
 
-Counts: 34 sources, 10 areas, 158 concepts, 31 entities.
+Counts: 35 sources, 10 areas, 160 concepts, 31 entities.
 
 ## Areas
 
 - [[evals]] - how you measure whether an LLM product works and keep improving it past the demo stage. (14 sources)
-- [[agentic-engineering]] - building software *with* agents: direction, orchestration, verification, context, cost, and what the human is still for. (11 sources)
-- [[agent-operations]] - running things *with* agents continuously: loops, routines, fleets, self-improvement, and agents pointed at distribution. (8 sources)
+- [[agentic-engineering]] - building software *with* agents: direction, orchestration, verification, context, cost, and what the human is still for. (15 sources)
+- [[agent-operations]] - running things *with* agents continuously: loops, routines, fleets, self-improvement, and agents pointed at distribution. (9 sources)
 - [[ai-career]] - navigating an AI-native tech career: staying valuable, positioning, growth, and the forward-deployed-engineer role. (4 sources)
 - [[agent-saas]] - building and selling agents as products: the business model, build ladder, and trust layer. (1 source)
 - [[ml-metrics]] - classical ML evaluation metrics (ROC/AUC, precision/recall, thresholds); the foundations under evals. (1 source)
-- [[system-design]] - designing robust, production-ready apps in the AI era: trade-offs, abstraction layers, security boundaries, durability. (1 source)
+- [[system-design]] - designing robust, production-ready apps in the AI era: trade-offs, abstraction layers, security boundaries, durability. (2 sources)
 - [[agentic-web]] - building for a web where AI agents are the customer: the machine-to-machine economy, agent infrastructure, and AEO. (1 source)
 - [[rag]] - retrieval-augmented generation: giving models a library to look things up in; the technical core of hcho's flagship. (2 sources)
 - [[production-llm]] - the seven patterns that turn an LLM demo into a product: evals, RAG, fine-tuning, caching, guardrails, defensive UX, feedback. (1 source)
@@ -162,6 +162,8 @@ Counts: 34 sources, 10 areas, 158 concepts, 31 entities.
 - [[make-the-agent-report-its-cost]] - ask for the dollar cost on every run; the cheapest instrumentation there is.
 
 ### AI-assisted build workflow
+- [[risk-based-agent-governance]] - match verification and human authority to consequence and reversibility.
+- [[reproducible-agent-environment]] - reconstructible tooling and shared onboarding, with credentials kept outside version control.
 - [[graph-engineering]] - design the work as jobs, arrows, and shared state; the founder-legible name for the whole orchestration pillar, with a manual-first build ladder.
 - [[goal-plan-worklog]] - the "ultra goal" triad: an agent-authored, editable goal.md with a verifiable end-state, plus plan and worklog.
 - [[phased-implementation]] - research to plan to implement in small, testable phases; each phase = one PR.
@@ -251,6 +253,7 @@ Counts: 34 sources, 10 areas, 158 concepts, 31 entities.
 
 ## Sources
 
+- [[kun-agentic-app-development-workflow]] - local reconstruction of four Kun talks; intent, architecture, isolated integrated slices, independent validation, reproducibility, and fleet coordination. Secondary and overlapping evidence, with beginner adaptations marked.
 - [[your-ai-product-needs-evals]] - Hamel Husain (2024-03-29): the three-level eval framework and why evals unlock iteration.
 - [[ai-evals-error-analysis]] - Peter Yang with Hamel Husain and Shreya Shankar: human-led error discovery, narrow binary judges, and automated-evaluator precision.
 - [[agents-are-the-new-saas]] - Startup Ideas Podcast: an 8-part playbook for building and selling agent-SaaS.
@@ -316,9 +319,9 @@ The boundary between them is documented at the top of [[agent-operations]].
 
 `raw/` has no unprocessed AI sources from the LLM_Evals merge.
 
-## Raw inbox status (2026-08-21)
+## Raw inbox status (2026-09-16)
 
-All canonical AI-engineering sources currently in `raw/` have source summaries.
+All canonical AI-engineering sources currently in `raw/` have source summaries, including the new local Kun workflow guide ingested on 2026-09-16.
 The 2026-09-15 LLM_Evals merge added two unique raw sources and removed seven byte-identical copies.
 
 Two files added to `raw/` on 2026-08-21 are **not wiki material and were deliberately not ingested**: `dodgeball_double_elim_guide.html` (a tournament station guide) and `MM26_camp_scoreboard.xlsx` (a camp scoreboard).

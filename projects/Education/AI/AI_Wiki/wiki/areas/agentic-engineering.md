@@ -2,8 +2,8 @@
 type: area
 tags: [agentic-engineering, agents, craft, tooling, orchestration, verification]
 status: established
-source-count: 14
-last-updated: 2026-08-27
+source-count: 15
+last-updated: 2026-09-16
 ---
 
 # Agentic Engineering
@@ -102,6 +102,7 @@ What survives is [[ramble-then-structure]] (say the constraints, not the structu
 
 ## Sources
 
+- [[kun-agentic-app-development-workflow]] - local secondary reconstruction of four talks, with explicitly identified beginner adaptations.
 - [[ai-era-50-career-tips]] - names the discipline and its four pillars.
 - [[designing-loops-and-workflows]] - Tharic (Anthropic): the first primary source; mechanism selection, self-referential bias, planning as unknown-removal.
 - [[building-at-the-frontier]] - Boris Cherny (Anthropic): ablation, overhang, elicitation, 11-day and 15-day runs, dynamic workflows as a compute axis.
@@ -129,9 +130,15 @@ The area is not internally consistent, and the disagreements are the interesting
 | **More agents or fewer?** | [[dynamic-workflows-as-test-time-compute]] scales to thousands; [[designing-loops-and-workflows]] reports Tharic cutting from five sessions to one; [[one-orchestrator-agent]] keeps many agents but one interface. |
 | **Do instructions compound?** | [[building-skills]] and [[self-updating-config]] treat them as an asset; [[ablation-driven-development]] treats them as debt with a one-generation half-life. [[agents-md-as-neural-net]] proposes a third position: they are **weights**, trained continuously within a fixed budget - ablation is the periodic full retrain, the backward pass the weekly gradient step. |
 
+## Workflow reconstruction (2026-09-16)
+
+The secondary guide [[kun-agentic-app-development-workflow]] adds a beginner sequence for the existing direction, isolation, and verification practices.
+[[risk-based-agent-governance]] makes the review decision explicit, and [[reproducible-agent-environment]] connects onboarding to reconstructible tooling.
+It is overlapping evidence rather than four new independent confirmations, and its staged checklist still allows architecture review during integration.
+
 ## Synthesis
 
-The through-line across eleven sources is that **the scarce skill is designing a check the machine can run on itself, and everything else is being absorbed by the harness.**
+The through-line across these sources is that **the scarce skill is designing a check the machine can run on itself, and everything else is being absorbed by the harness.**
 
 Prompting was demoted (elicitation replaced it), context management is being demoted (compaction is eating it), and orchestration primitives are being partially demoted at the frontier (the model sustains long runs unaided).
 What has *not* been demoted, in any source, is verification.

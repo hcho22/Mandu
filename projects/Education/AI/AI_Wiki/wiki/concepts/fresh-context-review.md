@@ -2,8 +2,8 @@
 type: concept
 tags: [validation, code-review, context-engineering, evals]
 status: developing
-source-count: 2
-last-updated: 2026-07-28
+source-count: 3
+last-updated: 2026-09-16
 ---
 
 # Fresh-Context Review
@@ -24,6 +24,11 @@ That distinction matters for this page.
 Clearing the context window removes the reviewer's *belief* that the work is correct, which is what this page's original source identified.
 It does not remove the model's *preference* for its own style of output, which the eval literature measures directly ([[llm-as-judge]]: GPT-4 about +10%, Claude-v1 about +25% self-win rate).
 Fresh context is therefore necessary but not sufficient, and the fuller prescription is three roles with different context and different models: one coordinating, one doing, one verifying.
+
+## Workflow reconstruction (2026-09-16)
+
+[[kun-agentic-app-development-workflow]] separates the first implementation from review against original intent, real integration evidence, documentation, and a risk decision.
+The reconstruction reinforces the method but is overlapping secondary material, not another independent experiment.
 
 ## Synthesis
 

@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [system-design, security, architecture]
-status: seed
-source-count: 1
-last-updated: 2026-07-08
+status: developing
+source-count: 2
+last-updated: 2026-09-16
 ---
 
 # Client Never Touches the Database
@@ -15,6 +15,11 @@ The correct flow is always **client -> server -> database -> server -> client**.
 
 - If the client talks to the DB, anyone can open the Network tab (or inspect element) and read your API key/credentials - "you're absolutely cooked."
 - This is Ross's main reservation about the common Supabase pattern: it offers a server library, but most people query from the client and lean on row-level security (RLS), which he calls "a fool's game."
+
+## Workflow reconstruction (2026-09-16)
+
+[[kun-agentic-app-development-workflow]] supports server-owned business rules and domain actions instead of arbitrary client table mutation.
+Its example does not establish a universal ban on correctly secured direct client access, so Ross's stronger original claim remains source-specific rather than newly corroborated as a universal rule.
 
 ## Synthesis
 

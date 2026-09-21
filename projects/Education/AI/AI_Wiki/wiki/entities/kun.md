@@ -2,8 +2,8 @@
 type: entity
 tags: [person, agentic-engineering, tooling, solo-builder]
 status: developing
-source-count: 3
-last-updated: 2026-08-27
+source-count: 4
+last-updated: 2026-09-16
 ---
 
 # Kun
@@ -54,3 +54,10 @@ Both are judgments about *how much system this situation deserves*, which is a s
 
 The wiki's best-documented single build session, and the closest thing it has to a controlled test of [[agentic-engineering]] practice.
 Complements [[ryan-carson]] (who runs many agents and schedules his own attention) with the opposite ergonomic answer: many agents, **one** human interface.
+
+## Local workflow reconstruction (2026-09-16)
+
+[[kun-agentic-app-development-workflow]] is an uncredited local reconstruction of four talks attributed to Kun, with beginner prompts and checklists supplied by the compiler.
+It connects his build practice to reproducible workstation configuration, project-scoped Second Mates, and proportional review.
+This is a fourth cataloged source associated with Kun, not a fourth independent primary source; exact overlap and talk dates are unavailable.
+See [[reproducible-agent-environment]] and [[risk-based-agent-governance]].

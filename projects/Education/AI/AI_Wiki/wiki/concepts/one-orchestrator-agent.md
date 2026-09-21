@@ -2,8 +2,8 @@
 type: concept
 tags: [agentic-engineering, orchestration, sub-agents, cognitive-load]
 status: developing
-source-count: 1
-last-updated: 2026-08-01
+source-count: 2
+last-updated: 2026-09-16
 ---
 
 # One Orchestrator Agent
@@ -39,6 +39,11 @@ So the pattern keeps the fan-out benefits of [[sub-agents]] - parallelism, clean
 - He runs **calm mode** by default, hiding all tool calls, script runs, and skill invocations, so the terminal shows only his prompt and the orchestrator's response.
 His reasoning: with the weaker models of one or two years ago, watching tool calls was genuinely useful for catching wrong turns; with today's models he rarely needs to, so **the noise is no longer worth reading**.
 - **Persist dispatched task state to files.** That is what makes the pattern survive compaction ([[compaction-over-context-window]]).
+
+## Workflow reconstruction (2026-09-16)
+
+[[kun-agentic-app-development-workflow]] extends one human interface to project-scoped Second Mates with their own crews, remote placement, and fleet digests.
+This is a coordination pattern rather than proof that more hierarchy improves throughput; the guide recommends adding it only for a real bottleneck.
 
 ## Synthesis
 

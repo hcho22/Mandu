@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [agentic-engineering, skills, agents-md, claude-md, budget, context-engineering, method]
-status: seed
-source-count: 1
-last-updated: 2026-08-27
+status: developing
+source-count: 2
+last-updated: 2026-09-16
 ---
 
 # Skills as the Release Valve
@@ -24,6 +24,11 @@ For each candidate unit of instruction, decide by breadth and trigger:
 Without a budget, every rule looks free, so everything is appended and the file drifts into [[four-bad-memory-states|bloat]].
 With a budget, the memory file and the skill library become two halves of one system: the file carries the broad steering, and the skills carry the long tail of narrow, triggerable capability.
 This is the concrete mechanism behind the wiki's existing advice to keep memory files short - [[principles-over-constraints]] says most `CLAUDE.md` files are too long, and this rule says *where the trimmed content goes* rather than only that it should be trimmed.
+
+## Workflow reconstruction (2026-09-16)
+
+[[kun-agentic-app-development-workflow]] places conditional skills beside a small shared onboarding file and reproducible configuration across harnesses.
+This reinforces progressive loading without supplying a new numeric budget or a fresh evaluation of the memory-training claims.
 
 ## Synthesis
 

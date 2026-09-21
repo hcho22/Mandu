@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [testing, evals, agents, e2e, validation]
-status: seed
-source-count: 1
-last-updated: 2026-07-08
+status: developing
+source-count: 2
+last-updated: 2026-09-16
 ---
 
 # Agent Testing Instructions
@@ -15,6 +15,11 @@ The practice from [[building-products-with-agents]] of writing explicit end-to-e
 - Write the instructions as "how I would test this myself": drive the real app (e.g. an Electron desktop app via a browser), take screenshots, check for console errors.
 - Turn recurring core flows into automated E2E tests (e.g. Playwright) so they run on every change.
 - Guiding rule: whenever you do something manually, turn it into something the agent does for you - today's models can usually figure out how.
+
+## Workflow reconstruction (2026-09-16)
+
+[[kun-agentic-app-development-workflow]] turns testing instructions into a user journey with actual dependencies, persistence and retrieval, plus a meaningful permission or failure case.
+Build output and verifier doubles remain useful narrower evidence rather than substitutes for the full journey.
 
 ## Synthesis
 

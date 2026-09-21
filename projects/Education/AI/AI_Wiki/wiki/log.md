@@ -250,3 +250,13 @@ Counts now 28 sources, 10 areas, 137 concepts, 24 entities.
 - Preserved hcho's `## In my own words (hcho)` contamination section verbatim in [[data-contamination]].
 - Retired the parallel `LLM_Evals/wiki/`; `LLM_Evals/` now retains only its curriculum, `Exercise/`, and `log/`.
 - Updated [[evals]], [[index]], [[synthesis]], the wiki schema, and Mandu's active-wiki registry.
+
+## [2026-09-16] ingest | Agentic App Development Workflow (Kun reconstruction)
+- Source: [[kun-agentic-app-development-workflow]]; immutable raw file preserved byte-identical.
+- Created source summary plus [[risk-based-agent-governance]] and [[reproducible-agent-environment]].
+- Extended concepts: [[plan-code-validate]], [[one-orchestrator-agent]], [[fresh-context-review]], [[phased-implementation]], [[agent-testing-instructions]], [[ramble-then-structure]], [[design-system-not-a-design]], [[skills-as-release-valve]], [[define-the-end-to-end-gate]], [[review-plans-as-artifacts]], [[client-never-touches-the-database]].
+- Updated [[kun]], [[agentic-engineering]], [[agent-operations]], and [[system-design]], plus [[index]], [[synthesis]], and this [[log]].
+- Flagged secondary provenance, unavailable original URLs/dates, likely overlap with earlier Kun sources, and compiler-authored beginner recommendations.
+- Qualified the server-authority connection: the wallet example does not prove a universal ban on secured client database access.
+- Counts: 35 sources, 10 areas, 160 concepts, 31 entities; corrected the stale agentic-engineering index count to match its metadata plus this source.
+- No daily-log pointer added: no corresponding daily log exists for 2026-09-16.

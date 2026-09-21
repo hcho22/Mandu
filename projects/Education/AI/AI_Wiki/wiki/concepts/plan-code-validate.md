@@ -2,8 +2,8 @@
 type: concept
 tags: [workflow, agentic-engineering, planning]
 status: developing
-source-count: 2
-last-updated: 2026-07-28
+source-count: 3
+last-updated: 2026-09-16
 ---
 
 # Plan, Code, Validate
@@ -30,6 +30,11 @@ Both agree that a vague prompt bounces back constantly and that an objective def
 That same source also supplies the missing selection rule for the "objective definition of done" bullet.
 Whether you can express the check deterministically decides your mechanism: deterministic signal takes `/goal`, subjective signal takes a workflow with a rubric and a separate verifier ([[verification-signal-picks-the-mechanism]]).
 It independently confirms the visual-planning bullet as well, since HTML artifacts are used at Anthropic for plans, PRs, status reports, and incident reports.
+
+## Workflow reconstruction (2026-09-16)
+
+The local reconstruction [[kun-agentic-app-development-workflow]] makes the loop teachable as intent, parallel discovery, visual decisions, documented contracts, integrated implementation, and separate validation.
+It also keeps architecture review inside the integration loop, so its phase checklist does not overturn [[planning-is-removing-unknowns]].
 
 ## Synthesis
 

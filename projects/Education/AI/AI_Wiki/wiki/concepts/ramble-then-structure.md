@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [agentic-engineering, prompting, planning, requirements]
-status: seed
-source-count: 1
-last-updated: 2026-08-01
+status: developing
+source-count: 2
+last-updated: 2026-09-16
 ---
 
 # Ramble, Then Let the Agent Structure It
@@ -35,6 +35,11 @@ These are exactly the assumptions that get silently invented for you if you leav
 The market scout found nothing matching the full brief and recommended building.
 - **Mine the research twice.** The first pass answers "should we build this?"; a second pass over the same research answers "**what should we steal?**"
 That second pass produced the feature list that shaped the product - read-only kids view, money buckets, approval requests, lessons attached to real actions.
+
+## Workflow reconstruction (2026-09-16)
+
+[[kun-agentic-app-development-workflow]] expands the beginner prompt to include non-goals, data ownership, privacy, offline behavior, and unresolved assumptions.
+The agent organizes those inputs into a product contract; its capacity to impose structure does not authorize inventing missing requirements.
 
 ## Synthesis
 
