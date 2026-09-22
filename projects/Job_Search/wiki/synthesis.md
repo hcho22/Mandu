@@ -10,13 +10,13 @@ The top-level plan.
 This page answers: across hcho's target lanes, which roles are the strongest fit, which skills are the highest-leverage gaps to close, and in what order.
 It is rewritten as ingests shift the picture.
 
-> **Strategy note (2026-09-20):** the operational search broadened after the narrow strategy produced too few useful results. The role ranking below predates this expansion and should be refreshed as new sources are ingested.
+> **Strategy note (2026-09-22):** the operational search broadened after the narrow strategy produced too few useful results. The September 22 expansion adds evaluation-centered MLE and Data Scientist titles plus applied-ML roles, while retaining responsibility-based fit gates. The role ranking below predates this expansion and should be refreshed as new sources are ingested.
 
 ## The three search lanes
 
 - **Software quality and systems validation** - automation-heavy SDET, systems/product validation, test infrastructure, API/backend automation, mobile/iOS test, and release quality.
-- **AI quality and evaluation** - roles centered on evaluating and assuring production AI systems.
-- **AI product, integration, and technical delivery** - AI product engineering plus hands-on integration, implementation, customer engineering, developer support, and forward-deployed delivery.
+- **AI quality and evaluation** - roles centered on evaluating and assuring production AI systems, including Machine Learning Engineer, Evals; Machine Learning Evaluation Engineer; ML or Model Quality Engineer; ML Validation Engineer; LLM Evaluation Engineer; and Data Scientist roles centered on model evaluation, Trust and Safety modeling, AI quality, or AI reliability.
+- **AI product, integration, and technical delivery** - AI product engineering plus Applied Machine Learning Engineer, AI/ML Engineer, Data Scientist roles centered on applied ML, and hands-on integration, implementation, customer engineering, developer support, and forward-deployed delivery.
 
 The cross-cutting differentiator is **validation / evals rigor** from a decade of hardware QA, paired with current software automation and shipped AI/product work.
 The 2026-07-08 posting batch confirmed this is the right bet: evaluation is a named requirement in nearly every posting, across companies and role types.
