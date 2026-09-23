@@ -464,9 +464,11 @@ companies:
 
   - name: Notion
     bucket: ai-native-larger
-    location: San Francisco, CA
-    careers_url: ""  # TODO
+    location: San Francisco, CA / New York, NY / global offices (role-specific hybrid)
+    website_url: https://www.notion.com/product
+    careers_url: https://www.notion.com/careers
     pitch: "AI-native workspace assistant — Braintrust evals customer; aligns with the Mandu second-brain/builder identity"
+    watch_outs: "Relevant US engineering and AI-evaluation roles have historically required SF/NYC hybrid anchor days. Verify the full JD rather than trusting ATS remote metadata."
     priority: medium
 
   - name: Webflow
@@ -615,6 +617,15 @@ companies:
 
   # === Captain-selected three-lane expansion targets (added 2026-09-20) ===
   # Source discovery: BuiltIn referral links supplied by hcho; homepage URLs normalized and official career pages verified.
+  - name: WHOOP
+    bucket: quality-systems-validation
+    location: Boston, MA / global (role-specific; mostly onsite)
+    website_url: https://www.whoop.com/us/en/
+    careers_url: https://www.whoop.com/us/en/careers/
+    pitch: "Connected health wearable spanning sensors, firmware, mobile software, health insights, and personalized coaching - a strong bridge from senior hardware validation plus iOS product work and the Rep Today fitness domain"
+    watch_outs: "WHOOP says most roles are Boston-based and built around in-person collaboration. Keep only explicit US-remote roles or any future greater-LA opening, and separate software/system validation from pure hardware-only work."
+    priority: medium
+
   - name: GrayMatter Robotics
     bucket: quality-systems-validation
     location: Los Angeles, CA
@@ -799,6 +810,8 @@ companies:
     priority: high
 
 # === Browse live YC listings ===
+# Captain-supplied broad US discovery feed (Healthcare, B2B, Education, Consumer, Industrials):
+# https://www.ycombinator.com/companies?industry=Healthcare&industry=B2B&industry=Education&industry=Consumer&industry=Industrials&regions=United%20States%20of%20America
 # https://www.ycombinator.com/companies/industry/ai/san-francisco-bay-area/hiring
 # https://www.ycombinator.com/companies/industry/ai/new-york/hiring
 # https://www.ycombinator.com/companies/industry/generative-ai/san-francisco-bay-area/hiring

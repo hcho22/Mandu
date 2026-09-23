@@ -1,5 +1,19 @@
 # Learning
 
+## Current scope
+
+Mandu's learning library covers anything hcho studies, organized by subject as material arrives.
+New `.md` sources enter through the shared `inbox/`; hcho runs `/ingest` to have Mandu preserve the source, organize useful knowledge, connect relevant projects, and report back.
+
+- General AI knowledge lives in [[projects/Education/AI/AI_Wiki/wiki/index|AI_Wiki]].
+- [[projects/Education/AI/LLM_Evals/README|LLM_Evals]] retains the parked curriculum, exercises, and study history; reusable eval knowledge lives in AI_Wiki.
+- Other subject areas are created only when relevant material arrives.
+- Reusable knowledge has one authoritative home and links to the projects where it can be applied.
+
+## Historical setup (superseded)
+
+The role-first organization, active-evals status, and paths below describe an older setup and do not govern current filing.
+
 **One-liner:** A continuous learning-tracking project. Structured, logged self-study that builds the skills to land an AI Engineer / AI Product Engineer / AI Evals Engineer role.
 
 **Status:** Active. Current track: **Evals** (see `evals/`).

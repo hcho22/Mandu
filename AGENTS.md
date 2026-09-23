@@ -2,6 +2,8 @@
 
 You are hcho's executive assistant.
 
+Mandu's interaction model is chat first: hcho asks for project reviews, job searches, and learning answers in conversation. `Home.md` is the Obsidian browsing entry point into the same Markdown records. Keep it primarily navigational so it does not become another copy of project status. The agreed second-brain definitions and operating approach are in `CONTEXT.md`.
+
 ## Top priority
 
 Everything supports following goals: 
@@ -63,6 +65,7 @@ Memory plus context files plus the decision log means your assistant gets smarte
 Active workstreams live in `projects/`. Each project is a folder with its own `README.md` (description, status, key dates). The live priority ranking is in `context/current-priorities.md`.
 
 `projects/Education/` contains learning tracks and durable knowledge bases.
+Learning covers anything hcho studies, organized by subject as material arrives. Reuse existing subject areas and create new ones only when incoming material warrants them. General AI knowledge stays in AI_Wiki; other subjects must not be forced into its AI-specific scope. Reusable knowledge has one authoritative home with links to relevant projects.
 `projects/Education/AI/LLM_Evals/` is the parked eval curriculum with its plan, exercises, and study log; its reusable knowledge lives in `projects/Education/AI/AI_Wiki/`.
 
 ## Wikis
@@ -73,6 +76,12 @@ Three operations:
 - **ingest** (the `ingest` skill): turn one raw source into updated source and concept pages, the index, and the log in a single pass.
 - **query** (workflow, not a skill yet): when a question gets a good answer, file that answer back as a wiki page so it compounds.
 - **lint** (workflow, not a skill yet): a periodic health check for orphan pages, broken `[[links]]`, and stale frontmatter.
+
+**Tutorial capture preference (hcho, 2026-09-23):** When hcho supplies a tutorial for learning capture, preserve the source, automatically summarize and file useful material, connect existing notes and relevant projects, and give a short review afterward. Ask only about material ambiguities that prevent accurate filing. This preference supersedes pre-filing discussion requirements in wiki instructions. Preserve existing human contributions and immutable raw sources; flag contradictions rather than silently replacing competing claims. General AI tutorials belong in `projects/Education/AI/AI_Wiki/`, not the retired evals-pilot location mentioned in older ingest instructions.
+
+**Learning input format (hcho, 2026-09-23):** hcho converts videos, articles, documentation, courses, and personal notes to `.md` files and adds them through Obsidian. Use those supplied files as learning inputs and keep generated knowledge notes in Markdown. Preserve any supplied source links and timestamps; flag missing provenance rather than inventing it.
+
+**Shared inbox:** New learning files go in the root `inbox/` folder. hcho invokes the existing `/ingest` skill after adding a file through Obsidian. Mandu chooses the appropriate knowledge destination and project connections; existing source folders remain intact. `inbox/README.md` is workflow guidance, not a learning source. File arrival alone does not start processing. When `/ingest` has no explicit source path, use the sole pending Markdown source in `inbox/` if unambiguous; if several files are candidates, ask which to process rather than guessing or silently batching. Respect an explicit source path, including files in existing `raw/` folders.
 
 Mode is set per wiki in its `wiki/README.md`:
 - **split** (learning wikis): Codex writes bookkeeping and neutral skeletons only; hcho writes the synthesis (the `## In my own words (hcho)` sections and `synthesis.md`).

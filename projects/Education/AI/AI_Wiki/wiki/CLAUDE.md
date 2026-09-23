@@ -22,6 +22,8 @@ That spans two linked halves:
 - **The career:** how a hardware-QA engineer becomes a hired or self-employed AI builder - solo building, positioning, the job market, and the skills that matter.
 
 The input diet is whatever hcho curates into `raw/`: saved articles, blog posts, guidebooks, docs, and condensed summaries of talks, tutorials, and video transcripts.
+hcho supplies this learning material as `.md` files through Obsidian, handling conversion from the original medium before intake (confirmed 2026-09-23).
+Generated source summaries and knowledge notes also remain Markdown; preserve supplied provenance and identify missing source details without guessing.
 This is hcho's working knowledge base and his primary "second brain" for the AI-engineer pivot.
 It absorbed the scope of the planned YouTube-transcript wiki (folded in 2026-07-08), so AI-engineering talk and video-transcript material lives here, not in a separate wiki.
 
@@ -131,13 +133,13 @@ Steps, in order:
 
 1. **Read** the raw source in full. If it references images in `raw/assets/`, read the text first, then view the images you need for context.
 2. **Classify.** Note which craft or career areas it touches and whether another wiki owns any of them (cross-link if so).
-3. **Discuss takeaways** with hcho before writing. Surface the 3-6 key points, anything that contradicts existing pages, and what you propose to create or update. Get a quick steer on emphasis.
+3. **Identify takeaways and connections.** For tutorials supplied for learning capture, proceed automatically with filing and give hcho a short review afterward (preference confirmed 2026-09-23). Ask only about material ambiguities that prevent accurate filing. Flag contradictions with existing pages and preserve both sources. For other source types, discuss the 3-6 key points and proposed updates with hcho before writing unless already authorized to proceed.
 4. **Write the source page** in `sources/<slug>.md` with full frontmatter and provenance.
 5. **Update the wiki graph.** Touch every page the source affects: create or extend `entities/`, `concepts/`, and `areas/` pages; add `[[wikilinks]]` both directions; **flag contradictions explicitly** (note where new data challenges an old claim, with both dates, rather than silently overwriting). A single source may touch 5-15 pages.
 6. **Update `index.md`** - add new pages, refresh one-line summaries and source counts.
 7. **Revise `synthesis.md`** if the source shifts the big picture. Small sources may not; say so.
 8. **Append to `log.md`** a single entry (format below).
-9. **Report** what you created and changed as a short list of `[[links]]` so hcho can browse it in Obsidian.
+9. **Report** what you created and changed as a short list of `[[links]]` so hcho can browse it in Obsidian. For automatically filed tutorials, include the main takeaways, relevant project connections, and any contradictions or source-access limitations in this short review.
 
 Never modify the raw file. The raw source must be byte-identical after an ingest.
 
