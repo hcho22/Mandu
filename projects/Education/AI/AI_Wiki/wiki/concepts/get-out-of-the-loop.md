@@ -2,8 +2,8 @@
 type: concept
 tags: [agentic-engineering, workflow, scale, validation]
 status: established
-source-count: 6
-last-updated: 2026-08-01
+source-count: 7
+last-updated: 2026-09-23
 ---
 
 # Get Out of the Loop
@@ -48,6 +48,14 @@ The condition is unchanged and absolute: a verification loop the model can run o
 The pattern across six sources is now stable enough to state as a rule.
 **You can exit any loop you can replace with a check, and no loop you cannot.**
 Line-by-line review is replaceable ([[adversarial-code-review]]). Scope judgment, product feel, and direction are not - because no one has built the oracle for them.
+
+## Explicit counter-position: keep reading consequential code (2026-09-23)
+
+[[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] recommends evidence review and a skim for genuinely isolated leaf changes, but deep human review for shared infrastructure and consequential behavior.
+That directly qualifies the blanket statement above that line-by-line review is replaceable.
+The provisional reconciliation is risk-dependent review, captured by [[risk-based-agent-governance]], not a universal exit from reading code.
+Executable checks cover known requirements; passing them does not demonstrate that every consequential failure mode was specified.
+The new source is an undated secondary guide, so this records a substantive disagreement rather than an empirical verdict.
 
 ## Synthesis
 

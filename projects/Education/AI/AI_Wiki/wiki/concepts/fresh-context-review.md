@@ -2,8 +2,8 @@
 type: concept
 tags: [validation, code-review, context-engineering, evals]
 status: developing
-source-count: 3
-last-updated: 2026-09-16
+source-count: 4
+last-updated: 2026-09-23
 ---
 
 # Fresh-Context Review
@@ -29,6 +29,12 @@ Fresh context is therefore necessary but not sufficient, and the fuller prescrip
 
 [[kun-agentic-app-development-workflow]] separates the first implementation from review against original intent, real integration evidence, documentation, and a risk decision.
 The reconstruction reinforces the method but is overlapping secondary material, not another independent experiment.
+
+## Review handoff (2026-09-23)
+
+[[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] specifies a practical handoff: original requirements, current diff, necessary project context, and evidence for the current revision.
+A new reviewer supplied the entire implementation conversation may inherit the same assumptions despite being a separate agent.
+This guide adds a usable procedure, not an independent measurement of bias reduction.
 
 ## Synthesis
 

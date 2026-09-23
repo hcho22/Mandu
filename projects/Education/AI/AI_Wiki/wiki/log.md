@@ -260,3 +260,18 @@ Counts now 28 sources, 10 areas, 137 concepts, 24 entities.
 - Qualified the server-authority connection: the wallet example does not prove a universal ban on secured client database access.
 - Counts: 35 sources, 10 areas, 160 concepts, 31 entities; corrected the stale agentic-engineering index count to match its metadata plus this source.
 - No daily-log pointer added: no corresponding daily log exists for 2026-09-16.
+
+## [2026-09-23] ingest | Reviewing AI-Generated Code Safely
+- Preserved `092326_agentic-code-review-guide.md` byte-identical at [[projects/Education/AI/AI_Wiki/raw/agentic-code-review-guide|the raw source]] and cleared it from the shared inbox.
+- Created [[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] and [[merge-ready-vs-launch-ready]].
+- Extended [[risk-based-agent-governance]], [[adversarial-code-review]], [[fresh-context-review]], [[agent-testing-instructions]], and [[get-out-of-the-loop]], plus [[agentic-engineering]], [[projects/Education/AI/AI_Wiki/wiki/index|index]], and [[projects/Education/AI/AI_Wiki/wiki/synthesis|synthesis]].
+- Recorded a substantive tension: automated verification does not establish a universal exemption from reading high-risk shared code.
+- Source provenance remains incomplete; the compiler's examples, subjective 80/20 estimate, and AI-review superiority claim are not treated as independently verified facts.
+- Corrected adversarial-code-review's pre-existing source-count omission: its body already cited building-robust-apps-with-ai, so the new count is four including this guide.
+- Counts: 36 sources, 10 areas, 161 concepts, 31 entities. No corresponding daily study log exists for a pointer.
+
+## [2026-09-23] ingest | Cross-links from Marketing's digital-brain guide
+- The source is owned once in [[projects/Education/Marketing/wiki/sources/build-a-digital-brain-guide|Marketing]], with its own raw file, source summary, concepts, entity, index, synthesis, and log.
+- Extended [[personal-voice-skill]] and [[ai-operating-system]] with author-endorsement and content-library scope boundaries, and updated [[projects/Education/AI/AI_Wiki/wiki/synthesis|synthesis]].
+- Their source counts include the linked Marketing source; AI_Wiki's catalog count remains 36 because no duplicate summary was created here.
+- Existing general-AI knowledge stays in this wiki; Home, Education, and Mandu's registry link the new Marketing subject.

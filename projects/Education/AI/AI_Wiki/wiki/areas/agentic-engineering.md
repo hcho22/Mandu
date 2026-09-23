@@ -2,8 +2,8 @@
 type: area
 tags: [agentic-engineering, agents, craft, tooling, orchestration, verification]
 status: established
-source-count: 15
-last-updated: 2026-09-16
+source-count: 16
+last-updated: 2026-09-23
 ---
 
 # Agentic Engineering
@@ -73,6 +73,7 @@ What survives is [[ramble-then-structure]] (say the constraints, not the structu
 - [[long-horizon-agent-runs]] - days-to-weeks runs, and the three ingredients that enable them.
 
 ### Verification and the human's remaining job
+- [[merge-ready-vs-launch-ready]] - integration, user exposure, and operational recovery need distinct evidence.
 - [[define-the-end-to-end-gate]] - a concrete E2E done-condition, stated up front, forces the plan to expose gaps.
 - [[agent-testing-instructions]] - agents default to shallow tests; write how you would test it.
 - [[get-out-of-the-loop]] - don't review every line; build the automated reviewer.
@@ -102,6 +103,7 @@ What survives is [[ramble-then-structure]] (say the constraints, not the structu
 
 ## Sources
 
+- [[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] - derived guide on blast radius, requirement-linked evidence, independent review, feature gates, and gradual release; original speaker and video details missing.
 - [[kun-agentic-app-development-workflow]] - local secondary reconstruction of four talks, with explicitly identified beginner adaptations.
 - [[ai-era-50-career-tips]] - names the discipline and its four pillars.
 - [[designing-loops-and-workflows]] - Tharic (Anthropic): the first primary source; mechanism selection, self-referential bias, planning as unknown-removal.
@@ -124,6 +126,7 @@ The area is not internally consistent, and the disagreements are the interesting
 
 | Question | Positions |
 |---|---|
+| **Can humans stop reading code?** | [[get-out-of-the-loop]] favors automated replacement of review; [[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] reserves deep human inspection for consequential shared behavior. Review depth depends on risk, not merely passing checks. |
 | **Does context degrade?** | [[context-rot]] says start fresh; [[compaction-over-context-window]] reports four clean compactions. Probably capacity versus contamination, but unresolved. |
 | **Is orchestration scaffolding necessary?** | [[verification-signal-picks-the-mechanism]] gives a selection rule; [[building-at-the-frontier]] says `/go` and `/loop` are "helpful but not required" now. Likely a model-tier difference. |
 | **Local or cloud?** | [[cloud-agents-over-local]] versus the local worktrees of [[building-5-ai-products-solo]] and [[inside-conductor-workflow]]. Filed under [[agent-operations]]. |

@@ -2,8 +2,8 @@
 type: concept
 tags: [code-review, verification, agents, evals, quality]
 status: developing
-source-count: 2
-last-updated: 2026-07-08
+source-count: 4
+last-updated: 2026-09-23
 ---
 
 # Adversarial Code Review
@@ -21,6 +21,15 @@ Two complementary forms:
 - Being blunt/"mean" in the critique prompt measurably helps.
 - **Productized as a skill and a merge gate** ([[working-with-fable-5]]): Theo's Codex Review skill has a sub-agent run `codex review` on a diff/branch, then verifies its claims against the code before trusting them; and his long-running "goal" is forbidden from merging until independent automated reviewers (Bugbot, Macroscope, CodeRabbit) approve. Cross-model review becomes the gate that makes [[get-out-of-the-loop]] safe.
 - **Confidence-scored gate** ([[building-robust-apps-with-ai]]): Ross uses Greptile to review PRs with a summary + a 1-5 confidence score, and won't personally review or merge anything below 4/5 - a threshold that routes his scarce attention, a cousin of [[time-to-fix-as-health-signal]].
+
+## Concrete findings over confidence (2026-09-23)
+
+[[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] asks a separate reviewer to inspect the specification, diff, context, and validation evidence without inheriting the full implementation conversation.
+Each important finding needs a failure scenario and supporting evidence; validate it before making a fix, then rerun the affected checks on the new revision.
+The earlier claims above about reliable bug discovery, different models lacking shared blind spots, and blunt prompts measurably helping are practitioner claims, not universal guarantees established by this guide.
+Changing model or context may reduce shared assumptions without eliminating shared errors.
+The guide supplies no benchmark proving AI review is superior to human review.
+Source count includes the previously cited [[building-robust-apps-with-ai]], omitted from the old count of two, plus this new guide.
 
 ## Synthesis
 

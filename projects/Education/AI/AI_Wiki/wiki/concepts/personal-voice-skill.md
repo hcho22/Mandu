@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [agentic-engineering, skills, writing, voice, codex]
-status: seed
-source-count: 1
-last-updated: 2026-08-05
+status: developing
+source-count: 2
+last-updated: 2026-09-23
 ---
 
 # Personal Voice Skill
@@ -17,6 +17,13 @@ From [[running-life-on-codex]]: [[jason-openai-codex]] built a "write me" skill 
 - **Refined by audience, not just built once.** Jason tunes tone to shift by audience: external users vs team members, executive vs coworker. The nuance lives in the skill, edited over time.
 - **Kept current by re-reading recent output.** Because voice drifts, the maintenance move is periodic: "read the last 200 Slack messages / tweets / blog posts and tell me what's changed," then update the skill ([[self-improving-agent-loop]]).
 - **A channel each.** One skill per surface (email, Slack, Twitter) rather than one global "sound like me," because the same person writes differently in each - though these can later be bundled (see [[skills-vs-plugins]]).
+
+## Voice and endorsement are separate (2026-09-23)
+
+[[projects/Education/Marketing/wiki/sources/build-a-digital-brain-guide|The Nicholas Cole interview guide]] complements example-based voice learning with explicit vocabulary, rhythm, formality, and evidence preferences.
+Its emphasis on writing down choices qualifies the earlier “examples, not instructions” framing: examples and articulated preferences can work together.
+[[projects/Education/Marketing/wiki/concepts/approved-language-repurposing|Approved language repurposing]] adds a different boundary: matching style does not establish that the author endorses a belief or experienced a story.
+The marketing guide remains in its subject library; this cross-link is not a duplicate AI source summary.
 
 ## Synthesis
 

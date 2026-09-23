@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [agentic-engineering, risk, governance, review, production]
-status: seed
-source-count: 1
-last-updated: 2026-09-16
+status: developing
+source-count: 2
+last-updated: 2026-09-23
 ---
 
 # Risk-Based Agent Governance
@@ -21,6 +21,14 @@ Its categories are a decision aid, not an industry standard or proof that automa
 - Agent tests and fresh-context review inform a decision rather than granting production access.
 - Explain risk and remaining uncertainty in the PR so reviewers can assess the actual change.
 
+## Trunk, leaves, and release risk (2026-09-23)
+
+[[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] makes the triage concrete: trace dependencies and side effects before treating a change as an isolated leaf.
+Shared state, networking, permissions, and existing production behavior deserve closer review even when the diff is short.
+Feature gates reduce exposure only when they cover relevant integration points and the disabled path has been tested.
+[[merge-ready-vs-launch-ready]] separates integration evidence from the decision to expose users.
+This is additional secondary guidance, not a validated risk score or proof that a gate makes a change safe.
+
 ## Synthesis
 
 Proportionality directs scarce review attention toward incorrect or irreversible results that matter most.
@@ -31,3 +39,4 @@ The source's automatic-merge examples are context-specific, and its beginner rec
 ## Source
 
 - [[kun-agentic-app-development-workflow]] - secondary account of project policies plus compiler-authored beginner recommendations.
+- [[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] - unidentified speaker's review workflow, reconstructed as a beginner guide.

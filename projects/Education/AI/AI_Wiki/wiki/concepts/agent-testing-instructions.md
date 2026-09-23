@@ -2,8 +2,8 @@
 type: concept
 tags: [testing, evals, agents, e2e, validation]
 status: developing
-source-count: 2
-last-updated: 2026-09-16
+source-count: 3
+last-updated: 2026-09-23
 ---
 
 # Agent Testing Instructions
@@ -20,6 +20,14 @@ The practice from [[building-products-with-agents]] of writing explicit end-to-e
 
 [[kun-agentic-app-development-workflow]] turns testing instructions into a user journey with actual dependencies, persistence and retrieval, plus a meaningful permission or failure case.
 Build output and verifier doubles remain useful narrower evidence rather than substitutes for the full journey.
+
+## Requirement-linked evidence (2026-09-23)
+
+[[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] adds a useful check on the checks: would this evidence fail if the requirement were broken?
+A screenshot demonstrates appearance, while interaction, persistence, and side effects need behavioral evidence.
+Generated tests that reproduce implementation assumptions require review rather than automatic trust.
+After fixes, rerun relevant validation and replace stale evidence; a confidence score is not proof.
+For gated changes, test both states and the preserved control path, linking implementation validation to [[merge-ready-vs-launch-ready]].
 
 ## Synthesis
 

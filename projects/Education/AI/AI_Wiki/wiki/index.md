@@ -1,6 +1,6 @@
 ---
 type: index
-last-updated: 2026-09-16
+last-updated: 2026-09-23
 ---
 
 # Index
@@ -10,12 +10,13 @@ Every page is listed once under its category with a one-line summary.
 Read this first when answering a query, then drill into the linked pages.
 Updated on every ingest.
 
-Counts: 35 sources, 10 areas, 160 concepts, 31 entities.
+Counts: 36 sources, 10 areas, 161 concepts, 31 entities.
+Related subject library: [[projects/Education/Marketing/wiki/index|Marketing]], which owns the new content-source-library guide and is cross-linked rather than duplicated here.
 
 ## Areas
 
 - [[evals]] - how you measure whether an LLM product works and keep improving it past the demo stage. (14 sources)
-- [[agentic-engineering]] - building software *with* agents: direction, orchestration, verification, context, cost, and what the human is still for. (15 sources)
+- [[agentic-engineering]] - building software *with* agents: direction, orchestration, verification, context, cost, and what the human is still for. (16 sources)
 - [[agent-operations]] - running things *with* agents continuously: loops, routines, fleets, self-improvement, and agents pointed at distribution. (9 sources)
 - [[ai-career]] - navigating an AI-native tech career: staying valuable, positioning, growth, and the forward-deployed-engineer role. (4 sources)
 - [[agent-saas]] - building and selling agents as products: the business model, build ladder, and trust layer. (1 source)
@@ -162,6 +163,7 @@ Counts: 35 sources, 10 areas, 160 concepts, 31 entities.
 - [[make-the-agent-report-its-cost]] - ask for the dollar cost on every run; the cheapest instrumentation there is.
 
 ### AI-assisted build workflow
+- [[merge-ready-vs-launch-ready]] - integrating gated code, exposing users, and recovering from failures are distinct readiness questions.
 - [[risk-based-agent-governance]] - match verification and human authority to consequence and reversibility.
 - [[reproducible-agent-environment]] - reconstructible tooling and shared onboarding, with credentials kept outside version control.
 - [[graph-engineering]] - design the work as jobs, arrows, and shared state; the founder-legible name for the whole orchestration pillar, with a manual-first build ladder.
@@ -253,6 +255,7 @@ Counts: 35 sources, 10 areas, 160 concepts, 31 entities.
 
 ## Sources
 
+- [[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] - supplied beginner guide on risk-based review, current-revision evidence, independent scrutiny, and gated rollout; original speaker and video metadata unknown.
 - [[kun-agentic-app-development-workflow]] - local reconstruction of four Kun talks; intent, architecture, isolated integrated slices, independent validation, reproducibility, and fleet coordination. Secondary and overlapping evidence, with beginner adaptations marked.
 - [[your-ai-product-needs-evals]] - Hamel Husain (2024-03-29): the three-level eval framework and why evals unlock iteration.
 - [[ai-evals-error-analysis]] - Peter Yang with Hamel Husain and Shreya Shankar: human-led error discovery, narrow binary judges, and automated-evaluator precision.
@@ -299,6 +302,7 @@ The 2026-08-01 batch introduced real disagreements between sources. They are rec
 
 | Question | Positions | Where |
 |---|---|---|
+| **Does passing verification replace all code reading?** | [[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] retains deep human review for shared or consequential changes, qualifying broad automation claims in [[get-out-of-the-loop]]. | [[risk-based-agent-governance]] |
 | **Does context degrade as it fills?** | [[context-rot]] says start fresh; [[compaction-over-context-window]] reports four clean compactions | [[agentic-engineering]] |
 | **Local or cloud agents?** | [[cloud-agents-over-local]] vs the local worktrees of [[building-5-ai-products-solo]] and [[inside-conductor-workflow]] | [[agent-operations]] |
 | **Is orchestration scaffolding necessary?** | [[verification-signal-picks-the-mechanism]] gives a selection rule; [[building-at-the-frontier]] says `/go` and `/loop` are "helpful but not required" now | [[agentic-engineering]] |

@@ -30,6 +30,7 @@ Ask Mandu: “Find current roles that fit my experience and preferences.”
 - [[inbox/README|Inbox instructions]]
 - [[projects/Education/README|Learning library]]
 - [[projects/Education/AI/AI_Wiki/wiki/index|AI knowledge]]
+- [[projects/Education/Marketing/wiki/index|Marketing knowledge]]
 - [[projects/Education/AI/LLM_Evals/README|Evals study track]]
 
 Drop a `.md` file into `inbox/`, then run `/ingest`.

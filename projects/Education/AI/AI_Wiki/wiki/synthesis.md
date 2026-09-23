@@ -1,8 +1,8 @@
 ---
 type: synthesis
-last-updated: 2026-09-16
+last-updated: 2026-09-23
 status: established
-source-count: 35
+source-count: 36
 ---
 
 # Synthesis
@@ -285,11 +285,23 @@ The evidence caveat matters here: a local reconstruction of four undated talks c
 Its documentation package and beginner team sizes are the compiler's recommendations, and likely overlap with earlier Kun sources remains unmapped.
 The architecture checklist is therefore a teaching aid, not a new obligation to add more infrastructure or to skip continuing discovery during implementation.
 
+## What the 2026-09-23 inbox ingest added
+
+[[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] sharpens the verification spine with blast-radius-based review and [[merge-ready-vs-launch-ready]].
+Its recommendation to read consequential shared code closely qualifies the stronger claims in [[get-out-of-the-loop]] that review can simply be replaced by automated checks.
+The provisional synthesis is to scale human inspection with consequences and reversibility while requiring current, requirement-linked evidence from agents.
+This is an undated derived guide, not independent experimental validation of that policy.
+
+The companion content guide belongs in [[projects/Education/Marketing/wiki/index|the new Marketing library]], not as another AI source copy.
+Its [[projects/Education/Marketing/wiki/concepts/approved-language-repurposing|author-endorsement boundary]] extends [[personal-voice-skill]]: sounding like someone does not establish the truth of a personal story or their agreement with a claim.
+Its [[projects/Education/Marketing/wiki/concepts/content-source-library|content library]] also clarifies that “digital brain” is narrower there than the operational role described by [[ai-operating-system]].
+Both additions preserve a useful distinction: collected text is evidence to interpret, not automatic authority to act or speak for its owner.
+
 ## Open threads
 
 - The [[rag]] and [[production-llm]] hubs are now open and substantive; the prompting hub is still empty (folded loosely into production-llm and the career curriculum for now).
 - The eval area is [[evals|established]] (14 sources) with a coherent stance: define criteria up front, prefer functional testing, triangulate methods, measure reproducibly, and evaluate on your own uncontaminated data - now with the added caveat that the suite itself has a one-to-three-generation half-life.
-- **Canonical AI sources in `raw/` are processed as of 2026-09-16.** The wiki now catalogs 35 sources, including the local Kun workflow reconstruction. The next ingest needs new material curated in. (Two non-wiki files landed in `raw/` on 2026-08-21 - a dodgeball tournament guide and a camp scoreboard - and were deliberately left unprocessed; they need a home elsewhere in Mandu.)
+- **The two new inbox guides are processed as of 2026-09-23.** AI_Wiki now catalogs 36 sources; the digital-brain content guide is owned by the new Marketing library. Two older non-wiki files in AI `raw/` (a dodgeball tournament guide and a camp scoreboard) remain outside this ingest; their routing still needs attention.
 - **Build the missing half of the distribution system.** [[building-marketing-agents]] and [[one-person-marketing-team]] are opposite halves - loop-plus-data and context-layer - and nothing documents the union. The cheap half is a weekend of markdown; the expensive half only matters at real spend. This is the most concrete build target the distribution material has produced.
 - **Confirm or drop the [[nate-herk]] identification.** The "Nate" of [[ai-operating-system-tutorial]] (2026-07-08) is probably the same creator, on style, audience, and subject matter, but neither raw file states the earlier surname. If confirmed, that entity goes to two sources and the two form one arc from personal AI OS to business production system. Currently annotated, not merged.
 - **Instrument cost by default.** [[make-the-agent-report-its-cost]] is the cheapest unadopted practice in the wiki: one clause in a prompt, and it is the prerequisite for every later cost analysis. Worth applying to hcho's own long-running loops before it is needed.

@@ -99,6 +99,7 @@ De-duplication, so the wiki does not become a fifth redundant memory layer:
 Interview talking points from wiki work consolidate to `projects/job-search/interview-prep.md`, not per-wiki duplicate lists.
 
 Active wikis:
+- Marketing: `projects/Education/Marketing/wiki/` (mode: full; reusable marketing knowledge, including content creation and distribution).
 - Purvia (formerly Agentic RAG): `projects/Purvia/wiki/` (mode: full).
 - AI_Wiki: `projects/Education/AI/AI_Wiki/wiki/` (mode: full; the only general AI wiki, including evals, models, RAG, and agentic engineering).
 - Job-Search Roles: `projects/Job_Search/wiki/` (mode: full).

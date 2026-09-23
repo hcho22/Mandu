@@ -6,6 +6,7 @@ Mandu's learning library covers anything hcho studies, organized by subject as m
 New `.md` sources enter through the shared `inbox/`; hcho runs `/ingest` to have Mandu preserve the source, organize useful knowledge, connect relevant projects, and report back.
 
 - General AI knowledge lives in [[projects/Education/AI/AI_Wiki/wiki/index|AI_Wiki]].
+- Marketing knowledge lives in [[projects/Education/Marketing/wiki/index|Marketing]], beginning with content libraries and source-grounded writing.
 - [[projects/Education/AI/LLM_Evals/README|LLM_Evals]] retains the parked curriculum, exercises, and study history; reusable eval knowledge lives in AI_Wiki.
 - Other subject areas are created only when relevant material arrives.
 - Reusable knowledge has one authoritative home and links to the projects where it can be applied.
