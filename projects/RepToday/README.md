@@ -14,7 +14,9 @@ The reasoning behind the promotion: Purvia is the stronger portfolio piece and t
 
 ## Status
 
-_Update this line as the project moves. Last reviewed: 2026-09-14._
+_Last verified: 2026-09-28._
+
+- **⚠️ LIVE COACH AUTHENTICATION DIAGNOSIS IN PROGRESS (through PR #173).** Default-off bounded guard diagnostics (#172) and a native Keychain-only migration preflight (#173) are merged with green CI. The production stage/release diagnostic remains unrun, and the live assertion-challenge HTTP 401 is unresolved. The canonical checkout is seven commits behind with seven local modifications; preserve them before syncing. See `log/2026-09-28.md`.
 
 - **✅ DEVELOPMENT SYNC THROUGH PR #155 (2026-09-14, `origin/main` `0ee5088`).** Full detail in `log/2026-09-14.md`.
   - **Production telemetry is provisioned and Release-validated (#154, `fbcdcc7`, 2026-09-01).** Release now targets Convex production deployment `sensible-spider-810`; the captain-owned Keychain token is injected only by `tools/archive-release.sh`, and live opted-in/opted-out validation proved persistence versus zero requests. The provisioning blocker is closed. Still open: TestFlight-cohort reconciliation (US-T13), fire-and-forget loss on suspension/termination, and missed later trial-to-paid `subscribe` events.

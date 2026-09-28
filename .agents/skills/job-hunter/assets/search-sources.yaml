@@ -1,0 +1,78 @@
+# Search-source registry for the combined full-time and freelance job scan.
+# `enabled` means the source is included by default when hcho asks for a broad or weekly search.
+
+full_time:
+  - name: Curated employer and ATS boards
+    enabled: true
+    kind: direct
+    url: .agents/skills/job-hunter/assets/companies.yaml
+    authority: canonical
+    notes: "Primary source for role status, requirements, location, compensation, and applications."
+
+  - name: Indeed
+    enabled: true
+    kind: aggregator
+    url: https://www.indeed.com/jobs
+    authority: discovery
+    notes: "Search broadly, de-duplicate, then verify on the employer or ATS page when one exists."
+
+  - name: Wellfound
+    enabled: true
+    kind: startup-board
+    url: https://wellfound.com/jobs
+    authority: discovery
+    notes: "Useful for remote startup roles; verify compensation, location restrictions, and the employer listing."
+
+  - name: Y Combinator Jobs
+    enabled: true
+    kind: startup-board
+    url: https://www.ycombinator.com/jobs
+    authority: source
+    notes: "Use exact company/job pages and preserve stated geography and compensation."
+
+  - name: Built In
+    enabled: true
+    kind: aggregator
+    url: https://builtin.com/jobs
+    authority: discovery
+    notes: "Focus on remote-US and greater-Los-Angeles technology roles; verify at the employer when possible."
+
+freelance:
+  - name: Upwork
+    enabled: true
+    kind: marketplace
+    url: https://www.upwork.com/freelance-jobs/
+    authority: source
+    notes: "Primary freelance source. Prefer fresh, bounded AI integration, RAG, agent, FastAPI/React, React Native/Expo, and automation/validation work."
+
+  - name: Contra
+    enabled: true
+    kind: marketplace
+    url: https://contra.com/opportunities
+    authority: source
+    notes: "Secondary freelance source when exact opportunity pages and terms are publicly accessible."
+
+  - name: Braintrust
+    enabled: true
+    kind: talent-network
+    url: https://app.usebraintrust.com/jobs
+    authority: source
+    notes: "Use for credible contract or contract-to-hire engineering work; verify access and engagement terms."
+
+query_families:
+  software_quality_and_validation:
+    - "SDET API automation Playwright Python remote"
+    - "software test engineer AI API SDK remote"
+    - "QA automation FastAPI React remote"
+    - "systems validation software automation Los Angeles"
+  ai_quality_and_evaluation:
+    - "LLM evaluation engineer remote"
+    - "AI quality engineer RAG agents remote"
+    - "model evaluation reliability engineer remote"
+    - "AI test automation engineer remote"
+  ai_product_integration_and_delivery:
+    - "applied AI engineer RAG agents FastAPI remote"
+    - "AI integration engineer OpenAI Claude API remote"
+    - "forward deployed AI engineer remote"
+    - "React Native Expo AI developer remote"
+    - "MCP server Python TypeScript freelance"

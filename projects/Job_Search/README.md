@@ -19,6 +19,18 @@ Preserve qualified AI-builder roles; the broader lanes add credible opportunitie
 
 Use an approximate **40/35/25 application mix** across the three lanes as a starting portfolio, never as a quota that justifies weak matches. The job-hunter skill remains responsible for the exact location, compensation, seniority, evidence, and fit gates.
 
+## Search sources and engagement types (updated 2026-09-28)
+
+Broad and weekly searches now cover three source classes by default:
+
+1. **Direct employer and ATS pages** from the curated company list. These remain authoritative for whether a role is live and for its requirements, location, compensation, and application link.
+2. **Full-time discovery sites**, led by Indeed and supplemented by Wellfound, YC Jobs, and Built In. Aggregator results expand coverage; Mandu de-duplicates them and verifies the employer or ATS version when available.
+3. **Freelance marketplaces**, led by Upwork and supplemented by Contra and Braintrust when exact listings are accessible.
+
+Full-time roles retain the existing remote-US/Burbank-area, Fit 4–5, seniority, and approximate $150K compensation-top gates. A strong role with undisclosed compensation is separated as conditional rather than counted as qualified.
+
+Freelance work uses the same three skill lanes and Fit 4–5 bar, with contract-specific checks for freshness, scope, rate or fixed-price economics, client history, proposal competition, and platform integrity. Prioritize AI/RAG/agent integrations, FastAPI/React applications, React Native/Expo work, MCP/API integrations, and software or AI validation projects. Exclude manual QA, annotation, unpaid trials, off-platform payment requests, agency-only engagements, vague full-product builds with token budgets, and projects whose core specialty is unsupported. Track these as `To propose` / `Proposed` / `Interviewing` / `Hired` / `Declined` / `Closed` / `Passed`, separately from full-time application statuses.
+
 The existing company tiers remain a starting source list, not a restriction on role lane:
 
 - YC-backed agentic / applied-AI startups (FDE / Applied AI shaped).
@@ -31,9 +43,10 @@ The existing company tiers remain a starting source list, not a restriction on r
 
 ## Assets and tooling
 
-- **Skill:** `job-hunter` (now at `.claude/skills/job-hunter/`) scans career pages and ranks roles by fit. Invoke it to search for jobs.
-- **Target list:** `.claude/skills/job-hunter/assets/companies.yaml` (the company list with tiers).
-- **Company-list reference:** `.claude/skills/job-hunter/references/company-list.md`.
+- **Skill:** `job-hunter` at `.agents/skills/job-hunter/` searches direct employers, broad job sites, and freelance marketplaces, then ranks opportunities by fit and work quality.
+- **Target list:** `.agents/skills/job-hunter/assets/companies.yaml` (the company list with tiers).
+- **Search-source registry:** `.agents/skills/job-hunter/assets/search-sources.yaml` (direct, aggregator, startup-board, and freelance sources plus query families).
+- **Company-list reference:** `.agents/skills/job-hunter/references/company-list.md`.
 - **Resume:** `Hyung_Cho_Resume.docx` (in this folder).
 - **Interview prep:** `interview-prep.md` consolidates talking points across projects and wikis.
 - **Roles wiki:** `wiki/` (mode full) maps target roles, their qualifications/skills, and hcho's path into each; sibling `raw/` inbox. Schema in `wiki/CLAUDE.md`. Drop a posting or role guide into `raw/` and say "ingest this."

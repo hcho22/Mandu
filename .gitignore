@@ -4,3 +4,6 @@ CLAUDE.local.md
 node_modules/
 .DS_Store
 .obsidian/
+
+# Separate Rep Today development checkout; keep it out of the Mandu notes repository.
+projects/RepToday/repo/

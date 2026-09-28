@@ -6,7 +6,7 @@
 
 **Repo:** https://github.com/hcho22/Purvia (public; formerly `hcho22/Agentic_RAG`)
 
-**Last dev-repo activity:** 2026-08-28 (HEAD `a982d04`, PR #141; local firstmate checkout fetched and verified against `origin/main`). The headline since the 2026-08-21 sync (which was HEAD `14de073`, PR #120): **the eval-receipts-rot crisis is resolved at the root.**
+**Last verified dev-repo activity:** 2026-09-27 (GitHub through PR #167; the local firstmate checkout is stale and was not mutated). The receipt-publishing path is active, but two evaluation blockers remain: the E7 safety gate failed for a second consecutive week at 18.2% false resolves against a 5% ceiling, and the RAGAS weekly run was cancelled for a second consecutive week without producing a measured snapshot. See `log/2026-09-28.md`. The earlier conclusion that the eval-receipts-rot crisis was fixed at the publishing layer still holds.
 
 - **✅ Receipts-rot crisis over (resolved 2026-08-21 → 08-28).** For three syncs the tracker described the same slow-motion failure - the nightly series stopped publishing to `main`, receipts stranded on `eval-publish/*` branches, "kill criterion 4 in motion." Root cause: the auto-merge publish path (#109) authenticated with `EVAL_PUBLISH_TOKEN`, an expiring/empty PAT. **#121** (`999ae74`, 2026-08-21) fixes that at the root - the eval-publish PR token is now **minted at run time from a GitHub App** (`EVAL_PUBLISH_APP_ID` / `EVAL_PUBLISH_APP_PRIVATE_KEY`), retiring the failure mode that recurred four times. **#128-#131** (2026-08-24) backfilled the stranded 08-20/08-21 permissions-scale + retrieval nightlies onto `main` verbatim. **#132-#136** (08-27) and **#138-#140** (08-28) are the proof the series now publishes on its own under the `app/purvia-eval-publish[bot]` author - verified in firstmate `main`: `docs/permissions-scale-nightly/` and `docs/nightly/` both carry 2026-08-27 and 2026-08-28, and the 08-28 permissions-scale snapshot is **1.000 across all cells**.
 - **✅ RAGAS honesty correction (#137, `53a79ce`, 2026-08-28).** The README, `CONTEXT.md`, `docs/evals.md`, and the weekly workflow now disclose that the four canonical RAGAS-library scores are **not yet computed** - `score_with_ragas()` (`evals/retrieval/ragas.py`) is still the US-001 scaffold returning nothing, so the RAGAS weekly table renders unmeasured and its gate stays inert. Nuance preserved: the weekly page's **retrieval metrics and cross-family Claude-judge scores (1-5 Likert) are real**; only the RAGAS 0-1 scores are unmeasured. A new "Who should not use this" section was added.
@@ -24,7 +24,7 @@ Practically, at #2 the cheap standing obligation is **keeping the eval receipts 
 
 ---
 
-## Status (baseline 2026-08-02; current state in "Last dev-repo activity" above, updated 2026-08-28)
+## Status (baseline 2026-08-02; current state in "Last verified dev-repo activity" above, verified 2026-09-28)
 
 **Current one-line read (2026-08-28):** the eval-receipts-rot crisis that dominated the last three syncs is resolved at the root (#121), the series is publishing to `main` again, the README is now honest about the unmeasured RAGAS scores (#137), and RLS was hardened (#126/#127). Launch preconditions 1 and 2 are now green (see below). The binding constraint is unchanged: **0 of 10 buyer interviews.** The rest of this section is the 2026-08-02 baseline, kept intact for history.
 

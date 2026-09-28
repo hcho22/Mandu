@@ -1,10 +1,17 @@
 # Current Priorities
 
-_Last updated: 2026-09-14. Update this file when your focus shifts._
+**2026-09-28 verified review (priority order unchanged):**
+
+- **Rep Today:** GitHub is green through merged PR #173. Bounded Coach guard diagnostics and a Keychain-only migration preflight landed, but the production stage/release diagnostic and live Coach 401 resolution remain unverified. The canonical checkout is seven commits behind with seven local modifications that must be preserved. See `projects/RepToday/log/2026-09-28.md`.
+- **Purvia:** The 2026-09-27 E7 safety snapshot improved to 18.2% false resolves from 27.3%, but still fails the 5% ceiling and has two parity mismatches. RAGAS was cancelled for a second consecutive week without a measured snapshot. See `projects/Purvia/log/2026-09-28.md`.
+- **Job search:** The 2026-09-28 weekly scan found 8 live Fit 4–5 openings across four companies: three newly surfaced and five carried forward. The top application queue starts with OpenRouter, Machinify, Titan AI, and Cohere Integrations. No applications were submitted. See `projects/Job_Search/scans/2026-09-28.md`.
+
+_Last verified: 2026-09-28. Update priority order only when hcho's focus shifts._
 
 **📍 CANONICAL REPO: `/Users/hcho/firstmate/projects/RepToday`** (decided 2026-08-05).
-Active Rep Today development lives here (branch `main`, through PR #155 / `0ee5088`), driven by the `firstmate`
-tool. The
+Active Rep Today development lives here, driven by the `firstmate` tool. GitHub `main` is verified
+through PR #173 / `7c97fa7`; the local canonical checkout is at PR #168, seven commits behind, with
+seven modified files that must be preserved before syncing. The
 old checkout `/Users/hcho/Developer/RepToday` is **retired/stale** (frozen at PR #68,
 2026-07-31) - do not use it; sync or delete it at will. Path references across these docs have
 been repointed to firstmate. The full private GTM package now lives in Mandu at

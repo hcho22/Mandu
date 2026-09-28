@@ -33,7 +33,7 @@ Everything supports following goals:
 Skills are reusable workflows in `.Codex/skills/`. Each skill is a folder with a `SKILL.md` at `.Codex/skills/<skill-name>/SKILL.md`, and Codex auto-discovers them.
 
 Active skills:
-- `job-hunter`: scans target company career pages and ranks roles by fit against the resume.
+- `job-hunter`: searches direct employer pages, full-time aggregators such as Indeed, and freelance marketplaces led by Upwork; ranks opportunities by resume fit and engagement quality.
 - `daily-log`: creates or opens today's daily log for a tracked project (defaults to HabitLoop).
 - `prd`: generates a Product Requirements Document for a new feature.
 - `ingest`: files one raw source into a wiki, updating every page it touches in a single pass.

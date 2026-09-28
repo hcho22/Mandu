@@ -1,25 +1,27 @@
 ---
 name: job-hunter
-description: Scan a curated list of company career pages and surface roles the user is qualified for, ranked by fit against their resume. Use this skill whenever the user asks to "search for jobs", "find roles", "look at careers pages", "see who's hiring", or mentions specific companies they want to apply to. Also trigger when the user provides a list of companies (AI-native, startups, etc.) and wants to know which ones have open positions matching their background. Produces a ranked shortlist with role title, link, fit score, and a one-line rationale.
+description: Search employer career pages, job aggregators such as Indeed, and freelance marketplaces such as Upwork for full-time roles and paid contracts that match the user's current skills. Rank verified opportunities against the resume and engagement-quality gates. Use whenever the user asks to search for jobs, contracts, freelance work, gigs, clients, or companies hiring.
 ---
 
 # Job Hunter
 
-A skill for systematically searching a target list of companies for roles the user is qualified for, given their resume and stated preferences.
+A skill for systematically searching direct employers, broad job sites, and freelance marketplaces for work the user is qualified to perform.
 
 ## When to use this skill
 
 Trigger this skill when the user wants to:
 - Search a specific list of company career pages for open roles
+- Search broad job sites such as Indeed, Wellfound, Built In, or YC Jobs
+- Search freelance marketplaces such as Upwork or Contra for paid project work
 - Find roles matching their resume across multiple companies
-- Get a ranked shortlist of "apply now" candidates with fit rationale
+- Get a ranked shortlist of "apply now" roles and "propose now" contracts with fit rationale
 - Filter a broad company list (e.g., "10 AI startups") down to ones actively hiring for their skillset
 
 ## Inputs needed
 
 Before searching, confirm:
 1. **Resume** — should be in context already (uploaded file or pasted). If not, ask the user to provide it.
-2. **Target companies** — a list. May come as: a typed list, an uploaded image/screenshot, a CSV, or a category ("5 AI-native companies"). If only a category is given, ask the user to specify names OR confirm they want you to propose the list.
+2. **Search scope** — a company list is optional. When the user does not specify sources, run the combined source mix in `assets/search-sources.yaml`: direct employer/ATS pages, full-time aggregators, startup job boards, and freelance marketplaces. If the user names a company, site, engagement type, or category, add that source without narrowing away the default mix unless they explicitly request a narrow scan.
 3. **Role preferences** — **HARD FILTER**: a role must fit at least one of the three lanes below. Judge the responsibilities, not the title.
    - **Software quality and systems validation:** SDET; Software QA Automation Engineer; Systems Validation Engineer; Verification and Validation Engineer; Product Quality Engineer; Test Infrastructure Engineer; API or Backend Test Automation Engineer; Mobile QA Automation Engineer; iOS Test Engineer; Release Quality Engineer. Prefer automation, APIs, mobile, connected devices, developer tools, or AI products. Exclude manual-only QA and pure hardware-only validation with no meaningful software or automation ownership.
    - **AI quality and evaluation:** AI Quality Engineer; AI Test Engineer; AI/ML Validation Engineer; **Machine Learning Engineer, Evals**; **Machine Learning Evaluation Engineer**; **ML Quality Engineer**; **Model Quality Engineer**; **ML Validation Engineer**; **LLM Evaluation Engineer**; Model Evaluation Engineer; AI Reliability Engineer; ML Systems QA Engineer; Evaluation Platform Engineer; Responsible AI Test Engineer; **Data Scientist, Model Evaluation**; **Data Scientist, Trust and Safety**; **Data Scientist, AI Quality**; **Data Scientist, AI Reliability**; and AI red-team roles centered on systematic product evaluation rather than security research. For Data Scientist, Trust and Safety, keep roles centered on ML models, anomaly or abuse detection, model performance, evaluation, or reliability; exclude policy operations, conventional product analytics, and reporting-led roles. Hardware-validation tenure demonstrates rigor, test design, and failure analysis, but does not substitute for a required multi-year record of shipping software test infrastructure or evaluation systems.
@@ -30,27 +32,40 @@ Before searching, confirm:
    Preserve qualified AI-builder roles while broadening beyond them. A role qualifies if it fits one lane and clears the location, compensation, seniority, and evidence gates below.
 4. **Location** — **HARD FILTER**: keep only roles that are **remote (US-eligible)** OR **onsite/hybrid within 25 miles of Burbank, CA** (greater LA — e.g. Burbank, Glendale, Pasadena, Hollywood, Studio City, North Hollywood, Universal City, Sherman Oaks, Downtown LA). Drop every other onsite/relocation role, even strong fits. hcho is not relocating.
 5. **Stretch tolerance** — the user may want to include roles that are a stretch (e.g., "apply even if it's a borderline match"). Borderline roles that still score Fit 4 are kept and marked; Fit 3 and below are dropped (see Step 3).
+6. **Opportunity-specific economics:**
+   - **Full-time roles:** keep the standing compensation gate: a disclosed band should top at approximately **$150K or more**. If compensation is undisclosed, a substantive Fit 4–5 may be shown only in a clearly separated `Compensation unverified` section and does not count as qualified.
+   - **Freelance contracts:** do not apply the annual-salary gate. Evaluate the stated hourly rate or fixed-price scope instead. Exclude obviously uneconomic scopes, such as a multi-week production application for a token fixed price, unless the listing clearly describes a small bounded deliverable. Keep rate-undisclosed contracts only when the scope and client signals are credible, and mark `Verify rate`.
 
 If any of these are missing, ask in a single batched question before starting the search.
 
 ## Workflow
 
-### Step 1: Build the target list
-Compile the companies into a structured list. For each, identify the canonical careers page URL. Common patterns:
+### Step 1: Build the source plan
+
+Start from `assets/search-sources.yaml` and the curated companies in `assets/companies.yaml`. A normal weekly scan covers three source classes:
+
+1. **Direct employers and ATS boards** — the curated company list and newly discovered companies.
+2. **Full-time discovery sites** — Indeed first, then the enabled startup and technology job boards.
+3. **Freelance marketplaces** — Upwork first, then other enabled marketplaces when accessible.
+
+For each discovered employer, identify the canonical careers page URL. Common patterns:
 - `{company}.com/careers`
 - `{company}.com/jobs`
 - `jobs.lever.co/{company}`
 - `boards.greenhouse.io/{company}`
 - `{company}.com/about/careers`
 
-If a careers URL is unknown, run a web search: `"{company} careers page"` and pick the official domain (not LinkedIn/Indeed aggregators — go to the source).
+Use Indeed and other aggregators for discovery. When an employer or ATS version exists, verify the role there and use the direct apply link. If only an exact aggregator listing is readable and current, keep it with `Source-only — verify before applying`; never silently convert a search snippet into a verified opening.
 
-### Step 2: Fetch and parse each careers page
-For each company, fetch the careers page. Look for:
+### Step 2: Fetch and parse each source
+
+For employer pages and full-time aggregators, look for:
 - Role titles
 - Location / remote status
 - Team / department
 - Direct apply link
+- Posted or updated date
+- Compensation when disclosed
 
 **Apply the hard filters immediately**: discard any role that fits none of the three lanes (see "Role preferences"), AND discard any role that is **not remote (US-eligible) and not within 25 miles of Burbank, CA** (see "Location"). Don't carry manual-only QA, annotation, generic support, quota-dominated sales, Staff/Principal/Lead, research/PhD-gated, unsupported-specialty, or out-of-area onsite roles into scoring. Mid-level and Senior IC roles may qualify in every lane when their actual requirements are honestly clearable.
 
@@ -58,6 +73,23 @@ If the careers page is a JavaScript-heavy app (common with Greenhouse, Lever, As
 - Look for the underlying job board URL (often linked from the page)
 - Try the ATS directly: `boards.greenhouse.io/{slug}`, `jobs.lever.co/{slug}`, `jobs.ashbyhq.com/{slug}`
 - If still blocked, note "careers page requires JS — manual review needed" and move on
+
+For Indeed and other aggregators:
+
+- search each lane using responsibility and stack terms, not just titles;
+- de-duplicate the same role across sources by employer, title, location, and requisition ID;
+- prefer the employer/ATS description and apply link when available;
+- record the aggregator as the discovery source; and
+- treat stale snippets, missing exact pages, or contradictory location data as unverified rather than live.
+
+For Upwork and other freelance marketplaces, capture:
+
+- exact job URL, posting date, location eligibility, hourly/fixed-price terms, expected duration, and weekly hours;
+- deliverables and the actual technical spine;
+- proposal count, client spend, hire rate, payment verification, rating, and last activity when publicly available; and
+- whether the client wants an individual freelancer or an agency/team.
+
+Do not bypass site protections. Use public indexed pages or an available signed-in browser session. If native search is blocked, say which evidence is indexed versus directly verified.
 
 ### Step 3: Score each role against the resume
 Anchor scoring on the evidence relevant to the lane. The validation career supports test strategy, automation, defect isolation, systems thinking, and senior quality ownership. The Omdena and independent portfolio work supports current Python, SQL, PyTorch/TensorFlow/scikit-learn, model training and evaluation, LLM fine-tuning, CV/NLP, RAG/agents, Docker, APIs, observability, and application-level deployment. Do not convert hardware-validation tenure into unearned software, AI/ML, test-infrastructure, SDK, SRE, or enterprise-delivery tenure, and do not describe project-scale deployment as employer-scale MLOps or distributed-ML tenure. Prefer roles with take-home, debugging, system-design, experiment-design, or pair-build interviews over algorithmic-gauntlet screens.
@@ -76,13 +108,24 @@ Include the rationale in one line per role.
 
 **Keep only roles scoring 4 or 5.** Drop Fit 3 (stretch) and below entirely — they are not shown in the shortlist or saved to the tracking note.
 
+### Step 3B: Apply freelance work-quality gates
+
+A freelance listing must score Fit 4–5 and also clear these gates:
+
+- **Freshness:** prioritize listings posted within 7 days. Keep listings 8–14 days old when still active. Keep 15–30 day listings only when recent client activity or an explicit ongoing need is visible. Drop older listings without current activity.
+- **Scope:** prefer bounded deliverables, clear acceptance criteria, or a credible ongoing role. Exclude vague "build my whole AI app" requests with no usable scope.
+- **Economics:** label hourly or fixed-price terms as `Strong`, `Viable`, `Borderline`, or `Unverified` based on the work requested. Do not invent an hourly equivalent when required hours are absent. Drop budgets that are plainly incompatible with the requested production scope.
+- **Client quality:** prefer verified payment, prior spend or hires, a coherent history, and recent activity. Missing client history is a risk flag, not an automatic rejection when the scope is excellent.
+- **Competition:** record proposal volume when available. High competition changes priority, not fit.
+- **Engagement integrity:** exclude unpaid trials, requests to move payment off-platform, agency-only work when hcho is applying individually, manual annotation/review disguised as AI engineering, and listings that primarily seek an unsupported specialty.
+
 ### Step 4: Present the shortlist
-Output as a table grouped by lane and then company, sorted by fit score within each group. Include:
+Present full-time roles and freelance contracts in separate tables, each grouped by lane and sorted by fit. Include:
 
-| Lane | Company | Role | Location | Fit | Why it fits | Apply link |
-|------|---------|------|----------|-----|-------------|------------|
+| Type | Lane | Company / client | Role or project | Location | Compensation / budget | Fit | Why it fits | Apply / propose |
+|------|------|------------------|-----------------|----------|-----------------------|-----|--------------|-----------------|
 
-After the table, give a brief summary: "Found N roles across M companies. Top picks: [3 highest-fit roles]."
+After the tables, report separate counts for full-time roles and contracts, then name the top three overall actions.
 
 Optionally offer follow-ups:
 - "Want me to draft a cover letter for any of these?"
@@ -90,17 +133,17 @@ Optionally offer follow-ups:
 - "Any of these you want me to dig deeper on?"
 
 ### Step 5: Save the scan as a dated tracking note (always)
-After presenting, persist the scan to `projects/job-search/scans/<YYYY-MM-DD>.md` (create the `scans/` folder if it does not exist; get the real date from `date +%Y-%m-%d`). This is the durable record hcho uses to track applications, so it always gets written, not just on request.
+After presenting, persist the scan to `projects/Job_Search/scans/<YYYY-MM-DD>.md` (create the `scans/` folder if it does not exist; get the real date from `date +%Y-%m-%d`). This is the durable record hcho uses to track applications and proposals, so it always gets written, not just on request.
 
-- One row per role that scored **4+**, with a **Status** column hcho edits over time. Status legend: `To apply` (default) / `Applied` / `Interviewing` / `Offer` / `Rejected` / `Passed` (declined).
-- Columns: `Status | Lane | Company | Role | Location | Fit | Apply | Notes`. Group by lane, then **remote-eligible vs Burbank-local (within 25 mi)**, sorted by fit within each group (mirrors the shortlist).
+- One row per opportunity that scored **4+**, with a **Status** column hcho edits over time. Full-time status legend: `To apply` / `Applied` / `Interviewing` / `Offer` / `Rejected` / `Passed`. Freelance status legend: `To propose` / `Proposed` / `Interviewing` / `Hired` / `Declined` / `Closed` / `Passed`.
+- Columns: `Status | Type | Source | Lane | Company/client | Role/project | Location | Compensation/budget | Fit | Apply/propose | Notes`. Keep full-time and freelance sections separate, then group by lane and fit.
 - Also record the "no openings / unreachable" companies and the list of companies skipped this run, so the note is a complete record of what was and was not covered.
 - **Never overwrite an existing same-day file** — it may already hold hcho's Status edits. If `<YYYY-MM-DD>.md` exists, write `<YYYY-MM-DD>-2.md` (incrementing) instead, and tell hcho.
 
 ## Reference files
 
-- `references/scoring-rubric.md` — Detailed scoring criteria with examples, for borderline cases.
-- `references/company-list-template.md` — Template for organizing target companies by category.
+- `references/scoring-rubic.md` — Detailed scoring criteria with examples, for borderline cases.
+- `references/company-list.md` — Current organized company list and targeting notes.
 - `references/ats-patterns.md` — Common ATS URL patterns and how to find them.
 
 Read these only when you need to resolve ambiguity (e.g., a borderline fit score, or a company whose careers page you can't find).
@@ -108,7 +151,8 @@ Read these only when you need to resolve ambiguity (e.g., a borderline fit score
 ## Output location
 
 - **Target list (input):** `.agents/skills/job-hunter/assets/companies.yaml`.
-- **Scan tracking notes (output):** `projects/job-search/scans/<YYYY-MM-DD>.md` — one dated note per scan (see Step 5), with a Status column hcho updates to track applied/passed. This is the canonical record of every scan; do not overwrite prior days.
+- **Source registry (input):** `.agents/skills/job-hunter/assets/search-sources.yaml`.
+- **Scan tracking notes (output):** `projects/Job_Search/scans/<YYYY-MM-DD>.md` — one dated note per scan (see Step 5), with a Status column hcho updates to track applications and proposals. This is the canonical record of every scan; do not overwrite prior days.
 
 ## Important guidance
 
@@ -119,6 +163,8 @@ Read these only when you need to resolve ambiguity (e.g., a borderline fit score
 - **Enforce the three-lane filter.** Keep honestly qualified Mid-level and Senior IC roles in software quality/systems validation, AI quality/evaluation, or AI product/integration/technical delivery. Keep current AI-builder matches; the broader lanes add credible opportunities rather than replacing them. Read the full JD and drop roles whose spine is manual QA, generic support, quota sales, unsupported specialization, leadership, or research.
 - **Use the lanes as a portfolio, not quotas.** For application planning, start with an approximate 40/35/25 mix across software quality/validation, AI quality/evaluation, and AI product/integration/technical delivery. Never pad a lane to hit the mix; report the verified market instead.
 - **Enforce the location + fit gates.** Keep only roles that are remote (US-eligible) or within 25 miles of Burbank, CA, and only Fit 4-5. Drop onsite-elsewhere roles and anything Fit 3 or below before it reaches the shortlist or the tracking note. hcho is not relocating.
+- **Treat aggregators as discovery sources.** Indeed and similar sites expand coverage; the employer or ATS remains authoritative when available. Preserve an exact aggregator link only when the listing itself is current and readable.
+- **Keep employment and freelance evidence separate.** Annual compensation gates do not apply to contracts, and a freelance project does not become employer software tenure. Track applications and proposals with their own statuses.
 - **Note when a company has no relevant openings.** It's useful for the user to know a company had no qualifying role in any lane rather than silently omitting it.
 
 ## Memory
