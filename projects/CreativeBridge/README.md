@@ -2,7 +2,7 @@
 
 **One-liner:** A K-12 mobile story-writing app where users build narratives collaboratively with AI across grade levels. React Native + Expo, multi-AI backend (GPT-4o-mini for stories, Stable Diffusion 3.5 for images, Claude Skills SDK for quality).
 
-**Repo:** https://github.com/hcho22/CreativeBridge (private)
+**Repo:** https://github.com/hcho22/CreativeBridge (**public since 2026-10-08**; hcho made it public so its Master profile Claims have evidence anyone can open. The 2026-10-08 decision log noted one committed OpenAI key in its history that had to be revoked first; Mandu has no record that it was.)
 
 **Milestone:** **TestFlight complete** (target — see `context/current-priorities.md`).
 

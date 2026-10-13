@@ -47,7 +47,9 @@ The existing company tiers remain a starting source list, not a restriction on r
 - **Target list:** `.agents/skills/job-hunter/assets/companies.yaml` (the company list with tiers).
 - **Search-source registry:** `.agents/skills/job-hunter/assets/search-sources.yaml` (direct, aggregator, startup-board, and freelance sources plus query families).
 - **Company-list reference:** `.agents/skills/job-hunter/references/company-list.md`.
-- **Resume:** `Hyung_Cho_Resume.docx` (in this folder).
+- **Master profile:** `profile/` (since 2026-10-08) is the single source of truth for career facts: evidence-backed Claims plus a generated Skill index. See `profile/README.md`.
+- **Resumes:** `Resume/*.docx` are older renderings and contain overstated lines; build new materials from the Master profile instead.
+- **Application packets:** `applications/<date>-<company>-<role>/` (since 2026-10-08), one per role, built by the `application-packet` skill and checked by `applications/build_packet.py`. Each holds the posting snapshot, `packet.yaml`, the generated resume (.pdf, .docx), and `packet.md` for review. hcho submits; Mandu never does.
 - **Interview prep:** `interview-prep.md` consolidates talking points across projects and wikis.
 - **Roles wiki:** `wiki/` (mode full) maps target roles, their qualifications/skills, and hcho's path into each; sibling `raw/` inbox. Schema in `wiki/CLAUDE.md`. Drop a posting or role guide into `raw/` and say "ingest this."
 - **Archive:** `archive/` holds the legacy daily notes (2026-05-12, 05-29, 05-30) and the old long-term `MEMORY.md`, kept read-only for history.

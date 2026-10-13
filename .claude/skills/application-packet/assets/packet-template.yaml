@@ -1,0 +1,58 @@
+# Application packet source. Every line cites Master profile Claims; build_packet.py checks it.
+# Build: python3 ../build_packet.py <this-folder>     Check only: add --check
+# Claim ids, project names, period ids, and skill names: projects/Job_Search/profile/master-profile.yaml
+
+role:
+  company: <Company>
+  title: <Exact posting title>
+  url: <ATS posting URL>
+  location: <Location and work mode>
+  compensation: <Range as posted, or "not posted">
+  fit: <4 or 5> (<why, or a pointer to the re-score note>)
+  closes: <YYYY-MM-DD if the posting states one; else delete this line>
+
+status: draft          # draft | approved | submitted | withdrawn
+submitted_on: null     # YYYY-MM-DD once hcho has submitted
+
+headline: "<Role-aligned headline; no numbers unless a cited Claim has them>"
+
+summary:               # two or three sentences
+  - text: "<sentence>"
+    claims: [<claim-id>]
+
+experience:            # keep this period order; omit a period only if it adds nothing
+  - period: independent
+    bullets:
+      - label: <Project name exactly as in the profile's projects list>
+        text: "<One line rephrasing the cited Claims in the posting's words; numbers must come from the Claims>"
+        claims: [<claim-id>]
+  - period: omdena
+    bullets:
+      - text: "<line>"
+        claims: [<claim-id>]
+  - period: career-break   # no bullets; the resume shows the profile's subline
+  - period: zebra
+    bullets:
+      - text: "<line>"
+        claims: [<claim-id>]
+
+skills:                # three or four groups, one line each, vocabulary terms only
+  - label: <Group>
+    items: [<Skill>, <Skill>]
+
+education:
+  - text: "B.S., Electrical Engineering, California Polytechnic State University, San Luis Obispo"
+    claims: [degree-bs-ee]
+  - text: "FourthBrain ML Engineering bootcamp (2022); DeepLearning.AI deep learning and generative AI courses"
+    claims: [fourthbrain-mle-bootcamp, coursework-deeplearning-ai-early, coursework-deeplearning-ai-later]
+
+answers:               # one per free-text field on the actual form; none if the form has none
+  - field: "<Field label exactly as the form shows it>"
+    limit_words: 150   # the form's limit, or 150 if none is stated
+    text: |
+      <First person, specific, run through unslop.>
+    claims: [<claim-id>]
+
+gaps:                  # every Partial or Missing requirement, plus anything public an interviewer may raise
+  - gap: "<What is missing or weak>"
+    how_to_own_it: "<How hcho says it honestly>"
