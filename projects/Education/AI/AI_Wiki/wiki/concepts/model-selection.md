@@ -2,8 +2,8 @@
 type: concept
 tags: [models, workflow, claude, codex]
 status: developing
-source-count: 3
-last-updated: 2026-07-08
+source-count: 4
+last-updated: 2026-10-02
 ---
 
 # Model Selection (Opus vs Codex)
@@ -29,6 +29,13 @@ Two rules he attaches:
 
 - **Ratings are defaults, not limits:** the model may override them and re-run with a smarter model without asking - "judge the output, not the price tag."
 - **Do not let cost prevent using the right model** (he overrode the model's own auto-written "cost is a tiebreaker" line): use cheap models to gather info and try things, then move the real work to the better model.
+
+## Ratings are dated (2026-10-02)
+
+[[token-maxing-with-agents]] shows how fast these ratings move for one person.
+[[theo-t3]] rated Opus 4.8 high on taste in [[working-with-fable-5]], calls Opus "a trash model" in the main recording of the later video, and in an inserted clip calls Opus 5.5 "a pretty good model" that behaves much like Fable 5.1 and is hard to exhaust on one subscription.
+Published API pricing puts Opus 5.5 at 40% of Fable 5.1's per-token rate (see [[anthropic]]), which fits his usage observation.
+Any model glossary written into a config file needs a date and a re-check at each release.
 
 ## Synthesis
 

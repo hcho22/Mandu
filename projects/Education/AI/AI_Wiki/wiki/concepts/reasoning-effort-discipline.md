@@ -2,8 +2,8 @@
 type: concept
 tags: [models, cost-control, claude, reasoning-effort]
 status: developing
-source-count: 3
-last-updated: 2026-08-05
+source-count: 4
+last-updated: 2026-10-02
 ---
 
 # Reasoning-Effort Discipline
@@ -28,6 +28,15 @@ This is a different failure mode than the one this page opened with and worth ke
 Theo's case is *too much* effort on a single step producing over-engineering.
 Tharic's case is *too little* effort per output when many run at once, silently, because nothing signals that verification was skimped.
 Together they say effort is a budget you allocate explicitly in both directions, which is also why [[sub-agents]] fan-out needs a cap rather than being free throughput.
+
+## Does token-maxing overturn this? (2026-10-02)
+
+[[token-maxing-with-agents]] has the same speaker telling viewers to burn as many tokens as possible, which reads as the opposite of this page.
+It is not, once the billing model is explicit ([[subscription-vs-api-tokens]]): on an expiring flat allowance the unused token is the waste, so the dollar argument for low effort weakens.
+The quality argument does not weaken.
+x-high and max still over-engineer, and over-engineered changes consume the review attention that token-maxing makes scarce.
+So the page's rule survives on subscriptions for a different reason: effort discipline protects the human bottleneck, not the bill.
+Spend the allowance on more useful threads, not on more reasoning per step.
 
 ## Synthesis
 

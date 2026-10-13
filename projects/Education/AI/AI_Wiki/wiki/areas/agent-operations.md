@@ -2,8 +2,8 @@
 type: area
 tags: [agent-operations, agents, loops, automation, cost, business]
 status: developing
-source-count: 9
-last-updated: 2026-09-16
+source-count: 10
+last-updated: 2026-10-02
 ---
 
 # Agent Operations
@@ -49,6 +49,8 @@ People routinely span both - [[ryan-carson]] runs a cloud engineering fleet *and
 ### Fleets, vendors, and cost
 - [[manager-of-agents]] - the role reframe; decision throughput becomes the bottleneck.
 - [[cloud-agents-over-local]] - a VM per session instead of worktrees. **Contested; see below.**
+- [[agent-threads-as-inbox]] - many threads, surfaced only when done or blocked; overnight runs triaged each morning.
+- [[subscription-vs-api-tokens]] - flat-rate plans for your own work, metered API for anything user-facing.
 - [[independent-agent-lab-vs-frontier-lab]] - don't build your software factory inside a frontier lab's stack.
 - [[model-routing]] - route grunt work to cheaper models once spend passes ~$5K/month/engineer.
 
@@ -82,6 +84,7 @@ People routinely span both - [[ryan-carson]] runs a cloud engineering fleet *and
 - [[building-at-the-frontier]] - Boris Cherny: Anthropic's 20-30 daily self-maintenance routines, and the loop/routine/workflow distinction.
 - [[production-agent-with-cma]] - Anthropic: the production agent-infrastructure primitives underneath all of it.
 - [[running-life-on-codex]] - Jason (OpenAI Codex): the personal-operations version - a scheduled "Chief of Staff" heartbeat, a self-improving skill library, and a markdown vault as the agent's memory; the OpenAI-side confirmation that these patterns are not Anthropic-specific.
+- [[token-maxing-with-agents]] - Theo: funding a thread fleet from flat-rate subscriptions, an owned always-on Linux box for overnight runs, and a fleet repository for machine setup; the account-multiplication part is a self-declared terms-of-service risk.
 - [[one-person-marketing-team]] - Nate Herk: the context layer with no loop. A fictional brand, real per-asset costs, and the area's weakest evidence paired with its most concrete economics.
 
 ## The missing half of the distribution story (2026-08-21)
@@ -111,9 +114,9 @@ That asymmetry is now the binding constraint on every loop in this area, and it 
 
 ## Open tensions
 
-- **Local versus cloud** ([[cloud-agents-over-local]]): [[running-teams-of-ai-agents]] calls local development a "caveman" practice; [[building-5-ai-products-solo]] and [[inside-conductor-workflow]] both run local worktrees deliberately. Ryan's evidence is real but is *n* of 1 from a paying Devin customer at PMF scale.
+- **Local versus cloud** ([[cloud-agents-over-local]]): [[running-teams-of-ai-agents]] calls local development a "caveman" practice; [[building-5-ai-products-solo]] and [[inside-conductor-workflow]] both run local worktrees deliberately. Ryan's evidence is real but is *n* of 1 from a paying Devin customer at PMF scale. [[token-maxing-with-agents]] adds a third position, an owned always-on box at home with worktrees on it, which separates where the machine lives from how threads are isolated.
 - **How much infrastructure a real agent needs**: [[agents-as-cron-plus-markdown]] says a cron and a markdown file; [[marketing-agent]] says that is insufficient without a unified data warehouse. Probably resolved by whether the decision needs cross-channel context.
-- **Spend posture**: [[running-teams-of-ai-agents]] reports ~$20K/month and says spend first, optimize later; [[loop-cost-discipline]] says a well-scoped loop is under $5 a run. Both are right at their own scale.
+- **Spend posture**: [[running-teams-of-ai-agents]] reports ~$20K/month and says spend first, optimize later; [[loop-cost-discipline]] says a well-scoped loop is under $5 a run. Both are right at their own scale. [[subscription-vs-api-tokens]] adds the billing-model axis: on an expiring flat allowance the waste is the unused token.
 
 ## Workflow reconstruction (2026-09-16)
 

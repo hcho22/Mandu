@@ -2,8 +2,8 @@
 type: concept
 tags: [agentic-engineering, workflow, scale, validation]
 status: established
-source-count: 7
-last-updated: 2026-09-23
+source-count: 8
+last-updated: 2026-10-02
 ---
 
 # Get Out of the Loop
@@ -56,6 +56,13 @@ That directly qualifies the blanket statement above that line-by-line review is 
 The provisional reconciliation is risk-dependent review, captured by [[risk-based-agent-governance]], not a universal exit from reading code.
 Executable checks cover known requirements; passing them does not demonstrate that every consequential failure mode was specified.
 The new source is an undated secondary guide, so this records a substantive disagreement rather than an empirical verdict.
+
+## Verification as most of the spend (2026-10-02)
+
+[[token-maxing-with-agents]] quantifies the earlier Theo observation: he estimates 10-15% of his tokens go to writing code and 85-90% to verifying it.
+His framing is to de-risk both sides of the merge button - make a PR likely safe before anyone sees it, and make a bad merge cheap to undo - with a rule of thumb that a revert taking more than 15 seconds means the system is not ready for this way of working ([[merge-ready-vs-launch-ready]]).
+He goes further than most sources here, letting agents merge on conditions stated in the prompt and archiving about half his threads unread ([[agent-threads-as-inbox]]).
+That is consistent with this page's rule only where the stated conditions are a real check; it is the furthest exit recorded, from a single creator's practice.
 
 ## Synthesis
 

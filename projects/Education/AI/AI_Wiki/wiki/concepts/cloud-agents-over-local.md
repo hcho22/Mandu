@@ -2,8 +2,8 @@
 type: concept
 tags: [agent-operations, agentic-engineering, cloud, parallelism, contradiction]
 status: developing
-source-count: 1
-last-updated: 2026-08-01
+source-count: 2
+last-updated: 2026-10-02
 ---
 
 # Cloud Agents Over Local
@@ -49,6 +49,15 @@ Spin up a **local** agent for light front-end and wireframing, then move it into
 That is real evidence but it is *n* of 1, from someone with a paid Devin seat, and he concedes the landscape changes every 3-6 months.
 The honest position is that the cloud argument gets stronger the more parallel work you actually have, and that below some threshold the local answer is fine.
 Josh Pigford runs five products locally, which is not nothing.
+
+## A third position: an owned box at home (2026-10-02)
+
+[[token-maxing-with-agents]] rejects both the laptop and the cloud VPS.
+[[theo-t3]] runs long and overnight threads on owned always-on Linux machines (an old computer with Ubuntu is enough; at least 8 GB RAM and 4 cores), reached over Tailscale and driven from [[t3-code]].
+His reasons against the cloud are cost (he compares about $275/month for a comparable Hetzner server with about $700 once for owned hardware) and provider scrutiny of sign-ins from server IP ranges; his reason against the Mac is that macOS file-system and security overhead bottlenecks parallel agents.
+He still isolates threads with local worktrees on that box, calling them "good enough."
+This splits the question in two: where the agent's machine lives (laptop, home server, cloud) and how threads are isolated on it (worktree or VM).
+Ryan Carson's argument is mainly about the second; Theo's is mainly about the first.
 
 ## Synthesis
 

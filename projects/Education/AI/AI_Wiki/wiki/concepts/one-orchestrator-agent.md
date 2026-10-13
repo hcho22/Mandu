@@ -2,8 +2,8 @@
 type: concept
 tags: [agentic-engineering, orchestration, sub-agents, cognitive-load]
 status: developing
-source-count: 2
-last-updated: 2026-09-16
+source-count: 3
+last-updated: 2026-10-02
 ---
 
 # One Orchestrator Agent
@@ -44,6 +44,12 @@ His reasoning: with the weaker models of one or two years ago, watching tool cal
 
 [[kun-agentic-app-development-workflow]] extends one human interface to project-scoped Second Mates with their own crews, remote placement, and fleet digests.
 This is a coordination pattern rather than proof that more hierarchy improves throughput; the guide recommends adding it only for a real bottleneck.
+
+## The inbox alternative (2026-10-02)
+
+[[token-maxing-with-agents]] reaches the same diagnosis - the human is single-threaded and is the bottleneck - and keeps many directly addressed threads instead of one orchestrator.
+Its answer is a filtering interface: threads surface only when done or blocked, and finished threads leave view ([[agent-threads-as-inbox]]).
+Kun pushes coordination down into an agent; Theo filters it in the UI.
 
 ## Synthesis
 

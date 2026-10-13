@@ -1,6 +1,6 @@
 ---
 type: index
-last-updated: 2026-09-23
+last-updated: 2026-10-02
 ---
 
 # Index
@@ -10,14 +10,14 @@ Every page is listed once under its category with a one-line summary.
 Read this first when answering a query, then drill into the linked pages.
 Updated on every ingest.
 
-Counts: 36 sources, 10 areas, 161 concepts, 31 entities.
+Counts: 37 sources, 10 areas, 164 concepts, 32 entities.
 Related subject library: [[projects/Education/Marketing/wiki/index|Marketing]], which owns the new content-source-library guide and is cross-linked rather than duplicated here.
 
 ## Areas
 
 - [[evals]] - how you measure whether an LLM product works and keep improving it past the demo stage. (14 sources)
-- [[agentic-engineering]] - building software *with* agents: direction, orchestration, verification, context, cost, and what the human is still for. (16 sources)
-- [[agent-operations]] - running things *with* agents continuously: loops, routines, fleets, self-improvement, and agents pointed at distribution. (9 sources)
+- [[agentic-engineering]] - building software *with* agents: direction, orchestration, verification, context, cost, and what the human is still for. (17 sources)
+- [[agent-operations]] - running things *with* agents continuously: loops, routines, fleets, self-improvement, and agents pointed at distribution. (10 sources)
 - [[ai-career]] - navigating an AI-native tech career: staying valuable, positioning, growth, and the forward-deployed-engineer role. (4 sources)
 - [[agent-saas]] - building and selling agents as products: the business model, build ladder, and trust layer. (1 source)
 - [[ml-metrics]] - classical ML evaluation metrics (ROC/AUC, precision/recall, thresholds); the foundations under evals. (1 source)
@@ -139,7 +139,8 @@ Related subject library: [[projects/Education/Marketing/wiki/index|Marketing]], 
 - [[self-maintaining-codebase]] - 20-30 daily routines at Anthropic; one-sentence prompts, every routine ends in a PR.
 - [[self-improving-agent-loop]] - grade real production traffic against a rubric; failures open their own fix PRs.
 - [[production-watchdog]] - a daily digest of what real customers did, each line linked to the live UI.
-- [[cloud-agents-over-local]] - a VM per session instead of worktrees. **Contested against local-worktree sources.**
+- [[cloud-agents-over-local]] - a VM per session instead of worktrees. **Contested against local-worktree sources and an owned always-on home box.**
+- [[agent-threads-as-inbox]] - treat agent threads as tasks to clear; surface only done or blocked threads; never watch an agent work.
 - [[independent-agent-lab-vs-frontier-lab]] - don't build your software factory inside a frontier lab's stack.
 
 ### Business loops
@@ -185,6 +186,8 @@ Related subject library: [[projects/Education/Marketing/wiki/index|Marketing]], 
 - [[model-selection]] - Opus for creative/new work, Codex for grinding; rate models on intelligence/taste/cost in a config glossary.
 - [[model-routing]] - one model orchestrates and "shells out" to a cheaper/specialized model for the grunt work.
 - [[reasoning-effort-discipline]] - keep effort at "high"; x-high/max over-reason and over-charge. The biggest cost lever.
+- [[subscription-vs-api-tokens]] - metered API rewards thrift, an expiring flat allowance rewards utilization; subscriptions for your own work, API for anything user-facing.
+- [[delegate-the-problem-not-the-solution]] - bring the agent in when you start thinking; its failure is a difficulty probe; offload the silly tasks too.
 - [[time-to-fix-as-health-signal]] - read agent time-to-fix + files-touched as a codebase-health diagnostic.
 - [[ablation-driven-development]] - delete the whole prompt layer; add back only what repeatedly fails.
 - [[product-overhang]] - capability nobody has built a product for, and the hobbling that hides it.
@@ -239,7 +242,8 @@ Related subject library: [[projects/Education/Marketing/wiki/index|Marketing]], 
 - [[open-claw]] - open-source agent platform run as a personal chief-of-staff.
 - [[devin]] - cloud-only engineering agent; VM per task, playbooks, reliable browser testing.
 - [[opencode]] - open-source agent harness; easy model-switching.
-- [[theo-t3]] - developer/YouTuber; builder of T3 Code; cost-aware Fable 5 + Claude Code workflow.
+- [[theo-t3]] - developer/YouTuber; builder of T3 Code; cost-aware Fable 5 workflow, then subscription-funded token-maxing across many threads.
+- [[t3-code]] - Theo's open-source multi-machine agent-thread front end; settle/snooze/auto-settle, worktree per thread, remote connect.
 - [[ross-hey-fabrica]] - developer/agency founder; builder of Pluto; teaches agentic system design.
 - [[convex]] - everything-as-code backend + database platform; Pluto's control plane.
 - [[kun]] - L8 principal engineer (ex-Meta/Microsoft/Atlassian); builder of First Mate, Lavish, No Mistakes; the wiki's best-documented full build session.
@@ -255,6 +259,7 @@ Related subject library: [[projects/Education/Marketing/wiki/index|Marketing]], 
 
 ## Sources
 
+- [[token-maxing-with-agents]] - Theo (T3), undated: flat-rate subscriptions over API billing for your own work, verification as 85-90% of token spend, problem-first delegation, threads as an inbox, and overnight runs on an owned Linux box. Multi-account proxy section is a self-declared terms-of-service risk.
 - [[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] - supplied beginner guide on risk-based review, current-revision evidence, independent scrutiny, and gated rollout; original speaker and video metadata unknown.
 - [[kun-agentic-app-development-workflow]] - local reconstruction of four Kun talks; intent, architecture, isolated integrated slices, independent validation, reproducibility, and fleet coordination. Secondary and overlapping evidence, with beginner adaptations marked.
 - [[your-ai-product-needs-evals]] - Hamel Husain (2024-03-29): the three-level eval framework and why evals unlock iteration.
@@ -304,12 +309,13 @@ The 2026-08-01 batch introduced real disagreements between sources. They are rec
 |---|---|---|
 | **Does passing verification replace all code reading?** | [[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] retains deep human review for shared or consequential changes, qualifying broad automation claims in [[get-out-of-the-loop]]. | [[risk-based-agent-governance]] |
 | **Does context degrade as it fills?** | [[context-rot]] says start fresh; [[compaction-over-context-window]] reports four clean compactions | [[agentic-engineering]] |
-| **Local or cloud agents?** | [[cloud-agents-over-local]] vs the local worktrees of [[building-5-ai-products-solo]] and [[inside-conductor-workflow]] | [[agent-operations]] |
+| **Local or cloud agents?** | [[cloud-agents-over-local]] vs the local worktrees of [[building-5-ai-products-solo]] and [[inside-conductor-workflow]]; [[token-maxing-with-agents]] adds an owned always-on home box (2026-10-02) | [[agent-operations]] |
+| **Minimize tokens or burn them?** | [[reasoning-effort-discipline]] and [[loop-cost-discipline]] minimize; [[token-maxing-with-agents]] burns the whole allowance. Reconciled by billing model; effort discipline survives on subscriptions for quality reasons | [[subscription-vs-api-tokens]] |
 | **Is orchestration scaffolding necessary?** | [[verification-signal-picks-the-mechanism]] gives a selection rule; [[building-at-the-frontier]] says `/go` and `/loop` are "helpful but not required" now | [[agentic-engineering]] |
 | **Do evals compound?** | The [[evals]] area treats the suite as the compounding asset; [[evals-saturate-and-get-replaced]] gives it a 1-3 generation half-life | [[evals]] |
 | **Do instructions compound?** | [[building-skills]] and [[self-updating-config]] treat them as an asset; [[ablation-driven-development]] treats them as debt; [[agents-md-as-neural-net]] calls them weights trained within a budget (ablation = full retrain, backward pass = weekly step) | [[agentic-engineering]] |
 | **Is prompt injection still the threat model?** | [[red-team-your-agent]] assumes yes; [[building-at-the-frontier]] says Opus 5 is not demonstrably injectable, with caveats | [[red-team-your-agent]] |
-| **Do you still read the agent's code?** | [[read-what-the-agent-writes]] says reading is how you keep judgment; [[running-life-on-codex]] says "a lot of us don't review code anymore" - verification moved onto verifiable-goal oracles, not abandoned | [[read-what-the-agent-writes]] |
+| **Do you still read the agent's code?** | [[read-what-the-agent-writes]] says reading is how you keep judgment; [[running-life-on-codex]] says "a lot of us don't review code anymore" - verification moved onto verifiable-goal oracles, not abandoned; [[token-maxing-with-agents]] archives about half its threads unread on prompt-stated merge conditions | [[read-what-the-agent-writes]] |
 | **Manager, or director of taste?** | [[manager-of-agents]] (Ryan Carson, Cody Schneider) says you manage agents now; [[running-life-on-codex]] (Jason, OpenAI) rejects the manager frame and calls the job articulating taste | [[manager-of-agents]] |
 | **Vendor concentration** | The input diet is heavily Claude Code-centric; [[independent-agent-lab-vs-frontier-lab]] is the first counter-position, and [[running-life-on-codex]] (2026-08-05) is the first inside-OpenAI source - it reports the *same* patterns, which is itself the finding | - |
 | **Can an agent usefully check its own output?** | [[self-referential-bias]] says no, four ways over; [[one-person-marketing-team]] shows a self-QA pass that rejected a real defect - provisionally reconciled as objective defects yes, quality judgments no | [[self-referential-bias]] |

@@ -2,8 +2,8 @@
 type: entity
 tags: [tool, claude-code, anthropic, agentic-engineering]
 status: established
-source-count: 7
-last-updated: 2026-08-21
+source-count: 8
+last-updated: 2026-10-02
 ---
 
 # Claude Code
@@ -20,6 +20,7 @@ Runs the Claude models in an agent harness with memory, context management, slas
 - [[working-with-fable-5]] - Theo's ([[theo-t3]]) production workflow: reasoning-effort control ([[reasoning-effort-discipline]]), `CLAUDE.md` as a [[model-selection]] glossary, [[model-routing]] by shelling out to Codex via `bash`, JS **workflows** (fan-out + judge panel) vs **sub-agents**, and the long-running **"goal"** that ran ~5 hours to clear a backlog.
 - [[designing-loops-and-workflows]] - **the first primary-source account**, from [[tharic]] on the Claude Code team.
 - [[one-person-marketing-team]] - **the first source that uses it for no coding at all**: a marketing project generating a website, ads, video, and a spreadsheet, driving [[higgsfield]] over MCP.
+- [[token-maxing-with-agents]] - Theo's claim that Claude subscriptions may be used only inside Claude Code; it accepts a custom API endpoint (as used for AWS Bedrock), and he reports its subscription auth needing renewal every two to three days. Driven across machines from [[t3-code]].
 
 ## Used as a project shell, not a coding tool ([[one-person-marketing-team]])
 

@@ -2,8 +2,8 @@
 type: concept
 tags: [evals, methodology, workflow]
 status: established
-source-count: 4
-last-updated: 2026-08-01
+source-count: 5
+last-updated: 2026-09-29
 ---
 
 # Eval-Driven Development (EDD)
@@ -36,8 +36,21 @@ Both are the same move: the eval set stops being a report card and becomes the t
 [[boris-cherny]] argues an eval survives one to three model generations before saturating, so budget for replacing eval suites rather than maintaining them.
 That does not weaken EDD - it argues for investing in the **generator** (the path from observed failure to new test case) over the test cases themselves.
 
+## Accepted work as an operating regression suite (2026-09-29)
+
+[[projects/Education/Business/wiki/sources/ai-rollup-solo-founder-guide|The $5 Trillion AI Rollup Opportunity]] carries EDD into service operations.
+It proposes preserving human-approved input/output pairs and rerunning them after rules, prompts, models, or workflows change.
+Repeated corrections become reviewed rules and new test cases, so production failures improve both the operating instructions and the regression suite.
+
+Passing that suite informs the human reviewer; it does not grant authority to send consequential work.
+The source supplies no implementation or measured outcomes, so this is a compatible operating pattern rather than new proof of effectiveness.
+
 ## Synthesis
 
 EDD is the methodological spine of the [[evals]] area and the natural companion to Hamel Husain's [[three-level-eval-framework]] (it says *sequence* the levels; EDD says *start* with them).
 It is the single most portable idea for hcho: "write the eval before you tune the prompt" is test-first engineering rebadged, and it is the discipline his Agentic RAG eval harness is meant to embody.
 Every other production pattern ([[fine-tuning]], [[guardrails]], [[semantic-caching]], [[retrieval-augmented-generation|RAG]]) depends on it - you cannot know a change helped without an eval to measure it.
+
+## Source added 2026-09-29
+
+- [[projects/Education/Business/wiki/sources/ai-rollup-solo-founder-guide|The $5 Trillion AI Rollup Opportunity]] - accepted human work as regression cases in an AI-assisted service operation.

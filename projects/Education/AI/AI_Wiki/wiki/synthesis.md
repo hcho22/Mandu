@@ -1,8 +1,8 @@
 ---
 type: synthesis
-last-updated: 2026-09-23
+last-updated: 2026-10-02
 status: established
-source-count: 36
+source-count: 37
 ---
 
 # Synthesis
@@ -296,6 +296,35 @@ The companion content guide belongs in [[projects/Education/Marketing/wiki/index
 Its [[projects/Education/Marketing/wiki/concepts/approved-language-repurposing|author-endorsement boundary]] extends [[personal-voice-skill]]: sounding like someone does not establish the truth of a personal story or their agreement with a claim.
 Its [[projects/Education/Marketing/wiki/concepts/content-source-library|content library]] also clarifies that “digital brain” is narrower there than the operational role described by [[ai-operating-system]].
 Both additions preserve a useful distinction: collected text is evidence to interpret, not automatic authority to act or speak for its owner.
+
+## What the 2026-09-29 Business ingest added
+
+[[projects/Education/Business/wiki/sources/ai-rollup-solo-founder-guide|The $5 Trillion AI Rollup Opportunity]] belongs to the Business wiki because its main subject is acquisition and integration, but its operating mechanics reinforce three AI concepts.
+Paid service work is a method for finding [[real-workflow-not-documented|the real workflow]] before automation; explicit preparation, review, and human-approval roles strengthen [[risk-based-agent-governance]]; and accepted human work plus corrections form an operational [[eval-driven-development|regression suite]].
+
+The cross-domain convergence is useful but limited.
+The guide provides no implementation, primary provenance, or measured results, and its market and investment claims remain unverified.
+AI_Wiki's catalog therefore remains at 36 sources: the Business source is linked rather than duplicated.
+
+## What the 2026-10-02 ingest added
+
+[[token-maxing-with-agents]] is the second [[theo-t3]] source, and it adds the economic regime the wiki had been reasoning inside without naming.
+Every cost page so far assumed per-token billing.
+[[subscription-vs-api-tokens]] separates the metered regime, where thrift is right, from the flat expiring-allowance regime, where the unused token is the waste.
+That dissolves what looked like a contradiction with [[reasoning-effort-discipline]] and [[loop-cost-discipline]] and leaves a sharper claim in its place: once tokens are effectively prepaid, **the binding constraint on agentic work is human attention and verification capacity, not money.**
+
+The rest of the source is about protecting that constraint.
+[[agent-threads-as-inbox]] is a third design for the human bottleneck, beside [[manager-of-agents]] (a check-in cadence) and [[one-orchestrator-agent]] (delegate the scheduling): filter, so only finished or blocked threads reach a person.
+[[delegate-the-problem-not-the-solution]] moves the delegation threshold earlier for hard problems and lower for trivial ones, using the agent's failure as a difficulty probe.
+And the speaker's estimate that 85-90% of his tokens go to verification is the verification spine again, from the most throughput-maximal practitioner in the wiki.
+Even the source arguing for the most parallelism spends most of its budget checking.
+
+Two limits keep this from being a recommendation to copy.
+Archiving threads unread on prompt-stated merge conditions is governance by instruction, which [[capabilities-not-instructions]] and [[risk-based-agent-governance]] reserve for reversible, low-blast-radius work, and his own 15-second revert rule shows the method assumes a fast undo that an App Store release does not have ([[merge-ready-vs-launch-ready]]).
+The account-multiplication setup is a self-declared terms-of-service risk and is recorded only as a claim.
+
+For hcho the transferable part is the attention design, not the token supply.
+Pre-revenue, one subscription for interactive work and metered APIs for anything user-facing or unattended (Rep Today's Coach, Purvia's nightly evals) is the conservative position, and it is the one the speaker himself prescribes for people not yet earning from their work.
 
 ## Open threads
 

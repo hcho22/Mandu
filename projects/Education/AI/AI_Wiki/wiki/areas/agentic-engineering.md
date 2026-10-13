@@ -2,8 +2,8 @@
 type: area
 tags: [agentic-engineering, agents, craft, tooling, orchestration, verification]
 status: established
-source-count: 16
-last-updated: 2026-09-23
+source-count: 17
+last-updated: 2026-10-02
 ---
 
 # Agentic Engineering
@@ -45,6 +45,7 @@ What survives is [[ramble-then-structure]] (say the constraints, not the structu
 - [[product-overhang]] - capability nobody has built a product for, and the hobbling that hides it.
 - [[ramble-then-structure]] - exhaust the constraints; let the agent impose structure.
 - [[build-for-the-model-of-the-future]] - design for the next generation, not today's.
+- [[delegate-the-problem-not-the-solution]] - bring the agent in when you start thinking; its failure tells you the problem deserves your attention.
 
 ### Training the memory file
 - [[agents-md-as-neural-net]] - treat the project `AGENTS.md` as weights: budget, forward pass, loss, backward pass.
@@ -69,6 +70,7 @@ What survives is [[ramble-then-structure]] (say the constraints, not the structu
 - [[verification-signal-picks-the-mechanism]] - pick /loop vs /goal vs a workflow by the shape of your check.
 - [[sub-agents]] - delegate heavy exploration to children that return conclusions.
 - [[one-orchestrator-agent]] - single-threaded human interface over parallel work; steerable crewmates over spawned sub-agents.
+- [[agent-threads-as-inbox]] - many threads, surfaced only when done or blocked; cleared like an email inbox.
 - [[agent-teams]] - persona panels that debate until they agree.
 - [[long-horizon-agent-runs]] - days-to-weeks runs, and the three ingredients that enable them.
 
@@ -89,6 +91,7 @@ What survives is [[ramble-then-structure]] (say the constraints, not the structu
 - [[model-selection]] - match model tier to task; a full production build ran on a non-frontier model.
 - [[model-routing]] - orchestrate with one model, shell out to a cheaper one.
 - [[reasoning-effort-discipline]] - keep effort at high; x-high over-reasons and over-charges.
+- [[subscription-vs-api-tokens]] - metered billing rewards thrift, an expiring flat allowance rewards utilization; know which regime a workload is in.
 - [[time-to-fix-as-health-signal]] - read agent time-to-fix as a codebase-health diagnostic.
 
 ### Artifacts and craft
@@ -113,6 +116,7 @@ What survives is [[ramble-then-structure]] (say the constraints, not the structu
 - [[building-5-ai-products-solo]] - Josh Pigford: phased local worktrees, cross-model review, context rot.
 - [[inside-conductor-workflow]] - Conductor: voice-first parallel orchestration, slop-free zones.
 - [[working-with-fable-5]] - Theo: cost min-maxing via reasoning effort and model routing.
+- [[token-maxing-with-agents]] - Theo again: flat-rate subscriptions as the funding model, verification as 85-90% of spend, problem-first delegation, and threads as an inbox.
 - [[every-claude-feature-ranked]] - the broad feature tour of the ecosystem.
 - [[production-agent-with-cma]] - Anthropic: production agent primitives and outcome rubrics.
 - [[building-robust-apps-with-ai]] - Ross: why agent-operable infra makes any of this possible.
@@ -130,7 +134,8 @@ The area is not internally consistent, and the disagreements are the interesting
 | **Does context degrade?** | [[context-rot]] says start fresh; [[compaction-over-context-window]] reports four clean compactions. Probably capacity versus contamination, but unresolved. |
 | **Is orchestration scaffolding necessary?** | [[verification-signal-picks-the-mechanism]] gives a selection rule; [[building-at-the-frontier]] says `/go` and `/loop` are "helpful but not required" now. Likely a model-tier difference. |
 | **Local or cloud?** | [[cloud-agents-over-local]] versus the local worktrees of [[building-5-ai-products-solo]] and [[inside-conductor-workflow]]. Filed under [[agent-operations]]. |
-| **More agents or fewer?** | [[dynamic-workflows-as-test-time-compute]] scales to thousands; [[designing-loops-and-workflows]] reports Tharic cutting from five sessions to one; [[one-orchestrator-agent]] keeps many agents but one interface. |
+| **More agents or fewer?** | [[dynamic-workflows-as-test-time-compute]] scales to thousands; [[designing-loops-and-workflows]] reports Tharic cutting from five sessions to one; [[one-orchestrator-agent]] keeps many agents but one interface; [[token-maxing-with-agents]] runs ten or more threads across five subscriptions and filters them through [[agent-threads-as-inbox]]. |
+| **Minimize tokens or burn them?** | [[reasoning-effort-discipline]] and [[loop-cost-discipline]] minimize; [[token-maxing-with-agents]] says spend the whole allowance. Reconciled by billing model in [[subscription-vs-api-tokens]]; effort discipline survives on subscriptions because over-engineering costs review attention. |
 | **Do instructions compound?** | [[building-skills]] and [[self-updating-config]] treat them as an asset; [[ablation-driven-development]] treats them as debt with a one-generation half-life. [[agents-md-as-neural-net]] proposes a third position: they are **weights**, trained continuously within a fixed budget - ablation is the periodic full retrain, the backward pass the weekly gradient step. |
 
 ## Workflow reconstruction (2026-09-16)

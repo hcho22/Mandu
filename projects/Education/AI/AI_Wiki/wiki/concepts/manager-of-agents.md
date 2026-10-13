@@ -2,8 +2,8 @@
 type: concept
 tags: [ai-career, agent-operations, role, management, craft]
 status: developing
-source-count: 3
-last-updated: 2026-08-05
+source-count: 4
+last-updated: 2026-10-02
 ---
 
 # You Are a Manager of Agents
@@ -40,6 +40,8 @@ Mantra: "Slow is smooth, and smooth is fast."
 
 The host's observation, which Ryan accepts: this is not very different from what a well-organized person did *before* AI.
 **"It's back to the basics, just in an agent age."**
+
+**A third workload design (2026-10-02).** [[token-maxing-with-agents]] states the same bottleneck in one line - agents are multi-threaded, humans are single-threaded, you are the bottleneck - and answers it by designing work so agents unblock themselves and surface only finished or blocked threads ([[agent-threads-as-inbox]]), rather than by a check-in cadence.
 
 ## A dissent worth holding: "I don't feel like a manager"
 

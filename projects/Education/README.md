@@ -7,6 +7,7 @@ New `.md` sources enter through the shared `inbox/`; hcho runs `/ingest` to have
 
 - General AI knowledge lives in [[projects/Education/AI/AI_Wiki/wiki/index|AI_Wiki]].
 - Marketing knowledge lives in [[projects/Education/Marketing/wiki/index|Marketing]], beginning with content libraries and source-grounded writing.
+- Business knowledge lives in [[projects/Education/Business/wiki/index|Business]], beginning with service-business acquisition, integration, governance, and operating economics.
 - [[projects/Education/AI/LLM_Evals/README|LLM_Evals]] retains the parked curriculum, exercises, and study history; reusable eval knowledge lives in AI_Wiki.
 - Other subject areas are created only when relevant material arrives.
 - Reusable knowledge has one authoritative home and links to the projects where it can be applied.

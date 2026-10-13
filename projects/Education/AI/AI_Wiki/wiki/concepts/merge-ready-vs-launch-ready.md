@@ -2,8 +2,8 @@
 type: concept
 tags: [code-review, release, feature-flags, validation]
 status: seed
-source-count: 1
-last-updated: 2026-09-23
+source-count: 2
+last-updated: 2026-10-02
 ---
 
 # Merge Ready vs Launch Ready
@@ -19,6 +19,13 @@ Merge readiness is sufficient evidence to integrate a change under the project's
 - Evidence must match the current revision; a review fix can invalidate an earlier test result or recording.
 - A limited release can expose operational failures even when it cannot support a reliable A/B-test conclusion.
 
+## Both sides of the merge button (2026-10-02)
+
+[[token-maxing-with-agents]] describes the same split from a speed-first practitioner: before merge, make it likely the PR is safe by the time a human sees it; after merge, make bad changes easy to revert and catch problems before users do.
+Its heuristic: if undoing a bad change takes more than 15 seconds, fix your systems before vibe coding.
+The rule assumes a deploy target where reverting is near-instant, such as a web app.
+For an App Store binary the post-merge half is weak, because a fix waits on review, so more of the evidence has to move before release and only server-side surfaces (flags, remote configuration, a proxied endpoint) keep a fast undo.
+
 ## Synthesis
 
 A gate is a containment mechanism whose behavior needs evidence, not a certificate of safety.
@@ -29,3 +36,4 @@ For project tracking, record implementation, validation, and exposure as distinc
 ## Source
 
 - [[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] - derived, undated tutorial; no universal rollout thresholds or readiness scoring model supplied.
+- [[token-maxing-with-agents]] - Theo's pre-merge and post-merge framing and the 15-second revert heuristic; a rule of thumb, not a measured threshold.

@@ -2,8 +2,8 @@
 type: concept
 tags: [ai-career, fde, discovery, requirements, deployment]
 status: developing
-source-count: 1
-last-updated: 2026-08-01
+source-count: 2
+last-updated: 2026-09-29
 ---
 
 # The Real Workflow, Not the Documented One
@@ -53,3 +53,15 @@ For hcho this is familiar territory under a different name.
 Hardware validation is the practice of discovering how a system actually behaves versus how the spec says it behaves, and building the test matrix from that gap.
 The transfer is close to exact, and it is a more concrete story than "I have validation experience" - it names a specific, hard, well-paid activity he has already done for a decade.
 It also directly informs the Agentic RAG buyer interviews, where the goal is not to hear what buyers say they want but to see what they actually do with permissions and retrieval today.
+
+## Service before acquisition (2026-09-29)
+
+[[projects/Education/Business/wiki/sources/ai-rollup-solo-founder-guide|The $5 Trillion AI Rollup Opportunity]] proposes a scoped paid service as the observation method before acquiring a business.
+Following real jobs reveals inputs, handoffs, exceptions, approvals, missing data, local preferences, and relationship dependencies that a listing or interview cannot show.
+The service also creates an obligation to solve a real problem, which makes the discovery evidence stronger than hypothetical process mapping.
+
+Its suggested 6-to-12-month duration is not validated, but the sequence reinforces this page's central claim: observe the work before deciding what to automate or buy.
+
+## Source added 2026-09-29
+
+- [[projects/Education/Business/wiki/sources/ai-rollup-solo-founder-guide|The $5 Trillion AI Rollup Opportunity]] - service delivery as workflow discovery before acquisition.

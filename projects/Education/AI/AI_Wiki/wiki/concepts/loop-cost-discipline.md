@@ -2,8 +2,8 @@
 type: concept
 tags: [agent-operations, loops, cost, economics]
 status: seed
-source-count: 1
-last-updated: 2026-08-01
+source-count: 2
+last-updated: 2026-10-02
 ---
 
 # Loop Cost Discipline
@@ -35,6 +35,12 @@ Against the cost of an SEO agency, cost should not be the deciding worry.
 |---|---|
 | Max ($100-200/month) | You effectively get thousands of dollars of tokens; don't sweat cost for something like this |
 | Tight $20 plan | Be much more careful; consider cheaper open-source models for this kind of task |
+
+## The expiring-allowance view (2026-10-02)
+
+[[token-maxing-with-agents]] pushes the Max-plan row of the table above further: on a flat plan, unspent limit expires at reset, so its speaker treats leftover allowance as something to spend on low-stakes work rather than conserve.
+That is a statement about subscription workloads only ([[subscription-vs-api-tokens]]).
+Loops that serve users or run as unattended production automation belong on metered billing, where this page's unit-economics stop condition applies in full.
 
 ## Synthesis
 

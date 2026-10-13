@@ -2,8 +2,8 @@
 type: concept
 tags: [agentic-engineering, risk, governance, review, production]
 status: developing
-source-count: 2
-last-updated: 2026-09-23
+source-count: 4
+last-updated: 2026-10-02
 ---
 
 # Risk-Based Agent Governance
@@ -29,6 +29,22 @@ Feature gates reduce exposure only when they cover relevant integration points a
 [[merge-ready-vs-launch-ready]] separates integration evidence from the decision to expose users.
 This is additional secondary guidance, not a validated risk score or proof that a gate makes a change safe.
 
+## Operational separation in service work (2026-09-29)
+
+[[projects/Education/Business/wiki/sources/ai-rollup-solo-founder-guide|The $5 Trillion AI Rollup Opportunity]] applies the same governance principle to recurring service work.
+It separates intake, preparation, review, and human approval, and says preparation and review agents should not send client-facing work.
+Each automated role should declare permitted actions, forbidden actions, required inputs, stop conditions, and escalation paths.
+That separation is a structural control: a useful draft cannot silently become an authorized external action.
+
+The guide's business results and market claims are unverified, but its permission boundaries are consistent with this page's consequence-based approach.
+
+## Merge authority written into the prompt (2026-10-02)
+
+[[token-maxing-with-agents]] grants merge authority per task: the prompt states the conditions under which the agent may merge, and trusted threads merge without a human reading them.
+That is governance by instruction rather than by structural boundary, which [[capabilities-not-instructions]] warns against for anything consequential.
+The earlier [[working-with-fable-5]] run was safer in exactly this respect, because merges deployed only to staging.
+Prompt-stated merge conditions fit reversible, low-blast-radius changes; consequential ones still need a boundary the agent cannot talk its way past.
+
 ## Synthesis
 
 Proportionality directs scarce review attention toward incorrect or irreversible results that matter most.
@@ -40,3 +56,5 @@ The source's automatic-merge examples are context-specific, and its beginner rec
 
 - [[kun-agentic-app-development-workflow]] - secondary account of project policies plus compiler-authored beginner recommendations.
 - [[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] - unidentified speaker's review workflow, reconstructed as a beginner guide.
+- [[projects/Education/Business/wiki/sources/ai-rollup-solo-founder-guide|The $5 Trillion AI Rollup Opportunity]] - unidentified source's service-business workflow and human-approval guidance.
+- [[token-maxing-with-agents]] - Theo's prompt-stated merge conditions; one practitioner's practice.

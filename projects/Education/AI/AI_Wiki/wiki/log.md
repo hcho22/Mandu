@@ -275,3 +275,20 @@ Counts now 28 sources, 10 areas, 137 concepts, 24 entities.
 - Extended [[personal-voice-skill]] and [[ai-operating-system]] with author-endorsement and content-library scope boundaries, and updated [[projects/Education/AI/AI_Wiki/wiki/synthesis|synthesis]].
 - Their source counts include the linked Marketing source; AI_Wiki's catalog count remains 36 because no duplicate summary was created here.
 - Existing general-AI knowledge stays in this wiki; Home, Education, and Mandu's registry link the new Marketing subject.
+
+## [2026-09-29] ingest | Cross-links from Business's AI rollup guide
+- The source is owned once in [[projects/Education/Business/wiki/sources/ai-rollup-solo-founder-guide|Business]], with its raw file, source summary, concepts, index, synthesis, and log.
+- Extended [[real-workflow-not-documented]], [[risk-based-agent-governance]], and [[eval-driven-development]], and updated [[projects/Education/AI/AI_Wiki/wiki/synthesis|synthesis]].
+- The connections cover service-based workflow discovery, structural permission boundaries, and accepted human work as a regression suite.
+- AI_Wiki's catalog remains at 36 sources because no duplicate source summary was created here.
+
+## [2026-10-02] ingest | Token Maxing with Agents (Theo)
+- Preserved `inbox/token-maxing-summary.md` byte-identical (SHA-256 verified) at [[projects/Education/AI/AI_Wiki/raw/token-maxing-with-agents|the raw source]] and cleared it from the shared inbox.
+- Created [[token-maxing-with-agents]], [[subscription-vs-api-tokens]], [[delegate-the-problem-not-the-solution]], [[agent-threads-as-inbox]], and the entity [[t3-code]].
+- Extended [[reasoning-effort-discipline]], [[loop-cost-discipline]], [[get-out-of-the-loop]], [[merge-ready-vs-launch-ready]], [[cloud-agents-over-local]], [[read-what-the-agent-writes]], [[one-orchestrator-agent]], [[manager-of-agents]], [[reproducible-agent-environment]], [[model-selection]], and [[risk-based-agent-governance]].
+- Updated entities [[theo-t3]], [[anthropic]], [[codex]], and [[claude-code]]; areas [[agentic-engineering]] and [[agent-operations]]; plus [[index]] and [[synthesis]].
+- Reconciled rather than flagged a new contradiction: "burn tokens" versus [[reasoning-effort-discipline]] resolves by billing model, and effort discipline survives on subscriptions for quality reasons. Added it to the index tensions table, and extended the local-versus-cloud and read-the-code tensions.
+- Checked pricing against the claude-api reference (cached 2026-09-25): Fable 5.1 at $10/$50 confirmed; the $25/$125 Mythos Preview figure is not documented there; the speaker's "70% cheaper" is 60% on his own numbers.
+- Recorded the multi-account proxy setup only as a source claim with the speaker's own terms-of-service warning; no concept page adopts it.
+- Evidence limits: undated video, no URL, caption-derived summary with flagged uncertain corrections, interested-party tool comparisons, and a sponsor segment.
+- Counts: 37 sources, 10 areas, 164 concepts, 32 entities. No daily study log exists for a pointer.
