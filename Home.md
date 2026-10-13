@@ -9,6 +9,8 @@ Work with Mandu in chat; use this page to browse the records and sources behind 
 - [[context/goals|Goals]]
 - [[projects/RepToday/README|Rep Today]]
 - [[projects/Purvia/README|Purvia]]
+- [[projects/Immerse/README|Immerse]]
+- [[projects/gr0wthlab/README|gr0wthlab]]
 - [[projects/CreativeBridge/README|CreativeBridge]]
 - [[projects/CompeteIntel/README|CompeteIntel]]
 - [[decisions/log|Decision history]]
@@ -31,6 +33,7 @@ Ask Mandu: “Find current roles that fit my experience and preferences.”
 - [[projects/Education/README|Learning library]]
 - [[projects/Education/AI/AI_Wiki/wiki/index|AI knowledge]]
 - [[projects/Education/Marketing/wiki/index|Marketing knowledge]]
+- [[projects/Education/Business/wiki/index|Business knowledge]]
 - [[projects/Education/AI/LLM_Evals/README|Evals study track]]
 
 Drop a `.md` file into `inbox/`, then run `/ingest`.

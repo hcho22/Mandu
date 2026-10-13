@@ -1,20 +1,30 @@
 # Current Priorities
 
-**2026-09-28 verified review (priority order unchanged):**
+**2026-09-29 ranking update (hcho's call): Immerse is ranked #2, immediately after Rep Today.**
+Order is now Rep Today, Immerse, Purvia, then the job search as the parallel hedge.
+Immerse (`projects/Immerse/`, repo `hcho22/Immerse`) was a planning baseline when ranked; full native v1 implementation started on 2026-10-02 (PR #7).
+Purvia is now #3 but keeps its standing obligation: keep the eval schedules live and fix the E7 gate and RAGAS run.
+Older sections of this file and other docs that call Purvia "#2" predate this change.
+Local checkout: `/Users/hcho/Developer/fm_private/firstmate-private/projects/Immerse`.
 
-- **Rep Today:** GitHub is green through merged PR #173. Bounded Coach guard diagnostics and a Keychain-only migration preflight landed, but the production stage/release diagnostic and live Coach 401 resolution remain unverified. The canonical checkout is seven commits behind with seven local modifications that must be preserved. See `projects/RepToday/log/2026-09-28.md`.
-- **Purvia:** The 2026-09-27 E7 safety snapshot improved to 18.2% false resolves from 27.3%, but still fails the 5% ceiling and has two parity mismatches. RAGAS was cancelled for a second consecutive week without a measured snapshot. See `projects/Purvia/log/2026-09-28.md`.
-- **Job search:** The 2026-09-28 weekly scan found 8 live Fit 4–5 openings across four companies: three newly surfaced and five carried forward. The top application queue starts with OpenRouter, Machinify, Titan AI, and Cohere Integrations. No applications were submitted. See `projects/Job_Search/scans/2026-09-28.md`.
+**2026-10-12 verified review (current order unchanged):**
 
-_Last verified: 2026-09-28. Update priority order only when hcho's focus shifts._
+- **Rep Today:** GitHub is green through PR #198 (1,665 tests per lane) and has been quiet since 2026-10-06. PRs #193-#198 were small fixes, all Simulator-validated. **The first physical-iPhone pass is on record:** a 73-check device checklist holds 47 results from 2026-10-06 to 2026-10-09 on an iPhone 13 Pro (43 pass, 3 skip, 1 fail), and 29 of its 35 release-blocking checks pass, including a real production Coach reply, restore on a fresh install, and account deletion. Six release-blocking checks are unrecorded (PLAY-7, HEALTH-1, HEALTH-2, SYNC-1, TELE-1, TELE-2). The one failure, COACH-5, is a Coach reply that said "tier", which the still-undeployed PR #186 prompt removes. firstmate has not picked the results up. No submission blocker moved: latency on the claim's device, screenshots, App Store Connect, the privacy source, and TestFlight. The GitHub repo is public and its history still contains the GTM package removed in #152. See `projects/RepToday/log/2026-10-12.md`.
+- **Immerse:** PRD 2.0 and 2.1 landed (2026-10-07) and three of four implementation slices merged through PR #24: capture behavior, decade-free names with the 16mm at 2:47 and the Instant card, and a color or black-and-white Film Stock on the 6x6 and 16mm. The fourth slice, per-Camera looks, sits on an unpushed local branch; hcho approved the Instant, Disposable, and Super 8 looks on 2026-10-10, and **the 6x6 and 16mm boards wait on him at round 7**. Still nothing is device-validated; the manual-test candidate is now the build after all slices. CI is 9 of 11 green on `main` with two different flaky UI tests and runs up to 108 minutes. The repo is still public, the tracker (252 items) has no implementation task checked, and kill criteria, a validation plan, price, and name remain open. See `projects/Immerse/log/2026-10-12.md`.
+- **Purvia:** Every schedule fired, but the Sunday 10-11 RAGAS run crashed on a floating dependency (`pyarrow` now needs NumPy 2; the backend pins `numpy<2`) and **measured nothing** (issue #177). **E7 breached for the fourth straight week and got worse**, 27% false-resolve (3/11) against 5% (issue #163). In all four weeks the false-resolved rows are ones the runtime gate would have escalated, so the breach comes from the offline judge, which counts the refusal "I don't have that information." as an answer. Wednesday retrieval and permissions-scale results are unchanged and green. No human commit since 2026-09-16. See `projects/Purvia/log/2026-10-12.md`.
+- **Job search:** No application submitted; the last is still Cohere on 2026-07-13, thirteen weeks ago. The OpenRouter packet built on 2026-10-08 is still a draft. OpenRouter, Machinify, and Disney (closes 2026-10-30) are all still listed. The packet's E7 line was refreshed from "three" to "four weeks running" and rebuilt. No scan since 2026-10-05; scans are separately invoked. See `projects/Job_Search/log/2026-10-12.md`.
+- **gr0wthlab (tracked since 2026-10-12, not ranked):** the "Marketing Engineer" repo started on 2026-10-08 that drafts Rep Today launch marketing for hcho's review; tooling under Rep Today, and a fourth build stream on the same solo capacity. **The repo is public as of 2026-10-12.** PRs #1-#8 and #11 are merged (44 of 99 PRD boxes checked) and #9, #10, #12 are open. It has published and sent nothing, and no real weekly run or production clone exists; once runs start, each one commits its drafts, Review Queue, decisions, and run reports to that public repo. Nothing public can start until the Rep Today Waitlist is live and hcho sets the first sitting. On 2026-10-12 hcho asked for his decisions to move into gr0wthlab with Mandu as a reader, so the `projects/gr0wthlab/exchange/` folder the current spec expects was not created. While it was private its CI was blocked by a GitHub Actions payment or spending limit; public repos use free runners, so its checks are running again. See `projects/gr0wthlab/log/2026-10-12.md`.
 
-**📍 CANONICAL REPO: `/Users/hcho/firstmate/projects/RepToday`** (decided 2026-08-05).
-Active Rep Today development lives here, driven by the `firstmate` tool. GitHub `main` is verified
-through PR #173 / `7c97fa7`; the local canonical checkout is at PR #168, seven commits behind, with
-seven modified files that must be preserved before syncing. The
-old checkout `/Users/hcho/Developer/RepToday` is **retired/stale** (frozen at PR #68,
-2026-07-31) - do not use it; sync or delete it at will. Path references across these docs have
-been repointed to firstmate. The full private GTM package now lives in Mandu at
+_Last verified: 2026-10-12. Update priority order only when hcho's focus shifts._
+
+**ACTIVE CHECKOUTS (verified 2026-10-12): `/Users/hcho/Developer/FM_Private/firstmate-private/projects/{RepToday,Immerse,Purvia,gr0wthlab}`.**
+firstmate runs from `firstmate-private`; the RepToday checkout there is clean at PR #198 and Immerse's at
+PR #24, both in sync with GitHub, and Purvia's is clean at #173, four snapshot commits behind. Immerse's
+looks slice lives in a local worktree (`~/.treehouse/Immerse-3833fe/1/Immerse`) and is not on GitHub. The
+2026-08-05 home `/Users/hcho/firstmate` stopped on 2026-09-24 and is superseded: its RepToday checkout is
+still frozen at PR #168 with seven modified files and two stashes, and its Purvia checkout has two
+untracked items; preserve or discard those before deleting it. The older `/Users/hcho/Developer/RepToday`
+(frozen at PR #68) is also retired. The full private GTM package lives in Mandu at
 `projects/RepToday/gtm/`; the development repo retains `gtm/03-site/` as the canonical deployable
 public-site source.
 
@@ -403,5 +413,6 @@ With that closed there is now zero in-flight build; Agentic RAG is purely valida
   the nightly-fixed benchmark (permissions-scale back to 1.000, publishing daily); README-dated
   likely too. Remaining RED: USPTO clearance, bio verified, repo hygiene, career read. See the
   2026-08-11 update block at the top.
-- Rep Today: MVP shipped (TestFlight / App Store; date TBD). Blocked on account deletion
-  (US-AD01-AD06), then provisioning.
+- Rep Today: App Store submission (date TBD). No code build is blocking as of 2026-10-12; it waits
+  on the six unrecorded release-blocking device checks, the PR #186 Coach deploy, and the submission
+  assets (latency on the claim's device, screenshots, App Store Connect, privacy source, TestFlight).

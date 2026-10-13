@@ -34,6 +34,7 @@ Skills are reusable workflows in `.Codex/skills/`. Each skill is a folder with a
 
 Active skills:
 - `job-hunter`: searches direct employer pages, full-time aggregators such as Indeed, and freelance marketplaces led by Upwork; ranks opportunities by resume fit and engagement quality.
+- `application-packet`: builds a checked Application packet (one-page resume from Master profile Claims, form answers, gaps note) for one role; hcho submits it himself. Canonical copy in `.claude/skills/application-packet/`, linked from `.agents/skills/`.
 - `daily-log`: creates or opens today's daily log for a tracked project (defaults to HabitLoop).
 - `prd`: generates a Product Requirements Document for a new feature.
 - `ingest`: files one raw source into a wiki, updating every page it touches in a single pass.
@@ -63,6 +64,15 @@ Memory plus context files plus the decision log means your assistant gets smarte
 ## Projects
 
 Active workstreams live in `projects/`. Each project is a folder with its own `README.md` (description, status, key dates). The live priority ranking is in `context/current-priorities.md`.
+
+`projects/Immerse/` (repo `hcho22/Immerse`, a nostalgic film-camera iOS app; native v1 implementation started 2026-10-02, not yet device-validated) is tracked daily as of 2026-09-29 at hcho's request and is ranked #2, immediately after Rep Today (Purvia is now #3; see `context/current-priorities.md` and `decisions/log.md`).
+Its local checkout is `/Users/hcho/Developer/fm_private/firstmate-private/projects/Immerse`.
+Include it in project reviews.
+
+`projects/gr0wthlab/` (repo `hcho22/gr0wthlab`, public since 2026-10-12; the "Marketing Engineer", a weekly agent that turns the go-to-market package in `projects/RepToday/gtm/` into drafts, evidence, and a Review Queue for hcho, and never publishes, sends, or spends) is tracked as of 2026-10-12 at hcho's request.
+It is tooling in service of Rep Today's launch and is not ranked.
+Its local checkout is `/Users/hcho/Developer/FM_Private/firstmate-private/projects/gr0wthlab`.
+Include it in project reviews.
 
 `projects/Education/` contains learning tracks and durable knowledge bases.
 Learning covers anything hcho studies, organized by subject as material arrives. Reuse existing subject areas and create new ones only when incoming material warrants them. General AI knowledge stays in AI_Wiki; other subjects must not be forced into its AI-specific scope. Reusable knowledge has one authoritative home with links to relevant projects.
@@ -100,6 +110,7 @@ Interview talking points from wiki work consolidate to `projects/job-search/inte
 
 Active wikis:
 - Marketing: `projects/Education/Marketing/wiki/` (mode: full; reusable marketing knowledge, including content creation and distribution).
+- Business: `projects/Education/Business/wiki/` (mode: full; reusable knowledge about business acquisition, operations, integration, governance, and economics).
 - Purvia (formerly Agentic RAG): `projects/Purvia/wiki/` (mode: full).
 - AI_Wiki: `projects/Education/AI/AI_Wiki/wiki/` (mode: full; the only general AI wiki, including evals, models, RAG, and agentic engineering).
 - Job-Search Roles: `projects/Job_Search/wiki/` (mode: full).

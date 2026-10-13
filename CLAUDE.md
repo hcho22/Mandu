@@ -32,6 +32,7 @@ Skills are reusable workflows in `.claude/skills/`. Each skill is a folder with 
 
 Active skills:
 - `job-hunter`: scans target company career pages and ranks roles by fit against the resume.
+- `application-packet`: builds a checked Application packet (one-page resume from Master profile Claims, form answers, gaps note) for one role; hcho submits it himself.
 - `daily-log`: creates or opens today's daily log for a tracked project (defaults to HabitLoop).
 - `prd`: generates a Product Requirements Document for a new feature.
 - `ingest` (global skill, lives at `~/.claude/skills/ingest/`, not in this repo): files one raw source into a wiki, updating every page it touches in a single pass. Still defaults to this project's wikis.
@@ -61,6 +62,15 @@ Memory plus context files plus the decision log means your assistant gets smarte
 ## Projects
 
 Active workstreams live in `projects/`. Each project is a folder with its own `README.md` (description, status, key dates). **As of 2026-08-02 the top focus is `projects/RepToday/`** (the primary near-term income bet: a B2C freemium iOS micro-workout app, MVP complete, being shipped to the App Store to test PMF); `projects/Purvia/` (formerly `Agentic_RAG/`) is the second income bet and the lead portfolio piece (a paid permission-aware RAG starter kit, build complete, in buyer validation); `projects/job-search/` runs as the parallel hedge. Demoted/paused: `projects/CreativeBridge/` (portfolio-only) and `projects/CompeteIntel/` (backlog). `projects/Education/AI/LLM_Evals/` is a parked learning track, while `projects/Education/AI/AI_Wiki/` remains the active AI-engineering + AI-career knowledge graph and hcho's primary second brain. The live priority ranking is in `context/current-priorities.md`. Completed and archived: `archives/HabitLoop/`, `archives/F2F/`.
+
+`projects/Immerse/` (repo `hcho22/Immerse`, a nostalgic film-camera iOS app; native v1 implementation started 2026-10-02, not yet device-validated) is tracked daily as of 2026-09-29 at hcho's request and is ranked #2, immediately after Rep Today (Purvia is now #3; see `context/current-priorities.md` and `decisions/log.md`).
+Its local checkout is `/Users/hcho/Developer/fm_private/firstmate-private/projects/Immerse`.
+Include it in project reviews.
+
+`projects/gr0wthlab/` (repo `hcho22/gr0wthlab`, public since 2026-10-12; the "Marketing Engineer", a weekly agent that turns the go-to-market package in `projects/RepToday/gtm/` into drafts, evidence, and a Review Queue for hcho, and never publishes, sends, or spends) is tracked as of 2026-10-12 at hcho's request.
+It is tooling in service of Rep Today's launch and is not ranked.
+Its local checkout is `/Users/hcho/Developer/FM_Private/firstmate-private/projects/gr0wthlab`.
+Include it in project reviews.
 
 `projects/Education/` contains learning tracks and durable knowledge bases.
 `projects/Education/AI/LLM_Evals/` is the parked eval curriculum with its plan, exercises, and study log; its reusable knowledge lives in `projects/Education/AI/AI_Wiki/`.
