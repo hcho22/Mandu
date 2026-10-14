@@ -8,3 +8,6 @@ __pycache__/
 
 # Separate Rep Today development checkout; keep it out of the Mandu notes repository.
 projects/RepToday/repo/
+
+# Founder raw footage folders, one per 14-day window; read by gr0wthlab from disk, kept out of Mandu history.
+projects/RepToday/window-*/
