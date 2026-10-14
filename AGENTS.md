@@ -37,7 +37,7 @@ Active skills:
 - `application-packet`: builds a checked Application packet (one-page resume from Master profile Claims, form answers, gaps note) for one role; hcho submits it himself. Canonical copy in `.claude/skills/application-packet/`, linked from `.agents/skills/`.
 - `daily-log`: creates or opens today's daily log for a tracked project (defaults to HabitLoop).
 - `prd`: generates a Product Requirements Document for a new feature.
-- `gr0wthlab-reader`: reads gr0wthlab's Review Queue and hcho's records for status, applies a package change he approved on gr0wthlab's sitting page, and hands an approved Dispatch request on to firstmate; records no decision. Canonical copy in `.claude/skills/gr0wthlab-reader/`, linked from `.agents/skills/`.
+- `gr0wthlab-reader`: reads gr0wthlab's Review Queue and hcho's records for status, applies a package change he approved on gr0wthlab's sitting page, and gives hcho an approved Dispatch request to pass to firstmate; records no decision. Canonical copy in `.claude/skills/gr0wthlab-reader/`, linked from `.agents/skills/`.
 - `ingest`: files one raw source into a wiki, updating every page it touches in a single pass.
 
 Each skill folder also carries a `MEMORY.md` it reads at the start of each run and appends to only on explicit hcho feedback (kept under 100 lines). Skills are built organically as recurring workflows emerge; the backlog is in `.Codex/skills/README.md`.
@@ -78,7 +78,7 @@ Include it in project reviews.
 **Mandu reads gr0wthlab and never writes it.** hcho decides every Review Queue item on gr0wthlab's own sitting page, and gr0wthlab keeps his records in its `ledger/founder/`; the contract is gr0wthlab's `docs/mandu-exchange.md` (version 7).
 Mandu reads gr0wthlab's Review Queue, items, run reports, and his records, read-only, from the production clone `~/gr0wthlab` to show him status.
 It never records a decision, a sitting, a Beta Build, Beta Cohort counts, or what he sent or heard back, nor the TikTok export or the Immerse Listening confirmation; all of those are given on the sitting page, and a decision told to Mandu in chat is not one.
-It applies a package change to `projects/RepToday/gtm/` only when gr0wthlab's queue lists the item closed as approved and his decision record says approve, and it hands an approved Dispatch request on to firstmate on the same two records.
+It applies a package change to `projects/RepToday/gtm/` only when gr0wthlab's queue lists the item closed as approved and his decision record says approve, and on the same two records it gives hcho an approved Dispatch request to pass to firstmate.
 Use the `gr0wthlab-reader` skill for all of it.
 
 `projects/Education/` contains learning tracks and durable knowledge bases.

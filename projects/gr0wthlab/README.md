@@ -53,7 +53,7 @@ _Last verified: 2026-10-12._
 - **What Mandu does, through the `gr0wthlab-reader` skill:**
   it reads the Review Queue, items, run reports, and hcho's records from `~/gr0wthlab/ledger/` to show him status, and writes nothing in gr0wthlab;
   it applies a package change to the package only when `queue.json` lists the item closed as approved and `founder/decisions/<id>.json` says approve, and records it in the Product's daily log;
-  it hands an approved Dispatch request on to firstmate on the same two records, and records the handoff in this project's log.
+  it gives hcho an approved Dispatch request, on the same two records, as a message to pass to firstmate, and records it in this project's log as given to hcho to pass to firstmate.
   It never records a decision or anything else hcho did for gr0wthlab, and a decision told to Mandu in chat is not one.
 - **Package changes hcho approved on 2026-10-10 are not applied here yet:** raise `hook_max_words` from 12 to 18 in `projects/RepToday/gtm/09-extras/marketing-agent/brand-rules.json`, and replace "no streaks" with "no resets" in the day 6 hook (eight places).
   He also answered that the trademark line stays open.
@@ -96,7 +96,7 @@ _Last verified: 2026-10-12._
    Whether the repo is public, and while it is, what production runs have committed to it, said plainly: a real run is to happen only once the repo is private.
 5. `config/run.json`: the Waitlist date, the first sitting, and the posting slot.
 6. firstmate's `data/backlog.md` for gr0wthlab holds waiting on hcho.
-7. The Review Queue and hcho's records, read with the `gr0wthlab-reader` skill: open items by kind, carried-over items, whether the week's run is overdue, the approvals Mandu has applied or handed on since the previous review, and the approved package-change proposals and Dispatch requests still waiting for hcho's word.
+7. The Review Queue and hcho's records, read with the `gr0wthlab-reader` skill: open items by kind, carried-over items, whether the week's run is overdue, the approvals Mandu has applied or given to hcho to pass to firstmate since the previous review, and the approved package-change proposals and Dispatch requests still waiting for hcho's word.
 8. Whether `docs/mandu-exchange.md` moved past version 7; a newer version may need a change to the reader.
 
 Review entries live in `log/<YYYY-MM-DD>.md`.

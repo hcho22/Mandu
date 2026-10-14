@@ -1,6 +1,6 @@
 ---
 name: gr0wthlab-reader
-description: 'Read gr0wthlab''s Review Queue, items, run reports, and the Founder''s records to show hcho marketing status; apply a Go-To-Market Package change he approved; hand an approved Dispatch request on to firstmate. Use when hcho asks "what''s waiting in gr0wthlab", "what did I decide", "what did the last run say", "where is beta recruiting", "apply what I approved", during any gr0wthlab project review, and whenever hcho tries to give a decision on a gr0wthlab item in chat. Read-only toward gr0wthlab; never records a decision.'
+description: 'Read gr0wthlab''s Review Queue, items, run reports, and the Founder''s records to show hcho marketing status; apply a Go-To-Market Package change he approved; give hcho an approved Dispatch request to pass to firstmate. Use when hcho asks "what''s waiting in gr0wthlab", "what did I decide", "what did the last run say", "where is beta recruiting", "apply what I approved", during any gr0wthlab project review, and whenever hcho tries to give a decision on a gr0wthlab item in chat. Read-only toward gr0wthlab; never records a decision.'
 ---
 
 # gr0wthlab reader
@@ -56,9 +56,9 @@ Answer from the files, in chat, and write nothing.
    A superseded item names `superseded_by`; a withdrawn one says so.
 4. The latest run report's summary, in its own words, when asked or when it reports a failure.
 5. The Founder's other records, when present: sitting minutes, the Beta Build record, the latest Beta Cohort counts (a `null` count is "not reported", never zero), and outreach records (sent and replied dates).
-6. Approvals waiting for his word: every `package-change-proposal` or `dispatch-request` that passes the approval check below and that no log under `projects/*/log/` names as applied or handed on.
+6. Approvals waiting for his word: every `package-change-proposal` or `dispatch-request` that passes the approval check below and that no log under `projects/*/log/` names as applied or as given to hcho to pass to firstmate.
 
-In the weekday project review, give gr0wthlab one short status line: open items by kind, anything carried over, whether the week's run is overdue, the approvals Mandu's logs under `projects/*/log/` name as applied or handed on since the previous review, and the approvals still waiting for his word (step 6).
+In the weekday project review, give gr0wthlab one short status line: open items by kind, anything carried over, whether the week's run is overdue, the approvals Mandu's logs under `projects/*/log/` name as applied or as given to hcho to pass to firstmate since the previous review, and the approvals still waiting for his word (step 6).
 
 ## The approval check
 
@@ -68,8 +68,8 @@ Act only on a `package-change-proposal` or a `dispatch-request`, and only when b
 - `founder/decisions/<id>.json` holds `"decision": "approve"`, and its `item` equals `<id>`.
 
 Never act on anything else: any other kind, an open item, a decision record alone (the page may still change it), a rejected item, an item closed as `superseded` or `"withdrawn": true` whatever was decided for it, or a record you could not read.
-Act on each approval once: if a log under `projects/*/log/` already names its id as applied or handed on, it is done; a log that only lists it as waiting does not count.
-Act when hcho asks ("apply what I approved", "hand on the approved Dispatch"); a status read only lists what is waiting.
+Act on each approval once: if a log under `projects/*/log/` already names its id as applied or as given to hcho to pass to firstmate, it is done; a log that only lists it as waiting does not count.
+Act when hcho asks ("apply what I approved", "give me the approved Dispatch for firstmate"); a status read only lists what is waiting.
 
 ## Apply an approved package change
 
@@ -87,13 +87,13 @@ For an item of `kind: package-change-proposal` that passes the check:
 
 A rejected proposal is never applied, whatever its reason says.
 
-## Hand on an approved Dispatch request
+## Give hcho an approved Dispatch request for firstmate
 
 For an item of `kind: dispatch-request` that passes the check:
 
 1. Read the item file: its `product`, `## Request`, and `## Evidence`, and the decision record's `note`.
-2. Record the handoff in `projects/gr0wthlab/log/<YYYY-MM-DD>.md`: the item id as handed on to firstmate, the Product, the ask, the note if any, and that both approval records were read.
-3. Give hcho, in chat, a handoff for firstmate to pass on as it is: the item id, the Product, the item file's path, the Request word for word, the note, and both approval records' paths.
+2. Record it in `projects/gr0wthlab/log/<YYYY-MM-DD>.md`: the item id as given to hcho to pass to firstmate, the Product, the ask, the note if any, and that both approval records were read.
+3. Give hcho, in chat, a message to pass to firstmate as it is: the item id, the Product, the item file's path, the Request word for word, the note, and both approval records' paths.
    firstmate builds it through that Product's normal reviewed path.
    Write nothing outside Mandu.
 
