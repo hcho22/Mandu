@@ -95,7 +95,7 @@ _Last verified: 2026-10-12._
 4. Whether anything has been published or sent, which only hcho can do, as his outreach records show.
 5. `config/run.json`: the Waitlist date, the first sitting, and the posting slot.
 6. firstmate's `data/backlog.md` for gr0wthlab holds waiting on hcho.
-7. The Review Queue and hcho's records, read with the `gr0wthlab-reader` skill: open and carried-over items, whether the week's run is overdue, and approvals Mandu has not yet applied or handed on.
+7. The Review Queue and hcho's records, read with the `gr0wthlab-reader` skill: open items by kind, carried-over items, whether the week's run is overdue, the approvals Mandu has applied or handed on since the previous review, and the approved package-change proposals and Dispatch requests still waiting for hcho's word.
 8. Whether `docs/mandu-exchange.md` moved past version 7; a newer version may need a change to the reader.
 
 Review entries live in `log/<YYYY-MM-DD>.md`.

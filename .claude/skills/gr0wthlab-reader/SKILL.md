@@ -14,7 +14,7 @@ This skill follows it; where the two seem to disagree, read the contract in the 
 
 ## Where the records are
 
-- `<gr0wthlab>` is the absolute path in the environment variable `GR0WTHLAB_DIR` when it is set (check with `printenv GR0WTHLAB_DIR`), and otherwise the production clone `~/gr0wthlab`.
+- `<gr0wthlab>` is the production clone `~/gr0wthlab`.
 - Every record is under `<gr0wthlab>/ledger/`:
 
 | What | Path under `ledger/` | Written by |
@@ -56,19 +56,19 @@ Answer from the files, in chat, and write nothing.
    A superseded item names `superseded_by`; a withdrawn one says so.
 4. The latest run report's summary, in its own words, when asked or when it reports a failure.
 5. The Founder's other records, when present: sitting minutes, the Beta Build record, the latest Beta Cohort counts (a `null` count is "not reported", never zero), and outreach records (sent and replied dates).
-6. Approvals waiting on Mandu: every item that passes the approval check below and has no entry in Mandu's logs yet (search `projects/*/log/` for its id).
+6. Approvals waiting for his word: every `package-change-proposal` or `dispatch-request` that passes the approval check below and that no log under `projects/*/log/` names as applied or handed on.
 
-In the weekday project review, give gr0wthlab one short status line: open items by kind, anything carried over, whether the week's run is overdue, and approvals waiting on Mandu.
+In the weekday project review, give gr0wthlab one short status line: open items by kind, anything carried over, whether the week's run is overdue, the approvals Mandu's logs under `projects/*/log/` name as applied or handed on since the previous review, and the approvals still waiting for his word (step 6).
 
 ## The approval check
 
-Act on an item only when both hold:
+Act only on a `package-change-proposal` or a `dispatch-request`, and only when both hold:
 
 - `queue.json` lists it in `closed` with `"status": "approved"`.
 - `founder/decisions/<id>.json` holds `"decision": "approve"`, and its `item` equals `<id>`.
 
-Never act on anything else: an open item, a decision record alone (the page may still change it), a rejected item, an item closed as `superseded` or `"withdrawn": true` whatever was decided for it, or a record you could not read.
-Act on each approval once: if Mandu's logs already name its id as applied or handed on, it is done.
+Never act on anything else: any other kind, an open item, a decision record alone (the page may still change it), a rejected item, an item closed as `superseded` or `"withdrawn": true` whatever was decided for it, or a record you could not read.
+Act on each approval once: if a log under `projects/*/log/` already names its id as applied or handed on, it is done; a log that only lists it as waiting does not count.
 Act when hcho asks ("apply what I approved", "hand on the approved Dispatch"); a status read only lists what is waiting.
 
 ## Apply an approved package change
@@ -81,7 +81,7 @@ For an item of `kind: package-change-proposal` that passes the check:
 3. Edit only the files `## Touches` lists, and only inside that package.
    Make exactly the change the Proposal states, as the note refines it.
    If a touched file is outside the package, the Product has no package, the Proposal is unclear, or the note conflicts with it, stop and ask hcho; change nothing.
-4. Record it in the Product's daily log, `projects/<Product>/log/<YYYY-MM-DD>.md` (create it from the `daily-log` template if today's does not exist; never overwrite an existing entry): the item id, its ask, the decision's `decided_at` and `sitting`, the note if any, each file changed and what changed, and that both approval records were read.
+4. Record it in the Product's daily log, `projects/<Product>/log/<YYYY-MM-DD>.md` (create it from the `daily-log` template if today's does not exist; never overwrite an existing entry): the item id as applied, its ask, the decision's `decided_at` and `sitting`, the note if any, each file changed and what changed, and that both approval records were read.
 5. Leave the change uncommitted for hcho unless he asked you to commit.
    gr0wthlab sees it at its next run.
 
@@ -92,7 +92,7 @@ A rejected proposal is never applied, whatever its reason says.
 For an item of `kind: dispatch-request` that passes the check:
 
 1. Read the item file: its `product`, `## Request`, and `## Evidence`, and the decision record's `note`.
-2. Record the handoff in `projects/gr0wthlab/log/<YYYY-MM-DD>.md`: the item id, the Product, the ask, the note if any, and that both approval records were read.
+2. Record the handoff in `projects/gr0wthlab/log/<YYYY-MM-DD>.md`: the item id as handed on to firstmate, the Product, the ask, the note if any, and that both approval records were read.
 3. Give hcho, in chat, a handoff for firstmate to pass on as it is: the item id, the Product, the item file's path, the Request word for word, the note, and both approval records' paths.
    firstmate builds it through that Product's normal reviewed path.
    Write nothing outside Mandu.
