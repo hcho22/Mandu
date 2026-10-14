@@ -10,7 +10,8 @@ hcho, the Founder, decides every item on gr0wthlab's own sitting page, and gr0wt
 Mandu only reads them, and acts on two kinds of approval.
 
 The contract is gr0wthlab's `docs/mandu-exchange.md`, version 7.
-This skill follows it; where the two seem to disagree, read the contract in the gr0wthlab checkout and follow it.
+It governs what Mandu may read and when Mandu may act on an approval; where this skill seems to disagree with it on either, read the contract in the gr0wthlab checkout and follow it.
+How an approved Dispatch request reaches firstmate is hcho's choice of 2026-10-14 and is set by this skill, not the contract: Mandu gives it to him to pass to firstmate and writes nothing outside Mandu.
 
 ## Where the records are
 

@@ -78,7 +78,7 @@ Volunteer work is project-scale even when done on a team.
 - A tailored resume or cover note may only select and rephrase **Claims** from the **Master profile**; it never introduces a new one.
 - A statement with neither Linked nor Attested **Evidence** is not a **Claim** and cannot enter the **Master profile**.
 - A **Capture** never records a decision on a gr0wthlab Review Queue item or anything else hcho did for gr0wthlab; he gives those on gr0wthlab's own sitting page, gr0wthlab keeps them, and Mandu only reads them.
-- A **Dispatch** from gr0wthlab starts only from a Dispatch request that gr0wthlab's queue closed as approved and whose decision record says approve.
+- A **Dispatch** from gr0wthlab starts only from a Dispatch request that gr0wthlab's queue closed as approved and whose decision record says approve; Mandu does not hand it to firstmate itself, but gives the request to hcho to pass to firstmate, and writes nothing outside Mandu.
 - Mandu prepares an **Application packet** but never submits it; submitting is an **Account action** hcho takes himself.
 - Work from June 2025 onward requires Linked **Evidence**; Attested **Evidence** is reserved for earlier work and for coursework awaiting its certificate.
 - Independent work is described once as built solo by directing AI coding agents; a **Claim** then says "built" only for work hcho can explain, how and why, without notes in an interview, and a Claim he would need to study first is not used until he has.
