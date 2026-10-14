@@ -37,6 +37,7 @@ Active skills:
 - `application-packet`: builds a checked Application packet (one-page resume from Master profile Claims, form answers, gaps note) for one role; hcho submits it himself. Canonical copy in `.claude/skills/application-packet/`, linked from `.agents/skills/`.
 - `daily-log`: creates or opens today's daily log for a tracked project (defaults to HabitLoop).
 - `prd`: generates a Product Requirements Document for a new feature.
+- `gr0wthlab-reader`: reads gr0wthlab's Review Queue and hcho's records for status, applies a package change he approved on gr0wthlab's sitting page, and hands an approved Dispatch request on to firstmate; records no decision. Canonical copy in `.claude/skills/gr0wthlab-reader/`, linked from `.agents/skills/`.
 - `ingest`: files one raw source into a wiki, updating every page it touches in a single pass.
 
 Each skill folder also carries a `MEMORY.md` it reads at the start of each run and appends to only on explicit hcho feedback (kept under 100 lines). Skills are built organically as recurring workflows emerge; the backlog is in `.Codex/skills/README.md`.
@@ -69,10 +70,16 @@ Active workstreams live in `projects/`. Each project is a folder with its own `R
 Its local checkout is `/Users/hcho/Developer/fm_private/firstmate-private/projects/Immerse`.
 Include it in project reviews.
 
-`projects/gr0wthlab/` (repo `hcho22/gr0wthlab`, public since 2026-10-12; the "Marketing Engineer", a weekly agent that turns the go-to-market package in `projects/RepToday/gtm/` into drafts, evidence, and a Review Queue for hcho, and never publishes, sends, or spends) is tracked as of 2026-10-12 at hcho's request.
+`projects/gr0wthlab/` (repo `hcho22/gr0wthlab`, public again since 2026-10-14 while v1 is built (private 2026-10-13), and to be made private before the first real run; the "Marketing Engineer", a weekly agent that turns the go-to-market package in `projects/RepToday/gtm/` into drafts, evidence, and a Review Queue for hcho, and never publishes, sends, or spends) is tracked as of 2026-10-12 at hcho's request.
 It is tooling in service of Rep Today's launch and is not ranked.
-Its local checkout is `/Users/hcho/Developer/FM_Private/firstmate-private/projects/gr0wthlab`.
+firstmate's development checkout, for code and PRs in a review, is `/Users/hcho/Developer/FM_Private/firstmate-private/projects/gr0wthlab`; it holds none of hcho's records.
 Include it in project reviews.
+
+**Mandu reads gr0wthlab and never writes it.** hcho decides every Review Queue item on gr0wthlab's own sitting page, and gr0wthlab keeps his records in its `ledger/founder/`; the contract is gr0wthlab's `docs/mandu-exchange.md` (version 7).
+Mandu reads gr0wthlab's Review Queue, items, run reports, and his records, read-only, from the production clone `~/gr0wthlab` to show him status.
+It never records a decision, a sitting, a Beta Build, Beta Cohort counts, or what he sent or heard back, nor the TikTok export or the Immerse Listening confirmation; all of those are given on the sitting page, and a decision told to Mandu in chat is not one.
+It applies a package change to `projects/RepToday/gtm/` only when gr0wthlab's queue lists the item closed as approved and his decision record says approve, and it hands an approved Dispatch request on to firstmate on the same two records.
+Use the `gr0wthlab-reader` skill for all of it.
 
 `projects/Education/` contains learning tracks and durable knowledge bases.
 Learning covers anything hcho studies, organized by subject as material arrives. Reuse existing subject areas and create new ones only when incoming material warrants them. General AI knowledge stays in AI_Wiki; other subjects must not be forced into its AI-specific scope. Reusable knowledge has one authoritative home with links to relevant projects.
@@ -126,3 +133,10 @@ Supporting material lives in `references/`: `references/sops/` for standard oper
 ## Archives
 
 Do not delete outdated or completed material; move it to `archives/`. The previous "Job_Hunter" assistant setup is preserved in `archives/job-hunter-legacy/`.
+
+## Maintaining this file
+
+Keep this file for knowledge useful to almost every future agent session in this project.
+Do not repeat what the codebase already shows; point to the authoritative file or command instead.
+Prefer rewriting or pruning existing entries over appending new ones.
+When updating this file, preserve this bar for all agents and keep entries concise.
