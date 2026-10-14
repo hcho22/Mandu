@@ -1,8 +1,8 @@
 ---
 type: synthesis
-last-updated: 2026-10-02
+last-updated: 2026-10-14
 status: established
-source-count: 37
+source-count: 40
 ---
 
 # Synthesis
@@ -326,12 +326,37 @@ The account-multiplication setup is a self-declared terms-of-service risk and is
 For hcho the transferable part is the attention design, not the token supply.
 Pre-revenue, one subscription for interactive work and metered APIs for anything user-facing or unattended (Rep Today's Coach, Purvia's nightly evals) is the conservative position, and it is the one the speaker himself prescribes for people not yet earning from their work.
 
+## What the 2026-10-14 batch added
+
+Three sources landed together, and they are less independent than their count suggests.
+[[agentic-code-review-strategies]] and [[stop-prompting-design-loops-and-goals]] are two talks by one speaker, [[john-meta-engineer]]; the first is most likely the talk behind the 2026-09-23 review guide; and [[agentic-coding-workflow-idea-to-review]] is a playbook built from both plus the Kun reconstruction.
+So the batch adds one new voice, one more long-run case, and a merged procedure, not three corroborations.
+
+The new voice changes the read-the-code tension, which the wiki had framed as a spectrum from reading everything to reading nothing.
+John reads more code than before and also skims more, and the variable that decides which is **rollback ability**, settled while planning ([[feature-gating-from-day-one]]), with agent-supplied evidence standing in for line-by-line reading wherever a change can be undone ([[proof-in-the-pr]]).
+That turns the rule on [[get-out-of-the-loop]] (exit any loop you can replace with a check) into a two-part test: is there a check, and if the check is wrong, can the change be switched off?
+The second part bites hardest where undo is slow, which is exactly the position of an App Store binary such as Rep Today's.
+
+His loops talk adds the condition the verification spine kept implying: outside a frontier lab, an exit criterion is necessary but not sufficient.
+His 22-hour goal ran because the deploy access and a queryable context CLI already existed, which the frontier case studies took for granted ([[long-horizon-agent-runs]]).
+It also names the consequence: autonomous loops make review the bottleneck, which is why the same speaker's review talk exists.
+Read together, the two talks describe one closed system, loops that produce PRs and a review regime built to absorb them.
+
+The playbook's own contribution is structural: one set of acceptance scenarios reused as exit criterion, evidence checklist, and review yardstick ([[define-the-end-to-end-gate]]), and risk tiers assigned before code exists ([[risk-based-agent-governance]]).
+It also settles a vocabulary dispute the batch introduced: John calls loops and goals interchangeable, while the Claude Code docs, as checked on 2026-10-12, separate them the way [[tharic]] did ([[verification-signal-picks-the-mechanism]]).
+
+For hcho the batch sharpens two existing threads rather than opening new ones.
+Every element of the review regime (pass criteria defined first, evidence attached to the change, depth set by consequence and reversibility, a separate sign-off for release) is a validation sign-off process, which makes this the most directly transferable material since the eval sources.
+And the exit-criterion warning has a live instance in Purvia: E7's offline judge counts a refusal as an answer, so a loop told to stop when E7 passes would stop on a false success.
+Fixing that judge is fixing an exit criterion, which is the same work whether the consumer is a CI gate or an autonomous goal.
+
 ## Open threads
 
 - The [[rag]] and [[production-llm]] hubs are now open and substantive; the prompting hub is still empty (folded loosely into production-llm and the career curriculum for now).
 - The eval area is [[evals|established]] (14 sources) with a coherent stance: define criteria up front, prefer functional testing, triangulate methods, measure reproducibly, and evaluate on your own uncontaminated data - now with the added caveat that the suite itself has a one-to-three-generation half-life.
 - **The two new inbox guides are processed as of 2026-09-23.** AI_Wiki now catalogs 36 sources; the digital-brain content guide is owned by the new Marketing library. Two older non-wiki files in AI `raw/` (a dodgeball tournament guide and a camp scoreboard) remain outside this ingest; their routing still needs attention.
-- **Build the missing half of the distribution system.** [[building-marketing-agents]] and [[one-person-marketing-team]] are opposite halves - loop-plus-data and context-layer - and nothing documents the union. The cheap half is a weekend of markdown; the expensive half only matters at real spend. This is the most concrete build target the distribution material has produced.
+- **Build the missing half of the distribution system.** [[building-marketing-agents]] and [[one-person-marketing-team]] are opposite halves - loop-plus-data and context-layer - and nothing documents the union. The cheap half is a weekend of markdown; the expensive half only matters at real spend. This is the most concrete build target the distribution material has produced. **Update 2026-10-14:** [[projects/Education/Marketing/wiki/sources/becoming-a-marketing-engineer|Becoming a Marketing Engineer]] (Marketing wiki) describes the union as the marketing engineer's growth repo plus six cadenced systems, but with a hypothetical company and no running system, so it is a design, not evidence. hcho's gr0wthlab and Rep Today's go-to-market package already hold the context and approval halves; the results half is still unbuilt everywhere.
+- ~~Confirm or drop the [[john-meta-engineer]] identifications.~~ **Resolved 2026-10-14:** hcho identified the [[ai-era-50-career-tips]] creator as John Kim, and the two talks' "John" is treated as the same person. That makes him a four-source voice whose arc runs from the career hub's founding thesis (agentic validation is the skill) to its practice (loops on exit criteria, review by blast radius). His code-review talk remains the probable source of the 2026-09-23 guide on content match alone.
 - **Confirm or drop the [[nate-herk]] identification.** The "Nate" of [[ai-operating-system-tutorial]] (2026-07-08) is probably the same creator, on style, audience, and subject matter, but neither raw file states the earlier surname. If confirmed, that entity goes to two sources and the two form one arc from personal AI OS to business production system. Currently annotated, not merged.
 - **Instrument cost by default.** [[make-the-agent-report-its-cost]] is the cheapest unadopted practice in the wiki: one clause in a prompt, and it is the prerequisite for every later cost analysis. Worth applying to hcho's own long-running loops before it is needed.
 - **Vendor bias: first correction landed, keep going.** [[running-life-on-codex]] (2026-08-05) is the wiki's first inside-OpenAI/Codex source, and it reports the *same* craft (compaction, skills, verifiable goals, taste, markdown-vault memory) - early evidence the conclusions here generalize beyond Claude Code rather than being harness-specific. Still wanted: the independent agent labs (Amp, Cognition, Factory) and open-model tooling. [[independent-agent-lab-vs-frontier-lab]] remains the sharpest structural counter-position.

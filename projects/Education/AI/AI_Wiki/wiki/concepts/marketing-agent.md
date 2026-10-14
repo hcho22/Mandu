@@ -2,8 +2,8 @@
 type: concept
 tags: [agent-operations, marketing, agents, definition, data]
 status: developing
-source-count: 2
-last-updated: 2026-08-21
+source-count: 3
+last-updated: 2026-10-14
 ---
 
 # Marketing Agent
@@ -54,6 +54,14 @@ That gap is the most concrete build target the distribution material has produce
 
 The practical ordering hint, since the two halves cost very differently: **the context layer is the cheap half and the data layer is the expensive half.**
 A weekend of context files and brand rules buys most of the output quality; Airbyte and ClickHouse buy the decision-making, and only matter once there is real spend to decide about.
+
+## The union, described but not built (2026-10-14)
+
+[[projects/Education/Marketing/wiki/sources/becoming-a-marketing-engineer|Becoming a Marketing Engineer]], filed in the Marketing wiki, describes the system this page called undocumented.
+Its [[projects/Education/Marketing/wiki/concepts/marketing-engineer|marketing engineer]] keeps a context layer (a [[projects/Education/Marketing/wiki/concepts/growth-repo|growth repo]] with customer truth, founder voice, approved angles, and banned language), runs agents on a cadence (daily market files, weekly experiment reviews, a weekly growth cockpit), and judges them on business results (qualified replies, demo requests) rather than activity.
+Against this page's three requirements it scores two and a half: the cadence and the decision loop are explicit, and the data layer is named (sales calls, tickets, payment movement, CRM, Search Console) without the warehouse Cody builds.
+The evidence is much weaker than either earlier source: a talk by [[greg-isenberg]] with a hypothetical HVAC company, and no system shown running.
+So the gap narrows on paper only; the build target stands.
 
 ## Synthesis
 

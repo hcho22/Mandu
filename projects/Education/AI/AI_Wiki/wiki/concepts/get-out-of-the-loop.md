@@ -2,8 +2,8 @@
 type: concept
 tags: [agentic-engineering, workflow, scale, validation]
 status: established
-source-count: 8
-last-updated: 2026-10-02
+source-count: 10
+last-updated: 2026-10-14
 ---
 
 # Get Out of the Loop
@@ -27,6 +27,11 @@ The central philosophy of [[building-products-with-agents]] (and lived out in [[
 - He names his own biggest time-waster as being "a little bit lazy," giving a weak prompt, and having to redo the work, which is a cost that rises with the number of threads you are splitting attention across.
 
 Dating the two claims: [[building-products-with-agents]] (filed 2026-07-08) frames parallelism as a forcing function that pushes you out of the loop; this source (2026-07-28) finds a ceiling where added parallelism degrades the human's prompt quality and judgment faster than it adds throughput.
+A third practitioner puts a number on the ceiling (2026-10-14).
+[[stop-prompting-design-loops-and-goals]]: [[john-meta-engineer]] estimates most people can actively handle 2-3 agent instances, and that a terminal full of tabs means "you're probably doing it wrong."
+His fix is not fewer agents but longer runs: replace frequent check-ins with one large goal plus upfront planning, so each agent needs the human less often.
+That moves the ceiling from the number of agents to the number of decisions per hour, which is the same dial Tharic turned down.
+
 These are compatible if you separate the two exits: parallelism forces you out of *line-by-line review*, which is the point, but it does not scale your capacity for *direction and judgment*, which is what [[read-what-the-agent-writes]] says you must not exit.
 
 ## Where the exits stop (2026-08-01)
@@ -56,6 +61,11 @@ That directly qualifies the blanket statement above that line-by-line review is 
 The provisional reconciliation is risk-dependent review, captured by [[risk-based-agent-governance]], not a universal exit from reading code.
 Executable checks cover known requirements; passing them does not demonstrate that every consequential failure mode was specified.
 The new source is an undated secondary guide, so this records a substantive disagreement rather than an empirical verdict.
+
+**Now with a named speaker (2026-10-14).** [[agentic-code-review-strategies]] is most likely the talk behind that guide, by [[john-meta-engineer]].
+His version of the counter-position is sharper than the guide's: he says he reads more code than before, because agent volume raises the absolute amount of trunk code that needs a human.
+He still exits the loop where he can replace it with a check, gated leaf code with proof attached, so his practice fits this page's rule rather than refuting it.
+The disagreement narrows to which loops have a check good enough to exit, and he answers that rollback ability decides it ([[feature-gating-from-day-one]]).
 
 ## Verification as most of the spend (2026-10-02)
 

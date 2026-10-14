@@ -2,8 +2,8 @@
 type: concept
 tags: [testing, evals, agents, e2e, validation]
 status: developing
-source-count: 3
-last-updated: 2026-09-23
+source-count: 4
+last-updated: 2026-10-14
 ---
 
 # Agent Testing Instructions
@@ -28,6 +28,12 @@ A screenshot demonstrates appearance, while interaction, persistence, and side e
 Generated tests that reproduce implementation assumptions require review rather than automatic trust.
 After fixes, rerun relevant validation and replace stale evidence; a confidence score is not proof.
 For gated changes, test both states and the preserved control path, linking implementation validation to [[merge-ready-vs-launch-ready]].
+
+## A skill against useless tests (2026-10-14)
+
+[[agentic-code-review-strategies]] puts the same worry in a sentence: agents can write useless tests.
+[[john-meta-engineer]]'s fix is a dedicated skill "around not writing useless tests," so the tests stay meaningful when they are offered as proof in the PR ([[proof-in-the-pr]]).
+It is the negative counterpart of this page's "how I would test this" instructions: one says what a good test does, the other forbids the tests that would pass with the feature broken.
 
 ## Synthesis
 

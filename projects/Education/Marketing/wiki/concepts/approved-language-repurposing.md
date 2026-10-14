@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [writing, attribution, voice, content, ai]
-status: seed
-source-count: 1
-last-updated: 2026-09-23
+status: developing
+source-count: 2
+last-updated: 2026-10-14
 ---
 
 # Approved Language Repurposing
@@ -20,6 +20,13 @@ Adapt an author's currently endorsed material into new formats while preserving 
 - Attribute a founder's or employee's experience to that person rather than turning it into a brand's autobiography.
 - A generated variation becomes approved language only after the author approves it.
 
+## Banned language and evidence rules (2026-10-14)
+
+[[projects/Education/Marketing/wiki/sources/becoming-a-marketing-engineer|Becoming a Marketing Engineer]] adds two controls from the agent-operations side.
+A **banned-language list** in the outbound folder stops agent-written outreach from sounding fake, and every insight an agent reports needs a quote, a link, or a source.
+Both are compatible with this page: one constrains wording, the other requires support for claims.
+The source keeps a human approval step before outbound or content goes out, but it treats approval as quality control, not as the author endorsing a statement made in their name; that distinction remains this page's job.
+
 ## Synthesis
 
 [[projects/Education/AI/AI_Wiki/wiki/concepts/personal-voice-skill|Personal voice skills]] address style; this concept adds the separate question of whether the author endorses the claim.
@@ -30,3 +37,4 @@ The source-only boundary for first-person claims is compatible with supplementin
 ## Source
 
 - [[projects/Education/Marketing/wiki/sources/build-a-digital-brain-guide|Build a Digital Brain for AI-Assisted Content]].
+- [[projects/Education/Marketing/wiki/sources/becoming-a-marketing-engineer|Becoming a Marketing Engineer]] - banned-language lists, the receipts rule, and human approval before sending.

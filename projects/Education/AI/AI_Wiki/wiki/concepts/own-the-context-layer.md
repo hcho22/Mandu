@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [agent-operations, context-engineering, marketing, tools, strategy]
-status: seed
-source-count: 1
-last-updated: 2026-08-21
+status: developing
+source-count: 2
+last-updated: 2026-10-14
 ---
 
 # Own the Context Layer
@@ -47,6 +47,12 @@ If your differentiator is a context layer that took months to accumulate and enc
 **Second, it is a switching-cost argument in your favor.**
 A context layer held as plain files is portable across tools.
 The same `CLAUDE.md`, brand rules, and skills that drive Higgsfield today drive whatever replaces it, which is the practical form of [[independent-agent-lab-vs-frontier-lab]]'s warning applied one layer down.
+
+## The growth repo (2026-10-14)
+
+[[projects/Education/Marketing/wiki/sources/becoming-a-marketing-engineer|Becoming a Marketing Engineer]] (Marketing wiki) makes the same argument for a whole company: build a [[projects/Education/Marketing/wiki/concepts/growth-repo|growth repo]] first, because work done in random chats disappears and next week's AI starts from scratch.
+Its version of this page's thesis is "the tools keep changing, but the workflow is the thing to learn," and its upgraded prompt reads the customer truth, founder voice, and recent winners before drafting.
+It adds one thing this page did not have: corrections go back into the repo as rules, so the context layer improves with use instead of staying a static brief.
 
 ## Synthesis
 

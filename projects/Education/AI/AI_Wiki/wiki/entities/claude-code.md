@@ -2,8 +2,8 @@
 type: entity
 tags: [tool, claude-code, anthropic, agentic-engineering]
 status: established
-source-count: 8
-last-updated: 2026-10-02
+source-count: 11
+last-updated: 2026-10-14
 ---
 
 # Claude Code
@@ -21,6 +21,8 @@ Runs the Claude models in an agent harness with memory, context management, slas
 - [[designing-loops-and-workflows]] - **the first primary-source account**, from [[tharic]] on the Claude Code team.
 - [[one-person-marketing-team]] - **the first source that uses it for no coding at all**: a marketing project generating a website, ads, video, and a spreadsheet, driving [[higgsfield]] over MCP.
 - [[token-maxing-with-agents]] - Theo's claim that Claude subscriptions may be used only inside Claude Code; it accepts a custom API endpoint (as used for AWS Bedrock), and he reports its subscription auth needing renewal every two to three days. Driven across machines from [[t3-code]].
+- [[agentic-code-review-strategies]] - [[john-meta-engineer]] names its built-in `/code-review` (caption-flagged) as a review tool good enough to use as the default, provided it runs without the producing context ([[fresh-context-review]]).
+- [[stop-prompting-design-loops-and-goals]] - the same speaker's loops and goals, used for hourly PR babysitting and a goal that ran about 22 hours. The captions do not show which tool or command he used, and he calls loops and goals "pretty interchangeable," which the team's own account does not ([[verification-signal-picks-the-mechanism]]).
 
 ## Used as a project shell, not a coding tool ([[one-person-marketing-team]])
 
@@ -44,6 +46,22 @@ The generalized claim is filed as [[own-the-context-layer]]: what the tool actua
 - **`/goal`** - reminds the agent of its exit condition so it does not stop early; for when spec and exploration are already done.
 - **Workflows** - the most powerful of the three; spin up [[sub-agents]] that do the work in parallel and verify it, making a non-deterministic task closer to deterministic. Implemented as a JS file that can be saved into a skill.
 - **The selection rule** is [[verification-signal-picks-the-mechanism]]: deterministic check takes `/goal`, subjective check takes a workflow with a rubric and a separate verifier ([[self-referential-bias]]).
+
+## Commands for the build-and-review loop (as of 2026-10-12)
+
+Checked against the docs by the compiler of [[agentic-coding-workflow-idea-to-review]] on 2026-10-12; products change quickly, so confirm with `/help`.
+
+| Command | Behavior as documented |
+|---|---|
+| `/goal <condition>` | Keeps working turn after turn until a separate evaluator model judges the condition met or impossible. The evaluator reads only what appears in the conversation, so name a visible check and a turn cap. `/goal` shows status; `/goal clear` stops it. |
+| `/loop [interval] [prompt]` | Reruns a prompt on an interval, or self-paces and ends when no interval is given; bare `/loop` tends the current branch's PR (review comments, failing CI, merge conflicts). Runs only while the session is open and expires after 7 days. |
+| `/schedule` (routines) | Cloud scheduled or event-triggered runs, for automation that must outlive a session. |
+| `/code-review` (alias `/review`) | Reviews a branch, PR, or ref range in a background subagent with its own context; `--fix` applies findings, `--comment` posts them, `ultra` escalates to a deeper cloud review. `/security-review` is the security variant. |
+| Claude Code Review | Managed GitHub PR review, a research preview for Team and Enterprise: runs on PR open, on push, or on `@claude review`; tuned by `REVIEW.md`; findings tagged Important, Nit, or Pre-existing; averages $15-25 per review; never blocks a merge alone. |
+| `claude --worktree <name>` | Starts a session in its own git worktree under `.claude/worktrees/`. |
+
+Mandu's own Claude Code build (2026-10-14) lists a `/code-review` skill with branch, PR, or path targets, `--fix`, `--comment`, and an `ultra` level, and a `/loop` skill that self-paces without an interval, consistent with the table.
+The documented `/goal` and `/loop` split agrees with [[tharic]]'s account and not with the "pretty interchangeable" characterization in [[stop-prompting-design-loops-and-goals]] ([[verification-signal-picks-the-mechanism]]).
 
 ## Product and org facts from that source
 

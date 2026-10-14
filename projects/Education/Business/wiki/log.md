@@ -14,3 +14,13 @@ type: log
 - Registered the new subject in Mandu and linked it from Home and Education.
 - Flagged missing original-video metadata, unverified market and performance claims, incomplete acquisition economics, and unresolved regulatory and employment risks.
 - Counts: 1 source, 6 concepts, 0 entities; no corresponding daily study log existed to receive a pointer.
+
+## [2026-10-14] ingest | Cross-link from Marketing's marketing-engineer tutorial
+
+- The source is owned once in [[projects/Education/Marketing/wiki/sources/becoming-a-marketing-engineer|Becoming a Marketing Engineer]], with its raw file, summary, and concepts in the Marketing wiki.
+- Extended [[service-before-acquisition]] (seed to developing) with the speaker's consult, productize, then software ladder; its source count includes the linked Marketing source.
+- Business counts unchanged: 1 source, 6 concepts, 0 entities.
+
+## [2026-10-14] ingest | Provenance update: Greg Isenberg identified
+
+- hcho identified the speaker of [[projects/Education/Marketing/wiki/sources/becoming-a-marketing-engineer|Becoming a Marketing Engineer]] as Greg Isenberg; updated the attribution on [[service-before-acquisition]].

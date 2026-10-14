@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [code-review, release, feature-flags, validation]
-status: seed
-source-count: 2
-last-updated: 2026-10-02
+status: developing
+source-count: 4
+last-updated: 2026-10-14
 ---
 
 # Merge Ready vs Launch Ready
@@ -26,6 +26,23 @@ Its heuristic: if undoing a bad change takes more than 15 seconds, fix your syst
 The rule assumes a deploy target where reverting is near-instant, such as a web app.
 For an App Store binary the post-merge half is weak, because a fix waits on review, so more of the evidence has to move before release and only server-side surfaces (flags, remote configuration, a proxied endpoint) keep a fast undo.
 
+## The last 20% (2026-10-14)
+
+[[agentic-code-review-strategies]], a named summary of what is most likely the talk behind the first source, gives the split in the speaker's words: "Even if it's merge ready, I don't think it's launch ready."
+[[john-meta-engineer]] calls the first phase "broad strokes": everything gated and landed, which leaves the feature about 80% done.
+The last 20% is where most of his human effort goes:
+
+- refactoring and cleaning up what the agents wrote;
+- running a group of agents to audit the whole feature before launch for performance, bugs, security, and whether it works to spec;
+- polish such as animations, which needs human taste.
+
+By his estimate the last 20% takes as long as the first 80%.
+Then he opens the gate to a canary or an A/B test even without statistical power, because a trickle of traffic surfaces crashes and alerts before everyone sees the feature.
+The audit step is new to this page: review per PR checks each change, while a pre-launch audit checks the assembled feature, which no single PR review sees.
+
+[[agentic-coding-workflow-idea-to-review]] turns the split into two gated phases: review ends with the PR merged and its gate off, and launch has its own exit gate (audit findings fixed or accepted, the canary clean for an agreed window, the gate fully open or the feature removed, and lessons added to `AGENTS.md` or a skill).
+"Or the feature has been removed" is a useful addition: a launch phase that can end in deletion is one where merged code is not presumed to ship.
+
 ## Synthesis
 
 A gate is a containment mechanism whose behavior needs evidence, not a certificate of safety.
@@ -37,3 +54,5 @@ For project tracking, record implementation, validation, and exposure as distinc
 
 - [[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] - derived, undated tutorial; no universal rollout thresholds or readiness scoring model supplied.
 - [[token-maxing-with-agents]] - Theo's pre-merge and post-merge framing and the 15-second revert heuristic; a rule of thumb, not a measured threshold.
+- [[agentic-coding-workflow-idea-to-review]] - review and launch as separately gated phases; compiler-authored.
+- [[agentic-code-review-strategies]] - John's "broad strokes" 80%, the agent audit and polish in the last 20%, and the canary; his estimate, not a measurement.

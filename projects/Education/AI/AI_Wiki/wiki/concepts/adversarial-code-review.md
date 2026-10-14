@@ -2,8 +2,8 @@
 type: concept
 tags: [code-review, verification, agents, evals, quality]
 status: developing
-source-count: 4
-last-updated: 2026-09-23
+source-count: 6
+last-updated: 2026-10-14
 ---
 
 # Adversarial Code Review
@@ -30,6 +30,16 @@ The earlier claims above about reliable bug discovery, different models lacking 
 Changing model or context may reduce shared assumptions without eliminating shared errors.
 The guide supplies no benchmark proving AI review is superior to human review.
 Source count includes the previously cited [[building-robust-apps-with-ai]], omitted from the old count of two, plus this new guide.
+
+## A reviewer on the PR, and a loop to answer it (2026-10-14)
+
+[[agentic-code-review-strategies]] adds the hosted layer.
+[[john-meta-engineer]] runs [[codex]]'s GitHub integration so a Codex reviewer comments automatically when a PR opens, or on demand when tagged; it costs money, and he believes (hedged) it uses a model trained for review.
+His view that AI review is already "better than most humans" is an opinion with no measurement attached; the problem, he says, is that people use it wrong.
+The new part is what happens after the review: review comments arrive, you fix them, more arrive.
+He hands that back-and-forth to an hourly loop that checks the PR, fixes the requested changes, re-runs local and agentic validation, updates the PR notes, and resubmits.
+That closes the loop this page describes, but only in one direction: a babysitter that applies every comment can still apply a wrong one, which is why the earlier verify-the-claim-first step still matters.
+[[agentic-coding-workflow-idea-to-review]] adds the matching rule: the babysitter fixes reviewer comments but does not settle disagreements, so a comment asking for a design or scope change goes to the human instead of into an endless fix cycle.
 
 ## Synthesis
 

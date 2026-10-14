@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [agentic-web, aeo, seo, go-to-market, agents]
-status: seed
-source-count: 1
-last-updated: 2026-07-08
+status: developing
+source-count: 2
+last-updated: 2026-10-14
 ---
 
 # AEO (Answer/Agent Engine Optimization)
@@ -22,6 +22,12 @@ From [[startups-for-agents]]: as agents (and answer engines like ChatGPT and Per
 ## The open question
 
 The host cannot stop thinking about **agent analytics and the agent conversion rate**: he once lifted human conversion 1%->4% by pairing voice-of-customer data with Google Analytics, and there is no agent-native equivalent yet.
+
+## As one of six growth systems (2026-10-14)
+
+[[projects/Education/Marketing/wiki/sources/becoming-a-marketing-engineer|Becoming a Marketing Engineer]] (Marketing wiki) lists "AI search visibility" as one of a [[projects/Education/Marketing/wiki/concepts/marketing-engineer|marketing engineer]]'s six systems: check whether the company is understandable to AI systems, then have agents pull data, create content, and optimize the site so it gets cited.
+The speaker focuses on ChatGPT over Google AI Overviews, Gemini, Perplexity, and Claude, citing a billion-plus users from memory (unverified).
+It offers no method beyond that outline, so it confirms the priority rather than adding technique.
 
 ## Synthesis
 

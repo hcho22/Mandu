@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [agent-operations, loops, metrics, evals]
-status: seed
-source-count: 1
-last-updated: 2026-08-01
+status: developing
+source-count: 2
+last-updated: 2026-10-14
 ---
 
 # Leading Metric Over Vanity Metric
@@ -34,6 +34,13 @@ Insufficient sample is the same failure as an unresponsive metric - no signal.
 - The eval version: an explicit threshold (Inbox Zero's **≥90%** categorization accuracy) is a leading metric that closes a loop cleanly, which is why [[eval-driven-development]] and [[business-loops]] fit together so naturally.
 - **Split loops by metric type** rather than by feature area: a bug loop on uptime, a feature loop on retention.
 Mixing them gives you one loop with two gradients pulling against each other.
+
+## Activity versus signal (2026-10-14)
+
+[[projects/Education/Marketing/wiki/sources/becoming-a-marketing-engineer|Becoming a Marketing Engineer]] (Marketing wiki) states the rule for outbound and content agents: messages sent is activity, qualified replies is the signal.
+Its weekly cockpit example shows why the choice matters: one angle drew fewer clicks than another but twice as many demo requests from the target segment.
+Clicks would have picked the wrong angle.
+Its [[projects/Education/Marketing/wiki/concepts/customer-truth-file|customer truth file]] adds the counterpart caution this page already holds: weekly counts from a handful of calls need a denominator and enough cases before they move positioning.
 
 ## Synthesis
 

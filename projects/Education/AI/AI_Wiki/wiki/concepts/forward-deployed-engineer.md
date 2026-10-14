@@ -2,8 +2,8 @@
 type: concept
 tags: [ai-career, role, fde, deployment, evals, job-search]
 status: developing
-source-count: 1
-last-updated: 2026-08-01
+source-count: 2
+last-updated: 2026-10-14
 ---
 
 # Forward Deployed Engineer (FDE)
@@ -44,6 +44,12 @@ Vas puts the range at **$150,000 base with considerable equity** up to **as high
 
 The engagement runs on [[audit-eval-deployment]], with [[build-on-existing-systems]] as the non-negotiable deployment constraint and [[solve-for-the-exceptions]] as the philosophy of what makes the work valuable.
 The entry path is [[do-the-job-before-the-title]].
+
+## The marketing version (2026-10-14)
+
+[[projects/Education/Marketing/wiki/sources/becoming-a-marketing-engineer|Becoming a Marketing Engineer]] (Marketing wiki) names a "forward deployed marketer," also called a [[projects/Education/Marketing/wiki/concepts/marketing-engineer|marketing engineer]]: someone who embeds with a founder's company for 30, 60, or 90 days, builds one growth system, and sells the outcome at $5K, $10K, or $30K per month.
+The speaker explicitly compares the earning ceiling to today's forward deployed engineers.
+The shape matches this page (embed, build one workflow next to revenue, productize what repeats), and the evidence is weaker: a forecast by [[greg-isenberg]], with no market data behind the pay figures.
 
 ## Synthesis
 

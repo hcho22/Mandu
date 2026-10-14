@@ -2,7 +2,7 @@
 type: source
 title: "50 Things I'd Do If I Were Starting Over in My 20s or 30s"
 source-type: tutorial-summary
-author: "PM-to-Staff-Engineer tech creator (Meta)"
+author: "John Kim (PM-to-Staff-Engineer tech creator, Meta)"
 url: "local"
 date-ingested: 2026-07-08
 date-created: unknown
@@ -42,7 +42,7 @@ This is the founding source for the [[ai-career]] hub.
 
 ## Source
 
-- **Author:** Tech creator, PM to Staff Software Engineer at Meta (Claude Code / Codex instructor, YouTube + Push to Prod newsletter)
+- **Author:** John Kim ([[john-meta-engineer]]), tech creator, PM to Staff Software Engineer at Meta (Claude Code / Codex instructor, YouTube + Push to Prod newsletter). Name supplied by hcho on 2026-10-14; the raw summary does not state it.
 - **Title:** 50 Things I'd Do If I Were Starting Over in My 20s or 30s
 - **URL:** local summary (YouTube talk)
 - **Raw:** [[AI_Era_50_Career_Tips_Summary]] (saved verbatim in `raw/`, immutable)

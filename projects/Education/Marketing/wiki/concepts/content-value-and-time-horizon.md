@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [content-strategy, marketing, measurement]
-status: seed
-source-count: 1
-last-updated: 2026-09-23
+status: developing
+source-count: 2
+last-updated: 2026-10-14
 ---
 
 # Content Value and Time Horizon
@@ -20,6 +20,13 @@ Assess content by what it contributes to a reusable library and the period over 
 - Choose the intended outcome before judging performance: reach, qualified responses, inquiries, and durable reuse answer different questions.
 - The guide provides no study establishing which category performs best and no universal publishing cadence.
 
+## Weekly reads and the horizon problem (2026-10-14)
+
+[[projects/Education/Marketing/wiki/sources/becoming-a-marketing-engineer|Becoming a Marketing Engineer]] judges content weekly by business results: which hooks keep people watching, which campaign created real conversations, which angle drove demo requests.
+That is this page's "choose the intended outcome before judging performance" applied well, since qualified replies and demos replace raw reach.
+The tension is with the horizon: a weekly loop that repeats what performed will favor content that pays off within the week, and evergreen pieces judged on that clock look weaker than they are.
+The source does not address this; keeping a separate, longer read for evergreen material is Mandu's suggestion.
+
 ## Synthesis
 
 A useful [[content-source-library]] grows through new reasons, examples, distinctions, and evidence as well as through polished phrasing.
@@ -29,3 +36,4 @@ No additional publication target follows from ingesting this framework.
 ## Source
 
 - [[projects/Education/Marketing/wiki/sources/build-a-digital-brain-guide|Build a Digital Brain for AI-Assisted Content]].
+- [[projects/Education/Marketing/wiki/sources/becoming-a-marketing-engineer|Becoming a Marketing Engineer]] - weekly performance reads on business metrics; no horizon guidance.

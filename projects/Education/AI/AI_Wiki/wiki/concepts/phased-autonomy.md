@@ -2,8 +2,8 @@
 type: concept
 tags: [agent-safety, agents, deployment, trust]
 status: established
-source-count: 3
-last-updated: 2026-08-01
+source-count: 4
+last-updated: 2026-10-14
 ---
 
 # Phased Autonomy (The Bike Method)
@@ -33,6 +33,16 @@ The [[audit-eval-deployment]] eval report is the evidence that justifies each pr
 
 **A harder-edged variant** from [[agentic-full-stack-build]] and [[running-teams-of-ai-agents]]: rather than a smooth ramp, both practitioners draw **one hard line at the production boundary** - broad permissions everywhere else, explicit per-access authorization for anything touching prod ([[credential-vaults]]).
 That is a step function, not a gradient, and it suggests the right shape depends on whether the blast radius is recoverable.
+
+## Bounded goals for coding agents (2026-10-14)
+
+[[agentic-coding-workflow-idea-to-review]] applies the ramp to coding agents with concrete settings, mostly editor-authored:
+
+- Start goals capped at 10-20 turns, on Low-tier tasks only, and lengthen the runs as tests and evidence get stronger. A 22-hour run ([[stop-prompting-design-loops-and-goals]]) is the end of the ramp, not where a beginner starts.
+- Grow the team in five stages: one agent; one lead with two workers and a fresh-context reviewer; separate research, design, build, and validation agents; risk policies with auto-merge for the Low tier only; then fleets, once coordination is the bottleneck.
+- Each stage has a stated trigger ("one agent reliably produces validated features," "tests and evidence have proven reliable"), which makes promotion an evidence decision rather than a feeling.
+
+The same ramp appears here as a fourth domain: personal skills, enterprise deployment, production boundaries, and now the autonomy of a build agent.
 
 ## Synthesis
 

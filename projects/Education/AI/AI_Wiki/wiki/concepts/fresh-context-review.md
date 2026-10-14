@@ -2,8 +2,8 @@
 type: concept
 tags: [validation, code-review, context-engineering, evals]
 status: developing
-source-count: 4
-last-updated: 2026-09-23
+source-count: 6
+last-updated: 2026-10-14
 ---
 
 # Fresh-Context Review
@@ -35,6 +35,19 @@ The reconstruction reinforces the method but is overlapping secondary material, 
 [[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] specifies a practical handoff: original requirements, current diff, necessary project context, and evidence for the current revision.
 A new reviewer supplied the entire implementation conversation may inherit the same assumptions despite being a separate agent.
 This guide adds a usable procedure, not an independent measurement of bias reduction.
+
+## "The agents will cheat" (2026-10-14)
+
+[[agentic-code-review-strategies]] gives the practitioner's version of the bias in four words.
+[[john-meta-engineer]] calls a reviewer without the producing context an **adversarial review agent**, a new sub-agent or separate agent, because one that helped write the code leans on the earlier conversation and grades it accordingly.
+He pairs it with the default review tools ([[claude-code]]'s `/code-review`, [[codex]]'s reviewer) rather than a custom one, plus a PR template so the reviewer sees the same structure every time ([[proof-in-the-pr]]).
+This is most likely the same talk as the 2026-09-23 guide, so it names the speaker rather than adding an independent measurement.
+
+## Layered, so the builder never grades itself (2026-10-14)
+
+[[agentic-coding-workflow-idea-to-review]] stacks three independent reviews: a fresh-context agent before the PR opens (Kun's No Mistakes pipeline, or a reviewer subagent), an AI reviewer on GitHub (John's Codex bot), and a human at the depth the risk tier sets.
+Its reviewer prompt opens "You did not write this change" and hands over the task's requirement and the architecture doc rather than the conversation, which is the handoff this page's 2026-09-23 section describes.
+The layering is the compiler's design; the sources it merges each supply one or two of the layers.
 
 ## Synthesis
 

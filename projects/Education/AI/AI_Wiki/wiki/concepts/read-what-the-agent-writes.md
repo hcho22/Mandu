@@ -2,8 +2,8 @@
 type: concept
 tags: [craft, learning, judgment, ai-career, agentic-engineering, failure-modes]
 status: developing
-source-count: 3
-last-updated: 2026-10-02
+source-count: 4
+last-updated: 2026-10-14
 ---
 
 # Read What the Agent Writes
@@ -51,6 +51,13 @@ The unresolved edge is real, though: an executable check verifies *correctness*,
 [[token-maxing-with-agents]] goes past Jason's position: [[theo-t3]] estimates about half his threads are archived without his reading the agent's final message, and calls watching an agent work one of the worst uses of time.
 Like Jason, he relocates the check into conditions stated in the prompt and into automated review, so it is another case of verification moved rather than dropped.
 He also says plainly that he wants agents brought in when he starts thinking ([[delegate-the-problem-not-the-solution]]), which is the case this page worries about most: the understanding you skip is the one you would have built.
+
+## The opposite data point: reading more (2026-10-14)
+
+[[agentic-code-review-strategies]] is the first named practitioner in the wiki who reports reading *more* code since agents arrived.
+[[john-meta-engineer]] still reads "a lot," turns his review knob up for trunk code and one-way doors, and skims gated leaf work that carries proof.
+His reason is volume: one person running several agents produces far more code, and the dangerous fraction of it grows with the total.
+He also ties fast review to knowing the codebase, which is this page's thesis from the other side: you can only triage what you understand, and understanding comes from having read it.
 
 ## Synthesis
 

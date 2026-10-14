@@ -2,8 +2,8 @@
 type: area
 tags: [agent-operations, agents, loops, automation, cost, business]
 status: developing
-source-count: 10
-last-updated: 2026-10-02
+source-count: 12
+last-updated: 2026-10-14
 ---
 
 # Agent Operations
@@ -85,6 +85,7 @@ People routinely span both - [[ryan-carson]] runs a cloud engineering fleet *and
 - [[production-agent-with-cma]] - Anthropic: the production agent-infrastructure primitives underneath all of it.
 - [[running-life-on-codex]] - Jason (OpenAI Codex): the personal-operations version - a scheduled "Chief of Staff" heartbeat, a self-improving skill library, and a markdown vault as the agent's memory; the OpenAI-side confirmation that these patterns are not Anthropic-specific.
 - [[token-maxing-with-agents]] - Theo: funding a thread fleet from flat-rate subscriptions, an owned always-on Linux box for overnight runs, and a fleet repository for machine setup; the account-multiplication part is a self-declared terms-of-service risk.
+- [[stop-prompting-design-loops-and-goals]] - John (Meta): loops and goals to stop babysitting agents; hourly PR babysitting, 1-2 hour check-ins, and three-hourly thread summaries as standing loops, plus a 22-hour build goal.
 - [[one-person-marketing-team]] - Nate Herk: the context layer with no loop. A fictional brand, real per-asset costs, and the area's weakest evidence paired with its most concrete economics.
 
 ## The missing half of the distribution story (2026-08-21)
@@ -111,6 +112,10 @@ Build in that order.
 Eighteen static creatives for $3.43 removes the old constraint on variant count that [[test-breadth-over-conviction]] was written against.
 What remains expensive is the read - connecting output to outcomes you do not control.
 That asymmetry is now the binding constraint on every loop in this area, and it is the same shape as the area's existing third finding: the automation is easy and knowing what it did is not.
+
+**A third source describes the union (2026-10-14).** [[projects/Education/Marketing/wiki/sources/becoming-a-marketing-engineer|Becoming a Marketing Engineer]], filed in the Marketing wiki, lays out a context layer (a growth repo), cadenced agents with job specs, and a weekly read judged on qualified replies and demo requests.
+It is the most complete *description* of the system in either wiki, and the least evidenced: a talk by [[greg-isenberg]] with a hypothetical company, and nothing shown running.
+It also orders the build the same way as this section: a folder of context and 20 real customer notes first, one system next, the data plumbing only when a result justifies it.
 
 ## Open tensions
 

@@ -2,8 +2,8 @@
 type: concept
 tags: [agentic-engineering, workflow, verification, claude-code, orchestration]
 status: established
-source-count: 3
-last-updated: 2026-08-01
+source-count: 5
+last-updated: 2026-10-14
 ---
 
 # The Verification Signal Picks the Mechanism
@@ -51,6 +51,19 @@ They disagree on how much machinery has to wrap it, and the likely explanation i
 That is inference, not something either source states.
 
 Boris also adds a fourth mechanism this page did not have: **dynamic workflows** as a way to ramp test-time compute on one task, distinct from a loop or routine ([[dynamic-workflows-as-test-time-compute]]).
+
+## "Pretty interchangeable" (2026-10-14)
+
+[[stop-prompting-design-loops-and-goals]] disagrees with this page's premise, at least in vocabulary.
+[[john-meta-engineer]] describes a loop as rerunning a prompt until an end criterion is met or indefinitely, and a goal as essentially a loop with an interval, and calls the two "pretty interchangeable."
+His own uses split along this page's line anyway.
+PR babysitting every hour and thread summaries every three hours are interval loops with no exit check; the 22-hour build is a goal whose exit criterion is the design screens and passing tests.
+His rule for a good goal is this page's rule from the user's side: an exit criterion the agent can verify at a very high confidence level, such as an evaluation, design specs, or tests.
+The interchangeability is recorded as his characterization; the third source of the same batch, [[agentic-coding-workflow-idea-to-review]], checks the documented behavior.
+
+**Documented behavior (as of 2026-10-12).** That playbook's check of the [[claude-code]] docs supports this page's split: `/goal` keeps working until a separate evaluator model judges the condition met or impossible, while `/loop` reruns a prompt on a time interval (or self-paces), runs only while the session is open, and expires after 7 days.
+One documented detail sharpens the rule: the `/goal` evaluator judges only what appears in the conversation, so a deterministic check counts only if the agent runs it visibly ("`npm test` exits 0").
+A check the evaluator cannot see is, for this mechanism, no check at all.
 
 ## Synthesis
 

@@ -292,3 +292,54 @@ Counts now 28 sources, 10 areas, 137 concepts, 24 entities.
 - Recorded the multi-account proxy setup only as a source claim with the speaker's own terms-of-service warning; no concept page adopts it.
 - Evidence limits: undated video, no URL, caption-derived summary with flagged uncertain corrections, interested-party tool comparisons, and a sponsor segment.
 - Counts: 37 sources, 10 areas, 164 concepts, 32 entities. No daily study log exists for a pointer.
+
+## [2026-10-14] ingest | Do You Still Read Your Code? Agentic Code Review Strategies (John)
+- First of three sources hcho asked to process as one batch on 2026-10-14 (the inbox held three pending Markdown files); each gets its own raw file, summary, and log entry.
+- Preserved `inbox/101226_agentic-code-review-summary.md` byte-identical (SHA-256 verified) at [[projects/Education/AI/AI_Wiki/raw/agentic-code-review-strategies|the raw source]] and cleared it from the shared inbox.
+- Created [[agentic-code-review-strategies]], the entity [[john-meta-engineer]], and the concepts [[feature-gating-from-day-one]] and [[proof-in-the-pr]].
+- Extended [[risk-based-agent-governance]], [[merge-ready-vs-launch-ready]] (seed to developing), [[fresh-context-review]], [[adversarial-code-review]], [[agent-testing-instructions]], [[get-out-of-the-loop]], and [[read-what-the-agent-writes]]; entities [[codex]] (seed to developing) and [[claude-code]]; area [[agentic-engineering]]; plus [[index]].
+- Provenance finding: the summary matches [[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] (2026-09-23, speaker unknown) claim for claim, so the two are most likely derivations of one talk and count as one voice. Added a dated note to the guide page without changing its original identity statement. A further possible match to the creator of [[ai-era-50-career-tips]] is recorded as unconfirmed.
+- Tensions: extended the read-the-code rows; the named speaker reads more code than before and lets rollback ability set review depth. Reconciled John's confidence levels with the guide's "a confidence score is not proof" as routing signal versus evidence, on [[proof-in-the-pr]].
+- Evidence limits: undated video, no URL or real title, first name only, self-described credentials, caption-derived with 13 flagged restorations, and opinion-level claims (AI review "better than most humans," the 80/20 split) with no measurements.
+- Counts: 38 sources, 10 areas, 166 concepts, 33 entities.
+
+## [2026-10-14] ingest | Stop Prompting, Start Designing Loops and Goals (John)
+- Second of the three-source batch hcho requested on 2026-10-14.
+- Preserved `inbox/101226_stop-prompting-loops-goals-summary.md` byte-identical (SHA-256 verified) at [[projects/Education/AI/AI_Wiki/raw/stop-prompting-design-loops-and-goals|the raw source]] and cleared it from the shared inbox.
+- Created [[stop-prompting-design-loops-and-goals]]; no new concept pages, because every idea had an existing home.
+- Extended [[long-horizon-agent-runs]] (a third run and a second three-ingredient list, compared side by side with Boris Cherny's), [[verification-signal-picks-the-mechanism]], [[get-out-of-the-loop]], [[build-the-machine-first]] (seed to developing), [[ai-operating-system]], [[heartbeat-automation]] (seed to developing), and [[credential-vaults]].
+- Updated entities [[john-meta-engineer]] (seed to developing; now two sources), [[boris-cherny]], [[open-claw]], and [[claude-code]]; areas [[agentic-engineering]] and [[agent-operations]]; a backlink on [[token-maxing-with-agents]]; plus [[index]].
+- Contradiction flagged: John calls loops and goals "pretty interchangeable," against [[tharic]]'s distinction on [[verification-signal-picks-the-mechanism]]; his own use cases split along Tharic's line. Added to the orchestration-scaffolding tension rows.
+- Term collision recorded, not resolved: "token maxing" means work out per human token in here, and spending the whole allowance in [[token-maxing-with-agents]].
+- Tension flagged on [[credential-vaults]]: pre-authenticated deploy tooling avoids secret leakage but grants deploy authority; separable concerns.
+- Evidence limits: undated video, no URL or real title, summary generated 2026-10-11, caption-derived with flagged restorations (including the design tool "Pen (formerly Pencil)" and "Opus 4.8"), a side project with relaxed code-quality standards, and a 22-hour run reported in progress with no outcome measure. Claims about Peter Steinberger and Boris Cherny are the speaker's paraphrases.
+- Counts: 39 sources, 10 areas, 166 concepts, 33 entities.
+
+## [2026-10-14] ingest | Agentic Coding Workflow: From Idea to Code Review (playbook)
+- Third and last of the three-source batch hcho requested on 2026-10-14, filed last so it could link the two John sources it is built from.
+- Preserved `inbox/101226_agentic-coding-workflow.md` byte-identical (SHA-256 verified) at [[projects/Education/AI/AI_Wiki/raw/agentic-coding-workflow-idea-to-review|the raw source]] and cleared it from the shared inbox.
+- Created [[agentic-coding-workflow-idea-to-review]]; no new concept pages.
+- Extended [[risk-based-agent-governance]] (three-tier table, re-triage rule), [[define-the-end-to-end-gate]] (one definition of done reused three times), [[phased-autonomy]] (bounded goals, five-stage ladder), [[verification-signal-picks-the-mechanism]] (documented `/goal` and `/loop` behavior), [[fresh-context-review]], [[adversarial-code-review]], [[proof-in-the-pr]], [[feature-gating-from-day-one]], and [[merge-ready-vs-launch-ready]].
+- Updated entities [[claude-code]] (a dated command table, as of 2026-10-12), [[codex]], [[kun]], and [[john-meta-engineer]]; area [[agentic-engineering]]; [[index]]; and [[synthesis]] (a new section for the batch and an open thread on the John identifications).
+- Contradiction resolved: the documented Claude Code behavior separates `/goal` (until a condition holds) from `/loop` (on an interval), agreeing with [[tharic]] and not with John's "pretty interchangeable." The `[?]` "goals" for PR babysitting maps to `/loop`, as the likely reading rather than a confirmed one.
+- Verification: Mandu's Claude Code build on 2026-10-14 lists `/code-review` (branch, PR, or path targets; `--fix`; `--comment`; `ultra`) and a self-pacing `/loop`, consistent with the source. The `/review` alias and `/goal` evaluator behavior were not checked.
+- Evidence limits: third-order material built from two edited summaries and a third-party reconstruction, so it adds no independent corroboration; uncredited and undated; many structures are explicitly editor additions; Codex facts come from bot messages and third-party articles; tool facts are time-sensitive.
+- Project observations recorded on the source page: hcho's environment already contains the Kun tools the compiler could not verify, Mandu's `AGENTS.md` setup is the shared-rules tip in practice, and hcho's global cost instruction matches Kun's nearly word for word.
+- Counts: 40 sources, 10 areas, 166 concepts, 33 entities. Batch total: 3 sources, 2 concepts, and 1 entity created; 1 earlier source page given a provenance note.
+
+## [2026-10-14] ingest | Provenance update: John Kim identified
+- hcho identified the creator of [[ai-era-50-career-tips]] (ingested 2026-07-08, author previously unnamed) as John Kim.
+- Treated the "John, senior staff software engineer at Meta" of [[agentic-code-review-strategies]] and [[stop-prompting-design-loops-and-goals]] as the same person, on hcho's identification plus matching first name, employer, tutorials channel, Claude Code and Codex focus, and vocabulary. The talk transcripts themselves give only the first name.
+- Updated [[john-meta-engineer]] (retitled John Kim; filename kept so earlier links resolve; now four sources), the author fields and provenance notes of all three source pages, [[ai-career]], [[index]], and the open thread in [[synthesis]] (marked resolved).
+- The Staff versus senior staff title difference is recorded as a likely promotion or looser title, not a contradiction.
+- Counts unchanged: 40 sources, 10 areas, 166 concepts, 33 entities.
+
+## [2026-10-14] ingest | Cross-links from Marketing's marketing-engineer tutorial
+- The source is owned once in [[projects/Education/Marketing/wiki/sources/becoming-a-marketing-engineer|the Marketing wiki]], with its raw file, source summary, three new concepts ([[projects/Education/Marketing/wiki/concepts/marketing-engineer|marketing engineer]], [[projects/Education/Marketing/wiki/concepts/growth-repo|growth repo]], [[projects/Education/Marketing/wiki/concepts/customer-truth-file|customer truth file]]), index, synthesis, and log.
+- Extended [[marketing-agent]] (the undocumented union, now described but unbuilt), [[own-the-context-layer]] and [[seven-part-agent-spec]] (seed to developing; a field-by-field comparison with the marketing job spec), [[test-breadth-over-conviction]] (taste-versus-breadth tension), [[leading-metric-over-vanity-metric]] and [[aeo-answer-engine-optimization]] (seed to developing), [[forward-deployed-engineer]], and the entity [[higgsfield]]; area [[agent-operations]]; plus [[index]] and [[synthesis]] (the distribution open thread).
+- Their source counts include the linked Marketing source; AI_Wiki's catalog count remains 40 because no duplicate summary was created here.
+
+## [2026-10-14] ingest | Provenance update: Greg Isenberg identified as the marketing-engineer speaker
+- hcho identified the speaker of [[projects/Education/Marketing/wiki/sources/becoming-a-marketing-engineer|Becoming a Marketing Engineer]] (Marketing wiki) as Greg Isenberg.
+- Extended [[greg-isenberg]] (seed to developing; source count now 2 including the linked Marketing source) and replaced "unnamed speaker" wording on [[marketing-agent]], [[forward-deployed-engineer]], and [[agent-operations]]; refreshed his [[index]] line.
+- Counts unchanged: 40 sources, 10 areas, 166 concepts, 33 entities.

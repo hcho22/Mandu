@@ -2,8 +2,8 @@
 type: entity
 tags: [tool, image, video, generative-media, marketing, mcp]
 status: seed
-source-count: 1
-last-updated: 2026-08-21
+source-count: 2
+last-updated: 2026-10-14
 ---
 
 # Higgsfield
@@ -37,6 +37,10 @@ See [[make-the-agent-report-its-cost]].
 
 From the source's own author: **"It's not the cheapest tool out there for all of these different models."**
 The argument for it is aggregation - one account and one bill across a large catalog - plus the Marketing Studio templates, not per-model price.
+
+## Named in a second source (2026-10-14)
+
+[[projects/Education/Marketing/wiki/sources/becoming-a-marketing-engineer|Becoming a Marketing Engineer]] (Marketing wiki) lists Higgsfield, with fal.ai (caption-flagged), among the creative models that speed up ads, thumbnails, mockups, and video concepts for a creative testing engine; no usage detail is given.
 
 ## Notes
 

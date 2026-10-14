@@ -2,8 +2,8 @@
 type: area
 tags: [agentic-engineering, agents, craft, tooling, orchestration, verification]
 status: established
-source-count: 17
-last-updated: 2026-10-02
+source-count: 20
+last-updated: 2026-10-14
 ---
 
 # Agentic Engineering
@@ -76,6 +76,8 @@ What survives is [[ramble-then-structure]] (say the constraints, not the structu
 
 ### Verification and the human's remaining job
 - [[merge-ready-vs-launch-ready]] - integration, user exposure, and operational recovery need distinct evidence.
+- [[feature-gating-from-day-one]] - gate every feature while planning; rollback ability is what licenses a lighter review later.
+- [[proof-in-the-pr]] - the agent attaches tests, logs, screenshots, and confidence levels so the reviewer reads evidence before code.
 - [[define-the-end-to-end-gate]] - a concrete E2E done-condition, stated up front, forces the plan to expose gaps.
 - [[agent-testing-instructions]] - agents default to shallow tests; write how you would test it.
 - [[get-out-of-the-loop]] - don't review every line; build the automated reviewer.
@@ -106,6 +108,9 @@ What survives is [[ramble-then-structure]] (say the constraints, not the structu
 
 ## Sources
 
+- [[agentic-coding-workflow-idea-to-review]] - uncredited playbook merging John's two talks with the Kun reconstruction into 11 gated phases, with a three-tier risk table and the Claude Code and Codex commands checked on 2026-10-12. Third-order; no new primary evidence.
+- [[stop-prompting-design-loops-and-goals]] - John (Meta): attention as the bottleneck, loops and goals with agent-verifiable exit criteria, and a 22-hour goal enabled by tooling, context, and design screens; review becomes the next bottleneck.
+- [[agentic-code-review-strategies]] - John (Meta): review depth as a gradient set by blast radius, gates from day one, proof in every PR, a fresh-context reviewer, and merge-ready is not launch-ready. Most likely the same talk as the guide below.
 - [[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] - derived guide on blast radius, requirement-linked evidence, independent review, feature gates, and gradual release; original speaker and video details missing.
 - [[kun-agentic-app-development-workflow]] - local secondary reconstruction of four talks, with explicitly identified beginner adaptations.
 - [[ai-era-50-career-tips]] - names the discipline and its four pillars.
@@ -130,11 +135,11 @@ The area is not internally consistent, and the disagreements are the interesting
 
 | Question | Positions |
 |---|---|
-| **Can humans stop reading code?** | [[get-out-of-the-loop]] favors automated replacement of review; [[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] reserves deep human inspection for consequential shared behavior. Review depth depends on risk, not merely passing checks. |
+| **Can humans stop reading code?** | [[get-out-of-the-loop]] favors automated replacement of review; [[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] reserves deep human inspection for consequential shared behavior. Review depth depends on risk, not merely passing checks. [[agentic-code-review-strategies]] (2026-10-14) names the speaker, who reads more code than before and lets rollback ability decide the depth. |
 | **Does context degrade?** | [[context-rot]] says start fresh; [[compaction-over-context-window]] reports four clean compactions. Probably capacity versus contamination, but unresolved. |
-| **Is orchestration scaffolding necessary?** | [[verification-signal-picks-the-mechanism]] gives a selection rule; [[building-at-the-frontier]] says `/go` and `/loop` are "helpful but not required" now. Likely a model-tier difference. |
+| **Is orchestration scaffolding necessary?** | [[verification-signal-picks-the-mechanism]] gives a selection rule; [[building-at-the-frontier]] says `/go` and `/loop` are "helpful but not required" now. Likely a model-tier difference. [[stop-prompting-design-loops-and-goals]] calls loops and goals "pretty interchangeable" while using them for different jobs. |
 | **Local or cloud?** | [[cloud-agents-over-local]] versus the local worktrees of [[building-5-ai-products-solo]] and [[inside-conductor-workflow]]. Filed under [[agent-operations]]. |
-| **More agents or fewer?** | [[dynamic-workflows-as-test-time-compute]] scales to thousands; [[designing-loops-and-workflows]] reports Tharic cutting from five sessions to one; [[one-orchestrator-agent]] keeps many agents but one interface; [[token-maxing-with-agents]] runs ten or more threads across five subscriptions and filters them through [[agent-threads-as-inbox]]. |
+| **More agents or fewer?** | [[dynamic-workflows-as-test-time-compute]] scales to thousands; [[designing-loops-and-workflows]] reports Tharic cutting from five sessions to one; [[one-orchestrator-agent]] keeps many agents but one interface; [[token-maxing-with-agents]] runs ten or more threads across five subscriptions and filters them through [[agent-threads-as-inbox]]; [[stop-prompting-design-loops-and-goals]] puts the active ceiling at 2-3 instances and answers it with longer goals, not more terminals. |
 | **Minimize tokens or burn them?** | [[reasoning-effort-discipline]] and [[loop-cost-discipline]] minimize; [[token-maxing-with-agents]] says spend the whole allowance. Reconciled by billing model in [[subscription-vs-api-tokens]]; effort discipline survives on subscriptions because over-engineering costs review attention. |
 | **Do instructions compound?** | [[building-skills]] and [[self-updating-config]] treat them as an asset; [[ablation-driven-development]] treats them as debt with a one-generation half-life. [[agents-md-as-neural-net]] proposes a third position: they are **weights**, trained continuously within a fixed budget - ablation is the periodic full retrain, the backward pass the weekly gradient step. |
 
@@ -143,6 +148,12 @@ The area is not internally consistent, and the disagreements are the interesting
 The secondary guide [[kun-agentic-app-development-workflow]] adds a beginner sequence for the existing direction, isolation, and verification practices.
 [[risk-based-agent-governance]] makes the review decision explicit, and [[reproducible-agent-environment]] connects onboarding to reconstructible tooling.
 It is overlapping evidence rather than four new independent confirmations, and its staged checklist still allows architecture review during integration.
+
+## Workflow playbook (2026-10-14)
+
+[[agentic-coding-workflow-idea-to-review]] assembles this area's build practice into one procedure: intent, research, architecture with a trunk/leaf map, prototype, a contract with scenarios and risk tiers, atomic gated tasks, bounded goals, proof in the PR, layered review, and a separately gated launch.
+Its structural contribution is that one set of acceptance scenarios serves as exit criterion, evidence checklist, and review yardstick ([[define-the-end-to-end-gate]]), and that review depth is fixed by a tier assigned before the code exists ([[risk-based-agent-governance]]).
+It is built from secondary material, so it organizes the area's claims without strengthening them.
 
 ## Synthesis
 

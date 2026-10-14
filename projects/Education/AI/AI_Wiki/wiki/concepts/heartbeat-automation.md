@@ -1,9 +1,9 @@
 ---
 type: concept
 tags: [agent-operations, automation, scheduled-tasks, chief-of-staff, codex]
-status: seed
-source-count: 1
-last-updated: 2026-08-05
+status: developing
+source-count: 2
+last-updated: 2026-10-14
 ---
 
 # Heartbeat Automation
@@ -26,6 +26,12 @@ This is the OpenAI-side instance of a pattern the wiki already holds from the An
 - [[production-watchdog]] - the same "compress many events into one digest a human will actually read" move, pointed at your own attention rather than at customer activity.
 - [[business-loops]] and [[self-maintaining-codebase]] - recurring scheduled agents that do the individually-low-value, collectively-large work.
 - [[open-claw]] - already filed as "an open-source agent platform run as a personal chief-of-staff"; this is the same job on a different stack.
+
+## The same cadence from a builder (2026-10-14)
+
+[[stop-prompting-design-loops-and-goals]] lists three recurring loops [[john-meta-engineer]] runs: babysitting PRs, checking in on work every hour or two, and pulling messages from the threads he follows every three hours into a summary.
+The last one is this page's pattern with a narrower intake, and the first two point the same cadence at agent work rather than at inboxes.
+He frames all three as automating his own manual attention, which is the heartbeat's purpose stated in one line.
 
 ## Synthesis
 

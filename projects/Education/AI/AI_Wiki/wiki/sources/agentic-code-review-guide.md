@@ -49,6 +49,13 @@ These are Mandu's suggested applications, not claims that the projects already i
 - [[projects/RepToday/README|Rep Today]]: distinguish merged functionality from release validation, and verify disabled-feature behavior as well as the enabled path.
 - [[projects/Job_Search/interview-prep|Interview preparation]]: this framework can help explain an actual validation decision; the tutorial alone is not evidence of work experience.
 
+## Probable common origin (added 2026-10-14)
+
+[[agentic-code-review-strategies]], a named summary of a talk by [[john-meta-engineer]], matches this guide claim for claim (trunk and leaf, the control experience, gated integration points, fresh review, useless generated tests, the 80/20 merge-versus-launch split, and the small-cohort caveat).
+The two are most likely derived from the same talk, so they count as one voice, not independent corroboration.
+This page's original identity statement below is left as written; the attribution rests on content match, not on anything either file states.
+New feature-gating and evidence material from the pair now lives on [[feature-gating-from-day-one]] and [[proof-in-the-pr]].
+
 ## Source
 
 - Supplied title: Beginner's Guide to Reviewing AI-Generated Code Safely.

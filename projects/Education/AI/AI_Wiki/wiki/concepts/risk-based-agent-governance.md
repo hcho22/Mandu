@@ -2,8 +2,8 @@
 type: concept
 tags: [agentic-engineering, risk, governance, review, production]
 status: developing
-source-count: 4
-last-updated: 2026-10-02
+source-count: 6
+last-updated: 2026-10-14
 ---
 
 # Risk-Based Agent Governance
@@ -45,6 +45,34 @@ That is governance by instruction rather than by structural boundary, which [[ca
 The earlier [[working-with-fable-5]] run was safer in exactly this respect, because merges deployed only to staging.
 Prompt-stated merge conditions fit reversible, low-blast-radius changes; consequential ones still need a boundary the agent cannot talk its way past.
 
+## The named speaker's procedure (2026-10-14)
+
+[[agentic-code-review-strategies]] is a named summary of what is most likely the same talk as the 2026-09-23 guide, by [[john-meta-engineer]], so it sharpens that section rather than corroborating it independently.
+It supplies the procedure in his own order:
+
+1. **Tag the change twice:** trunk or leaf, and reversible or one-way door.
+2. **Ask three safety questions:** what control experience must not change, how bad it would be if this went wrong, and can it be rolled back.
+3. **Turn the review-depth knob:** up for trunk code, infrastructure, many dependents, and one-way doors; down for gated leaf work that carries proof ([[proof-in-the-pr]]).
+
+Rollback is the hinge, which is why gating is decided while planning ([[feature-gating-from-day-one]]).
+His last tip is that knowing your own codebase's architecture is what makes this fast: you can see at a glance what touches the dangerous zones.
+He reports reading more code than before under this regime, which is a reminder that proportional review is a reallocation of attention, not a reduction of it.
+
+## Tiers assigned before the code exists (2026-10-14)
+
+[[agentic-coding-workflow-idea-to-review]] merges John's blast radius with Kun's per-project policies into an editor-authored three-tier table, assigned while planning rather than at review:
+
+| Tier | Typical areas | Rollback | Human review |
+|---|---|---|---|
+| Low | Leaf UI, gated experiments, internal tools, docs | Flag off or revert | AI review and a skim |
+| Medium | Customer-facing features, important data flows, auth-adjacent UI | Flag off | AI review; a human reads every file touching a contract or shared code |
+| High | Auth, payments, permissions, migrations, secrets, infrastructure, shared state, one-way doors | May be impossible | Security review, every line read, a rollback plan |
+
+Two rules make the table hold up in practice.
+The tier is **confirmed or raised at review**: a task planned as a leaf that ends up editing a shared reducer is trunk, whatever the task card said.
+And the one-way-door question is made concrete: a data migration, a deletion, a public API change, or an external send.
+The table is a compiler's teaching aid built on secondary sources, not a validated standard; its value is that it forces the tier decision before the diff exists.
+
 ## Synthesis
 
 Proportionality directs scarce review attention toward incorrect or irreversible results that matter most.
@@ -58,3 +86,5 @@ The source's automatic-merge examples are context-specific, and its beginner rec
 - [[projects/Education/AI/AI_Wiki/wiki/sources/agentic-code-review-guide|Reviewing AI-Generated Code Safely]] - unidentified speaker's review workflow, reconstructed as a beginner guide.
 - [[projects/Education/Business/wiki/sources/ai-rollup-solo-founder-guide|The $5 Trillion AI Rollup Opportunity]] - unidentified source's service-business workflow and human-approval guidance.
 - [[token-maxing-with-agents]] - Theo's prompt-stated merge conditions; one practitioner's practice.
+- [[agentic-coding-workflow-idea-to-review]] - compiler's three-tier table and re-triage rule; third-order material.
+- [[agentic-code-review-strategies]] - John's named account of the trunk/leaf procedure; probably the same talk as the 2026-09-23 guide, so one voice rather than two.

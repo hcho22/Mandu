@@ -2,8 +2,8 @@
 type: entity
 tags: [tool, agent-platform, open-source]
 status: seed
-source-count: 2
-last-updated: 2026-07-08
+source-count: 3
+last-updated: 2026-10-14
 ---
 
 # Open Claw
@@ -18,6 +18,8 @@ An open-source agent platform, configured throughout [[one-person-company-with-a
 - Slack is its control surface; it is given [[agent-as-employee|its own identity and scoped permissions]].
 
 - [[building-robust-apps-with-ai]] - OpenClaw is the agent that Ross's ([[ross-hey-fabrica]]) product Pluto actually deploys, running on Daytona sandboxes with a self-healing browser per agent.
+
+- [[stop-prompting-design-loops-and-goals]] (2026-10-14) names its creator as **Peter Steinberger**, described by the speaker as now at OpenAI, who posted a "monthly reminder" to stop prompting coding agents and design loops that prompt them. Spelling and employer are as captioned, not verified.
 
 ## Notes
 

@@ -2,8 +2,8 @@
 type: concept
 tags: [agentic-engineering, testing, verification, scope, e2e]
 status: developing
-source-count: 2
-last-updated: 2026-09-16
+source-count: 3
+last-updated: 2026-10-14
 ---
 
 # Define the End-to-End Gate
@@ -42,6 +42,18 @@ The actual final run was exactly the gate: sign in with Apple using his real acc
 [[kun-agentic-app-development-workflow]] generalizes the real wallet journey into a beginner acceptance pattern: actual app, actual authority/integration path, a durable action, retrieval, and the important failure case.
 Its prompts explicitly distinguish unit checks and compilation from evidence that the product journey works.
 
+## One definition of done, used three times (2026-10-14)
+
+[[agentic-coding-workflow-idea-to-review]] turns the gate into the spine of a whole pipeline.
+The 3-7 acceptance scenarios written before building (Given/When/Then, each listing the evidence that proves it, at least one failure path) are reused as:
+
+1. the agent's **exit criterion** while it builds (the goal condition);
+2. the **evidence checklist** when it opens the PR ([[proof-in-the-pr]]);
+3. the **reviewer's yardstick** during review.
+
+Its example scenario is Kun's wallet gate rewritten: a new parent account signed in through the real auth provider deposits 10, signs out and back in, sees 10, and a second account cannot read that wallet; evidence is a simulator recording, an API response log, and a database row.
+The compiler adds a practical constraint from current tooling: write each scenario so its proof appears in the agent's own output, because a goal evaluator that judges only the conversation cannot see a check the agent never ran visibly.
+
 ## Synthesis
 
 This is the specific, agent-era version of a rule hcho already holds globally: reproduce and verify in an E2E setting as close to the real user experience as possible.
@@ -50,6 +62,8 @@ Stated up front, it makes the agent's own plan reveal its gaps; stated at the en
 
 It sits directly alongside [[agent-testing-instructions]], which says agents default to shallow tests unless you write down how you would test it.
 This compresses that to a single scenario with real dependencies named, and adds the "don't ask me unless only I can do it" clause that keeps the agent from bailing out mid-loop.
+
+Reusing the same scenarios as exit criterion, evidence, and yardstick ([[agentic-coding-workflow-idea-to-review]]) is the strongest form of the planning-instrument idea, because a gap found at any stage is a gap in one shared definition rather than three drifting ones.
 
 It is also the practical form of what [[elicitation-over-prompt-engineering]] and [[long-horizon-agent-runs]] identify as the binding constraint: a stopping condition the agent can evaluate itself.
 "Don't stop until pixel-perfect" and "don't stop until it signs in with my real Apple ID against the real backend" are the same instrument at different scales.

@@ -32,6 +32,11 @@ This is his second source in the wiki, after [[working-with-fable-5]], and it re
 - **Codify machine setup in a fleet-management repo** with a "set up a box" file an agent executes on each new machine ([[reproducible-agent-environment]]).
 - **Model opinions, dated by the video:** he calls Opus "a trash model" in the main recording, then in a later inserted clip calls Opus 5.5 "a pretty good model" that behaves much like Fable 5.1 and is hard to exhaust on one subscription ([[model-selection]]).
 
+## Same term, different meaning (added 2026-10-14)
+
+[[stop-prompting-design-loops-and-goals]] uses "token maxing" for the ratio of work out to human input in, achieved with a harness, not for spending a whole subscription allowance.
+The two uses are kept attributed to their speakers; see [[build-the-machine-first]].
+
 ## Evidence limits
 
 The original video title, URL, publication date, and timestamps were not supplied; the filed title is the compiler's descriptive heading.

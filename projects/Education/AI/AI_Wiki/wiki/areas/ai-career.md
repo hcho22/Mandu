@@ -69,7 +69,7 @@ The counterweight is honest: the new bottleneck is **decision throughput** (2-3 
 
 ## Sources
 
-- [[ai-era-50-career-tips]] - the 50-tip AI-era career talk (Meta Staff Engineer / creator).
+- [[ai-era-50-career-tips]] - the 50-tip AI-era career talk by John Kim ([[john-meta-engineer]]), Meta staff engineer and creator.
 - [[zero-to-hireable-ai-engineer]] - @free_ai_guides: a build-first four-month path from zero to hireable, with PwC/Glassdoor market data.
 - [[fde-in-30-days]] - Vas (Varick Agents): the forward-deployed-engineer role, the Audit → Eval → Deployment loop, and a 30-day case-study roadmap.
 - [[running-teams-of-ai-agents]] - Ryan Carson: you are a manager of agents now, and it makes you more technical.

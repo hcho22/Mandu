@@ -2,8 +2,8 @@
 type: concept
 tags: [agent-operations, marketing, experimentation, distribution]
 status: developing
-source-count: 2
-last-updated: 2026-08-21
+source-count: 3
+last-updated: 2026-10-14
 ---
 
 # Test Breadth Over Conviction
@@ -49,6 +49,14 @@ Twenty variants and no read is strictly worse than two variants and a read, beca
 
 The pairing to hold: generation cost has collapsed to near zero for static creative, which removes the old constraint on variant count.
 The remaining constraint is entirely on the measurement side, and it did not get cheaper.
+
+## Breadth with taste (2026-10-14)
+
+[[projects/Education/Marketing/wiki/sources/becoming-a-marketing-engineer|Becoming a Marketing Engineer]] (Marketing wiki) agrees on breadth: one offer into 20 hooks and 10 ad angles, creative treated as a learning system, and failed ads blamed on "not testing enough creative with the right angle."
+It disagrees in emphasis on taste.
+Where Cody says "We're not Don Draper," this speaker keeps the Don Draper era's skills (story, psychology, positioning) and says taste matters more than ever, because AI makes average marketing cheap.
+Recorded as a tension, provisionally reconciled: taste decides what is worth testing and what should exist; the market decides which variant wins.
+Like the 2026-08-21 source, it gives no budget or sample size per variant.
 
 ## Synthesis
 

@@ -2,8 +2,8 @@
 type: entity
 tags: [person, anthropic, claude-code, frontier]
 status: established
-source-count: 3
-last-updated: 2026-08-01
+source-count: 4
+last-updated: 2026-10-14
 ---
 
 # Boris Cherny
@@ -30,6 +30,7 @@ Promoted here from "engineer associated with" to creator on the strength of [[bu
 - [[build-for-the-model-of-the-future]] - cited in [[ai-era-50-career-tips]]; now stated in his own words with a procedure attached.
 - Named in [[designing-loops-and-workflows]] as the author of **`simplify`**, a repo cleanup tool. (Tool name inferred from an auto-captioned transcript at medium confidence.)
 - Credited in [[loops-to-run-your-business]] as one of the people who popularized "loop engineering" on X.
+- Cited in [[stop-prompting-design-loops-and-goals]] (2026-10-14) as saying in interviews that he runs loops and that his job is to write loops; the speaker's paraphrase, with the interview not named.
 
 ## Positions worth knowing
 

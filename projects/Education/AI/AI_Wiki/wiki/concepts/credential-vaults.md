@@ -2,8 +2,8 @@
 type: concept
 tags: [agent-safety, security, secrets, mcp]
 status: established
-source-count: 3
-last-updated: 2026-08-01
+source-count: 4
+last-updated: 2026-10-14
 ---
 
 # Credential Vaults
@@ -38,6 +38,14 @@ You paste it into that session, and both of you are explicit about what is happe
 
 **The shared permission philosophy**, stated almost identically by both: give the agent broad permissions and capabilities everywhere, and require **explicit human authorization at the production boundary**.
 That is [[phased-autonomy]] drawn as a hard line around one blast radius rather than as a gradual ramp.
+
+## Pre-authenticated tooling (2026-10-14)
+
+[[stop-prompting-design-loops-and-goals]] shows the other side of credentials: access as a roadblock to remove.
+[[john-meta-engineer]] had Vercel already connected and logged in, with skills, so his 22-hour goal could deploy without being taught to log in, set up, and launch.
+That fits this page's leakage rule (the CLI holds the session, so no secret has to pass through the model's context) while granting the authority the rule's "never give agents prod write keys" is meant to withhold.
+The two concerns are separable: a vault stops a secret from leaking, but only a boundary decides whether the agent may deploy at all.
+He applies this to an internal side project; for anything consequential, pre-authenticate staging or preview targets and keep production behind an explicit grant ([[phased-autonomy]], [[risk-based-agent-governance]]).
 
 ## Synthesis
 
