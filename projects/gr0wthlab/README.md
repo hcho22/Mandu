@@ -93,6 +93,7 @@ _Last verified: 2026-10-12._
 2. PRD acceptance boxes: which stories moved.
 3. Whether a production clone and schedule exist, and whether any real weekly run has produced a Review Queue.
 4. Whether anything has been published or sent, which only hcho can do, as his outreach records show.
+   Whether the repo is public, and while it is, what production runs have committed to it, said plainly: a real run is to happen only once the repo is private.
 5. `config/run.json`: the Waitlist date, the first sitting, and the posting slot.
 6. firstmate's `data/backlog.md` for gr0wthlab holds waiting on hcho.
 7. The Review Queue and hcho's records, read with the `gr0wthlab-reader` skill: open items by kind, carried-over items, whether the week's run is overdue, the approvals Mandu has applied or handed on since the previous review, and the approved package-change proposals and Dispatch requests still waiting for hcho's word.
