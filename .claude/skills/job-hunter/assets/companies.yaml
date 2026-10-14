@@ -520,6 +520,98 @@ companies:
     pitch: "AI for internal-tools development — full-stack (FastAPI + React) builder profile; applied-AI dev tooling"
     priority: low
 
+  # === BuiltIn "companies hiring AI engineers" additions (added 2026-06-27; non-duplicates only; URLs TODO — resolved at scan time) ===
+  # Source: https://builtin.com/articles/companies-hiring-ai-engineers
+  # Duplicates already in the list (Hebbia, Webflow, Notion, Sendbird, Regal, Product.ai) were skipped.
+  # Megacaps / non-AI-native enterprises (Datadog, Block, MongoDB, Coinbase, Atlassian, Mastercard, AMD, ServiceNow, GitLab, Dropbox, PwC, etc.) intentionally skipped per the AI-native startup/scaleup + evals thesis.
+  # Agentio and Bellagent from this roundup are kept once, with resolved URLs, in the 2026-07-13 block below.
+  - name: Topline Pro
+    bucket: ai-native-larger
+    location: ""  # TODO
+    pitch: "Done-for-you AI agents for home-services pros, built on embeddings + retrieval-augmented generation — maps directly to Agentic RAG (pgvector retrieval) and Omdena RAG/embeddings work"
+    priority: high
+
+  - name: Zapier
+    bucket: ai-native-larger
+    location: Remote
+    careers_url: ""  # TODO
+    pitch: "Connected AI-orchestration platform for workflows + agents — agentic orchestration (CreativeBridge multi-AI) and Mandu agent tooling translate directly"
+    priority: high
+
+  - name: Assembled
+    bucket: ai-native-larger
+    location: ""  # TODO
+    pitch: "Support-ops platform tackling autonomous-agent optimization — agentic CX plus an evals/quality surface (agent optimization) that fits the validation thesis"
+    priority: medium
+
+  - name: Kustomer
+    bucket: ai-native-larger
+    location: ""  # TODO
+    pitch: "Customer-service platform with the KIQ Customer Assist agent — agentic CX production workflows, alongside Cresta/Decagon"
+    priority: medium
+
+  - name: Eve
+    bucket: ai-native-larger
+    location: ""  # TODO
+    pitch: "Legal AI operating system for plaintiff law firms — accuracy-critical like Harvey/GC AI, where validation rigor is a literal product requirement"
+    priority: medium
+
+  - name: AKASA
+    bucket: ai-native-larger
+    location: ""  # TODO
+    pitch: "Healthcare AI automating administrative + revenue-cycle tasks — AI-native healthcare ops at a well-funded scaleup"
+    priority: medium
+
+  - name: BrainPOP
+    bucket: ai-native-larger
+    location: ""  # TODO
+    pitch: "Edtech building digital learning tools on AI infrastructure — edtech is a target sector (CreativeBridge adjacency)"
+    priority: medium
+
+  - name: Carbon Robotics
+    bucket: ai-native-larger
+    location: ""  # TODO
+    pitch: "AI + computer vision for agricultural weed control — CV background maps to Omdena (DeepLabV3+/UNET segmentation)"
+    priority: medium
+
+  - name: Vantor
+    bucket: ai-native-larger
+    location: ""  # TODO
+    pitch: "Geospatial intelligence over satellite imagery — Omdena satellite/CV work is a direct domain bridge"
+    priority: medium
+
+  - name: Sonar
+    bucket: ai-native-larger
+    location: Austin, TX / London / Tokyo
+    careers_url: ""  # TODO
+    pitch: "Code-quality + security for AI-generated code — an evals/quality angle that maps cleanly from the hardware-QA decade"
+    priority: medium
+
+  - name: Snyk
+    bucket: ai-native-larger
+    location: ""  # TODO
+    pitch: "Developer security using human-in-the-loop AI/ML for vulnerability detection — QA/security-adjacent to the validation thesis"
+    priority: low
+
+  # Note (2026-10-14 merge): the 2026-07-13 re-scan below skipped Air Space Intelligence as robotics/CV/hardware; kept at low priority pending hcho's call.
+  - name: Air Space Intelligence
+    bucket: ai-native-larger
+    location: ""  # TODO
+    pitch: "AI-powered modeling/simulation for air operations — applied-AI builder surface in a high-stakes domain"
+    priority: low
+
+  - name: Sprinter Health
+    bucket: ai-native-larger
+    location: ""  # TODO
+    pitch: "Preventive-healthcare company expanding applied AI — production AI in a mission-driven sector"
+    priority: low
+
+  - name: Circle
+    bucket: ai-native-larger
+    location: ""  # TODO
+    pitch: "Community platform building AI agents, workflows, and copilots on LLMs — agentic product surface"
+    priority: low
+
   # === BuiltIn AI roundup re-scan additions (added 2026-07-13; only non-duplicates from the same roundup) ===
   # Source: https://builtin.com/artificial-intelligence/ai-companies-roundup (re-read 2026-07-13; the 06-22 block above
   # already captured Hebbia/Credal/EliseAI/Deepgram/Sendbird/Regal/Notion/Webflow/GC AI/Product.ai/Hedra/Tempus/Superblocks).

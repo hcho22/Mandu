@@ -4,4 +4,4 @@ Free-form notes this skill has been told to remember. The skill reads this file 
 
 ## Notes
 
-- [2026-06-06] After a PRD's user story is implemented and its Validation Test passes, update the PRD file to check off that story's acceptance criteria (optionally note completion); do not rewrite the PRD's intent or scope. Promoted into PRD_SKILL.md as the "After implementation: keep the PRD current" section.
+- [2026-06-06] After a PRD's user story is implemented and its Validation Test passes, update the PRD file to check off that story's acceptance criteria (optionally note completion); do not rewrite the PRD's intent or scope. Promoted into SKILL.md as the "After implementation: keep the PRD current" section.
