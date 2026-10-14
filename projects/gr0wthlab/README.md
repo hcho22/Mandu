@@ -92,7 +92,7 @@ _Last verified: 2026-10-12._
 1. New commits, PRs, and CI on `hcho22/gr0wthlab`.
 2. PRD acceptance boxes: which stories moved.
 3. Whether a production clone and schedule exist, and whether any real weekly run has produced a Review Queue.
-4. Whether anything has been published or sent, which only hcho can do, as his outreach records show.
+4. Whether anything has been sent or published, which only hcho can do: his outreach records show what he sent, but no gr0wthlab record shows that a post was published, so ask him.
    Whether the repo is public, and while it is, what production runs have committed to it, said plainly: a real run is to happen only once the repo is private.
 5. `config/run.json`: the Waitlist date, the first sitting, and the posting slot.
 6. firstmate's `data/backlog.md` for gr0wthlab holds waiting on hcho.
