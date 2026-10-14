@@ -73,7 +73,8 @@ It is tooling in service of Rep Today's launch and is not ranked.
 firstmate's development checkout, for code and PRs in a review, is `/Users/hcho/Developer/FM_Private/firstmate-private/projects/gr0wthlab`; it holds none of hcho's records.
 Include it in project reviews.
 
-**Mandu reads gr0wthlab and never writes it.** hcho decides every Review Queue item on gr0wthlab's own sitting page, and gr0wthlab keeps his records in its `ledger/founder/`; the contract is gr0wthlab's `docs/mandu-exchange.md` (version 7).
+**Mandu reads gr0wthlab and never writes it.**
+hcho decides every Review Queue item on gr0wthlab's own sitting page, and gr0wthlab keeps his records in its `ledger/founder/`; the contract is gr0wthlab's `docs/mandu-exchange.md` (version 7).
 Mandu reads gr0wthlab's Review Queue, items, run reports, and his records, read-only, from the production clone `~/gr0wthlab` to show him status.
 It never records a decision, a sitting, a Beta Build, Beta Cohort counts, or what he sent or heard back, nor the TikTok export or the Immerse Listening confirmation; all of those are given on the sitting page, and a decision told to Mandu in chat is not one.
 It applies a package change to `projects/RepToday/gtm/` only when gr0wthlab's queue lists the item closed as approved and his decision record says approve, and on the same two records it gives hcho an approved Dispatch request to pass to firstmate.

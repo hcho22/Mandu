@@ -4,7 +4,8 @@
 It never publishes, sends, or spends, and it cannot write to Mandu or to any product repo; it proposes, and each owner applies what hcho approves.
 Version 1 serves Rep Today's pre-launch marketing; Immerse joins as listen-only after Rep Today's first 14-day window has run cleanly.
 
-**Repo:** https://github.com/hcho22/gr0wthlab (`main`, created 2026-10-08). Visibility: private until about 18:50 UTC on 2026-10-12, then public; private on 2026-10-13 by hcho's call, "gr0wthlab records - private repo"; **public again since 2026-10-14 while v1 is built**, and to be made private before the first real run, which gr0wthlab is to refuse while the repo is public.
+**Repo:** https://github.com/hcho22/gr0wthlab (`main`, created 2026-10-08).
+Visibility: private until about 18:50 UTC on 2026-10-12, then public; private on 2026-10-13 by hcho's call, "gr0wthlab records - private repo"; **public again since 2026-10-14 while v1 is built**, and to be made private before the first real run, which gr0wthlab is to refuse while the repo is public.
 `main` has no branch protection.
 **Development checkout (code and PRs):** `/Users/hcho/Developer/FM_Private/firstmate-private/projects/gr0wthlab` (verified 2026-10-12 at `48b9c2d`, clean, in sync with GitHub); firstmate builds it, and it holds none of hcho's records.
 **Production clone (hcho's records):** `~/gr0wthlab`, where the weekly run, the sitting page, and `ledger/` live; it does not exist yet (checked 2026-10-14).
