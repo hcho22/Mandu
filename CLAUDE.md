@@ -35,6 +35,7 @@ Active skills:
 - `application-packet`: builds a checked Application packet (one-page resume from Master profile Claims, form answers, gaps note) for one role; hcho submits it himself.
 - `daily-log`: creates or opens today's daily log for a tracked project (defaults to HabitLoop).
 - `prd`: generates a Product Requirements Document for a new feature.
+- `gr0wthlab-reader`: reads gr0wthlab's Review Queue and hcho's records for status, applies a package change he approved on gr0wthlab's sitting page, and gives hcho an approved Dispatch request to pass to firstmate; records no decision.
 - `ingest` (global skill, lives at `~/.claude/skills/ingest/`, not in this repo): files one raw source into a wiki, updating every page it touches in a single pass. Still defaults to this project's wikis.
 
 Each skill folder also carries a `MEMORY.md` it reads at the start of each run and appends to only on explicit hcho feedback (kept under 100 lines). Skills are built organically as recurring workflows emerge; the backlog is in `.claude/skills/README.md`.
@@ -67,10 +68,17 @@ Active workstreams live in `projects/`. Each project is a folder with its own `R
 Its local checkout is `/Users/hcho/Developer/fm_private/firstmate-private/projects/Immerse`.
 Include it in project reviews.
 
-`projects/gr0wthlab/` (repo `hcho22/gr0wthlab`, public since 2026-10-12; the "Marketing Engineer", a weekly agent that turns the go-to-market package in `projects/RepToday/gtm/` into drafts, evidence, and a Review Queue for hcho, and never publishes, sends, or spends) is tracked as of 2026-10-12 at hcho's request.
+`projects/gr0wthlab/` (repo `hcho22/gr0wthlab`, public again since 2026-10-14 while v1 is built (private 2026-10-13), and to be made private before the first real run; the "Marketing Engineer", a weekly agent that turns the go-to-market package in `projects/RepToday/gtm/` into drafts, evidence, and a Review Queue for hcho, and never publishes, sends, or spends) is tracked as of 2026-10-12 at hcho's request.
 It is tooling in service of Rep Today's launch and is not ranked.
-Its local checkout is `/Users/hcho/Developer/FM_Private/firstmate-private/projects/gr0wthlab`.
+firstmate's development checkout, for code and PRs in a review, is `/Users/hcho/Developer/FM_Private/firstmate-private/projects/gr0wthlab`; it holds none of hcho's records.
 Include it in project reviews.
+
+**Mandu reads gr0wthlab and never writes it.**
+hcho decides every Review Queue item on gr0wthlab's own sitting page, and gr0wthlab keeps his records in its `ledger/founder/`; the contract is gr0wthlab's `docs/mandu-exchange.md` (version 7).
+Mandu reads gr0wthlab's Review Queue, items, run reports, and his records, read-only, from the production clone `~/gr0wthlab` to show him status.
+It never records a decision, a sitting, a Beta Build, Beta Cohort counts, or what he sent or heard back, nor the TikTok export or the Immerse Listening confirmation; all of those are given on the sitting page, and a decision told to Mandu in chat is not one.
+It applies a package change to `projects/RepToday/gtm/` only when gr0wthlab's queue lists the item closed as approved and his decision record says approve, and on the same two records it gives hcho an approved Dispatch request to pass to firstmate.
+Use the `gr0wthlab-reader` skill for all of it.
 
 `projects/Education/` contains learning tracks and durable knowledge bases.
 `projects/Education/AI/LLM_Evals/` is the parked eval curriculum with its plan, exercises, and study log; its reusable knowledge lives in `projects/Education/AI/AI_Wiki/`.
