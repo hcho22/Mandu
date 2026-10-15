@@ -30,8 +30,11 @@ _Last verified: 2026-10-12._
 - **Nothing has been published, sent, or scheduled, and no real weekly run has happened.**
   `workspace/` and `ledger/` on `main` hold only READMEs and instructions, no production clone or schedule is installed, and the config has no Waitlist date and no first sitting.
   Runs so far were tests in throwaway copies.
-- **Update 2026-10-14:** [PR #18](https://github.com/hcho22/gr0wthlab/pull/18) merged; hcho now decides on gr0wthlab's own sitting page and his records live in its `ledger/founder/` (exchange version 7; see How it connects to Mandu).
+- **Update 2026-10-14:** [PR #18](https://github.com/hcho22/gr0wthlab/pull/18) merged; hcho now decides on gr0wthlab's own sitting page and his records live in its `ledger/founder/` (see How it connects to Mandu).
   The repo was private on 2026-10-13 and is public again since 2026-10-14 while v1 is built; it is to be made private before the first real run, so the public-exposure bullet below applies only if a real run happened while it was public.
+- **Update 2026-10-15:** [PR #25](https://github.com/hcho22/gr0wthlab/pull/25) merged: the Weekly Read, built from the numbers hcho types on the sitting page, with no YouTube connection (gr0wthlab ADRs 0005 and 0006).
+  It moved the exchange with Mandu to version 8, and Mandu's reader reads version 8 since the same day (see How it connects to Mandu).
+  The PRD counts above predate it and were not recounted.
 - **CI on `main` was blocked by billing while the repo was private, and is running again now that it is public.**
   The run on `48b9c2d` (2026-10-12) first failed all three jobs in two seconds with zero steps; GitHub's message was "The job was not started because recent account payments have failed or your spending limit needs to be increased."
   After the repo went public the same run was re-run: Lint and the Linux tests pass, and the macOS job was still running when last checked.
@@ -46,16 +49,18 @@ _Last verified: 2026-10-12._
 ## How it connects to Mandu
 
 - **Mandu owns each product's go-to-market package.** For Rep Today that is `projects/RepToday/gtm/` plus `projects/RepToday/02-marketing-launch-checklist_260807.md`; gr0wthlab reads them and never copies or edits them.
-- **hcho decides in gr0wthlab, and Mandu only reads (exchange version 7, since 2026-10-14).**
-  gr0wthlab's `docs/mandu-exchange.md` (version 7) and ADR 0002 are the contract.
+- **hcho decides in gr0wthlab, and Mandu only reads (since 2026-10-14; exchange version 8 since 2026-10-15).**
+  gr0wthlab's `docs/mandu-exchange.md` (version 8) and ADR 0002 are the contract.
   hcho decides every Review Queue item on the local page `~/gr0wthlab/src/bin/gr0wthlab sitting` serves, and the page writes his decisions, sittings, Beta Build record, Beta Cohort counts, and outreach records into gr0wthlab's `ledger/founder/`.
-  The TikTok export (US-ME11) and the confirmation that starts Immerse Listening (US-ME18) are given on that page too, by hcho's answer of 2026-10-12; Mandu receives neither.
+  In a read week (day 7 and day 14 of a window) he also types each post's numbers from TikTok Studio or YouTube Studio, its comments, and the day it went out on that page, which keeps them as results records in `ledger/founder/results/`; by his decisions of 2026-10-14 gr0wthlab uses no YouTube connection and takes no export file or screenshot (its ADRs 0005 and 0006), and the 200-impression floor counts each platform's views.
+  The confirmation that starts Immerse Listening (US-ME18) is given on that page too, by hcho's answer of 2026-10-12; Mandu receives neither these numbers nor that confirmation.
   Mandu has no `exchange/` folder and never will under this design.
 - **What Mandu does, through the `gr0wthlab-reader` skill:**
-  it reads the Review Queue, items, run reports, and hcho's records from `~/gr0wthlab/ledger/` to show him status, and writes nothing in gr0wthlab;
+  it reads the Review Queue, items, run reports, Weekly Read memos, and hcho's records, his results records included, from `~/gr0wthlab/ledger/` to show him status, including which Weekly Read numbers are still to give, and writes nothing in gr0wthlab;
   it applies a package change to the package only when `queue.json` lists the item closed as approved and `founder/decisions/<id>.json` says approve, and records it in the Product's daily log;
   it gives hcho an approved Dispatch request, on the same two records, as a message to pass to firstmate, and records it in this project's log as given to hcho to pass to firstmate.
-  It never records a decision or anything else hcho did for gr0wthlab, and a decision told to Mandu in chat is not one.
+  It never records or corrects a decision, a result, or anything else hcho did for gr0wthlab, and a decision or a number told to Mandu in chat is not one.
+  It acts on nothing in a record of an exchange version newer than 8.
 - **Package changes hcho approved on 2026-10-10 are not applied here yet:** raise `hook_max_words` from 12 to 18 in `projects/RepToday/gtm/09-extras/marketing-agent/brand-rules.json`, and replace "no streaks" with "no resets" in the day 6 hook (eight places).
   He also answered that the trademark line stays open.
   The exact edits are in firstmate's `data/gr0wthlab/gr0wthlab-mandu-package-fixes/report.md`.
@@ -83,7 +88,7 @@ _Last verified: 2026-10-12._
 - `docs/prd/prd-marketing-engineer-v1_261008.md`: the v1 PRD, with acceptance boxes that record what has landed.
 - `docs/prd/design-decisions-2026-10-08.md`: the decisions the PRD rests on.
 - `docs/adr/0001-evidence-and-drafts-only.md`: why the repo holds evidence and drafts but no strategy.
-- `docs/mandu-exchange.md`: what Mandu may read from gr0wthlab and the two approvals it acts on (version 7).
+- `docs/mandu-exchange.md`: what Mandu may read from gr0wthlab and the two approvals it acts on (version 8).
 - `docs/adr/0002-the-founder-decides-in-gr0wthlab.md`: why hcho decides on gr0wthlab's sitting page and Mandu only reads.
 - `docs/operations.md`: setting up and removing the production clone and schedule, and the weekly sitting.
 - `config/run.json` and `config/products.json`: schedule, window, Waitlist date, and where each product's package lives.
@@ -97,7 +102,7 @@ _Last verified: 2026-10-12._
    Whether the repo is public, and while it is, what production runs have committed to it, said plainly: a real run is to happen only once the repo is private.
 5. `config/run.json`: the Waitlist date, the first sitting, and the posting slot.
 6. firstmate's `data/backlog.md` for gr0wthlab holds waiting on hcho.
-7. The Review Queue and hcho's records, read with the `gr0wthlab-reader` skill: open items by kind, carried-over items, whether the week's run is overdue, the approvals Mandu has applied or given to hcho to pass to firstmate since the previous review, and the approved package-change proposals and Dispatch requests still waiting for hcho's word.
-8. Whether `docs/mandu-exchange.md` moved past version 7; a newer version may need a change to the reader.
+7. The Review Queue and hcho's records, read with the `gr0wthlab-reader` skill: open items by kind, carried-over items, whether the week's run is overdue, in a read week how many of the asked posts' numbers he has given, the approvals Mandu has applied or given to hcho to pass to firstmate since the previous review, and the approved package-change proposals and Dispatch requests still waiting for hcho's word.
+8. Whether `docs/mandu-exchange.md` moved past version 8; a newer version may need a change to the reader.
 
 Review entries live in `log/<YYYY-MM-DD>.md`.
