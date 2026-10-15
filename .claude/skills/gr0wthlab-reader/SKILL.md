@@ -127,10 +127,10 @@ For an item of `kind: package-change-proposal` that passes the check:
 3. Edit only the files `## Touches` lists, and only inside that package.
    Make exactly the change the Proposal states, as the note refines it, in the Proposal's own words: gr0wthlab finds some package lines by their words, such as the 200-impression floor in `read-the-results.md`.
    Where the Proposal quotes a line to change from and a line to change it to, find the "from" line by its text, not its line number.
-   If it is not there exactly once, a touched file is outside the package, the Product has no package, the Proposal is unclear, or the note conflicts with it or asks for a change to a file `## Touches` does not list, stop and ask hcho; change nothing.
-   If the "to" line already stands in its place, the change is already made: change nothing, and record it as found already in place.
+   First, if the "to" line already stands where the "from" line was and the "from" line is gone, the change is already made: change nothing, and record it in step 4 as applied, found already in place.
+   Otherwise, if the "from" line is not there exactly once, a touched file is outside the package, the Product has no package, the Proposal is unclear, or the note conflicts with it or asks for a change to a file `## Touches` does not list, stop and ask hcho; change nothing and record nothing.
    A question the Proposal leaves to him ("To decide: ...") is answered only by his note; an unanswered one changes nothing.
-4. Record it in the Product's daily log, `projects/<Product>/log/<YYYY-MM-DD>.md` (create it from the `daily-log` template if today's does not exist; never overwrite an existing entry): the item id as applied, its ask, the decision's `decided_at` and `sitting`, the note if any, each file changed and what changed, and that both approval records were read.
+4. Record it in the Product's daily log, `projects/<Product>/log/<YYYY-MM-DD>.md` (create it from the `daily-log` template if today's does not exist; never overwrite an existing entry): the item id as applied (or as applied, found already in place), its ask, the decision's `decided_at` and `sitting`, the note if any, each file changed and what changed, and that both approval records were read.
 5. Leave the change uncommitted for hcho unless he asked you to commit.
    gr0wthlab sees it at its next run.
 
