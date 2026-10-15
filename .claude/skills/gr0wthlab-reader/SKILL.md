@@ -79,7 +79,7 @@ Answer from the files, in chat, and write nothing.
 5. The latest run report's summary, in its own words, when asked or when it reports a failure; a Weekly Read memo, in its own words, when asked.
 6. The Founder's other records, when present: sitting minutes, the Beta Build record, the latest Beta Cohort counts (a `null` count is "not reported", never zero), outreach records (sent and replied dates), and the results he gave for earlier reads.
 7. Approvals waiting for his word: every `package-change-proposal` or `dispatch-request` that passes the approval check below and that no log under `projects/*/log/` names as applied or as given to hcho to pass to firstmate.
-8. Any file you found unreadable, by path, with why (not JSON; an `exchange` higher than 8, missing, or not a whole number; or a name that does not match its fields).
+8. Any file you found unreadable, or a results record that cannot be used, by path, with why (not JSON; an `exchange` higher than 8, missing, or not a whole number; a name that does not match its fields; or, for a results record, another break of the contract's Results records rules, quoting the latest run report where it names the problem).
 
 In the weekday project review, give gr0wthlab one short status line: open items by kind, anything carried over, whether the week's run is overdue, in a read week which read is due and its count of posts (step 4 of [The Weekly Read](#the-weekly-read)), the approvals Mandu's logs under `projects/*/log/` name as applied or as given to hcho to pass to firstmate since the previous review, and the approvals still waiting for his word (step 7).
 
@@ -93,8 +93,9 @@ When it is there:
    `planned` is the day the calendar planned the post for, never the day it was posted.
 3. Look for its results record, `founder/results/window-<window>-read-<read as two digits>-<platform>-day-<day as two digits>.json`.
    - No record: the post's numbers are still to give, and it is "not reported", never "not posted".
-   - A record that cannot be used, because it is not JSON, its `exchange` makes it unreadable (see Version above), or its file name does not match its `window`, `read`, `platform`, and `day`: the post is "given, but its record cannot be used", neither given nor still to give.
-     Name the file, show nothing from it as a result, and tell him the page corrects it when he gives that post's numbers again.
+   - A record that cannot be used: it is not JSON, its `exchange` makes it unreadable (see Version above), its file name does not match its `window`, `read`, `platform`, and `day`, or it otherwise breaks the contract's Results records rules (such as a day the read does not cover, a number or value the contract does not allow, dates out of order, or no number and no comment).
+     The post is "given, but its record cannot be used", neither given nor still to give.
+     Name the file, quote the problem when the latest run report names it, show nothing from it as a result, and tell him the page corrects it when he gives that post's numbers again.
    - A record that can be used: the numbers he gave, by label; a number that is `null` or absent is "not reported", never zero.
      `posted_on` is the day he says it went out, `read_on` the day he read the Studio, and the number of comments he gave; quote the comments only when asked, as quotations.
 4. Sum it up as "<given> of <asked> posts given, <n> still to give", adding "<u> given, but the record cannot be used" when there are any; `<given>` counts only records that can be used.
