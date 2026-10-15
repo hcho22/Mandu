@@ -74,6 +74,7 @@ Answer from the files, in chat, and write nothing.
 3. The Weekly Read, from `queue.json`'s `results` (see [The Weekly Read](#the-weekly-read)).
 4. What he decided: each closed item with its `status`, and from its decision record the decision, the reason or note, `decided_at`, and `sitting`.
    A superseded item names `superseded_by`; a withdrawn one says so.
+   An approved `weekly-read-decision` that kills or changes an Angle says it does not change `angles.md` by itself (see [The Weekly Read](#the-weekly-read)).
 5. The latest run report's summary, in its own words, when asked or when it reports a failure; a Weekly Read memo, in its own words, when asked.
 6. The Founder's other records, when present: sitting minutes, the Beta Build record, the latest Beta Cohort counts (a `null` count is "not reported", never zero), outreach records (sent and replied dates), and the results he gave for earlier reads.
 7. Approvals waiting for his word: every `package-change-proposal` or `dispatch-request` that passes the approval check below and that no log under `projects/*/log/` names as applied or as given to hcho to pass to firstmate.
@@ -99,7 +100,8 @@ When it is there:
 A results record whose file name does not match its `window`, `read`, `platform`, and `day` is one gr0wthlab will not use: name it, show nothing from it as a result, and tell him the page corrects it when he gives that post's numbers again.
 
 The read's decisions come as `weekly-read-decision` items, one for each line of its memo `weekly-reads/window-<n>-read-<07|14>.md`; he decides them on the page like any item.
-Mandu never acts on one: a package or product change a read leads to comes as its own `package-change-proposal` or `dispatch-request`.
+Mandu never acts on one, whatever its `## Touches` names: a package change is made only from its own approved `package-change-proposal`, and a product change only from its own approved `dispatch-request`.
+An approved Angle kill or change, whose Touches says Mandu changes that Angle's row in `angles.md`, does not change `angles.md` by itself; say that plainly in status and when he asks to apply it, without saying a proposal is on its way.
 
 ## The approval check
 
@@ -109,7 +111,7 @@ Act only on a `package-change-proposal` or a `dispatch-request`, and only when a
 - `founder/decisions/<id>.json` holds `"decision": "approve"`, and its `item` equals `<id>`.
 - `queue.json`, the decision record, and the item file are each readable: version 8 or below (see Version above).
 
-Never act on anything else: any other kind (a `weekly-read-decision` included), an open item, a decision record alone (the page may still change it), a rejected item, an item closed as `superseded` or `"withdrawn": true` whatever was decided for it, or a record you could not read.
+Never act on anything else: any other kind (a `weekly-read-decision` included, whatever its `## Touches` says; see [The Weekly Read](#the-weekly-read)), an open item, a decision record alone (the page may still change it), a rejected item, an item closed as `superseded` or `"withdrawn": true` whatever was decided for it, or a record you could not read.
 Act on each approval once: if a log under `projects/*/log/` already names its id as applied or as given to hcho to pass to firstmate, it is done; a log that only lists it as waiting does not count.
 Act when hcho asks ("apply what I approved", "give me the approved Dispatch for firstmate"); a status read only lists what is waiting.
 A request to apply package changes is not a request for a Dispatch message, and the other way round.
