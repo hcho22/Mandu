@@ -74,7 +74,7 @@ Answer from the files, in chat, and write nothing.
 3. The Weekly Read, from `queue.json`'s `results` (see [The Weekly Read](#the-weekly-read)).
 4. What he decided: each closed item with its `status`, and from its decision record the decision, the reason or note, `decided_at`, and `sitting`.
    A superseded item names `superseded_by`; a withdrawn one says so.
-   An approved `weekly-read-decision` that kills or changes an Angle says it does not change `angles.md` by itself (see [The Weekly Read](#the-weekly-read)).
+   If he approved any `weekly-read-decision`, say once, not for each item, what approving one does to the package (see [The Weekly Read](#the-weekly-read)).
 5. The latest run report's summary, in its own words, when asked or when it reports a failure; a Weekly Read memo, in its own words, when asked.
 6. The Founder's other records, when present: sitting minutes, the Beta Build record, the latest Beta Cohort counts (a `null` count is "not reported", never zero), outreach records (sent and replied dates), and the results he gave for earlier reads.
 7. Approvals waiting for his word: every `package-change-proposal` or `dispatch-request` that passes the approval check below and that no log under `projects/*/log/` names as applied or as given to hcho to pass to firstmate.
@@ -100,8 +100,9 @@ When it is there:
 A results record whose file name does not match its `window`, `read`, `platform`, and `day` is one gr0wthlab will not use: name it, show nothing from it as a result, and tell him the page corrects it when he gives that post's numbers again.
 
 The read's decisions come as `weekly-read-decision` items, one for each line of its memo `weekly-reads/window-<n>-read-<07|14>.md`; he decides them on the page like any item.
-Mandu never acts on one, whatever its `## Touches` names: a package change is made only from its own approved `package-change-proposal`, and a product change only from its own approved `dispatch-request`.
-An approved Angle kill or change, whose Touches says Mandu changes that Angle's row in `angles.md`, does not change `angles.md` by itself; say that plainly in status and when he asks to apply it, without saying a proposal is on its way.
+Mandu never acts on one, and approving one changes no package file by itself, whichever file its `## Touches` names: an Angle's row in `angles.md`, a pair in `ab-pairs.md`, or day 14 of the 14-day calendar in `cadence-14-day.md`.
+A package change comes only as its own `package-change-proposal`, and a product change only as its own `dispatch-request`.
+Say both plainly, once in status and when he asks to apply one, without saying a proposal is on its way.
 
 ## The approval check
 
