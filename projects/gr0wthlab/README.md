@@ -7,8 +7,8 @@ Version 1 serves Rep Today's pre-launch marketing; Immerse joins as listen-only 
 **Repo:** https://github.com/hcho22/gr0wthlab (`main`, created 2026-10-08).
 Visibility: private until about 18:50 UTC on 2026-10-12, then public; private on 2026-10-13 by hcho's call, "gr0wthlab records - private repo"; **public again since 2026-10-14 while v1 is built**, and to be made private before the first real run, which gr0wthlab is to refuse while the repo is public.
 `main` has no branch protection.
-**Development checkout (code and PRs):** `/Users/hcho/Developer/FM_Private/firstmate-private/projects/gr0wthlab` (verified 2026-10-12 at `48b9c2d`, clean, in sync with GitHub); firstmate builds it, and it holds none of hcho's records.
-**Production clone (hcho's records):** `~/gr0wthlab`, where the weekly run, the sitting page, and `ledger/` live; it does not exist yet (checked 2026-10-14).
+**Development checkout (code and PRs):** `/Users/hcho/Developer/FM_Private/firstmate-private/projects/gr0wthlab` (verified 2026-10-15 at `b757595`, clean, in sync with GitHub); firstmate builds it, and it holds none of hcho's records.
+**Production clone (hcho's records):** `~/gr0wthlab`, where the weekly run, the sitting page, and `ledger/` live; it does not exist yet (checked 2026-10-15).
 
 **Strategic role: tracked as of 2026-10-12 at hcho's request, not ranked.**
 It is tooling in service of Rep Today's launch (priority #1), not a product bet of its own, so it has no place in the Rep Today, Immerse, Purvia order unless hcho gives it one.
@@ -19,32 +19,25 @@ Logged in `decisions/log.md`.
 
 ## Status
 
-_Last verified: 2026-10-12._
+_Last verified: 2026-10-15._
 
-- **Nine PRs merged in five days (#1 to #8 and #11, 2026-10-08 to 2026-10-12); three are open (#9, #10, #12).**
-  Merged: repository foundation, a Codex launcher that enforces the write boundary, the weekly run with package snapshot and Review Queue, the Waitlist request and an address-free Waitlist read, weekly post drafts, Beta Cohort recruiting, an agent time limit, listening and outreach drafts, and filming plans with finished 9:16 video cut from hcho's footage.
-- **PRD progress: 44 of 99 acceptance boxes checked across 18 stories.**
-  Complete: US-ME01, US-ME02, US-ME06.
-  Mostly done: US-ME04, US-ME07, US-ME08, US-ME09, US-ME17.
-  Not started: the scheduling-service spike and loading (US-ME03, US-ME10), the Waitlist itself (US-ME05), results collection and the Weekly Read memo (US-ME11, US-ME12), listening (US-ME13), learning from decisions (US-ME16), and Immerse listening (US-ME18).
+- **All 26 PRs so far merged in eight days (#1 to #26, 2026-10-08 to 2026-10-15), and #27 is open.**
+  `main` is at `b757595` (#26, 2026-10-15), and the last eight runs on `main` all passed.
+  Since 2026-10-12: the sitting page with hcho's records in `ledger/founder/` (#18), a refusal to run while the repo is public (#21), Instructions changed only through each workflow's example set (#23), the Weekly Read from numbers hcho types (#25, exchange version 8), and a Hook the code does not support sent to hcho as a package-change proposal (#26).
+- **PRD progress: 64 of 99 acceptance boxes checked across 18 stories (44 on 2026-10-12).**
+  Complete: US-ME01, 02, 04, 06, 07, 12, 15, 16.
+  Partly done: US-ME08, 09, 11, 14, 17.
+  Not started: the scheduling-service spike and loading (US-ME03, US-ME10, parked by hcho's manual-posting choice), the Waitlist itself (US-ME05), listening (US-ME13), and Immerse listening (US-ME18, parked).
 - **Nothing has been published, sent, or scheduled, and no real weekly run has happened.**
-  `workspace/` and `ledger/` on `main` hold only READMEs and instructions, no production clone or schedule is installed, and the config has no Waitlist date and no first sitting.
+  No production clone or schedule is installed, and `config/run.json` has no Waitlist date, first sitting, or posting slot.
   Runs so far were tests in throwaway copies.
-- **Update 2026-10-14:** [PR #18](https://github.com/hcho22/gr0wthlab/pull/18) merged; hcho now decides on gr0wthlab's own sitting page and his records live in its `ledger/founder/` (see How it connects to Mandu).
-  The repo was private on 2026-10-13 and is public again since 2026-10-14 while v1 is built; it is to be made private before the first real run, so the public-exposure bullet below applies only if a real run happened while it was public.
-- **Update 2026-10-15:** [PR #25](https://github.com/hcho22/gr0wthlab/pull/25) merged: the Weekly Read, built from the numbers hcho types on the sitting page, with no YouTube connection (gr0wthlab ADRs 0005 and 0006).
-  It moved the exchange with Mandu to version 8, and Mandu's reader reads version 8 since the same day (see How it connects to Mandu).
-  The PRD counts above predate it and were not recounted.
-- **CI on `main` was blocked by billing while the repo was private, and is running again now that it is public.**
-  The run on `48b9c2d` (2026-10-12) first failed all three jobs in two seconds with zero steps; GitHub's message was "The job was not started because recent account payments have failed or your spending limit needs to be increased."
-  After the repo went public the same run was re-run: Lint and the Linux tests pass, and the macOS job was still running when last checked.
-  Public repos use free runners, so this no longer blocks gr0wthlab; whether the account limit still applies to other private repos was not checked.
-- **Being public changes what a real run exposes.**
-  Each production run commits `workspace/` and `ledger/` to `main`: unposted post drafts, outreach message drafts, Review Queue items, hcho's decisions with their reasons, Waitlist and Beta Cohort counts, listening quotes with their links, and run reports.
-  By design none of that contains an email address, and finished videos are never committed.
-  No production run has happened, so nothing of that kind is public yet.
-  A pattern scan of the full history for API keys and private keys found none; that is a pattern search, not a dedicated secret scanner.
-- **Size on `main` (static counts):** 80 Python files, about 19,400 lines outside tests, 39 test files with 845 test functions.
+- **The repo is public while v1 is built, and a real run refuses to start until it is private** ([PR #21](https://github.com/hcho22/gr0wthlab/pull/21)).
+  Each production run commits `workspace/` and `ledger/` to `main`: unposted drafts, Review Queue items, hcho's decisions with their reasons, his typed results, counts, and run reports, so the repo must be private before the first one.
+  firstmate holds `gr0wthlab-private-before-first-run` for that moment.
+  A pattern scan of the full history for API keys and private keys found none on 2026-10-12; that is a pattern search, not a dedicated secret scanner.
+- **CI was blocked by a GitHub billing limit while the repo was private on 2026-10-12; public repos use free runners, so it runs again.**
+  Going private before the first run brings the metered minutes back, including one macOS job.
+- **Size on `main` (static counts, 2026-10-15):** 106 Python files, about 30,400 lines outside tests, and 1,480 test functions in 53 test files.
 
 ## How it connects to Mandu
 
@@ -74,12 +67,11 @@ _Last verified: 2026-10-12._
 4. **A production clone and the Sunday 16:00 schedule** have to be installed (`docs/operations.md`).
 5. **Posting is manual.** hcho chose manual posting on 2026-10-11, so no scheduling-service integration is being built.
 
-## Decisions waiting on hcho (from firstmate's backlog)
+## Decisions waiting on hcho (from firstmate's backlog, 2026-10-15)
 
-- How far the rule against saving a stranger's words reaches into what the agent writes; this should be settled before listening reads real text.
-- When to build the path for hcho to supply threads and reviews for listening; until then listening produces nothing.
-- Whether the later video of an A/B pair is simply cut from the earlier one.
-- Whether to schedule two follow-ups nobody asked for: a lock so a boundary check and a weekly run cannot overlap, and a hardening of the boundary probe.
+- When to build the path for hcho to supply threads and reviews for listening; until then listening produces nothing (his "later for now", 2026-10-13).
+- Whether to schedule three follow-ups nobody asked for: a lock so a boundary check and a weekly run cannot overlap, a hardening of the boundary probe, and not starting a session while the agent's changed Instructions could not be put back.
+- Settled since 2026-10-12: the rule against keeping a stranger's words (middle choice, built in #19), the A/B pair video (decided 2026-10-13), and how an approved Weekly Read kill reaches the package ("angle kill - two approvals", 2026-10-15).
 
 ## Key files (in the repo)
 

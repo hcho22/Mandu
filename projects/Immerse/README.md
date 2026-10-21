@@ -6,9 +6,9 @@ Instead of picking a vintage filter after unlimited capture, you choose a Camera
 **Name:** "Immerse" is the repo name.
 The final product name is not selected (PRD open decision DEC-01), and the PRD uses the descriptive title "Film Camera Experience".
 
-**Repo:** https://github.com/hcho22/Immerse (`main`). **GitHub reports it as PUBLIC** (re-verified 2026-10-12), although earlier Mandu records called it private.
+**Repo:** https://github.com/hcho22/Immerse (`main`). **GitHub reports it as PUBLIC** (re-verified 2026-10-15), although earlier Mandu records called it private.
 Its event history shows no visibility change, which is consistent with it having been public since creation on 2026-09-29; whether it should stay public is hcho's call.
-**Local checkout:** `/Users/hcho/Developer/fm_private/firstmate-private/projects/Immerse` (branch `main`, verified 2026-10-12 at `0e69ed2`, clean tree, in sync with GitHub). This is firstmate's live home; `FM_Private` and `fm_private` resolve to the same folder.
+**Local checkout:** `/Users/hcho/Developer/fm_private/firstmate-private/projects/Immerse` (branch `main`, verified 2026-10-15 at `4906054`, clean tree, in sync with GitHub). This is firstmate's live home; `FM_Private` and `fm_private` resolve to the same folder.
 
 **Strategic role: ranked #2, immediately after Rep Today (hcho's call, 2026-09-29).**
 Added to daily tracking on 2026-09-29 at hcho's request.
@@ -20,25 +20,25 @@ Logged in `decisions/log.md`.
 
 ## Status
 
-_Last verified: 2026-10-12._
+_Last verified: 2026-10-15._
 
-- **PRD 2.0 and 2.1 landed, and three of four implementation slices are merged (PRs #14-#24, 2026-10-05 to 2026-10-09).**
-  `main` is at `0e69ed2`.
-  The lineup is still five Cameras; the 6x6 and 16mm dropped their decade and gained a color or black-and-white Film Stock, the 16mm runs 2:47, looks are "fresh, not aged" and judged against one internal Format Reference per Camera, and Darkroom contrast grades apply to every Photo Film.
-  Merged slices: capture behavior (#19), names and the Instant card (#22), and Film Stock (#24).
-- **The fourth slice, per-Camera looks, is unmerged and waits on hcho.**
-  It lives on a local branch only (`fm/immerse-prd2-looks`, 18 commits, not pushed).
-  hcho approved the Instant, Disposable, and Super 8 looks on 2026-10-10; the 6x6 and 16mm boards are at round 7 awaiting his verdict.
-- **Still nothing validated on a physical iPhone.**
-  On 2026-10-06 hcho chose the manual-test candidate to be the build that includes PRD 2.0 after all slices, so device validation waits on the looks slice.
-  PR #7's "High" risk note and its capture, export, and Trial fixes remain software-only.
-- **CI: 9 of 11 `main` runs green since #14, the last four green.**
-  The two failures were different flaky UI tests on commits with no app-code change, and a run now takes up to 108 minutes against a 120-minute cap.
+- **All four PRD 2.1 implementation slices are merged, and the manual iPhone test candidate is ready (`771d5e2`).**
+  hcho approved the last look boards (6x6, 16mm color and black-and-white) on 2026-10-12, and the looks slice merged as [PR #25](https://github.com/hcho22/Immerse/pull/25) on 2026-10-13.
+  Ten more PRs followed through #35 (`4906054`, 2026-10-15), each on a decision he gave: four-part CI with a narrow rerun rule (#27), Darkroom limits and export checks (#28), the Instant's contrast and toning range (#29), a low-storage warning (#30), Crop fit on short screens (#31), and a side-by-side landscape Darkroom (#34).
+  [PR #36](https://github.com/hcho22/Immerse/pull/36), aimed at three flaky failures, is open.
+- **Still nothing validated on a physical iPhone; the pass waits on hcho.**
+  firstmate's hold `immerse-v1-hardware-validation` names `771d5e2` and his iPhone 13 Pro, and the plan in `Evidence/NativeApp/manual-validation.md` leaves him a handful of calls before starting.
+  An iPhone 11, a second iPhone, and a small iPhone are not available, so those scenarios cannot run.
+- **CI: 6 of 11 `main` runs green since `0e69ed2`, the last six green**, the newest only after a permitted dropped-touch rerun.
+  Failures were four different tests plus one run that hit the 120-minute cap; runs now take 46 to 62 minutes.
   `main` has no branch protection.
-- **Size on `main` (static counts):** 159 Swift files; app sources 15 files and 2,787 lines; package sources 41 files and 5,928 lines; test methods 44 app unit, 77 app UI, 194 package, 84 probe.
-  The media catalog is still empty and no live StoreKit product or price exists.
-- **Task tracker:** 252 items (PRD 2.0 added 14); the same 9 are checked (5 discovery, 4 decisions), 135 v1 and 108 v2 items are open, and no implementation task is checked.
+- **Decisions:** DEC-11 is checked; DEC-04 is decided in substance; DEC-05 has its rule but waits on hcho's seven sample shots; DEC-14 is "no analytics, learn from TestFlight interviews and Apple reports"; firstmate recorded the native stack (DEC-03) as answered on 2026-10-13, but the tracker box is unchecked.
+  DEC-01 (name) and DEC-02 (price) are open, and no kill criteria or validation plan exists.
+- **Task tracker:** 253 items, 10 checked (5 discovery, 5 decisions), 135 v1 and 108 v2 items open; no implementation task is checked until a phone has run it.
   The PRD and tracker headers still describe a planning baseline.
+- **The repo is public**; since 10-12 that includes hcho's film-look calibration files and two boards that hotlink reference photos that are not openly licensed.
+  On 2026-10-13 hcho did not say the visibility was unintended, which is not an explicit decision.
+- **PRD 2.0 and 2.1 (2026-10-07):** five Cameras; the 6x6 and 16mm dropped their decade and gained a color or black-and-white Film Stock; the 16mm runs 2:47; looks are "fresh, not aged" except the Instant and Super 8 (ADR 0016); Darkroom contrast grades apply to every Photo Film.
 - **Earlier baseline (2026-09-29 to 2026-10-01):** Design A, "Film Journal", selected; Group Films deferred to v2 (PR #3); personal-only on-phone system approved (PR #4); architecture revision 3 approved (PR #5); users, journeys, and the clickable design reference approved (PR #6).
 
 ## V1 scope (from PRD 2.1, 2026-10-07)
@@ -57,7 +57,7 @@ Product principles to remember: camera authenticity wins over convenience, a Fil
 
 ## Open questions
 
-- **No price, final brand, or formally approved native stack** (DEC-01 to DEC-03). The code uses SwiftUI and raw SQLite as reversible defaults. Pricing is deferred to before M2 billing work, and render/export sizes (DEC-04) are open. The platform and service boundary are settled: iOS 26, iPhone only, with no Immerse backend.
+- **No price or final brand** (DEC-01, DEC-02). firstmate recorded hcho's "1. fine" on the native stack (Swift/SwiftUI and eight flow choices) on 2026-10-13, though the storage library was not named to him and the tracker's DEC-03 box is unchecked. Pricing is deferred to before M2 billing work. Render and export sizes (DEC-04) were decided on 2026-10-13 except the Movie capture's native 4:3 size, which stays provisional. The platform and service boundary are settled: iOS 26, iPhone only, with no Immerse backend.
 - **Group Films are deferred.**
   Accountless participation, serialized Group Movie recording, Host Release, and shared privacy exits remain documented for v2 and should not shape the minimum v1 architecture.
 - **How it earns income is undecided.**
@@ -71,7 +71,8 @@ Product principles to remember: camera authenticity wins over convenience, a Fil
 - `2026-09-29-film-camera-experience-v1/2026-09-29-film-camera-experience-v1-prd.md`: PRD 1.5, superseded and kept unchanged.
 - `2026-09-29-film-camera-experience-v1/2026-09-29-film-camera-experience-v1-task-tracker.md`: the canonical checkbox list and source of truth for status.
 - `2026-09-29-film-camera-experience-v1/2026-09-29-film-camera-experience-v1-architecture.md`: the approved v1 architecture baseline and early checks.
-- `2026-09-29-film-camera-experience-v1/adr/`: decision records through ADR 0015 on `main` (0013 fresh-not-aged looks, 0014 Film Stock, 0015 Format References); ADR 0016 exists only on the unmerged looks branch.
+- `2026-09-29-film-camera-experience-v1/adr/`: decision records through ADR 0016 on `main` (0013 fresh-not-aged looks, 0014 Film Stock, 0015 Format References, 0016 the Instant and Super 8 exceptions).
+- `Evidence/NativeApp/manual-validation.md`: the manual iPhone test plan, pinned to the current candidate.
 - `2026-09-29-film-camera-experience-v1/sources/`: domain model and prototype notes.
 - `2026-09-29-nostalgic-camera-app-market-research-hipstamatic.md`: market research.
 
@@ -79,8 +80,8 @@ Product principles to remember: camera authenticity wins over convenience, a Fil
 
 1. New commits, PRs, and issues on `hcho22/Immerse` since the last log.
 2. Movement in the task tracker: new `[x]` items, resolved `DEC-*` decisions, and any owner or evidence annotations.
-3. CI on `main`, device-validation evidence, and whether any backend has appeared (native app since 2026-10-02; no backend as of 2026-10-12).
-   Also check firstmate's local worktrees for unpushed branches, since the looks slice is not on GitHub.
+3. CI on `main`, device-validation evidence, and whether any backend has appeared (native app since 2026-10-02; no backend as of 2026-10-15).
+   Also check firstmate's local worktrees (`~/.treehouse/Immerse-3833fe/`) for unpushed branches, since GitHub alone can understate progress.
 4. Scope changes, since the PRD asks for changes to be versioned rather than overwritten.
 5. Whether hcho has made a go/no-go or kill-criteria decision, which belongs in `decisions/log.md` and `context/current-priorities.md`.
 
