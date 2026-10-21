@@ -32,7 +32,7 @@ Every asset should lower the reader's heart rate, not raise it.
   Never revive it in any copy, asset, or metadata.
 - The name is an instruction, not a noun: do a rep, today. Copy may lean on this ("The name is the whole program.") but never explain the pun at length.
 - Never claim the name is trademark-cleared, and never imply a clearance process is underway when none is.
-  The canonical legal line, wherever a legal line is needed: "Pre-launch. 'Rep Today' has not been trademark-searched or registered, and the App Store name has not been reserved."
+  The canonical legal line, wherever a legal line is needed: "Pre-launch. A USPTO search was completed and the App Store name was reserved on 2026-08-07. This does not state that a trademark was registered or legally cleared."
   (Video end cards carry the short pre-release disclosure "Screen images simulated. App is pre-release." instead of the full legal line.)
   Any asset, static or video, that depicts a simulated or staged app screen carries the same "Screen images simulated. App is pre-release." sentence; on static assets it is appended after the legal line, not substituted for it.
 

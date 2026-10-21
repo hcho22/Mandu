@@ -4,7 +4,7 @@
 > Every PNG in this set is rendered from hand-written HTML/CSS in `src/`, not captured from the app.
 > App Store Review Guideline 2.3.3 requires screenshots that show the app in use, so the actual submission set must be captured from the built app on device or simulator, and each capture must be diffed screen by screen against these comps (Ready Screen, session player, progress view, plan screen) before any upload; where they differ, the real UI wins.
 > Screenshot 5 states planned pricing and must be regenerated against final App Store Connect pricing before submission.
-> Formal trademark and App Store name clearance are UNVERIFIED for Rep Today - the founder's next action.
+> Pre-launch. A USPTO search was completed and the App Store name was reserved on 2026-08-07. This does not state that a trademark was registered or legally cleared.
 
 Five screenshots sized for the 6.7-inch iPhone App Store slot, 1290x2796 PNG each.
 Pre-launch set: no social proof, no ratings, no user counts, per brand guidelines section 10.

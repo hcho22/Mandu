@@ -1,4 +1,4 @@
-# K8 Wedge-Comprehension Coding Rubric (pre-registered)
+# K8 Wedge-Comprehension Coding Rubric (draft; written criteria pre-registered)
 
 The instrument for K8, the qualitative kill signal defined in `investment-thesis.md` (§5, lines 206-210): *the wedge fails to be perceived.*
 This document is the written coding rubric that thesis line 207 requires "drafted and frozen before the first TestFlight session," and thesis §6 step 1 (line 253) requires frozen *first*, before any moderated cohort is recorded.

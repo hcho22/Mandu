@@ -12,7 +12,7 @@ A single viral outlier is NOT a win for its angle until a re-cut of the same ang
 ## What is noise at this sample size
 
 - Single-digit engagement on early posts concludes nothing, in either direction.
-- Any post under 200 impressions is unread, not failed.
+- Any post under 200 impressions is unread, not failed; the floor counts each platform's views (TikTok Studio's video views, YouTube Studio's views).
 - Differences of a few rank positions between two posts are noise; only large, repeated rank gaps (top quartile vs bottom quartile, held across two reads) adjudicate anything.
 - Sequential A/B legs are confounded by time; a pair resolves only when the rank gap is large AND both legs were readable, otherwise it reposts before judgment.
 - Follower counts, likes from friends, and week-one subscriber movement are vanity at this scale and enter no decision rule.

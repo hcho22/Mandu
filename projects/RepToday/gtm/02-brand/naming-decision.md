@@ -5,9 +5,8 @@
 Listing name: **"Rep Today"** (9 chars; the v1 suffix "Rest Tomorrow" is killed, see below). Subtitle: **"Opens to a ready workout"** (24 chars, carried from v1 D-005/D-009).
 
 > **Clearance status - read this first.**
-> Formal trademark clearance (USPTO or any registry) and App Store Connect name reservation are **UNVERIFIED** for Rep Today and for every candidate considered.
+> Pre-launch. A USPTO search was completed and the App Store name was reserved on 2026-08-07. This does not state that a trademark was registered or legally cleared.
 > Nothing in this document is a clearance claim.
-> A USPTO search (ideally with counsel) and an App Store Connect name reservation are **the founder's next action** before this name is final.
 > The defensibility judge adds: Rep Today is a descriptive/suggestive mark with a narrow enforcement perimeter; the founder accepts that in exchange for a name that is itself the product's call to action.
 
 ## How the v2 verdict was reached
@@ -67,6 +66,9 @@ The inversion sentence ("the app is the disciplined one") survives at essay leng
 ## Name findings (from [name-collisions.md](../01-research/name-collisions.md), fetched 2026-07-15; key URLs re-verified live 2026-08-01)
 
 - **Rep Today** - cleanest candidate. No same-name or close-variant app in a US App Store search for "rep today"; the crowded "Rep"-prefix space is gym-logging trackers, none using "Today". Main web collision: REP Fitness, a home-gym *equipment* retailer. reptoday.app returned NXDOMAIN; github.com/reptoday 404 (availability signals); X/Instagram handles unverifiable (login walls). reptoday.com is parked at HugeDomains, $3,895 buy-now - purchase deferred by the founder.
+  - Status after this research:
+    - Done 2026-08-07: `@reptoday` was claimed on TikTok, YouTube, Instagram, and X.
+    - Done 2026-08-11: `reptoday.app` is registered and serves the hosted privacy policy; `reptoday.com` was not bought.
 - **Cairn** - rejected: live same-category collision ("Cairn - Hiking Safety Tracker", Health & Fitness) plus the acquired-and-renamed Cairn outdoor-box brand history; and (new in v2) the stacked-stones metaphor reads streak-shaped against the forgiveness mechanics.
 - **Stack** - rejected: exact-name Ketchapp game with 56K+ ratings, "Stack Team App" in Sports, Stack Sports owning web mindshare; and (new in v2) accumulation semantics are counter-positioned to a score that forgives.
 - **FitSnack** (abandoned) - the rebrand remains validated: a live App Store fitness app brands itself "FITsnack" with "daily micro home workouts".
@@ -76,4 +78,4 @@ The inversion sentence ("the app is the disciplined one") survives at essay leng
 
 1. **Descriptive-mark weakness** - "Rep" and "Today" are common words; enforcement perimeter is narrow and a coined name would have stronger trademark posture. Accepted trade-off, re-affirmed in v2.
 2. **REP Fitness owns "rep" web mindshare** - an equipment brand, not an app; the discovery bet is App Store search, not web SEO.
-3. **Trademark totally unverified** - see the caveat at top. This is the founder's next action, before any listing name is typed into App Store Connect.
+3. **Trademark not registered or legally cleared** - see the status at top. Pre-launch. A USPTO search was completed and the App Store name was reserved on 2026-08-07. This does not state that a trademark was registered or legally cleared.

@@ -318,5 +318,5 @@ Framing per creator-landscape.md: his stated stance is that nobody should have t
 - Insert real links (App Store, TestFlight) - none exist yet.
 - Reddit: rules read manually, participation history established, mod permission where required.
 - No draft may gain emojis, streak language, urgency mechanics, invented numbers, or health claims in editing.
-- The name is "Rep Today" in prose, never "RepToday". The name has not been trademark-searched or registered; never claim or imply otherwise. Where a legal line is needed, use the canonical line from brand-guidelines.md section 2.
+- The name is "Rep Today" in prose, never "RepToday". A USPTO search was completed and the App Store name was reserved on 2026-08-07, but the name is not registered or legally cleared; never claim or imply otherwise. Where a legal line is needed, use the canonical line from brand-guidelines.md section 2.
 - Any post that says "AI" must carry the at-launch disclosure in the same post or its mandatory first reply: the Programmer is deterministic on-device logic at launch, and the app's only AI-generated text is one optional line with an offline fallback.

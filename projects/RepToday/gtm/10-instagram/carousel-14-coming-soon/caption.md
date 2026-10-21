@@ -48,4 +48,4 @@ iOS, not released yet. Join the waitlist at the link in bio.
 
 **Slide 6.** A small green label at the top reads "Where it is today". Large dark type reads: "Not out yet, and no countdown to it." Below it: "Rep Today is an iOS app that has not been released. There is no App Store page, and no date to promise here: this is a heads-up, not a launch clock."
 
-**Slide 7.** Closing card. Large dark type reads: "When it opens, it opens ready." Below it: "That is the whole idea behind Rep Today." At the bottom, the Ready Mark beside the words "Rep Today", then the line "iOS, not released yet.", then small grey legal type: "Pre-launch. 'Rep Today' has not been trademark-searched or registered, and the App Store name has not been reserved."
+**Slide 7.** Closing card. Large dark type reads: "When it opens, it opens ready." Below it: "That is the whole idea behind Rep Today." At the bottom, the Ready Mark beside the words "Rep Today", then the line "iOS, not released yet.", then small grey legal type: "Pre-launch. A USPTO search was completed and the App Store name was reserved on 2026-08-07. This does not state that a trademark was registered or legally cleared."

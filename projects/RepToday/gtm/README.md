@@ -1,6 +1,6 @@
 # Rep Today - Go-To-Market Package (v2)
 
-Everything is local and static; nothing here is published or deployed. Two exceptions have moved off "nothing purchased": the `reptoday.app` domain has been purchased through Cloudflare, and the landing site (`03-site/`) is now prepped for one-command Cloudflare Pages deploys (`03-site/DEPLOY.md`, `03-site/_headers`) - but no deploy has been performed and no DNS has been changed.
+Everything is local and static. Two exceptions have moved off "nothing purchased": the `reptoday.app` domain has been purchased through Cloudflare, and the landing site (`03-site/`) is now prepped for one-command Cloudflare Pages deploys (`03-site/DEPLOY.md`, `03-site/_headers`). The landing site has not been deployed. The privacy policy is separately hosted at `reptoday.app/privacy`.
 
 ## Run it (3 commands)
 
@@ -39,5 +39,5 @@ open 04-video/launch-video.mp4
 ## Honesty notes
 
 - The app is pre-launch: zero users, zero downloads, zero revenue. Nothing in this package claims otherwise.
-- Formal trademark and App Store name clearance are UNVERIFIED for Rep Today - the founder's next action.
+- Pre-launch. A USPTO search was completed and the App Store name was reserved on 2026-08-07. This does not state that a trademark was registered or legally cleared.
 - v2 refresh ran 2026-08-01/02; v1 artifacts are retained side by side as labeled history, and the red-team dossier (`08-redteam/dossier.md`) is the current gate record.

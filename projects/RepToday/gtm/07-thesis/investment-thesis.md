@@ -208,7 +208,7 @@ Instrument, pre-registered: a written coding rubric drafted and frozen before th
 Expected: first-time users see the ready session, understand nothing is being asked of them, and press Start; when asked to describe the app, they reach for some version of "it's already ready when you open it."
 Kill signal, with pre-registered numbers: more than 50% of rubric-coded first runs show users hunting for a workout list, scrolling for a browse screen, or asking where to pick a workout; or fewer than 30% of unprompted descriptions mention the ready-on-open behavior. [ASSUMPTION: both thresholds are founder priors with no external benchmark; the point of pre-registering them is that they are fixed before any data arrives.]
 If 25 observed first runs cannot be reached by the 90-day review, K8 is reported as under-sampled, not passed.
-The frozen coding instrument that operationalizes this signal - the per-run behavioral criteria, coding scheme, and the two thresholds above - is `k8-wedge-comprehension-rubric.md`, drafted to be locked before the first cohort.
+The draft coding instrument that operationalizes this signal - the per-run behavioral criteria, coding scheme, and the two thresholds above - is `k8-wedge-comprehension-rubric.md`, drafted to be locked before the first cohort.
 Why: the durable claim is the combined stack of instant, offline, question-free, never-paywalled (positioning.md); if that stack is not perceived without explanation, the positioning has failed regardless of what the retention numbers momentarily show, because there is nothing for word of mouth to carry.
 A secondary qualitative signal: if early reviews cluster on wanting to customize sessions, the app is acquiring the customizer segment the positioning deliberately gave up (https://apps.apple.com/us/app/freeletics-workouts-fitness/id654810212 shows that segment's complaints), which means the channels are reaching the wrong audience.
 
@@ -260,8 +260,10 @@ Its no-signal outcome is a thesis-level observation (K0, section 5), not a conte
 Run a USPTO trademark search and create the App Store Connect record to confirm the listing name "Rep Today" is available; both were explicitly unverified in research, for this name and every candidate (name-collisions.md, naming-decision.md).
 The v1 listing suffix "Rest Tomorrow" is killed everywhere per the v2 naming decision; the listing name is plain "Rep Today".
 The collision scan was clean, but REP Fitness owns "REP" mindshare in fitness search (https://www.repfitness.com), so clearance is a legal question, not a search-results question.
-4. **Do not buy reptoday.com.**
-It is a $3,895 investor-held domain (https://www.hugedomains.com/domain_profile.cfm?d=reptoday.com); reptoday.app returned NXDOMAIN, a strong availability signal (https://dns.google/resolve?name=reptoday.app&type=NS), and a pre-revenue app does not need the .com.
+4. **Domain: done.**
+Done 2026-08-11: `reptoday.app` is registered and serves the hosted privacy policy; `reptoday.com` was not bought.
+The earlier NXDOMAIN result for reptoday.app (https://dns.google/resolve?name=reptoday.app&type=NS) was the research-time availability signal before registration, not the domain's state now.
+reptoday.com remains a $3,895 investor-held domain (https://www.hugedomains.com/domain_profile.cfm?d=reptoday.com), and a pre-revenue app does not need the .com.
 5. **Validate ASO keywords with the free Apple Search Ads popularity scores before locking metadata**, exactly as the ASO research recommends, since every volume statement in it is an [ASSUMPTION] (aso-landscape.md).
 6. **Respect the now-verified subreddit bans.**
 The v2 research fetched the rules v1 could not: the ICP-matched subreddits ban promotion outright, so Reddit is listening plus one sanctioned r/SideProject post, nothing more (01-research/platform-signal-evidence.md, fetched 2026-08-01; channel-plan.md A3).
