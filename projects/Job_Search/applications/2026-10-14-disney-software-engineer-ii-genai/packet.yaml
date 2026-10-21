@@ -1,0 +1,106 @@
+# Application packet source. Every line cites Master profile Claims; build_packet.py checks it.
+# Build: python3 ../build_packet.py .     Check only: python3 ../build_packet.py . --check
+
+role:
+  company: Disney
+  title: Software Engineer II (GenAI)
+  url: https://disney.wd5.myworkdayjobs.com/disneycareer/job/Seattle-WA-USA/Software-Engineer-II_10153237-1
+  location: Glendale, CA (1200 Grand Central Ave) or Seattle, WA; primarily on site, occasionally from home
+  compensation: Glendale $119,200-$159,800; Seattle $124,900-$167,400
+  fit: 4 (re-scored 2026-10-08 in scans/2026-10-08-rescore.md; requirements unchanged on 2026-10-14)
+  closes: 2026-10-30
+
+status: submitted      # draft | approved | submitted | withdrawn
+submitted_on: 2026-10-14
+
+headline: "AI Engineer | Python GenAI Applications | Retrieval, Grounding, Tool Calling, and LLM Evaluation"
+
+summary:
+  - text: "AI engineer who builds Python GenAI applications with retrieval and grounding, tool calling, and the evaluations that gate them, using AI coding agents such as Claude Code as the core workflow."
+    claims: [purvia-multi-user-rag-app, purvia-tool-calling-agent-loop, purvia-retrieval-golden-set, creativebridge-agent-directed-ios-build]
+  - text: "Before that, 10 years of product validation at Zebra Technologies, ending with two years building C# test automation."
+    claims: [zebra-validation-ownership, zebra-csharp-automation]
+
+experience:
+  - period: independent
+    bullets:
+      - label: Purvia
+        text: "Built a multi-user RAG chat app on FastAPI and the raw OpenAI SDK with multi-format document ingestion, Pydantic structured-output metadata extraction, streamed responses, and per-chunk source badges in a React and TypeScript UI."
+        claims: [purvia-multi-user-rag-app]
+      - label: Purvia
+        text: "Implemented hybrid retrieval that fuses pgvector HNSW search with Postgres full-text search by reciprocal rank fusion, with a keyword fallback and optional rerankers; a bake-off kept reranking off by default."
+        claims: [purvia-hybrid-retrieval-reranking]
+      - label: Purvia
+        text: "Built a framework-free tool-calling agent loop, capped at 5 iterations, in which the model chooses between document search, text-to-SQL, web search, and a full-document sub-agent that runs in its own isolated context."
+        claims: [purvia-tool-calling-agent-loop]
+      - label: Purvia
+        text: "Enforced access control inside the Postgres retrieval functions so every search runs as the signed-in user, backed by row-level security and a CI eval that fails unless a user with no grants gets nothing protected back."
+        claims: [purvia-acl-in-retrieval-predicate, purvia-e4-no-leak-table]
+      - label: Purvia
+        text: "Built a 60-question retrieval regression set scored on recall@k, MRR, and nDCG@5 that posts the PR-versus-main difference on pull requests; hybrid search scores 0.950 recall@5."
+        claims: [purvia-retrieval-golden-set]
+      - label: Purvia
+        text: "Designed an escalation eval whose LLM judges come from two providers, OpenAI and Anthropic, with a weekly 5% false-resolve ceiling and a judge-agreement check; it has flagged a breach four weeks running."
+        claims: [purvia-e7-escalation-eval]
+      - label: Purvia
+        text: "Tagged LangSmith traces by user and thread, and set up scheduled eval jobs that commit dated results and open an issue when a run fails or measures nothing."
+        claims: [purvia-multi-user-rag-app, purvia-scale-benchmark-and-receipts]
+      - label: Purvia
+        text: "Made model choice configurable per role across OpenAI, Azure OpenAI, and OpenAI-compatible endpoints, and deployed a demo with a Dockerized FastAPI backend on Railway and the frontend on Vercel."
+        claims: [purvia-model-surface-and-adrs, purvia-demo-deployment]
+      - label: Rep Today
+        text: "Built a premium coaching chat that sends a user's message and a non-identifying training summary through a Cloudflare Worker proxy to OpenAI, with App Attest and subscription checks on the server, capped output, and 462 proxy tests in CI."
+        claims: [reptoday-premium-coach-llm]
+      - label: Rep Today
+        text: "Directed and approved 196 pull requests written by AI coding agents, 180 of them with a written risk assessment."
+        claims: [reptoday-agent-directed-delivery]
+
+  - period: omdena
+    bullets:
+      - text: "Fine-tuned open-source LLMs (LLaMA, Falcon) and iterated on chatbot prompts with an evaluation workflow."
+        claims: [omdena-llm-chatbot]
+
+  - period: career-break
+
+  - period: zebra
+    bullets:
+      - text: "Built C# test automation that replaced manual workflows and cut regression cycles by about 30%."
+        claims: [zebra-csharp-automation]
+      - text: "Led product validation for 6 shipped hardware products: test plans, procedures, acceptance criteria, and final reports."
+        claims: [zebra-validation-ownership]
+      - text: "Isolated root causes of failures across hardware, firmware, software, and test infrastructure, and proved the fixes."
+        claims: [zebra-failure-analysis]
+
+skills:
+  - label: GenAI
+    items: [RAG, pgvector, Prompt engineering, Tool calling, Text-to-SQL, OpenAI API, Azure OpenAI, Anthropic API]
+  - label: LLMOps
+    items: [LLM evaluation, LLM-as-judge, RAGAS, Retrieval metrics, LangSmith, GitHub Actions, CI/CD, Docker]
+  - label: Engineering
+    items: [Python, FastAPI, Pydantic, PostgreSQL, SQL, Supabase, TypeScript, React, Cloudflare Workers, C#]
+  - label: AI developer tools
+    items: [Claude Code, AI coding agents, Code review, Architecture decision records]
+
+education:
+  - text: "B.S., Electrical Engineering, California Polytechnic State University, San Luis Obispo"
+    claims: [degree-bs-ee]
+  - text: "FourthBrain ML Engineering bootcamp (2022); DeepLearning.AI deep learning and generative AI courses"
+    claims: [fourthbrain-mle-bootcamp, coursework-deeplearning-ai-early, coursework-deeplearning-ai-later]
+
+answers: []            # Workday hides the form until you sign in; tell Mandu about any free-text question you find
+
+gaps:
+  - gap: "\"3+ years of professional software development experience\": you have 2 paid years (C# test automation at Zebra, 2016 to 2018)."
+    how_to_own_it: "State the 2 years plainly and add the full-time independent work since June 2025. Do not count Omdena or the validation years as software development."
+  - gap: "Disney's candidate AI policy bans AI note-takers and AI-generated answers in interviews and assessments, and AI coding agents wrote most of your project code."
+    how_to_own_it: "Before any screen, be able to explain without notes the agent loop and its 5-iteration cap, the reciprocal-rank-fusion retrieval, and the access check in the retrieval SQL. Say plainly that agents write most of the code and you direct, review, and verify it; the posting itself requires AI developer tools."
+  - gap: "MCP is not in your evidence, and the role works on 'MCP style integration patterns'."
+    how_to_own_it: "The requirement accepts tool calling or function calling, which you have. Say MCP is next for you. If you build a small MCP server first, add it to the profile as a Claim before mentioning it."
+  - gap: "Cloud development in Azure, AWS, or GCP is thin: Azure OpenAI configuration only; deployments were Railway, Vercel, and Cloudflare Workers."
+    how_to_own_it: "Name what you deployed and where. Azure is listed as a plus; offer the Azure OpenAI configuration in Purvia as your only Azure exposure."
+  - gap: "Latency and cost tracking for LLM calls, Teams bots, Snowflake Cortex, and MongoDB are not in your evidence."
+    how_to_own_it: "Say so. For natural language to SQL, point to the optional text-to-SQL tool in the Purvia agent loop, and be clear it is enabled by configuration and was never used by real users."
+  - gap: "Purvia's escalation and RAGAS gates are failing in a public repo (issues #163, #172, #177), and the demo backend is down."
+    how_to_own_it: "Bring the failing gate up as a debugging story: the breach comes from the offline judge, not the runtime gate. If asked about the demo, say it ran from April to July 2026 and is offline now."
+  - gap: "The Glendale band ($119,200-$159,800) is below most roles in the queue."
+    how_to_own_it: "Decide your floor before the recruiter call; the role is about 3 miles from Burbank, primarily on site."

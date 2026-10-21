@@ -49,7 +49,8 @@ The existing company tiers remain a starting source list, not a restriction on r
 - **Company-list reference:** `.agents/skills/job-hunter/references/company-list.md`.
 - **Master profile:** `profile/` (since 2026-10-08) is the single source of truth for career facts: evidence-backed Claims plus a generated Skill index. See `profile/README.md`.
 - **Resumes:** `Resume/*.docx` are older renderings and contain overstated lines; build new materials from the Master profile instead.
-- **Application packets:** `applications/<date>-<company>-<role>/` (since 2026-10-08), one per role, built by the `application-packet` skill and checked by `applications/build_packet.py`. Each holds the posting snapshot, `packet.yaml`, the generated resume (.pdf, .docx), and `packet.md` for review. hcho submits; Mandu never does.
+- **Application packets:** `applications/<date>-<company>-<role>/` (since 2026-10-08), one per role, built by the `application-packet` skill and checked by `applications/build_packet.py`. Each holds the posting snapshot, `packet.yaml`, the generated resume (.pdf, .docx), a cover letter (.pdf, .docx) when the form has a field for one or hcho asks, and `packet.md` for review. hcho submits; Mandu never does.
 - **Interview prep:** `interview-prep.md` consolidates talking points across projects and wikis.
+- **Study plan:** `study_plan/01-interview-study-plan_261020.md` lists what to study for the applications sent through 2026-10-20, ranked by how many of them need it.
 - **Roles wiki:** `wiki/` (mode full) maps target roles, their qualifications/skills, and hcho's path into each; sibling `raw/` inbox. Schema in `wiki/CLAUDE.md`. Drop a posting or role guide into `raw/` and say "ingest this."
 - **Archive:** `archive/` holds the legacy daily notes (2026-05-12, 05-29, 05-30) and the old long-term `MEMORY.md`, kept read-only for history.

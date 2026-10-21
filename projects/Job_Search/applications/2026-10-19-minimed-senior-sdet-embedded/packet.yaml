@@ -1,0 +1,113 @@
+# Application packet source. Every line cites Master profile Claims; build_packet.py checks it.
+# Build: python3 ../build_packet.py .     Check only: python3 ../build_packet.py . --check
+
+role:
+  company: MiniMed
+  title: Senior Software Development Engineer In Test - Embedded Software/Firmware
+  url: https://mdtkangaroo.wd108.myworkdayjobs.com/MiniMedCareers/job/Northridge-California-United-States-of-America/Senior-Software-Development-Engineer-In-Test_R-801917
+  location: Northridge, CA, on-site
+  compensation: $124,000-$212,000 (California range)
+  fit: 4 (the only required line, a bachelor's degree plus 4 years of relevant experience, is met at employer scale; held by the seniority rule in scans/2026-10-19.md for the mentoring duty, which zebra-mentoring-standards answers; hcho chose to apply on 2026-10-19)
+  closes: 2026-10-28
+
+status: submitted      # draft | approved | submitted | withdrawn
+submitted_on: 2026-10-20
+
+headline: "Software Test Engineer | Embedded Product V&V, Test Automation, and Root-Cause Analysis"
+
+summary:
+  - text: "Validation engineer with 10 years at Zebra Technologies verifying embedded hardware products: test plans, procedures, acceptance criteria, and final reports for 6 shipped products, and root-cause isolation across hardware, firmware, and software."
+    claims: [zebra-validation-ownership, zebra-failure-analysis]
+  - text: "Now writes Python, TypeScript, and Swift test suites with quality gates in GitHub Actions CI."
+    claims: [purvia-backend-test-suite, reptoday-ci-matrix, reptoday-unit-suite-growth]
+  - text: "Directs AI coding agents under human review, with a risk assessment on each change and CI checks that keep requirements and test evidence aligned."
+    claims: [reptoday-agent-directed-delivery, immerse-traceability-release-guards]
+
+experience:
+  - period: independent
+    bullets:
+      - label: Rep Today
+        text: "Grew the XCTest unit suite from 829 to 1,687 tests; CI runs 1,665 of them on both iOS 18 and iOS 26 with 0 failures."
+        claims: [reptoday-unit-suite-growth]
+      - label: Rep Today
+        text: "Found and fixed platform-specific defects through CI and cross-OS testing, including an iOS 18 layout feedback loop that hung the suite past the 45-minute job limit, closed with a regression test."
+        claims: [reptoday-ci-caught-platform-defects]
+      - label: Rep Today
+        text: "Directed development as 196 agent-authored pull requests, 180 with a written risk assessment separating scenarios validated live in the app from those covered only by tests."
+        claims: [reptoday-agent-directed-delivery]
+      - label: Immerse
+        text: "Added CI scripts that fail the build when the requirement evidence map and the task tracker disagree (136 requirements, 74 acceptance clauses, 9 invariants) or when a debug-only unlock reaches the release build."
+        claims: [immerse-traceability-release-guards]
+      - label: Immerse
+        text: "Diagnosed intermittent UI-test failures that turned main red four times and fixed them by splitting race-prone tests."
+        claims: [immerse-ci-flake-fixes]
+      - label: Purvia
+        text: "Wrote an offline Python backend test suite that runs on every pull request with credentials stripped and network access blocked, plus integration tests against a local Supabase stack."
+        claims: [purvia-backend-test-suite]
+      - label: CreativeBridge
+        text: "Took the codebase from 961 TypeScript errors, 762 ESLint problems, and 790 failing Jest tests to zero, then made type-check, lint, and tests blocking CI steps."
+        claims: [creativebridge-ci-debt-to-green]
+
+  - period: omdena
+    bullets:
+      - text: "Led a DeepLabV3+ cancer-cell segmentation pipeline: preprocessing, training, evaluation, and deployment."
+        claims: [omdena-histopathology-segmentation]
+      - text: "Built UNET and DeepLabV3+ models on Sentinel-2 satellite imagery to map deforestation and seagrass habitat."
+        claims: [omdena-satellite-segmentation]
+      - text: "Fine-tuned LLaMA and Falcon, integrated ChatGPT into a chatbot, and iterated on prompts with an evaluation workflow."
+        claims: [omdena-llm-chatbot]
+      - text: "Containerized models with Docker for reproducible environments across volunteer teams in several time zones."
+        claims: [omdena-docker-collaboration]
+
+  - period: career-break
+
+  - period: zebra
+    bullets:
+      - text: "Led validation testing for 6 shipped hardware products, writing test plans, procedures, acceptance criteria, and final reports."
+        claims: [zebra-validation-ownership]
+      - text: "Isolated root causes of failures across hardware, firmware, software, and test infrastructure, and proved each fix."
+        claims: [zebra-failure-analysis]
+      - text: "Built C# validation tooling that replaced manual test workflows and cut regression test cycles by about 30%."
+        claims: [zebra-csharp-automation]
+      - text: "Owned SDK validation across Windows, macOS, and Linux: compatibility, performance, and reliability."
+        claims: [zebra-sdk-validation]
+      - text: "Mentored 10 test technicians and set quality and lab process standards adopted across the products the team validated."
+        claims: [zebra-mentoring-standards]
+
+skills:
+  - label: Verification and validation
+    items: [Test planning, Hardware validation, Failure analysis, Reliability testing, Requirements traceability]
+  - label: Test automation and CI
+    items: [Python, TypeScript, C#, Test automation, XCTest, Jest, GitHub Actions, Flaky test diagnosis]
+  - label: AI-assisted engineering
+    items: [AI coding agents, Claude Code, Code review, Technical writing, Mentoring]
+
+education:
+  - text: "B.S., Electrical Engineering, California Polytechnic State University, San Luis Obispo"
+    claims: [degree-bs-ee]
+  - text: "FourthBrain ML Engineering bootcamp (2022); DeepLearning.AI deep learning and generative AI courses"
+    claims: [fourthbrain-mle-bootcamp, coursework-deeplearning-ai-early, coursework-deeplearning-ai-later]
+
+answers: []            # Workday hides the form and its screening questionnaire until sign-in (read 2026-10-19)
+
+gaps:
+  - gap: "The application window closes on 2026-10-28 (the posting was reposted on 2026-10-20; it first said 2026-10-20)."
+    how_to_own_it: "Submit before then. If the form asks free-text questions, paste them to Mandu and the answers can be drafted from the profile."
+  - gap: "The Omdena Claims have open questions in the profile: the months each project ran, whether you were the formal task lead on the histopathology project, its framework and where it was deployed, and whether the chatbot reached real users."
+    how_to_own_it: "Answer them before an interview so the dates and the word led hold up. All Omdena work was unpaid volunteer work; say so if asked."
+  - gap: "The form could not be read: Workday shows the steps and a screening questionnaire only after sign-in."
+    how_to_own_it: "Upload the resume, check for text questions and a cover letter upload, and answer screening questions literally (for example, medical-device experience is no)."
+  - gap: "No medical-device work: IEC 62304, ISO 13485, design controls, risk management, and CAPA are listed duties."
+    how_to_own_it: "Say it is new. The closest practice is Zebra's written test procedures, acceptance criteria, and final reports, and the Immerse CI checks that keep requirements and test evidence in agreement. Offer to learn the standards first."
+  - gap: "No hardware-in-the-loop or software-in-the-loop benches, device simulators, or automated test fixtures in the profile."
+    how_to_own_it: "Zebra validation was hands-on lab work on shipped devices, but the profile has no Claim for benches or fixtures. If you used or built fixtures there, add an attested Claim before you submit; otherwise call it new and point to the offline test suite with network access blocked as the nearest software-side isolation work."
+  - gap: "No embedded communication interfaces (UART, SPI, I2C, CAN, USB, Bluetooth Low Energy) and no reading of C or C++ firmware in the profile."
+    how_to_own_it: "If Zebra's printer and mobile-computer validation covered USB, serial, or Bluetooth interfaces, that is worth an attested Claim; until then, do not claim it. Say you read code to design tests and isolate failures, and that C and C++ firmware reading is a gap you would close on the job."
+  - gap: "Coding-focused role: paid test automation is 2.0 years of C# (2016-08 to 2018-07); the Python and JavaScript automation is project-scale, and none of it drove physical devices from CI."
+    how_to_own_it: "State the 2 paid years plainly. Then show volume and habits from the projects: 1,687 XCTest tests on two OS versions, a Jest cleanup to zero failures, flaky-test fixes, and CI gates. Say that putting physical devices into CI would be new."
+  - gap: "No paid work since 2018: a career break with ML retraining, volunteer Omdena work, then solo unpaid products since 2025."
+    how_to_own_it: "Name the sequence briefly and move to what the recent projects show about current testing practice."
+  - gap: "Mentoring test engineers is a listed duty."
+    how_to_own_it: "Zebra: mentored 10 test technicians and set lab and quality standards the team adopted. Keep it to that; the posting calls the role a coding-focused individual contributor."
+  - gap: "On-site in Northridge, about 13 miles from Burbank."
+    how_to_own_it: "Confirm the in-office schedule in the first call."

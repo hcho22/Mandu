@@ -1,0 +1,125 @@
+# Application packet source. Every line cites Master profile Claims; build_packet.py checks it.
+# Build: python3 ../build_packet.py .     Check only: python3 ../build_packet.py . --check
+
+role:
+  company: Syllo
+  title: Senior Data Scientist, AI Evaluation
+  url: https://job-boards.greenhouse.io/syllo/jobs/4407430009
+  location: United States - Remote
+  compensation: $160,000-$200,000 base, plus health insurance and equity
+  fit: 4 (scored line by line in scans/2026-10-19.md, "Syllo - Senior Data Scientist, AI Evaluation"; re-checked 2026-10-20 against the posting and Purvia's 2026-10-16 eval fixes)
+
+status: submitted      # draft | approved | submitted | withdrawn
+submitted_on: 2026-10-20
+
+headline: "AI Evaluation | LLM and Retrieval Evals, Experiments, and Root-Cause Investigation"
+
+summary:
+  - text: "Builds quantitative evaluations for LLM and retrieval systems: test sets, scheduled regression checks, LLM-judge validation, and side-by-side comparisons of models and rubrics."
+    claims: [purvia-retrieval-golden-set, purvia-e7-escalation-eval, purvia-e7-offline-judge-root-cause, purvia-answer-gate-model-comparison]
+  - text: "Spent 10 years as a validation engineer at Zebra Technologies isolating root causes across hardware, firmware, software, and test infrastructure, and writing the final reports for 6 shipped products."
+    claims: [zebra-validation-ownership, zebra-failure-analysis]
+  - text: "Works in Python and SQL, with evals automated in GitHub Actions."
+    claims: [purvia-retrieval-golden-set, purvia-acl-in-retrieval-predicate, purvia-e4-no-leak-table]
+
+experience:
+  - period: independent
+    bullets:
+      - label: Purvia
+        text: "Traced a 27% false-resolve rate (5% ceiling) in an escalation eval to the offline LLM judge, not the product, which made 0 false resolves in 55 end-to-end runs; compared five judge designs on replayed drafts and kept the one that cut wrong verdicts from 38 of 280 to 0 of 300."
+        claims: [purvia-e7-offline-judge-root-cause]
+      - label: Purvia
+        text: "For the live answer gate, compared a stricter value-extraction rubric against a stronger judge model on 85 stored drafts; the rubric let 1 of 66 should-escalate drafts through against 15 of 66, for about $0.00007 more per reply."
+        claims: [purvia-answer-gate-model-comparison]
+      - label: Purvia
+        text: "Built a 60-question retrieval benchmark that scores vector, keyword, and hybrid search on recall@k, MRR, and nDCG@5 and posts the difference from main on pull requests; it flagged a 0.510 recall@5 drop on a deliberately broken change."
+        claims: [purvia-retrieval-golden-set]
+      - label: Purvia
+        text: "Traced a question the RAGAS coverage gate flagged as retrieving nothing to a keyword-stemming mismatch, and added a stem-prefix search tier that raised hybrid recall@5 from 0.950 to 0.967 with no metric worse."
+        claims: [purvia-keyword-stem-tier]
+      - label: Purvia
+        text: "Designed an escalation eval: an 18-question test set whose deterministic leak checks block pull requests, a scheduled LLM-judged check against the 5% ceiling, and a check that the offline and runtime judges agree."
+        claims: [purvia-e7-escalation-eval]
+      - label: Purvia
+        text: "Added a scheduled RAGAS job (faithfulness, answer relevancy, context precision, context recall) across two permission levels, with coverage and API-error gates and a cross-check against a separate Claude judge."
+        claims: [purvia-ragas-weekly-gate]
+      - label: Purvia
+        text: "After a permissions benchmark published 0.000 for 42 runs because its test users lacked a workspace membership, added guard tests so the evals refuse to report a score when they measured nothing."
+        claims: [purvia-fail-closed-eval-guards]
+      - label: Purvia
+        text: "Built a 10,000-chunk benchmark that sweeps HNSW search settings for users who can see 50%, 10%, and 1% of the data, with scheduled jobs that commit dated results and open an issue when a run fails or measures nothing."
+        claims: [purvia-scale-benchmark-and-receipts]
+      - label: Purvia
+        text: "Wrote access control into the Postgres vector and keyword retrieval functions, backed by row-level security across 48 SQL migrations, so every search returns only chunks the signed-in user may see."
+        claims: [purvia-acl-in-retrieval-predicate]
+      - label: Rep Today
+        text: "Instrumented 13 pre-registered funnel events through a Convex HTTP endpoint with opt-out consent and rate limits, and verified accepted, rejected, rate-limited, and opted-out behavior in production checks."
+        claims: [reptoday-funnel-telemetry]
+
+  - period: omdena
+    bullets:
+      - text: "Fine-tuned open-source LLMs (LLaMA, Falcon) and iterated on chatbot prompts with an evaluation workflow."
+        claims: [omdena-llm-chatbot]
+
+  - period: career-break
+
+  - period: zebra
+    bullets:
+      - text: "Isolated root causes of failures across hardware, firmware, software, and test infrastructure, and proved the fixes."
+        claims: [zebra-failure-analysis]
+      - text: "Led product validation for 6 shipped hardware products: test plans, procedures, acceptance criteria, and final reports."
+        claims: [zebra-validation-ownership]
+
+skills:
+  - label: AI evaluation
+    items: [LLM evaluation, Model evaluation, LLM-as-judge, RAGAS, Retrieval metrics, Prompt engineering]
+  - label: Data and analysis
+    items: [Python, SQL, PostgreSQL, Pandas, Data analysis, Statistics, Product analytics]
+  - label: Retrieval and ML
+    items: [RAG, Hybrid retrieval, Reranking, pgvector, Machine learning, Deep learning, Computer vision]
+  - label: Investigation and tooling
+    items: [Failure analysis, Regression testing, GitHub Actions, LangSmith, OpenAI API, Anthropic API]
+
+education:
+  - text: "B.S., Electrical Engineering, California Polytechnic State University, San Luis Obispo"
+    claims: [degree-bs-ee]
+  - text: "FourthBrain ML Engineering bootcamp (2022); DeepLearning.AI deep learning and generative AI courses; Google Advanced Data Analytics Professional Certificate"
+    claims: [fourthbrain-mle-bootcamp, coursework-deeplearning-ai-early, coursework-deeplearning-ai-later, coursework-google-advanced-data-analytics]
+
+answers: []            # the form has no free-text questions (read 2026-10-20)
+
+cover_letter:          # the form has an optional Cover Letter field (file or pasted text)
+  limit_words: 350
+  greeting: "Dear Syllo hiring team,"
+  paragraphs:
+    - text: "Your posting asks for someone who measures how an AI system behaves, runs experiments to compare approaches, and finds root causes. I did that work for ten years as a validation engineer at Zebra Technologies, and I do it now on Purvia, my open-source retrieval and support-bot project."
+      claims: [zebra-validation-ownership, zebra-failure-analysis, purvia-retrieval-golden-set]
+    - text: "The best example is an eval that went wrong. My escalation eval checks that a support bot hands questions it can't answer to a person, with a 5% ceiling on wrong auto-answers. It breached that ceiling four runs in a row, reaching 27%. Before touching the product, I ran the pipeline end to end with only its live gates and got 0 false resolves in 55 runs. The fault was the offline LLM judge. Once it could see the retrieved context, it graded whether a draft was true, not whether it answered the question, so an accurate \"I don't have that information\" passed. I compared five judge designs on replayed drafts and kept the one that makes the judge name the asked and stated values first. Wrong verdicts went from 38 of 280 to 0 of 300."
+      claims: [purvia-e7-escalation-eval, purvia-e7-offline-judge-root-cause]
+    - text: "I treat model choices as experiments with a price. For the live answer gate, a stronger judge model let 15 of 66 should-escalate drafts through on 85 stored drafts, while a stricter rubric on the current model let 1 through, for about $0.00007 more per reply, so I kept the rubric. On retrieval, a 60-question benchmark scores vector, keyword, and hybrid search on pull requests, and when a RAGAS gate flagged a question that retrieved nothing, I traced it to keyword stemming and raised hybrid recall@5 from 0.950 to 0.967."
+      claims: [purvia-answer-gate-model-comparison, purvia-retrieval-golden-set, purvia-keyword-stem-tier]
+    - text: "Production data at your scale would be new to me, since Purvia runs on a synthetic corpus, and so would litigation. I'd start by learning how your lawyers judge a good answer, then build the measurements around that. I'd welcome a conversation about how you evaluate your agentic features today."
+      claims: [purvia-retrieval-golden-set]
+  closing: "Sincerely,"
+
+gaps:
+  - gap: "Degree and years: \"Master's degree ... with substantial hands-on experience; or 2-4 years of relevant professional experience.\" You have a B.S. in EE, and your 10.5 professional years are hardware validation at Zebra, ending in 2018."
+    how_to_own_it: "Say it plainly: no Master's and no paid data-science role. The professional years are measurement, test design, and root-cause work on shipped products; the AI evaluation work since 2025 is solo project work, all public on GitHub. Let the interviewer decide whether that counts as relevant."
+  - gap: "\"Strong foundation in applied statistics, experimentation, and quantitative analysis.\" Statistics is coursework only (the Google Advanced Data Analytics certificate, completion date still pending in the profile). No repo shows hypothesis tests, confidence intervals, or power analysis."
+    how_to_own_it: "This is the line a data-science interviewer will test hardest. Review binomial confidence intervals, A/B test design and sample size, and multiple comparisons before any call. Then turn Purvia's weakness into the answer: the escalation eval has 11 should-escalate questions, so one miss moves the rate by about 9 points, and a 5% ceiling on 11 rows allows zero misses. Say what you would change (more rows, intervals on every rate, repeated sampling at temperature above zero)."
+  - gap: "\"Strong Python and SQL skills and experience working directly with production data.\" No production data anywhere: Purvia runs on a 16-chunk synthetic demo corpus with 60 questions, and Rep Today's telemetry has only synthetic rows."
+    how_to_own_it: "Claim Python and SQL at project scale (Purvia's retrieval functions and row-level security are 48 SQL migrations), and say production data is the gap. Do not let the 10,000-chunk benchmark sound like production; its own caveat says 1.000 recall is trivial at that size."
+  - gap: "\"Comfortable navigating production code and data systems you did not build.\" Partial: at Zebra you isolated failures in firmware and software other teams wrote, but you have no record of working inside someone else's data stack."
+    how_to_own_it: "Use the Zebra failure analysis as the example of working in systems you did not build. Do not use agent-written code as an example; you directed its design."
+  - gap: "AI coding agents did the 2026-10-16 judge and gate investigations under your direction, four days before this packet."
+    how_to_own_it: "Be able to explain the E7 judge fix and the answer-gate comparison without notes before submitting: read Purvia PR #184, PR #186, docs/adr/0015-answer-gate-value-extraction.md, and docs/evals.md section 6. Know why a bare yes/no judge failed once it saw the context, what the five designs were, and why gpt-5-mini was rejected. If asked who wrote the code, say you direct AI coding agents and own the design, review, and verification."
+  - gap: "No scheduled run has confirmed the fixes yet. Issues #163, #172, and #177 were closed by the PRs that fixed them, and the evals moved from weekly to monthly on 2026-10-16, so the first scheduled run on the fixes is 2026-11-01."
+    how_to_own_it: "Say the before and after numbers come from one-off CI runs on branches. If asked why monthly, the honest reason is cost on a project with no users, and the tradeoff is that a regression can go unnoticed for up to a month. Check the 2026-11-01 results before any interview after that date."
+  - gap: "Dashboards and internal tooling: the posting asks for tools and dashboards. Purvia has pull-request comments, dated markdown reports, auto-filed issues, and LangSmith traces, but no dashboard."
+    how_to_own_it: "Describe the reporting that exists and say a dashboard would be new work."
+  - gap: "Bonus line: \"modern cloud data platforms and production data infrastructure.\" Only Postgres on Supabase."
+    how_to_own_it: "Say so; name Postgres, pgvector, and Supabase and nothing else."
+  - gap: "Litigation and legal AI are new to you."
+    how_to_own_it: "The cover letter already says so. The closest match is Purvia's permission-aware retrieval, since law-firm documents also have strict access rules."
+  - gap: "Work authorization and sponsorship questions are Yes/No on the form."
+    how_to_own_it: "Answer them yourself on the form."

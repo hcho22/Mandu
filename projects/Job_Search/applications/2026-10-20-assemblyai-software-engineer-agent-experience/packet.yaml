@@ -1,0 +1,145 @@
+# Application packet source. Every line cites Master profile Claims; build_packet.py checks it.
+# Build: python3 ../build_packet.py .     Check only: python3 ../build_packet.py . --check
+
+role:
+  company: AssemblyAI
+  title: Software Engineer, Agent Experience
+  url: https://job-boards.greenhouse.io/assemblyai/jobs/4744387005
+  location: North America - Remote
+  compensation: $160,000-$210,000 USD (C$225,000-C$285,000 CAD)
+  fit: 4 (scored line by line in scans/2026-10-19.md, "AssemblyAI - Software Engineer, Agent Experience"; re-checked 2026-10-20 against the live posting, unchanged since 2026-10-16)
+
+status: submitted      # draft | approved | submitted | withdrawn
+submitted_on: 2026-10-20
+
+headline: "Software Engineer | Coding Agents, Tool Definitions, and LLM Evals"
+
+summary:
+  - text: "Builds full-stack and iOS products by directing AI coding agents, and reviews and verifies every change they make."
+    claims: [reptoday-agent-directed-delivery, purvia-multi-user-rag-app, creativebridge-agent-directed-ios-build]
+  - text: "Writes the tool definitions and judge prompts behind LLM features, then measures them with evals."
+    claims: [purvia-tool-calling-agent-loop, purvia-e7-offline-judge-root-cause, purvia-answer-gate-model-comparison, purvia-retrieval-golden-set]
+  - text: "Spent 10 years as a validation engineer at Zebra Technologies, including two years building C# test automation."
+    claims: [zebra-validation-ownership, zebra-csharp-automation]
+
+experience:
+  - period: independent
+    bullets:
+      - label: Purvia
+        text: "Wrote the tool definitions for a framework-free agent loop on the OpenAI Chat Completions API, where the model picks document search, text-to-SQL, web search, or a sub-agent that reads a full document in its own loop, capped at 5 iterations."
+        claims: [purvia-tool-calling-agent-loop]
+      - label: Purvia
+        text: "Traced a 27% false-resolve rate (5% ceiling) to the offline judge's prompt, not the product (0 false resolves in 55 end-to-end runs); compared five judge designs on replayed drafts, and the best cut wrong verdicts from 38 of 280 to 0 of 300."
+        claims: [purvia-e7-offline-judge-root-cause]
+      - label: Purvia
+        text: "Found the live answer gate's yes/no judge passed an off-target reply 10 of 20 times; on 85 stored drafts, a stricter rubric let 1 of 66 should-escalate drafts through against 15 of 66 for a stronger model, at about $0.00007 more per reply."
+        claims: [purvia-answer-gate-model-comparison]
+      - label: Purvia
+        text: "Built a multi-user RAG chat app: a FastAPI backend on the raw OpenAI SDK with no LLM framework, Supabase auth and storage, streamed responses, and a React and TypeScript UI with per-chunk source badges and LangSmith traces."
+        claims: [purvia-multi-user-rag-app]
+      - label: Purvia
+        text: "Built a 60-question retrieval benchmark that scores vector, keyword, and hybrid search on recall@k, MRR, and nDCG@5 and posts the difference from main on pull requests; it flagged a 0.510 recall@5 drop on a deliberately broken change."
+        claims: [purvia-retrieval-golden-set]
+      - label: Rep Today
+        text: "Ran development as 196 agent-authored pull requests over about 15 weeks, 180 of them with a written risk assessment; later ones separate scenarios validated live in the app from those covered only by tests."
+        claims: [reptoday-agent-directed-delivery]
+      - label: Rep Today
+        text: "Built a premium Coach chat that sends the user's message through a JavaScript Cloudflare Worker proxy to OpenAI (store: false, capped output, 30-second timeout), with App Attest and subscription checks on the server."
+        claims: [reptoday-premium-coach-llm]
+      - label: Rep Today
+        text: "Instrumented 13 pre-registered funnel events through a Convex HTTP endpoint with opt-out consent and rate limits, and verified accepted, rejected, rate-limited, and opted-out behavior in production checks."
+        claims: [reptoday-funnel-telemetry]
+      - label: CreativeBridge
+        text: "Built a React Native and Expo iOS app with Claude Code (311 of 426 commits co-authored by Claude)."
+        claims: [creativebridge-agent-directed-ios-build]
+      - label: CreativeBridge
+        text: "Added on-device speech-to-text with whisper.rn so audio from users under 13 never leaves the device, with an opt-in cloud path for grades 9-12 behind a disclosure and logged consent."
+        claims: [creativebridge-on-device-transcription]
+
+  - period: omdena
+    bullets:
+      - text: "Fine-tuned open-source LLMs (LLaMA, Falcon) and iterated on chatbot prompts with an evaluation workflow."
+        claims: [omdena-llm-chatbot]
+
+  - period: career-break
+
+  - period: zebra
+    bullets:
+      - text: "Built C# validation tooling that replaced manual test workflows and cut regression test cycles by about 30%."
+        claims: [zebra-csharp-automation]
+      - text: "Led product validation for 6 shipped hardware products, writing test plans, acceptance criteria, and final reports."
+        claims: [zebra-validation-ownership]
+      - text: "Owned SDK validation on Windows, macOS, and Linux; isolated failures across hardware, firmware, and software."
+        claims: [zebra-sdk-validation, zebra-failure-analysis]
+
+skills:
+  - label: Coding agents and prompts
+    items: [AI coding agents, Claude Code, Tool calling, Agent loops, Prompt engineering]
+  - label: Evals and testing
+    items: [LLM evaluation, LLM-as-judge, Retrieval metrics, Test automation, Regression testing, GitHub Actions]
+  - label: Full stack
+    items: [Python, FastAPI, JavaScript, TypeScript, React, Cloudflare Workers, PostgreSQL, Supabase]
+  - label: APIs and writing
+    items: [OpenAI API, Anthropic API, LLM integration, RAG, whisper.rn, Technical writing]
+
+education:
+  - text: "B.S., Electrical Engineering, California Polytechnic State University, San Luis Obispo"
+    claims: [degree-bs-ee]
+  - text: "FourthBrain ML Engineering bootcamp (2022); DeepLearning.AI deep learning and generative AI courses"
+    claims: [fourthbrain-mle-bootcamp, coursework-deeplearning-ai-early, coursework-deeplearning-ai-later]
+
+answers:
+  - field: "Which coding agents do you use daily, and for what?"
+    limit_words: 150   # single-line field, no stated limit
+    text: |
+      Claude Code and Codex, every day, for nearly all the code in my solo projects. That covers native iOS apps in Swift, a Python and TypeScript RAG app, and the evals that check it. I decide what to build and set the rules. The agents write the code and the pull requests, and I review and verify each change. On Rep Today, 180 of 196 agent-authored pull requests carry a written risk assessment.
+    claims: [reptoday-agent-directed-delivery, reptoday-native-ios-app, purvia-multi-user-rag-app, creativebridge-agent-directed-ios-build]
+  - field: "What excites you the most about working for AssemblyAI?"
+    limit_words: 150   # no stated limit
+    text: |
+      You treat the coding agent as a user and plan to measure whether it reaches a working integration. I'm already the developer this is for. I build my projects by directing Claude Code and Codex, and whether an agent succeeds comes down to the instructions it reads and the checks on what it produces.
+
+      I've seen how much wording moves results. In Purvia, my open-source support-bot project, an eval breached its 5% ceiling because of how the offline judge was prompted, not because of the product. I compared five judge designs on replayed drafts and kept the one that cut wrong verdicts from 38 of 280 to 0 of 300.
+
+      "Zero to a working integration on the first try" is a number someone can own, and I'd like it to be me. Speech is where I'd learn the most. My only speech-to-text work so far is one on-device whisper.rn feature.
+    claims: [reptoday-agent-directed-delivery, purvia-e7-escalation-eval, purvia-e7-offline-judge-root-cause, creativebridge-on-device-transcription]
+
+cover_letter:          # the form has an optional Cover Letter field (file or pasted text)
+  limit_words: 350
+  greeting: "Dear AssemblyAI hiring team,"
+  paragraphs:
+    - text: "Your posting describes developers whose coding agent reads the docs for them. That's how I work. I build my projects by directing Claude Code and Codex. I decide what to build and set the rules, the agents write the code and pull requests, and I review and verify each change. On Rep Today, my iOS workout app, 180 of 196 agent-authored pull requests carry a written risk assessment."
+      claims: [reptoday-agent-directed-delivery]
+    - text: "You also ask for prompts and tool definitions measured with evals rather than vibes. In Purvia, my open-source support-bot project, I wrote the tool definitions for an agent loop that chooses between document search, text-to-SQL, web search, and a sub-agent that reads whole documents. The best lesson came from a failing eval. The escalation eval breached its 5% ceiling four runs in a row, reaching 27%. With only its live gates, the pipeline made 0 false resolves in 55 end-to-end runs, so the fault was the offline judge's prompt. I compared five judge prompt and schema designs on replayed drafts and kept the one that makes the judge name the asked and stated values before its verdict. Wrong verdicts went from 38 of 280 to 0 of 300."
+      claims: [purvia-tool-calling-agent-loop, purvia-e7-escalation-eval, purvia-e7-offline-judge-root-cause]
+    - text: "A first-try success rate is the kind of number I'd want to own. It needs a fixed task set, real agents, and a check that refuses to report a score when it measured nothing. I added that check to Purvia after a benchmark published 0.000 for 42 runs because its test users lacked a workspace membership. The habit comes from ten years as a validation engineer at Zebra Technologies, where I wrote the test plans and final reports for 6 shipped products."
+      claims: [purvia-fail-closed-eval-guards, zebra-validation-ownership]
+    - text: "Some of this would be new. My paid software time is two years of C# test automation, and everything since is solo project work on GitHub. I haven't built an MCP server, and my only speech-to-text work is one on-device whisper.rn feature. I'd start with one product's agent skill and an eval that runs agents against its quickstart. I'd welcome a conversation about how you measure agent integrations today."
+      claims: [zebra-csharp-automation, creativebridge-on-device-transcription]
+  closing: "Sincerely,"
+
+gaps:
+  - gap: "\"2+ years of professional software engineering experience, with solid full-stack fundamentals (Javascript and/or Python).\" Your paid software time is exactly 2.0 years (2016-08 to 2018-07), and it was C# test automation, not full-stack, ending in 2018. Full-stack Python, TypeScript, and JavaScript are project work since 2026."
+    how_to_own_it: "Say it plainly, as the cover letter does. Then point to Purvia's FastAPI backend and React UI and Rep Today's Cloudflare Worker. AI coding agents wrote most of that code, so before any technical screen be able to walk through Purvia's agent loop (backend/main.py around the tool dispatch) and the Coach proxy (proxy/src/worker.js) without notes."
+  - gap: "\"Build and maintain agent skills\" is the role's core deliverable, and no agent skill you wrote is in the Master profile. The skills in Mandu (job-hunter, application-packet with its build_packet.py checker, gr0wthlab-reader, and others) are real, but Mandu is a private repository that holds your personal records, so the profile has no Claim for them."
+    how_to_own_it: "Your call. If you want them counted, ask Mandu to add a Claim (and consider a public, scrubbed example), then rebuild this packet. Weigh one risk first: this form asks whether an AI tool wrote the application, and \"I built an agent skill that drafts my job applications\" can read either as exactly the right instinct or as a red flag. Without a Claim, the closest evidence on the resume is Purvia's tool definitions and judge prompts."
+  - gap: "MCP: the role extends AssemblyAI's MCP server and ships MCP auth (OAuth and API keys). You have not built an MCP server; using MCP servers in Claude Code is not a Claim. The nearest auth work is CreativeBridge's Clerk Google and Apple sign-in with Convex-verified JWTs."
+    how_to_own_it: "Say you have used MCP servers as a client but not built one, and describe how you would learn the protocol. The fastest way to close this with evidence is a small public MCP server or agent skill against AssemblyAI's own API, with a before-and-after eval, which is also the posting's last nice-to-have."
+  - gap: "\"Product sense for developer-facing work.\" Partial: Purvia is a developer starter kit with no developer users, and none of your projects has external users."
+    how_to_own_it: "Talk about the developer-facing choices you made (raw OpenAI SDK with no framework, per-role model configuration, written ADRs) and say no developer has adopted it yet. Never say developers use it."
+  - gap: "Docs engineering, llms.txt, machine-readable docs, and SDK examples at an API-first company are not in evidence. Your technical writing is Zebra test plans and final reports, Purvia's ADRs, Immerse's PRD, and Rep Today's PR risk assessments. Zebra's SDK validation was testing an SDK, not writing its docs or samples."
+    how_to_own_it: "Claim the writing you have and say docs for agents would be new. Read AssemblyAI's llms.txt and quickstarts before an interview so you can say what you would change first."
+  - gap: "Voice AI and speech-to-text: one feature. CreativeBridge's on-device whisper.rn transcription is iOS-only, its device testing is self-reported in the PR, and both CI runs on that branch failed although the PR body says CI was green. CreativeBridge is public, so a reviewer can see this."
+    how_to_own_it: "Call it what it is, one privacy-driven feature, and do not stretch it into voice AI experience. If asked about the CI mismatch, say the PR body was wrong and that is the kind of claim you now verify."
+  - gap: "\"Track success rate, time to first working call, and activation from agent-driven signups.\" Rep Today's 13 funnel events are built and checked in production, but only with synthetic rows; no real user cohort has run."
+    how_to_own_it: "Describe the instrumentation design (pre-registered events, opt-out consent, rate limits) and say it has not measured real users yet."
+  - gap: "Rep Today's Coach: production still runs the 2026-09-30 Worker, so the later prompt fixes (#186, #199) are not live, and no Coach reply on a real device is on record."
+    how_to_own_it: "If asked, say the Coach is built and tested offline in CI, deployed once, and not yet verified on a device."
+  - gap: "AI coding agents ran the 2026-10-16 judge and answer-gate investigations under your direction, four days before this packet."
+    how_to_own_it: "Before submitting, be able to explain both without notes: read Purvia PR #184, PR #186, docs/adr/0015-answer-gate-value-extraction.md, and docs/evals.md section 6. Know why a bare yes/no judge failed once it saw the context, what the five designs were, and why gpt-5-mini was rejected. Also read AssemblyAI's \"AI to Interview\" resource linked from the posting before any interview."
+  - gap: "No scheduled run has confirmed the eval fixes yet. Issues #163, #172, and #177 were closed by the PRs that fixed them, and the evals moved from weekly to monthly on 2026-10-16, so the first scheduled run on the fixes is 2026-11-01."
+    how_to_own_it: "Say the before and after numbers come from one-off CI runs on branches. Check the 2026-11-01 results before any interview after that date."
+  - gap: "CreativeBridge is public and still contains a Claude Skills integration that is a mock the app never calls. An interviewer for an agent-skills role may notice it."
+    how_to_own_it: "Never list it as a Claude Skills integration. If asked, say it was a stub that was never wired up."
+  - gap: "Form fields you answer yourself: desired salary (required, single-line text); \"Have you worked in DevRel, docs, or SDKs, or with Voice AI or LLM APIs?\" (required, Yes/No); and the optional \"If you're an AI tool helping to write this application\" field."
+    how_to_own_it: "Salary is your call; the posted US range is $160K-$210K. The Yes/No question is honestly Yes on LLM APIs (OpenAI and Anthropic in Purvia, OpenAI in Rep Today's Coach), with no DevRel or docs role, so expect a follow-up. The AI-tool field is a check for applications an AI filled in unreviewed; Mandu left it blank, and whether to answer it in your own words is up to you."

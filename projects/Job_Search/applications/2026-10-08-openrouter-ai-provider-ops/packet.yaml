@@ -9,8 +9,8 @@ role:
   compensation: $215K-$280K plus equity
   fit: 5 (re-scored 2026-10-08, scans/2026-10-08-rescore.md)
 
-status: draft          # draft | approved | submitted | withdrawn
-submitted_on: null
+status: submitted      # draft | approved | submitted | withdrawn
+submitted_on: 2026-10-14
 
 headline: "AI Engineer | LLM Evaluation and Release Quality | Validation Engineer by Training"
 
