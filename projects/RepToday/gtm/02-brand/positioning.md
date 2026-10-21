@@ -79,7 +79,7 @@ Line: "Half your session can be the part other apps skip."
 ## The 6-second hook bank (for the PMF kit)
 
 - Hero A hook, softened per the defensibility judge (the original absolute was falsified by our own research): "Most workout apps open with a question. This one opens with the workout."
-- Hero B hook, founder-on-camera framing mandatory per the conversion judge (first-person claims from a zero-user product must be visibly the founder demoing their own app): "I skipped four days and my app celebrated my comeback. On purpose. I built it that way."
+- Hero B hook, first-person framing, text only by the founder's decision of 2026-10-21 (no person on screen, no voice: the line is on-screen text over the real app, posted from the founder's own account), replacing the conversion judge's founder-on-camera rule: "I skipped four days and my app celebrated my comeback. On purpose. I built it that way."
 - Inversion test angle (essay-register compressed; one PMF angle only): "The most disciplined thing I own is a workout app. Watch."
 - Contrarian angle (pitch-4, mechanics only, no competitor-intent claims): "I built a workout app with no streaks, on purpose. Watch what happens when I miss a day."
 

@@ -39,7 +39,7 @@ Runs for a quarter, not a week. TikTok primary, YouTube Shorts secondary, identi
 
 - [~] **Pre-register the K8 wedge-comprehension rubric** (written coding criteria, 25+ observed first runs) and **name a non-founder coder** - before the first cohort. Standing open slot in the thesis. **Rubric DONE 2026-08-11 (dev-repo #93):** the written coding criteria are pre-registered in `gtm/` before any cohort. **Still open:** naming the non-founder coder who applies it.
 - [ ] **Record the core cold-open demo asset** (real device, real time, cuts only where the shot list allows). It is reused across the whole kit and is Day 1 of the cadence.
-- [ ] **Pick one consistent local-evening posting slot** and never vary it during the window (holds time-of-day constant).
+- [x] **Post at one consistent 10:00 local slot** (the founder's decision of 2026-10-21) and never vary it during the window (holds time-of-day constant).
 - [ ] **Run the 14-day cadence, window 1.** Fully specced day-by-day in `gtm/05-social-pmf/cadence-14-day.md` (16 angles, 6 A/B hook pairs, per-post pre-registered signals). Includes a **Day-7 midpoint gate** and a **Day-14 rebuild**.
 - [ ] **Reddit listening protocol** - weekly read of r/fitness30plus, r/bodyweightfitness, r/getdisciplined (zero links, ever); mine verbatim pain language for hooks; build the account age + karma r/getdisciplined gates on. **Manually read each sub's self-promotion rules first.** r/SideProject is the one sanctioned posting venue, and only *after* TestFlight exists.
 - [ ] **Personal-network waitlist asks** - identity-framed ("movement that fits the life you already have"), never loss-framed; tag the source per signup.

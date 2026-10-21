@@ -4,7 +4,7 @@
 The product is pre-launch: zero users, zero downloads, no App Store listing, no public TestFlight link verified.
 Therefore no draft contains a download CTA, a link, an install count, or any engagement claim; captions state "not released yet" where status is relevant.
 Emoji count across every draft below: zero (none needed; the brand default is none, and none are flagged because none are used).
-Founder-on-camera is mandatory for every first-person line (conversion-judge rule); days 2, 4, and 6 are founder-on-camera.
+Text only, by the founder's decision of 2026-10-21: no person on screen and no voice, so every first-person line is on-screen text over footage of the app; this replaces the conversion-judge founder-on-camera rule, and the founder-on-camera shots, spoken lines, read-aloud directions, and day 7's person in frame below are superseded by the Formats in `angles.md` (day 7 takes the screen-record-only fallback its note names).
 The core demo asset is the day-1 screen record: cold open to ready session, real device, real time, no cuts.
 
 Relationship to `../09-extras/social-launch-kit.md` (v1): that file's X 7-post sequence targeted a platform the v2 research eliminated, so it is SUPERSEDED as the social test vehicle; a superseded note belongs at its top.

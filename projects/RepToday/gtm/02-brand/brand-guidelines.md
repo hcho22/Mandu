@@ -155,7 +155,7 @@ The audience is a tired adult at 9pm. Write like the competent friend, not the c
 11. No unqualified market absolutes: never "every workout app asks..." - "most" is the ceiling on any generalization about competitors, because our own research found exceptions.
 12. No data-practices claims beyond the documented architecture: never assert what the app does or does not record, store, or send unless the shipped mechanic is the claim (e.g. "generated on your phone, offline" is fine; "that is the only fact the app records" is the banned cautionary example).
 13. Competitor-motive claims stay internal: never publish why competitors build what they build ("their machinery serves retention, not you"). Surface copy states Rep Today's own mechanics only.
-14. Pre-launch truth: the product has zero users, downloads, ratings, or testimonials. Never invent or imply any. The demo of the mechanism is the only proof; first-person claims in video must be visibly the founder demoing their own app.
+14. Pre-launch truth: the product has zero users, downloads, ratings, or testimonials. Never invent or imply any. The demo of the mechanism is the only proof; first-person claims in video are on-screen text over real footage of the app, posted from the founder's own account, with no person on screen and no voice (the founder's decision of 2026-10-21).
 
 **Voice do/don't:**
 
@@ -239,7 +239,7 @@ iOS permission prompts (HealthKit, if the user opts in) and the optional Sign in
 **Approved 6-second hooks (video/social only):**
 
 - Hero A hook: "Most workout apps open with a question. This one opens with the workout." (Never "every workout app" - "most" is the ceiling, see §7 rule 11.)
-- Hero B hook (founder-on-camera mandatory): "I skipped four days and my app celebrated my comeback. On purpose. I built it that way."
+- Hero B hook (text only: on-screen text, no person on screen, no voice): "I skipped four days and my app celebrated my comeback. On purpose. I built it that way."
 - Inversion test angle (one pre-registered PMF angle only): "The most disciplined thing I own is a workout app. Watch."
 - Contrarian angle (mechanics only, no competitor-intent claims): "I built a workout app with no streaks, on purpose. Watch what happens when I miss a day."
 

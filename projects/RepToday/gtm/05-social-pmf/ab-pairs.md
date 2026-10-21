@@ -21,10 +21,10 @@ Each leg needs >=200 impressions before its read counts; a leg below the floor i
 - Belief tested: does admitting the cost (the dip) make the promise more believable than the pure negation of loss?
   Positioning.md carries both lines; this pair decides which one leads the forgiveness surface.
 
-## AB-3: free-forever wedge (angle P07, TikTok, same founder-on-camera video body)
+## AB-3: free-forever wedge (angle P07, TikTok, same text-only screen-record body)
 
-- Leg A hook: the video opens with the founder reading the verbatim review "you cannot use this app unless you pay for it. You just can't." (source: https://apps.apple.com/us/app/30-day-fitness-workout-at-home/id1099771240), promise second.
-- Leg B hook: the video opens with "Free means the workouts. All of them. Forever.", review read second.
+- Leg A hook: the video opens with the verbatim review "you cannot use this app unless you pay for it. You just can't." as on-screen text (source: https://apps.apple.com/us/app/30-day-fitness-workout-at-home/id1099771240), promise second.
+- Leg B hook: the video opens with "Free means the workouts. All of them. Forever.", review shown second.
 - Belief tested: pain-first versus promise-first ordering for the number-one mined pain; everything after the first 3 seconds is identical footage re-cut.
 
 ## AB-4: on-device speed (angle P06, YouTube Shorts, same slow-motion asset)
@@ -41,12 +41,12 @@ Each leg needs >=200 impressions before its read counts; a leg below the floor i
 - Leg B hook: "Five minutes on a hotel-room floor still counts."
 - Belief tested: abstract permission versus situated scene; does placing the five minutes in a concrete travel context (which also smuggles in zero-equipment) beat the bare claim?
 
-## AB-6: contrarian entry (angle P09, TikTok, same founder-plus-screen-record asset)
+## AB-6: contrarian entry (angle P09, TikTok, same screen-record asset)
 
 - Leg A hook: "I built a workout app with no streaks, on purpose. Watch what happens when I miss a day."
 - Leg B hook: "Watch what happens in my app when I miss a day."
 - Belief tested: declaration-led versus curiosity-gap-led entry into the same anti-streak demo; A fronts the founder's intent, B withholds it.
-  Both legs are founder-on-camera because both contain first-person lines (mandatory per the conversion judge).
+  Both legs are text only, by the founder's decision of 2026-10-21: their first-person lines are on-screen text over the same screen recording, with no person on screen and no voice.
 
 ## Scheduling note
 

@@ -3,7 +3,7 @@
 One asset per day, posted to BOTH platforms the same day (identical content per `platform-assignment.md`); the listed platform is the primary whose metrics adjudicate.
 A/B pair legs post exactly 7 days apart in the same weekday and time slot, so day N and day N+7 are each other's controls to the extent a sequential test allows.
 [ASSUMPTION] One asset per day is a solo-founder production ceiling; sustaining the calendar matters more than density because the signal is relative rank across posts.
-Posting time: pick one consistent local-evening slot on day 1 and never vary it during the window, so time-of-day is held constant.
+Posting time: one consistent 10:00 local slot, by the founder's decision of 2026-10-21, from day 1 and never varied during the window, so time-of-day is held constant.
 Nothing posts until the pre-publication checklist at the bottom passes for that asset.
 
 ## The calendar
@@ -11,17 +11,17 @@ Nothing posts until the pre-publication checklist at the bottom passes for that 
 | Day | Asset | Angle / pair leg | Primary platform | Notes |
 |---|---|---|---|---|
 | 1 | Cold-open demo, hook A | P01 / AB-1 leg A | TikTok | The core demo asset; recorded once, reused across the kit |
-| 2 | Founder reads paywall review, pain-first cut | P07 / AB-3 leg A | TikTok | Founder on camera |
+| 2 | Paywall review on screen, pain-first cut | P07 / AB-3 leg A | TikTok | Text only |
 | 3 | Missed-day score record | P03 / AB-2 leg A | YouTube Shorts | Silent mechanic demo |
-| 4 | Founder comeback story | P02 | TikTok | Founder on camera; Hero B hook |
+| 4 | Founder comeback story | P02 | TikTok | Text only; Hero B hook |
 | 5 | Airplane-mode demo | P11 | YouTube Shorts | |
-| 6 | No-streaks contrarian, declaration-led | P09 / AB-6 leg A | TikTok | Founder on camera |
+| 6 | No-streaks contrarian, declaration-led | P09 / AB-6 leg A | TikTok | Text only |
 | 7 | 5-minute timelapse | P04 (single leg this window; AB-5 queued) | TikTok | Evening: DAY-7 MIDPOINT REVIEW (below) |
 | 8 | Cold-open demo, hook B | P01 / AB-1 leg B | TikTok | Same asset as day 1, only the hook changes |
-| 9 | Founder reads paywall review, promise-first cut | P07 / AB-3 leg B | TikTok | Same footage as day 2, re-cut opening |
+| 9 | Paywall review on screen, promise-first cut | P07 / AB-3 leg B | TikTok | Same footage as day 2, re-cut opening |
 | 10 | Missed-day score record, negation hook | P03 / AB-2 leg B | YouTube Shorts | Same asset as day 3 |
 | 11 | Mobility-as-relief session scroll | P08 | YouTube Shorts | |
-| 12 | Discipline inversion | P10 | TikTok | The ONE sanctioned inversion test; founder on camera |
+| 12 | Discipline inversion | P10 | TikTok | The ONE sanctioned inversion test; text only |
 | 13 | No-streaks contrarian, curiosity-led | P09 / AB-6 leg B | TikTok | Same asset as day 6, re-cut opening |
 | 14 | Flex slot | Double-down re-cut of the day-7 review's top angle; if nothing qualifies under the rules below, post P14 (no-signup demo) | TikTok | |
 
@@ -61,5 +61,5 @@ Decision rules, in order:
 - Name is "Rep Today" in prose; no trademark or registration claim or implication.
 - Any post that says "AI" carries the disclosure in the same post or its pinned first comment: at launch the policy tuner is deterministic on-device logic, and the app's only AI-generated text is one optional line with an offline fallback.
 - No em dash characters, no health claims, no competitor-motive claims, no engagement-machinery language.
-- Founder is on camera for every first-person line.
-- Screen recordings are real device, real time, cuts only where the shot list declares them.
+- Text only, by the founder's decision of 2026-10-21: no person is on screen and no line is spoken; every first-person line is on-screen text over footage of the app, posted from the founder's own account.
+- Screen recordings are real device, real time, cuts only where the shot list declares them; a timelapse is the one exception to real time, and says so on screen for its whole length.
