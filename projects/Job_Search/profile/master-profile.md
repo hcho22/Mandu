@@ -2,9 +2,10 @@
 
 _Generated from `master-profile.yaml` by `render_profile.py`. Do not edit by hand; change the YAML and re-run the script._
 
-**Profile as of:** 2026-10-08
+**Profile as of:** 2026-10-20
 
 - **Location:** Burbank, CA (greater Los Angeles); open to US-remote
+- **Location on resumes and cover letters:** Los Angeles, CA
 - **Email:** hcho22@gmail.com
 - **Phone:** (408) 655-5691
 - **LinkedIn:** linkedin.com/in/hyungcho
@@ -465,7 +466,7 @@ Built a 60-question, five-category retrieval test set and runner that scores vec
 - **Number:** -0.510 recall@5 drop flagged by the PR comment on a deliberately broken PR that cut chunk size from 500 to 100 tokens. _As of 2026-10-08; source: bot comment on closed PR #14; docs/evals.md section 4._
 - **Skills:** LLM evaluation, Retrieval metrics, Hybrid retrieval, Python, GitHub Actions, RAG
 - **Lanes:** ai-eval
-- **Caveats:** 16 synthetic chunks; questions LLM-drafted then human-edited. The PR comment is advisory and never fails the build. Cadence moved from nightly to weekly on 2026-08-28.
+- **Caveats:** 16 synthetic chunks; questions LLM-drafted then human-edited. The PR comment is advisory and never fails the build. Cadence moved from nightly to weekly on 2026-08-28 and to monthly on 2026-10-16.
 
 #### `purvia-fail-closed-eval-guards`
 
@@ -533,33 +534,84 @@ Built a support-bot pipeline with fixed control flow (retrieval gate, draft, the
 
 #### `purvia-e7-escalation-eval`
 
-Designed an escalation eval with an 18-question test set whose deterministic leak checks block PRs and whose LLM-judged checks run weekly against a 5% false-resolve ceiling, plus a check that the offline and runtime judges agree; the ceiling has been breached four weeks running.
+Designed an escalation eval with an 18-question test set whose deterministic leak checks block PRs and whose LLM-judged checks run on a schedule against a 5% false-resolve ceiling, plus a check that the offline and runtime judges agree; the ceiling was breached four scheduled runs in a row before the cause was found.
 
 - **Dates:** 2026-06 to present
 - **Evidence:** linked, project scale
   - https://github.com/hcho22/Purvia/blob/fe3485037170803c7043caef0bdc052e11775d27/evals/retrieval/escalation_gold.yaml
   - https://github.com/hcho22/Purvia/blob/fe3485037170803c7043caef0bdc052e11775d27/docs/escalation-weekly/2026-10-11.md
+  - https://github.com/hcho22/Purvia/blob/9f57976b048ba42c70e18587d90ef0e85843c84a/docs/escalation-weekly/README.md#L34
   - https://github.com/hcho22/Purvia/issues/163
-- **Number:** 27% (3 of 11) vs a 5% ceiling false-resolve rate on should-escalate questions, 2026-10-11 (27% on 09-20, 18% on 09-27 and 10-04). _As of 2026-10-12; source: docs/escalation-weekly/*.json at fe34850; issue #163._
-- **Number:** 3 of 15 rows where the offline judge (claude-haiku-4-5) and runtime judge (gpt-4o-mini) disagreed, 2026-10-11. _As of 2026-10-12; source: docs/escalation-weekly/2026-10-11.md parity section._
+- **Number:** 27% (3 of 11) vs a 5% ceiling false-resolve rate on should-escalate questions, 2026-10-11 (27% on 09-20, 18% on 09-27 and 10-04). _As of 2026-10-20; source: docs/escalation-weekly/README.md L34 at 9f57976; issue #163._
+- **Number:** 3 of 15 rows where the offline judge (claude-haiku-4-5) and runtime judge (gpt-4o-mini) disagreed, 2026-10-11. _As of 2026-10-20; source: docs/escalation-weekly/2026-10-11.md parity section._
 - **Skills:** LLM evaluation, LLM-as-judge, Anthropic API, OpenAI API, GitHub Actions, Python
 - **Lanes:** ai-eval, quality
-- **Caveats:** Gate currently failing (issue #163 open, no fix landed). In all four weeks every false-resolved row was one the runtime judge marked not answered, so the breach comes from the offline judge's verdict, including on the draft "I don't have that information." The 2026-10-11 settings sweep was the first of the four to find an operating point under 5%. The weekly LLM check never blocks merges by design.
+- **Caveats:** The cause and fix are in the purvia-e7-offline-judge-root-cause Claim. Issue #163 was closed by the fix's merge (PR #184, 2026-10-16), not by a green scheduled run; the scheduled evals moved from weekly to monthly the same day (PR #185), so the first scheduled run on the fix is 2026-11-01. The LLM-judged check never blocks merges by design.
+
+#### `purvia-e7-offline-judge-root-cause`
+
+Traced the escalation eval's four-run breach of its 5% false-resolve ceiling to the offline LLM judge, not the product: run end to end with only the live gates, the pipeline made 0 false resolves in 55 runs, while the judge, once shown the retrieved context, graded whether a draft was true instead of whether it answered the question, so an accurate "I don't have that information" counted as an answer. Compared five judge prompt and schema designs on replayed drafts and kept the one that makes the judge name the asked and stated values before its verdict, cutting wrong verdicts from 38 of 280 to 0 of 300; on the same sweep, false resolves fell from 27% to 0% and the two judges agreed on 15 of 15 rows.
+
+- **Dates:** 2026-10 to 2026-10
+- **Evidence:** linked, project scale
+  - https://github.com/hcho22/Purvia/pull/184
+  - https://github.com/hcho22/Purvia/blob/9f57976b048ba42c70e18587d90ef0e85843c84a/docs/evals.md#L275-L289
+  - https://github.com/hcho22/Purvia/blob/9f57976b048ba42c70e18587d90ef0e85843c84a/docs/escalation-weekly/README.md
+- **Number:** 0 of 55 false resolves end to end with only the runtime gates, 5 runs per should-escalate question, 2026-10-15 (plus 0 false escalates in 20). _As of 2026-10-20; source: docs/evals.md L277 at 9f57976; PR #184 'Cause'._
+- **Number:** 38 of 280 to 0 of 300 wrong verdicts on replayed question, context, and draft tuples: bare-boolean judge (before) vs extraction fields plus a binding verdict (shipped); the other variants scored 8 of 100 and 26 of 180, 20 of 75, and 6 of 180. _As of 2026-10-20; source: PR #184 'Fix' replay table._
+- **Number:** 27% (3 of 11) to 0% (0 of 11) false-resolve rate on the same E7 sweep, before vs after, with deflection 100% (4 of 4) and false-escalate 0% both times. _As of 2026-10-20; source: PR #184 'For the captain' table._
+- **Number:** 3 of 15 to 15 of 15 offline vs runtime judge parity, from disagreeing on 3 of 15 rows to agreeing on 15 of 15. _As of 2026-10-20; source: PR #184 'For the captain' table._
+- **Skills:** LLM evaluation, LLM-as-judge, Anthropic API, Prompt engineering, Failure analysis, Python
+- **Lanes:** ai-eval, quality
+- **Caveats:** An AI coding agent ran the diagnosis, replays, and fix under hcho's direction (his ask on 2026-10-15: 'fix the eval failures'). The before and after numbers come from one-off CI dispatch runs on branches; no scheduled run has measured the fix yet (first one 2026-11-01). The cause was introduced by PR #156 on 2026-09-15 and went unfixed through four scheduled runs.
+
+#### `purvia-answer-gate-model-comparison`
+
+Hardened the live answer gate that decides whether a support-bot draft reaches a customer: measured that its yes/no judge passed a who-pays reply to a how-much question 10 of 20 times at temperature 1, compared a stricter value-extraction rubric on the current model against a stronger judge model on 85 stored drafts, and shipped the rubric, which sent 1 of 66 should-escalate drafts where the stronger model sent 15 of 66, for about $0.00007 more per reply.
+
+- **Dates:** 2026-10 to 2026-10
+- **Evidence:** linked, project scale
+  - https://github.com/hcho22/Purvia/pull/186
+  - https://github.com/hcho22/Purvia/blob/9f57976b048ba42c70e18587d90ef0e85843c84a/docs/adr/0015-answer-gate-value-extraction.md
+  - https://github.com/hcho22/Purvia/blob/9f57976b048ba42c70e18587d90ef0e85843c84a/docs/evals.md#L291-L302
+- **Number:** 10 of 20 to 0 of 20 passes of the verbatim e7-p3-10 who-pays draft at temperature 1, old gate vs new gate (0 of 20 at temperature 0 too). _As of 2026-10-20; source: PR #186 'What it costs'; docs/evals.md L297 at 9f57976._
+- **Number:** 1 of 66 vs 15 of 66 should-escalate drafts sent by the shipped rubric on gpt-4o-mini vs gpt-5-mini, across 85 real and fresh drafts; 0 of 19 should-answer drafts withheld. _As of 2026-10-20; source: docs/adr/0015-answer-gate-value-extraction.md L80 and L104 at 9f57976._
+- **Number:** $0.00007 added cost per reply that reaches the answer gate, plus 0.07 to 0.18 s of judge latency. _As of 2026-10-20; source: PR #186 'What it costs'._
+- **Skills:** LLM-as-judge, LLM evaluation, OpenAI API, Prompt engineering, Python
+- **Lanes:** ai-eval, ai-product
+- **Caveats:** An AI coding agent ran the measurements under hcho's direction; hcho chose the option ('go with A', 2026-10-16). The live-model checks ran through CI dispatch runs on throwaway branches, not in a deployed product, and the backend has no live deployment. One known gap stays open and is asserted in a test (e7-p3-07, a right-kind value for the wrong branch). The result contradicts ADR-0013's earlier benchmark, which was not reconciled.
+
+#### `purvia-keyword-stem-tier`
+
+Traced a question the RAGAS coverage floor flagged as retrieving nothing to the keyword search stemming "respond" and "response" differently while the vector search scored the right chunk 0.2265, under its 0.3 floor, and added a lowest-ranked stem-prefix keyword tier that keeps the old results as an exact prefix, raising hybrid recall@5 from 0.950 to 0.967 with no metric cell worse and no-access isolation unchanged at 1.000.
+
+- **Dates:** 2026-10 to 2026-10
+- **Evidence:** linked, project scale
+  - https://github.com/hcho22/Purvia/pull/182
+  - https://github.com/hcho22/Purvia/blob/9f57976b048ba42c70e18587d90ef0e85843c84a/docs/adr/0014-keyword-stem-prefix-tier.md
+  - https://github.com/hcho22/Purvia/blob/9f57976b048ba42c70e18587d90ef0e85843c84a/backend/test_keyword_stem_tolerance.py
+- **Number:** 0.950 to 0.967 hybrid recall@5, unmodified main vs the branch on the same corpus in CI (MRR 0.858 to 0.866, nDCG@5 0.872 to 0.882; keyword recall@5 0.917 to 0.933). _As of 2026-10-20; source: PR #182 'Measured, unmodified main vs this branch'._
+- **Number:** 0.2265 vector cosine of the gold chunk for q40, under the 0.3 floor. _As of 2026-10-20; source: docs/adr/0014-keyword-stem-prefix-tier.md L15 at 9f57976._
+- **Skills:** PostgreSQL, SQL, Hybrid retrieval, Retrieval metrics, RAG, Failure analysis
+- **Lanes:** ai-eval, ai-product
+- **Caveats:** An AI coding agent did the diagnosis and the migration under hcho's direction. Measured on the 60-question synthetic golden set; the miss had existed since at least 2026-08-03. The migration has a rollback script; the scheduled retrieval eval has not run on main since the merge (first one 2026-11-01).
 
 #### `purvia-ragas-weekly-gate`
 
-Added a weekly RAGAS job scoring faithfulness, answer relevancy, context precision, and context recall on two permission levels, with coverage and API-error gates and a cross-check against a separate Claude judge; its first real snapshot failed the coverage floor because one partial-access question retrieved nothing.
+Added a scheduled RAGAS job scoring faithfulness, answer relevancy, context precision, and context recall on two permission levels, with coverage and API-error gates and a cross-check against a separate Claude judge; after a dependency release crashed a run before scoring, pinned its dependency tree and made it check that RAGAS loads before any paid model call.
 
 - **Dates:** 2026-05 to present
 - **Evidence:** linked, project scale
   - https://github.com/hcho22/Purvia/blob/f28be38116313891924d9230d060e03745eea8ee/docs/ragas-weekly/2026-10-04.md
   - https://github.com/hcho22/Purvia/blob/f28be38116313891924d9230d060e03745eea8ee/evals/retrieval/ragas_gates.py
   - https://github.com/hcho22/Purvia/pull/157
-  - https://github.com/hcho22/Purvia/issues/172
-- **Number:** 0.843 / 0.695 / 0.914 / 0.964 RAGAS faithfulness / answer relevancy / context precision / context recall, full-access level, 2026-10-04. _As of 2026-10-08; source: docs/ragas-weekly/2026-10-04.md at f28be38._
+  - https://github.com/hcho22/Purvia/pull/182
+  - https://github.com/hcho22/Purvia/actions/runs/38835140176
+- **Number:** 0.843 / 0.695 / 0.914 / 0.964 RAGAS faithfulness / answer relevancy / context precision / context recall, full-access level, 2026-10-04 (the last snapshot published to main). _As of 2026-10-20; source: docs/ragas-weekly/2026-10-04.md at f28be38._
+- **Number:** 120 of 120 rows scored, with coverage 1.0 on all four metrics and 0 provider errors, on the full run of the fix branch, 2026-10-16. _As of 2026-10-20; source: PR #182 'Both evidence gaps are now closed'; Actions run 38835140176._
 - **Skills:** RAGAS, LLM evaluation, LLM-as-judge, Anthropic API, OpenAI API, Python
 - **Lanes:** ai-eval
-- **Caveats:** Only one real snapshot exists; earlier files came from an empty scaffold. Gate currently failing (issue #172 open). The 2026-10-11 run crashed on a dependency import before scoring and measured nothing (issue #177 open).
+- **Caveats:** Two snapshots ever ran on real scoring (2026-10-04, published, and the 2026-10-16 branch run, not published); earlier files came from an empty scaffold. The 2026-10-04 coverage failure was a real retrieval gap (see purvia-keyword-stem-tier). The 2026-10-11 run crashed on pyarrow 26 needing NumPy 2 and measured nothing. Both issues (#172, #177) were closed by PR #182's merge; the first scheduled run on the fix is 2026-11-01 (monthly since PR #185).
 
 #### `purvia-scale-benchmark-and-receipts`
 

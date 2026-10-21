@@ -2,7 +2,7 @@
 
 _Generated from `master-profile.yaml` by `render_profile.py`. Do not edit by hand; change the YAML and re-run the script._
 
-**Profile as of:** 2026-10-08
+**Profile as of:** 2026-10-20
 
 Each cell is the total time covered by Claims at that Evidence scale, with overlaps counted once.
 Project-scale time never counts as employer tenure.
@@ -17,7 +17,7 @@ Lanes: `quality` = Software quality and systems validation; `ai-eval` = AI quali
 | Agent loops | none | 0.5 yrs (2026-05 to present) | none | ai-product | `purvia-tool-calling-agent-loop` |
 | AI coding agents | none | 1.2 yrs (2025-09 to present) | none | quality, ai-product | `reptoday-native-ios-app`, `reptoday-agent-directed-delivery`, `purvia-multi-user-rag-app`, `purvia-tool-calling-agent-loop`, `immerse-native-ios-app`, `creativebridge-agent-directed-ios-build` |
 | Algorithm design | none | 0.4 yrs (2026-06 to present) | none | quality, ai-product | `reptoday-deterministic-engine` |
-| Anthropic API | none | 0.5 yrs (2026-05 to present) | none | quality, ai-eval | `purvia-e7-escalation-eval`, `purvia-ragas-weekly-gate` |
+| Anthropic API | none | 0.5 yrs (2026-05 to present) | none | quality, ai-eval | `purvia-e7-escalation-eval`, `purvia-e7-offline-judge-root-cause`, `purvia-ragas-weekly-gate` |
 | App Attest | none | 0.2 yrs (2026-08 to present) | none | ai-product | `reptoday-premium-coach-llm` |
 | Architecture decision records | none | 0.4 yrs (2026-06 to present) | none | quality, ai-product | `reptoday-agent-directed-delivery`, `purvia-model-surface-and-adrs`, `immerse-product-spec` |
 | AVFoundation | none | 0.1 yrs (2026-10 to present) | none | ai-product | `immerse-capture-render-pipeline` |
@@ -49,7 +49,7 @@ Lanes: `quality` = Software quality and systems validation; `ai-eval` = AI quali
 | Embeddings | none | 0.2 yrs (2026-01 to 2026-03) | none | ai-product | `creativebridge-grade-adaptive-prompts-and-repetition-check` |
 | ESLint | none | 0.1 yrs (2026-05 to 2026-05) | none | quality | `creativebridge-ci-debt-to-green` |
 | Expo | none | 0.8 yrs (2025-09 to 2026-05) | none | ai-product | `creativebridge-agent-directed-ios-build` |
-| Failure analysis | 10.5 yrs (2008-02 to 2018-07) | 0.3 yrs (2026-07 to 2026-10) | none | quality, ai-eval | `zebra-failure-analysis`, `reptoday-ci-caught-platform-defects`, `purvia-fail-closed-eval-guards` |
+| Failure analysis | 10.5 yrs (2008-02 to 2018-07) | 0.3 yrs (2026-07 to 2026-10) | none | quality, ai-eval, ai-product | `zebra-failure-analysis`, `reptoday-ci-caught-platform-defects`, `purvia-fail-closed-eval-guards`, `purvia-e7-offline-judge-root-cause`, `purvia-keyword-stem-tier` |
 | fastai | none | 1.6 yrs (2020-01 to 2021-07) | none | ai-product | `retraining-deep-learning` |
 | FastAPI | none | 0.5 yrs (2026-04 to 2026-09) | none | ai-eval, ai-product | `purvia-multi-user-rag-app`, `purvia-deflection-and-human-handoff` |
 | Flaky test diagnosis | none | 0.2 yrs (2026-05 to 2026-10) | none | quality | `reptoday-ci-caught-platform-defects`, `immerse-ci-flake-fixes`, `creativebridge-ci-debt-to-green` |
@@ -60,7 +60,7 @@ Lanes: `quality` = Software quality and systems validation; `ai-eval` = AI quali
 | Hardware validation | 10.5 yrs (2008-02 to 2018-07) | none | none | quality, ai-eval | `zebra-validation-ownership`, `zebra-failure-analysis` |
 | HealthKit | none | 0.2 yrs (2026-07 to 2026-09) | none | ai-product | `reptoday-apple-platform-integrations` |
 | Hugging Face Transformers | none | 1.0 yrs (2022-04 to 2023-03), plus claims with dates pending | none | ai-eval, ai-product | `retraining-applied-ml`, `omdena-llm-chatbot` |
-| Hybrid retrieval | none | 0.5 yrs (2026-05 to present) | none | ai-eval, ai-product | `purvia-retrieval-golden-set`, `purvia-hybrid-retrieval-reranking` |
+| Hybrid retrieval | none | 0.5 yrs (2026-05 to present) | none | ai-eval, ai-product | `purvia-retrieval-golden-set`, `purvia-hybrid-retrieval-reranking`, `purvia-keyword-stem-tier` |
 | Image segmentation | none | 1.0 yrs (2022-04 to 2023-03), plus claims with dates pending | none | ai-eval, ai-product | `retraining-applied-ml`, `omdena-histopathology-segmentation`, `omdena-satellite-segmentation` |
 | JavaScript | none | 0.7 yrs (2025-05 to present) | none | ai-product | `reptoday-premium-coach-llm`, `storyquest-web-prototype` |
 | Jest | none | 0.1 yrs (2026-05 to 2026-05) | none | quality | `creativebridge-ci-debt-to-green` |
@@ -68,10 +68,10 @@ Lanes: `quality` = Software quality and systems validation; `ai-eval` = AI quali
 | Keras | none | 3.4 yrs (2018-11 to 2023-03) | 0.3 yrs (2022-05 to 2022-08) | ai-product | `retraining-data-analysis`, `retraining-deep-learning`, `retraining-applied-ml`, `fourthbrain-mle-bootcamp` |
 | Keychain Services | none | 0.1 yrs (2026-10 to present) | none | ai-product | `immerse-native-ios-app` |
 | LangSmith | none | 0.3 yrs (2026-04 to 2026-07) | none | ai-product | `purvia-multi-user-rag-app` |
-| LLM evaluation | none | 0.5 yrs (2026-05 to present), plus claims with dates pending | none | quality, ai-eval, ai-product | `omdena-llm-chatbot`, `purvia-e4-no-leak-table`, `purvia-retrieval-golden-set`, `purvia-fail-closed-eval-guards`, `purvia-e7-escalation-eval`, `purvia-ragas-weekly-gate`, `purvia-scale-benchmark-and-receipts` |
+| LLM evaluation | none | 0.5 yrs (2026-05 to present), plus claims with dates pending | none | quality, ai-eval, ai-product | `omdena-llm-chatbot`, `purvia-e4-no-leak-table`, `purvia-retrieval-golden-set`, `purvia-fail-closed-eval-guards`, `purvia-e7-escalation-eval`, `purvia-e7-offline-judge-root-cause`, `purvia-answer-gate-model-comparison`, `purvia-ragas-weekly-gate`, `purvia-scale-benchmark-and-receipts` |
 | LLM fine-tuning | none | yes, dates pending | none | ai-eval, ai-product | `omdena-llm-chatbot` |
 | LLM integration | none | 1.0 yrs (2025-09 to present) | none | ai-product | `reptoday-premium-coach-llm`, `creativebridge-openai-replicate-generation` |
-| LLM-as-judge | none | 0.5 yrs (2026-05 to present) | none | quality, ai-eval, ai-product | `purvia-deflection-and-human-handoff`, `purvia-e7-escalation-eval`, `purvia-ragas-weekly-gate` |
+| LLM-as-judge | none | 0.5 yrs (2026-05 to present) | none | quality, ai-eval, ai-product | `purvia-deflection-and-human-handoff`, `purvia-e7-escalation-eval`, `purvia-e7-offline-judge-root-cause`, `purvia-answer-gate-model-comparison`, `purvia-ragas-weekly-gate` |
 | LLMs | none | yes, dates pending | yes, dates pending | ai-eval, ai-product | `omdena-llm-chatbot`, `coursework-deeplearning-ai-later` |
 | Machine learning | none | 0.8 yrs (2018-11 to 2019-08) | ~2.3 yrs (2018 to 2022-08), plus claims with dates pending | ai-product | `retraining-data-analysis`, `fourthbrain-mle-bootcamp`, `coursework-deeplearning-ai-early`, `coursework-deeplearning-ai-later`, `coursework-google-advanced-data-analytics` |
 | Market research | none | 0.2 yrs (2026-09 to present) | none | ai-product | `immerse-product-spec` |
@@ -84,22 +84,22 @@ Lanes: `quality` = Software quality and systems validation; `ai-eval` = AI quali
 | Object detection | none | 1.0 yrs (2022-04 to 2023-03) | none | ai-product | `retraining-applied-ml` |
 | Observation framework | none | 0.4 yrs (2026-06 to present) | none | ai-product | `reptoday-native-ios-app` |
 | On-device ML | none | 0.1 yrs (2026-05 to 2026-05) | none | ai-product | `creativebridge-on-device-transcription` |
-| OpenAI API | none | 1.5 yrs (2025-05 to present) | none | quality, ai-eval, ai-product | `reptoday-premium-coach-llm`, `purvia-multi-user-rag-app`, `purvia-tool-calling-agent-loop`, `purvia-deflection-and-human-handoff`, `purvia-e7-escalation-eval`, `purvia-ragas-weekly-gate`, `purvia-model-surface-and-adrs`, `creativebridge-coppa-controls-and-audit-suite`, `creativebridge-openai-replicate-generation`, `creativebridge-grade-adaptive-prompts-and-repetition-check`, `storyquest-web-prototype` |
+| OpenAI API | none | 1.5 yrs (2025-05 to present) | none | quality, ai-eval, ai-product | `reptoday-premium-coach-llm`, `purvia-multi-user-rag-app`, `purvia-tool-calling-agent-loop`, `purvia-deflection-and-human-handoff`, `purvia-e7-escalation-eval`, `purvia-answer-gate-model-comparison`, `purvia-ragas-weekly-gate`, `purvia-model-surface-and-adrs`, `creativebridge-coppa-controls-and-audit-suite`, `creativebridge-openai-replicate-generation`, `creativebridge-grade-adaptive-prompts-and-repetition-check`, `storyquest-web-prototype` |
 | OpenCV | none | 0.8 yrs (2018-11 to 2019-08) | none | ai-product | `retraining-data-analysis` |
 | Pandas | none | 0.8 yrs (2018-11 to 2019-08) | none | ai-product | `retraining-data-analysis` |
 | Performance testing | 10.5 yrs (2008-02 to 2018-07) | 0.1 yrs (2026-08 to 2026-08) | none | quality | `zebra-sdk-validation`, `reptoday-latency-benchmark` |
 | pgvector | none | 0.5 yrs (2026-05 to present) | none | quality, ai-eval, ai-product | `purvia-acl-in-retrieval-predicate`, `purvia-hybrid-retrieval-reranking`, `purvia-scale-benchmark-and-receipts` |
 | PhotoKit | none | 0.1 yrs (2026-10 to present) | none | ai-product | `immerse-native-ios-app`, `immerse-capture-render-pipeline` |
-| PostgreSQL | none | 0.6 yrs (2026-04 to present) | none | quality, ai-eval, ai-product | `purvia-multi-user-rag-app`, `purvia-acl-in-retrieval-predicate`, `purvia-hybrid-retrieval-reranking`, `purvia-deflection-and-human-handoff`, `purvia-scale-benchmark-and-receipts` |
+| PostgreSQL | none | 0.6 yrs (2026-04 to 2026-10) | none | quality, ai-eval, ai-product | `purvia-multi-user-rag-app`, `purvia-acl-in-retrieval-predicate`, `purvia-hybrid-retrieval-reranking`, `purvia-deflection-and-human-handoff`, `purvia-keyword-stem-tier`, `purvia-scale-benchmark-and-receipts` |
 | Privacy engineering | none | 0.5 yrs (2026-03 to present) | none | quality, ai-product | `reptoday-funnel-telemetry`, `reptoday-account-deletion`, `reptoday-premium-coach-llm`, `creativebridge-coppa-controls-and-audit-suite`, `creativebridge-on-device-transcription` |
 | Product analytics | none | 0.2 yrs (2026-08 to 2026-09) | none | quality, ai-product | `reptoday-funnel-telemetry` |
 | Product requirements | none | 0.2 yrs (2026-09 to present) | none | ai-product | `immerse-product-spec` |
-| Prompt engineering | none | 0.8 yrs (2025-09 to 2026-05), plus claims with dates pending | none | ai-eval, ai-product | `omdena-llm-chatbot`, `creativebridge-openai-replicate-generation`, `creativebridge-grade-adaptive-prompts-and-repetition-check` |
+| Prompt engineering | none | 0.8 yrs (2025-09 to 2026-10), plus claims with dates pending | none | quality, ai-eval, ai-product | `omdena-llm-chatbot`, `purvia-e7-offline-judge-root-cause`, `purvia-answer-gate-model-comparison`, `creativebridge-openai-replicate-generation`, `creativebridge-grade-adaptive-prompts-and-repetition-check` |
 | Pydantic | none | 0.5 yrs (2026-04 to 2026-09) | none | ai-eval, ai-product | `purvia-multi-user-rag-app`, `purvia-deflection-and-human-handoff` |
-| Python | none | 4.4 yrs (2018-11 to present), plus claims with dates pending | yes, dates pending | quality, ai-eval, ai-product | `retraining-data-analysis`, `retraining-deep-learning`, `retraining-applied-ml`, `omdena-histopathology-segmentation`, `omdena-satellite-segmentation`, `omdena-llm-chatbot`, `purvia-multi-user-rag-app`, `purvia-e4-no-leak-table`, `purvia-merge-blocking-security-gates`, `purvia-retrieval-golden-set`, `purvia-fail-closed-eval-guards`, `purvia-hybrid-retrieval-reranking`, `purvia-tool-calling-agent-loop`, `purvia-deflection-and-human-handoff`, `purvia-e7-escalation-eval`, `purvia-ragas-weekly-gate`, `purvia-scale-benchmark-and-receipts`, `purvia-backend-test-suite`, `purvia-model-surface-and-adrs`, `storyquest-web-prototype`, `coursework-google-advanced-data-analytics` |
+| Python | none | 4.4 yrs (2018-11 to present), plus claims with dates pending | yes, dates pending | quality, ai-eval, ai-product | `retraining-data-analysis`, `retraining-deep-learning`, `retraining-applied-ml`, `omdena-histopathology-segmentation`, `omdena-satellite-segmentation`, `omdena-llm-chatbot`, `purvia-multi-user-rag-app`, `purvia-e4-no-leak-table`, `purvia-merge-blocking-security-gates`, `purvia-retrieval-golden-set`, `purvia-fail-closed-eval-guards`, `purvia-hybrid-retrieval-reranking`, `purvia-tool-calling-agent-loop`, `purvia-deflection-and-human-handoff`, `purvia-e7-escalation-eval`, `purvia-e7-offline-judge-root-cause`, `purvia-answer-gate-model-comparison`, `purvia-ragas-weekly-gate`, `purvia-scale-benchmark-and-receipts`, `purvia-backend-test-suite`, `purvia-model-surface-and-adrs`, `storyquest-web-prototype`, `coursework-google-advanced-data-analytics` |
 | PyTorch | none | 1.6 yrs (2020-01 to 2021-07) | none | ai-product | `retraining-deep-learning` |
 | Quality process | 10.5 yrs (2008-02 to 2018-07) | none | none | quality | `zebra-validation-ownership`, `zebra-mentoring-standards` |
-| RAG | none | 0.6 yrs (2026-04 to present) | none | quality, ai-eval, ai-product | `purvia-multi-user-rag-app`, `purvia-acl-in-retrieval-predicate`, `purvia-retrieval-golden-set`, `purvia-hybrid-retrieval-reranking`, `purvia-tool-calling-agent-loop` |
+| RAG | none | 0.6 yrs (2026-04 to present) | none | quality, ai-eval, ai-product | `purvia-multi-user-rag-app`, `purvia-acl-in-retrieval-predicate`, `purvia-retrieval-golden-set`, `purvia-hybrid-retrieval-reranking`, `purvia-tool-calling-agent-loop`, `purvia-keyword-stem-tier` |
 | RAGAS | none | 0.5 yrs (2026-05 to present) | none | ai-eval | `purvia-ragas-weekly-gate` |
 | Railway | none | 0.3 yrs (2026-04 to 2026-07) | none | ai-product | `purvia-demo-deployment` |
 | React | none | 0.3 yrs (2026-04 to 2026-07) | none | ai-product | `purvia-multi-user-rag-app` |
@@ -112,7 +112,7 @@ Lanes: `quality` = Software quality and systems validation; `ai-eval` = AI quali
 | Replicate | none | 1.1 yrs (2025-05 to 2026-05) | none | ai-product | `creativebridge-openai-replicate-generation`, `storyquest-web-prototype` |
 | Requirements traceability | none | 0.1 yrs (2026-10 to present) | none | quality | `immerse-traceability-release-guards` |
 | Reranking | none | 0.2 yrs (2026-05 to 2026-07) | none | ai-eval, ai-product | `purvia-hybrid-retrieval-reranking` |
-| Retrieval metrics | none | 0.5 yrs (2026-05 to present) | none | quality, ai-eval, ai-product | `purvia-retrieval-golden-set`, `purvia-hybrid-retrieval-reranking`, `purvia-scale-benchmark-and-receipts` |
+| Retrieval metrics | none | 0.5 yrs (2026-05 to present) | none | quality, ai-eval, ai-product | `purvia-retrieval-golden-set`, `purvia-hybrid-retrieval-reranking`, `purvia-keyword-stem-tier`, `purvia-scale-benchmark-and-receipts` |
 | Row-level security | none | 0.5 yrs (2026-05 to present) | none | quality, ai-eval, ai-product | `purvia-acl-in-retrieval-predicate`, `purvia-e4-no-leak-table`, `purvia-merge-blocking-security-gates` |
 | scikit-learn | none | 0.8 yrs (2018-11 to 2019-08) | none | ai-product | `retraining-data-analysis` |
 | SDK validation | 10.5 yrs (2008-02 to 2018-07) | none | none | quality | `zebra-sdk-validation` |
@@ -120,7 +120,7 @@ Lanes: `quality` = Software quality and systems validation; `ai-eval` = AI quali
 | Server-Sent Events | none | 0.5 yrs (2026-04 to 2026-09) | none | ai-eval, ai-product | `purvia-multi-user-rag-app`, `purvia-deflection-and-human-handoff` |
 | Shell scripting | none | 0.1 yrs (2026-10 to present) | none | quality | `immerse-traceability-release-guards` |
 | Sign in with Apple | none | 0.2 yrs (2026-07 to 2026-09) | none | quality, ai-product | `reptoday-account-deletion`, `reptoday-apple-platform-integrations` |
-| SQL | none | 0.3 yrs (2026-05 to 2026-08) | none | quality, ai-product | `purvia-acl-in-retrieval-predicate` |
+| SQL | none | 0.4 yrs (2026-05 to 2026-10) | none | quality, ai-eval, ai-product | `purvia-acl-in-retrieval-predicate`, `purvia-keyword-stem-tier` |
 | SQLite | none | 0.1 yrs (2026-10 to present) | none | ai-product | `immerse-native-ios-app` |
 | Stable Diffusion | none | 1.1 yrs (2025-05 to 2026-05) | none | ai-product | `creativebridge-openai-replicate-generation`, `storyquest-web-prototype` |
 | Statistics | none | none | yes, dates pending | ai-product | `coursework-google-advanced-data-analytics` |

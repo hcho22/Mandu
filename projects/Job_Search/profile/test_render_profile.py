@@ -123,6 +123,14 @@ class ValidationTests(unittest.TestCase):
         profile["claims"][1]["project"] = "ghost"
         self.assertTrue(any("unknown project" in p for p in problems_for(profile)))
 
+    def test_resume_location_must_be_plain_city_and_state(self):
+        profile = base_profile()
+        profile["person"]["resume_location"] = "Los Angeles, CA"
+        self.assertEqual(problems_for(profile), [])
+        for bad in ("Burbank, CA (greater Los Angeles)", "Burbank, CA; open to US-remote", "Los Angeles", "Remote"):
+            profile["person"]["resume_location"] = bad
+            self.assertTrue(any("resume_location" in p for p in problems_for(profile)), bad)
+
     def test_private_project_is_flagged_in_the_rendered_profile(self):
         profile = base_profile()
         profile["projects"] = {"app": {"name": "App", "repo": "https://example.com/app", "access": "private"}}

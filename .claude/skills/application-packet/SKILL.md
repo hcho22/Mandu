@@ -58,7 +58,8 @@ Start from `assets/packet-template.yaml`.
   - Label independent-period bullets with the project name exactly as the profile's `projects` list spells it, so the resume shows one project heading with its tagline.
   - Mirror the posting's terms where a Claim supports them.
 - **Skills:** three or four groups, one line each, vocabulary terms only, ordered by the posting's keywords.
-- **Answers:** one per free-text field on the actual form, using the field's own wording and limit (150 words if none is stated). First person, specific, and run through `unslop`. No cover note unless the form has a field for one.
+- **Answers:** one per free-text field on the actual form, using the field's own wording and limit (150 words if none is stated). First person, specific, and run through `unslop`. No cover note in `answers` unless the form has a field for one.
+- **Cover letter:** only when the form has a cover letter field or hcho asks for one. It goes in `cover_letter` (greeting, cited paragraphs, closing, `limit_words`, 350 if none is stated), gets the same Claim and number checks as the resume, runs through `unslop`, and renders to a one-page `Hyung_Cho_Cover_Letter.pdf` and `.docx`. If the form has no field for it, say in `gaps` how hcho should send it.
 - **Gaps:** every Partial or Missing line from step 3, plus anything public an interviewer may raise (a failing gate, a broken demo), each with how to own it honestly.
 
 ### 5. Build and check
@@ -87,7 +88,7 @@ When hcho says "submitted <company>":
 ## Files
 
 - `projects/Job_Search/applications/build_packet.py`: the checker and renderer (tests in `test_build_packet.py`).
-- Per packet: `packet.yaml` (source), `posting.md` (snapshot), and generated `Hyung_Cho_Resume.pdf`, `Hyung_Cho_Resume.docx`, `packet.md` (the review page).
+- Per packet: `packet.yaml` (source), `posting.md` (snapshot), and generated `Hyung_Cho_Resume.pdf`, `Hyung_Cho_Resume.docx`, `packet.md` (the review page), plus `Hyung_Cho_Cover_Letter.pdf` and `.docx` when the packet has a cover letter.
 
 ## Memory
 

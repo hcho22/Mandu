@@ -14,7 +14,8 @@ TODAY = dt.date(2026, 10, 8)
 def profile():
     return {
         "as_of": dt.date(2026, 10, 8),
-        "person": {"name": "Test Person", "location": "Burbank, CA; open to remote", "email": "t@example.com"},
+        "person": {"name": "Test Person", "location": "Burbank, CA (greater Los Angeles); open to remote",
+                   "resume_location": "Los Angeles, CA", "email": "t@example.com"},
         "lanes": {"quality": "Quality"},
         "skills": ["C#", "Python"],
         "retired_phrases": [{"phrase": "108 services", "reason": "dead code"}],
@@ -58,6 +59,18 @@ def packet():
         "answers": [{"field": "Why us?", "limit_words": 20, "text": "Because I test things.", "claims": ["acme-tooling"]}],
         "gaps": [{"gap": "Two paid years.", "how_to_own_it": "Say it plainly."}],
     }
+
+
+def with_letter(pk=None):
+    pk = pk or packet()
+    pk["cover_letter"] = {
+        "limit_words": 30,
+        "greeting": "Dear Hiring Team,",
+        "paragraphs": [{"text": "I cut regression cycles by about 30% with C# tooling.", "claims": ["acme-tooling"]},
+                       {"text": "I grew a suite to 1,687 tests.", "claims": ["solo-app"]}],
+        "closing": "Sincerely,",
+    }
+    return pk
 
 
 def problems_for(pk, prof=None, today=TODAY):
@@ -150,10 +163,45 @@ class ValidationTests(unittest.TestCase):
         pk["answers"][0]["text"] = "word " * 25
         self.assertTrue(any("over its 20-word limit" in p for p in problems_for(pk)))
 
+    def test_resume_location_is_required_and_plain(self):
+        prof = profile()
+        del prof["person"]["resume_location"]
+        self.assertTrue(any("resume_location" in p for p in problems_for(packet(), prof)))
+        prof["person"]["resume_location"] = "Burbank, CA (greater Los Angeles)"
+        self.assertTrue(any("resume_location" in p for p in problems_for(packet(), prof)))
+
     def test_submitted_needs_a_date(self):
         pk = packet()
         pk["status"] = "submitted"
         self.assertTrue(any("submitted_on" in p for p in problems_for(pk)))
+
+    def test_cover_letter_is_valid(self):
+        self.assertEqual(problems_for(with_letter()), [])
+
+    def test_cover_letter_paragraph_must_cite_and_match_numbers(self):
+        pk = with_letter()
+        pk["cover_letter"]["paragraphs"][1]["text"] = "I grew a suite to 2,000 tests."
+        self.assertTrue(any("cover letter paragraph 2" in p and "2000" in p for p in problems_for(pk)))
+        pk["cover_letter"]["paragraphs"][1]["claims"] = []
+        self.assertTrue(any("cover letter paragraph 2 cites no Claims" in p for p in problems_for(pk)))
+
+    def test_cover_letter_over_word_limit_is_rejected(self):
+        pk = with_letter()
+        pk["cover_letter"]["limit_words"] = 10
+        self.assertTrue(any("cover letter is 17 words, over its 10-word limit" in p for p in problems_for(pk)))
+
+    def test_cover_letter_greeting_may_not_carry_facts_or_em_dashes(self):
+        pk = with_letter()
+        pk["cover_letter"]["greeting"] = "Dear team of 12,"
+        self.assertTrue(any("greeting has numbers" in p for p in problems_for(pk)))
+        pk = with_letter()
+        pk["cover_letter"]["closing"] = "Thanks — Test"
+        self.assertTrue(any("em dash" in p for p in problems_for(pk)))
+
+    def test_empty_cover_letter_is_rejected(self):
+        pk = with_letter()
+        pk["cover_letter"]["paragraphs"] = []
+        self.assertTrue(any("no paragraphs" in p for p in problems_for(pk)))
 
 
 class RenderTests(unittest.TestCase):
@@ -162,7 +210,12 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(model["experience"][1]["dates"], "Feb 2008 - Jul 2018")
         self.assertEqual(model["experience"][0]["dates"], "Jun 2025 - Present")
         self.assertEqual(model["experience"][0]["subline"], "Solo work.")
-        self.assertEqual(model["contact"][0], "Burbank, CA")
+
+    def test_contact_line_uses_resume_location_not_search_location(self):
+        pk = with_letter()
+        for contact in (bp.resume_sections(pk, profile())["contact"], bp.letter_model(pk, profile())["contact"]):
+            self.assertEqual(contact[0], "Los Angeles, CA")
+            self.assertFalse(any("Burbank" in c or "greater" in c for c in contact))
 
     def test_consecutive_labels_share_one_project_heading(self):
         model = bp.resume_sections(packet(), profile())
@@ -198,6 +251,60 @@ class RenderTests(unittest.TestCase):
     def test_pdf_page_count(self):
         with tempfile.TemporaryDirectory() as tmp:
             pages = bp.render_pdf(bp.render_html(bp.resume_sections(packet(), profile())), Path(tmp) / "r.pdf")
+        self.assertEqual(pages, 1)
+
+    def test_letter_html_escapes_and_signs_with_the_profile_name(self):
+        pk = with_letter()
+        pk["cover_letter"]["paragraphs"][0]["text"] = "I test <things>."
+        letter = bp.letter_model(pk, profile())
+        self.assertEqual(letter["regarding"], "Re: Engineer, Co")
+        html_text = bp.render_letter_html(letter)
+        self.assertIn("&lt;things&gt;", html_text)
+        self.assertIn("Sincerely,<br>Test Person", html_text)
+
+    def test_review_shows_cover_letter_with_claims_and_word_count(self):
+        pk = with_letter()
+        review = bp.render_review(pk, bp.resume_sections(pk, profile()), 1, TODAY,
+                                  letter=bp.letter_model(pk, profile()), letter_pages=1)
+        self.assertIn("## Cover letter", review)
+        self.assertIn("_Claims: solo-app_", review)
+        self.assertIn("17 words of 30 allowed", review)
+        self.assertIn("cover letter is 1 page", review)
+        self.assertIn("Hyung_Cho_Cover_Letter.pdf", review)
+
+    def test_submit_steps_name_only_what_the_packet_has(self):
+        pk = with_letter()
+        pk["answers"] = []
+        review = bp.render_review(pk, bp.resume_sections(pk, profile()), 1, TODAY,
+                                  letter=bp.letter_model(pk, profile()), letter_pages=1)
+        self.assertIn("1. Read the resume PDF and the cover letter; ask Mandu", review)
+        self.assertNotIn("Paste each answer", review)
+        pk = with_letter()
+        review = bp.render_review(pk, bp.resume_sections(pk, profile()), 1, TODAY,
+                                  letter=bp.letter_model(pk, profile()), letter_pages=1)
+        self.assertIn("1. Read the resume PDF, the cover letter, and the form answers below;", review)
+        self.assertIn("3. Paste each answer into its field.", review)
+
+    def test_review_without_letter_has_no_letter_section(self):
+        pk = packet()
+        review = bp.render_review(pk, bp.resume_sections(pk, profile()), 1, TODAY)
+        self.assertNotIn("Cover letter", review)
+        self.assertNotIn("cover letter", review)
+
+    def test_letter_docx_renders(self):
+        try:
+            import docx  # noqa: F401
+        except ImportError:
+            self.skipTest("python-docx not installed")
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "l.docx"
+            bp.render_letter_docx(bp.letter_model(with_letter(), profile()), path)
+            self.assertGreater(path.stat().st_size, 1000)
+
+    @unittest.skipUnless(Path(bp.CHROME).exists(), "Chrome not installed")
+    def test_letter_pdf_page_count(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            pages = bp.render_pdf(bp.render_letter_html(bp.letter_model(with_letter(), profile())), Path(tmp) / "l.pdf")
         self.assertEqual(pages, 1)
 
 

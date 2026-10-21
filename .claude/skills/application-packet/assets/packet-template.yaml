@@ -53,6 +53,14 @@ answers:               # one per free-text field on the actual form; none if the
       <First person, specific, run through unslop.>
     claims: [<claim-id>]
 
+cover_letter:          # optional: only when the form has a cover letter field or hcho asks; delete otherwise
+  limit_words: 350
+  greeting: "Dear <Company> hiring team,"
+  paragraphs:          # each paragraph cites the Claims behind it; run the text through unslop
+    - text: "<Paragraph>"
+      claims: [<claim-id>]
+  closing: "Sincerely,"
+
 gaps:                  # every Partial or Missing requirement, plus anything public an interviewer may raise
   - gap: "<What is missing or weak>"
     how_to_own_it: "<How hcho says it honestly>"

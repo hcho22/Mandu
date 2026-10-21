@@ -54,6 +54,8 @@ GENERATED_NOTE = (
 )
 
 ID_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
+# The location printed on resumes and cover letters: a plain "City, ST", nothing else.
+CITY_STATE_RE = re.compile(r"^[A-Z][A-Za-z.' -]*[A-Za-z.], [A-Z]{2}$")
 MONTH_RE = re.compile(r"^(\d{4})-(\d{2})$")
 YEAR_RE = re.compile(r"^(\d{4})$")
 
@@ -156,6 +158,11 @@ def validate(profile: dict) -> None:
         as_of = parse_date(profile["as_of"])
     except ValueError:
         raise ProfileError(["as_of must be YYYY-MM-DD"])
+
+    resume_location = (profile["person"] or {}).get("resume_location")
+    if resume_location is not None:
+        need(bool(CITY_STATE_RE.match(str(resume_location))),
+             "person.resume_location must be a plain 'City, ST' such as 'Los Angeles, CA', not %r" % resume_location)
 
     lanes = set(profile["lanes"] or {})
     skills = profile["skills"] or []
@@ -344,8 +351,8 @@ def render_profile(profile: dict) -> str:
         "**Profile as of:** %s" % parse_date(profile["as_of"]).isoformat(),
         "",
     ]
-    labels = (("location", "Location"), ("email", "Email"), ("phone", "Phone"),
-              ("linkedin", "LinkedIn"), ("github", "GitHub"))
+    labels = (("location", "Location"), ("resume_location", "Location on resumes and cover letters"),
+              ("email", "Email"), ("phone", "Phone"), ("linkedin", "LinkedIn"), ("github", "GitHub"))
     for key, label in labels:
         if person.get(key):
             lines.append("- **%s:** %s" % (label, person[key]))

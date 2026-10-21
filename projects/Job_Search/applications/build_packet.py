@@ -3,21 +3,24 @@
 
 An Application packet lives in its own folder under applications/ and is driven
 by packet.yaml: the role, a one-page resume made only of Master profile Claims,
-answers for the application form's text fields, and a note on gaps to own.
+answers for the application form's text fields, an optional one-page cover
+letter, and a note on gaps to own.
 
-Every resume line and answer must cite Claims. Before anything is written, the
-packet is refused if it:
+Every resume line, answer, and cover-letter paragraph must cite Claims. Before
+anything is written, the packet is refused if it:
   - cites a Claim that does not exist, is marked `interview_ready: study`, or
     (for experience bullets) belongs to a different period;
   - contains a number that none of its cited Claims contains;
   - cites a Linked Claim whose numbers are more than 14 days old;
   - contains a retired phrase, an em dash, or a link to a private repository;
   - lists a skill outside the profile's vocabulary;
-  - exceeds an answer's word limit, or renders to more than one page.
+  - exceeds an answer's or the cover letter's word limit, or renders the resume
+    or the cover letter to more than one page.
 
 Usage:
   python3 build_packet.py <packet-folder>            check, then write the resume
-                                                     (.pdf, .docx) and packet.md
+                                                     (.pdf, .docx), the cover letter
+                                                     if the packet has one, and packet.md
   python3 build_packet.py <packet-folder> --check    check only
   python3 build_packet.py <packet-folder> --today YYYY-MM-DD
 """
@@ -44,6 +47,7 @@ import render_profile as rp  # noqa: E402
 STATUSES = ("draft", "approved", "submitted", "withdrawn")
 CHROME = os.environ.get("CHROME", "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 RESUME_BASENAME = "Hyung_Cho_Resume"
+LETTER_BASENAME = "Hyung_Cho_Cover_Letter"
 NUMBER_RE = re.compile(r"\d[\d,]*(?:\.\d+)?")
 URL_RE = re.compile(r"https?://\S+")
 MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
@@ -91,6 +95,13 @@ def word_count(text: str) -> int:
     return len(re.findall(r"\S+", text))
 
 
+def join_words(items: List[str]) -> str:
+    """'a', 'a and b', or 'a, b, and c'."""
+    if len(items) <= 2:
+        return " and ".join(items)
+    return "%s, and %s" % (", ".join(items[:-1]), items[-1])
+
+
 def cited_items(packet: dict):
     """Yield (where, item, required_period) for every Claim-citing item in the packet."""
     for i, item in enumerate(packet.get("summary") or []):
@@ -102,6 +113,12 @@ def cited_items(packet: dict):
         yield "education[%d]" % i, item, None
     for i, item in enumerate(packet.get("answers") or []):
         yield "answer %r" % item.get("field", i), item, None
+    for i, item in enumerate(letter_paragraphs(packet)):
+        yield "cover letter paragraph %d" % (i + 1), item, None
+
+
+def letter_paragraphs(packet: dict) -> List[dict]:
+    return (packet.get("cover_letter") or {}).get("paragraphs") or []
 
 
 def item_text(item: dict) -> str:
@@ -111,6 +128,8 @@ def item_text(item: dict) -> str:
 def all_text(packet: dict) -> List[str]:
     texts = [str(packet.get("headline", ""))]
     texts += [item_text(item) for _, item, _ in cited_items(packet)]
+    letter = packet.get("cover_letter") or {}
+    texts += [str(letter.get(k, "")) for k in ("greeting", "closing")]
     for gap in packet.get("gaps") or []:
         texts += [str(gap.get("gap", "")), str(gap.get("how_to_own_it", ""))]
     return texts
@@ -130,6 +149,11 @@ def validate(packet: dict, profile: dict, today: dt.date) -> None:
     periods = {p["id"]: p for p in profile["periods"]}
     vocabulary = set(profile["skills"])
     private_repos = [p["repo"] for p in (profile.get("projects") or {}).values() if p["access"] == "private"]
+
+    resume_location = (profile.get("person") or {}).get("resume_location")
+    if not resume_location or not rp.CITY_STATE_RE.match(str(resume_location)):
+        problems.append("the profile needs person.resume_location as a plain 'City, ST' such as 'Los Angeles, CA' "
+                        "(it is the location printed on the resume and cover letter); found %r" % resume_location)
 
     role = packet.get("role") or {}
     for key in ("company", "title", "url"):
@@ -183,6 +207,19 @@ def validate(packet: dict, profile: dict, today: dt.date) -> None:
             problems.append("answer %r is %d words, over its %d-word limit"
                             % (answer.get("field"), word_count(answer["text"]), limit))
 
+    letter = packet.get("cover_letter")
+    if letter is not None:
+        if not letter_paragraphs(packet):
+            problems.append("cover_letter has no paragraphs")
+        words = sum(word_count(p.get("text", "")) for p in letter_paragraphs(packet))
+        limit = letter.get("limit_words")
+        if limit and words > limit:
+            problems.append("cover letter is %d words, over its %d-word limit" % (words, limit))
+        # The greeting and closing cite nothing, so they may not carry facts.
+        for key in ("greeting", "closing"):
+            if number_tokens(letter.get(key, "")):
+                problems.append("cover letter %s has numbers; put facts in a cited paragraph" % key)
+
     for group in packet.get("skills") or []:
         for skill in group.get("items") or []:
             if skill not in vocabulary:
@@ -207,13 +244,20 @@ def validate(packet: dict, profile: dict, today: dt.date) -> None:
 # ---------------------------------------------------------------- resume model
 
 
+def contact_items(profile: dict) -> List[str]:
+    """The contact line on resumes and letters. The location is person.resume_location, never person.location,
+    which holds search detail (neighborhood, remote preference) that does not belong on a document."""
+    person = profile["person"]
+    contact = [person.get("resume_location"), person.get("email"), person.get("phone"),
+               person.get("linkedin"), person.get("github")]
+    return [c for c in contact if c]
+
+
 def resume_sections(packet: dict, profile: dict) -> dict:
     """The resume as plain data, shared by the HTML, DOCX, and review renderers."""
     person = profile["person"]
     periods = {p["id"]: p for p in profile["periods"]}
     taglines = {p["name"]: p.get("tagline", "") for p in (profile.get("projects") or {}).values()}
-    contact = [person.get("location", "").split(";")[0], person.get("email"), person.get("phone"),
-               person.get("linkedin"), person.get("github")]
     experience = []
     for entry in packet.get("experience") or []:
         period = periods[entry["period"]]
@@ -235,11 +279,25 @@ def resume_sections(packet: dict, profile: dict) -> dict:
     return {
         "name": person["name"],
         "headline": packet["headline"],
-        "contact": [c for c in contact if c],
+        "contact": contact_items(profile),
         "summary": " ".join(item["text"].strip() for item in packet.get("summary") or []),
         "experience": experience,
         "skills": packet.get("skills") or [],
         "education": packet.get("education") or [],
+    }
+
+
+def letter_model(packet: dict, profile: dict) -> dict:
+    """The cover letter as plain data, shared by the HTML, DOCX, and review renderers."""
+    role = packet["role"]
+    letter = packet.get("cover_letter") or {}
+    return {
+        "name": profile["person"]["name"],
+        "contact": contact_items(profile),
+        "regarding": "Re: %s, %s" % (role["title"], role["company"]),
+        "greeting": letter.get("greeting") or "Dear Hiring Team,",
+        "paragraphs": [p["text"].strip() for p in letter_paragraphs(packet)],
+        "closing": letter.get("closing") or "Sincerely,",
     }
 
 
@@ -384,8 +442,77 @@ def render_docx(model: dict, docx_path: Path) -> None:
     doc.save(str(docx_path))
 
 
-def render_review(packet: dict, model: dict, pages: Optional[int], today: dt.date) -> str:
+LETTER_CSS = """
+@page { size: Letter; margin: 0.8in 0.9in; }
+body { font-family: Arial, Helvetica, sans-serif; font-size: 10.5pt; line-height: 1.45; color: #111; margin: 0; }
+h1 { font-size: 17pt; margin: 0; letter-spacing: 0.3px; }
+.contact { font-size: 8.5pt; color: #333; white-space: nowrap; border-bottom: 1px solid #555; padding-bottom: 6px; margin: 2px 0 22px; }
+.regarding { font-weight: bold; }
+p { margin: 0 0 11px; }
+.signature { margin-top: 20px; }
+"""
+
+
+def render_letter_html(model: dict) -> str:
+    e = html.escape
+    out = ["<!doctype html><html><head><meta charset=\"utf-8\"><title>%s - Cover Letter</title><style>%s</style></head><body>"
+           % (e(model["name"]), LETTER_CSS)]
+    out.append("<h1>%s</h1><p class=\"contact\">%s</p>" % (e(model["name"]), " | ".join(e(c) for c in model["contact"])))
+    out.append("<p class=\"regarding\">%s</p><p>%s</p>" % (e(model["regarding"]), e(model["greeting"])))
+    out += ["<p>%s</p>" % e(text) for text in model["paragraphs"]]
+    out.append("<p class=\"signature\">%s<br>%s</p></body></html>" % (e(model["closing"]), e(model["name"])))
+    return "".join(out)
+
+
+def render_letter_docx(model: dict, docx_path: Path) -> None:
+    from docx import Document
+    from docx.shared import Inches, Pt
+
+    doc = Document()
+    section = doc.sections[0]
+    section.page_width, section.page_height = Inches(8.5), Inches(11)
+    section.left_margin = section.right_margin = Inches(0.9)
+    section.top_margin = section.bottom_margin = Inches(0.8)
+    normal = doc.styles["Normal"]
+    normal.font.name, normal.font.size = "Arial", Pt(10.5)
+    normal.paragraph_format.space_after = Pt(8)
+
+    def para(text, bold=False, size=None, space_after=None):
+        p = doc.add_paragraph()
+        run = p.add_run(text)
+        run.bold = bold
+        if size:
+            run.font.size = Pt(size)
+        if space_after is not None:
+            p.paragraph_format.space_after = Pt(space_after)
+        return p
+
+    para(model["name"], bold=True, size=17, space_after=0)
+    para(" | ".join(model["contact"]), size=8.5, space_after=18)
+    para(model["regarding"], bold=True)
+    para(model["greeting"])
+    for text in model["paragraphs"]:
+        para(text)
+    signature = para(model["closing"], space_after=0)
+    signature.paragraph_format.space_before = Pt(10)
+    para(model["name"])
+    doc.save(str(docx_path))
+
+
+def render_review(packet: dict, model: dict, pages: Optional[int], today: dt.date,
+                  letter: Optional[dict] = None, letter_pages: Optional[int] = None) -> str:
     role = packet["role"]
+    has_letter = bool(letter_paragraphs(packet))
+    files = "`%s.pdf` and `%s.docx`" % (RESUME_BASENAME, RESUME_BASENAME)
+    if has_letter:
+        files = "`%s.pdf` and `.docx` (resume); `%s.pdf` and `.docx` (cover letter)" % (RESUME_BASENAME, LETTER_BASENAME)
+    page_note = ""
+    if pages:
+        page_note = "; resume is %d page%s" % (pages, "" if pages == 1 else "s")
+    if letter_pages:
+        page_note += "; cover letter is %d page%s" % (letter_pages, "" if letter_pages == 1 else "s")
+    to_read = ["the resume PDF"] + (["the cover letter"] if has_letter else []) \
+        + (["the form answers below"] if packet.get("answers") else [])
     lines = [
         "# Application packet: %s, %s" % (role["company"], role["title"]),
         "",
@@ -399,15 +526,17 @@ def render_review(packet: dict, model: dict, pages: Optional[int], today: dt.dat
             lines.append("- **%s:** %s" % (label, role[key]))
     lines += [
         "- **Checks:** passed (Claims exist and are interview-ready, numbers match their Claims, no stale numbers, "
-        "no retired phrases, no em dashes, skills in vocabulary, answers within limits)%s"
-        % ("; resume is %d page%s" % (pages, "" if pages == 1 else "s") if pages else ""),
-        "- **Files:** `%s.pdf` and `%s.docx`" % (RESUME_BASENAME, RESUME_BASENAME),
+        "no retired phrases, no em dashes, skills in vocabulary, answers within limits)%s" % page_note,
+        "- **Files:** %s" % files,
         "",
         "## How to submit",
         "",
-        "1. Read the resume PDF and the answers below; ask Mandu for any changes.",
-        "2. Open the posting, upload `%s.pdf` (or the .docx if the form asks for Word)." % RESUME_BASENAME,
-        "3. Paste each answer into its field. Answer the legal questions (work authorization, sponsorship) yourself.",
+        "1. Read %s; ask Mandu for any changes." % join_words(to_read),
+        "2. Open the posting, upload `%s.pdf` (or the .docx if the form asks for Word)%s."
+        % (RESUME_BASENAME, (" and `%s.pdf` wherever the form takes a cover letter" % LETTER_BASENAME)
+           if has_letter else ""),
+        "3. %sAnswer the legal questions (work authorization, sponsorship) yourself."
+        % ("Paste each answer into its field. " if packet.get("answers") else ""),
         "4. After submitting, tell Mandu \"submitted %s\" so the packet is marked submitted with today's date." % role["company"],
         "",
         "## Resume",
@@ -443,6 +572,13 @@ def render_review(packet: dict, model: dict, pages: Optional[int], today: dt.dat
             lines += ["### %s" % answer["field"], "",
                       answer["text"].strip(), "",
                       "_%d words%s. Claims: %s_" % (word_count(answer["text"]), limit, ", ".join(answer["claims"])), ""]
+    if has_letter and letter:
+        words = sum(word_count(p["text"]) for p in letter_paragraphs(packet))
+        limit_words = packet["cover_letter"].get("limit_words")
+        lines += ["## Cover letter", "", "**%s**" % letter["regarding"], "", letter["greeting"], ""]
+        for paragraph in letter_paragraphs(packet):
+            lines += [paragraph["text"].strip(), "", "_Claims: %s_" % ", ".join(paragraph["claims"]), ""]
+        lines += [letter["closing"], "", "_%d words%s._" % (words, (" of %d allowed" % limit_words) if limit_words else ""), ""]
     if packet.get("gaps"):
         lines += ["## Gaps to own", ""]
         for gap in packet["gaps"]:
@@ -467,8 +603,17 @@ def build(folder: Path, today: dt.date, check_only: bool = False) -> str:
     if pages != 1:
         raise PacketError(["resume renders to %d pages; trim it to one" % pages])
     render_docx(model, folder / ("%s.docx" % RESUME_BASENAME))
-    (folder / "packet.md").write_text(render_review(packet, model, pages, today), encoding="utf-8")
-    return "Built %s: one-page resume (.pdf, .docx) and packet.md." % folder.name
+    letter, letter_pages = None, None
+    if letter_paragraphs(packet):
+        letter = letter_model(packet, profile)
+        letter_pages = render_pdf(render_letter_html(letter), folder / ("%s.pdf" % LETTER_BASENAME))
+        if letter_pages != 1:
+            raise PacketError(["cover letter renders to %d pages; trim it to one" % letter_pages])
+        render_letter_docx(letter, folder / ("%s.docx" % LETTER_BASENAME))
+    review = render_review(packet, model, pages, today, letter=letter, letter_pages=letter_pages)
+    (folder / "packet.md").write_text(review, encoding="utf-8")
+    return "Built %s: one-page resume (.pdf, .docx)%s and packet.md." % (
+        folder.name, ", one-page cover letter (.pdf, .docx)," if letter else "")
 
 
 def main(argv: Optional[List[str]] = None) -> int:
