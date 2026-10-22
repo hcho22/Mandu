@@ -229,6 +229,12 @@ iOS permission prompts (HealthKit, if the user opts in) and the optional Sign in
   Once a real link exists, the one CTA is "Join the beta" (one dominant action per asset, §6), pointing only at the actual link.
 - Beta status may be added as one short sentence at the end of the Hero A or Hero B subhead (e.g. "The first TestFlight builds go out soon.") without counting against the verbatim rule.
 
+**Waitlist call to action (PMF posts, since the waitlist went live on 2026-10-21):**
+
+- The one call to action in a PMF post is the last line of its caption: "Join the waitlist: " followed by the waitlist link of the platform it is posted on (`reptoday.app/tiktok` on TikTok, `reptoday.app/youtube` on YouTube Shorts), so each sign-up records the channel that brought it (the founder's decision of 2026-10-22).
+- Every post carries the identical line apart from that link, so the 14-day test still compares only the Hooks.
+  It is caption text only, never in a Hook, on the video, or in a title, and no post carries any other link or call to action (one dominant action per asset, §6).
+
 **Other approved lines:**
 
 - Secondary: "A floor, a wall, and five minutes."

@@ -19,6 +19,8 @@
     "leaderboard",
     "xp"
   ],
+  "frozen_hooks_exempt_from": ["hook_max_words", "banned_words_in_hook"],
+  "caption_call_to_action": {"line": "Join the waitlist: {link}", "links": {"TikTok": "reptoday.app/tiktok", "YouTube Shorts": "reptoday.app/youtube"}},
   "banned_social_proof_in_hook": [
     "stars",
     "reviews",
@@ -239,6 +241,8 @@
   "notes": [
     "Banned words are checked in the hook only: the pain-state section quotes users verbatim and may legitimately name mechanics like streaks (voice rule 8: name the mechanic, don't celebrate it).",
     "The question ban follows brand section 10 (never asks the user a question in an ad); the one approved question line in the do/don't table is deliberately excluded from this seed bank to keep the lint strict.",
-    "No invented stats, ratings, or testimonials may appear anywhere (brand section 10: never fabricates social proof)."
+    "No invented stats, ratings, or testimonials may appear anywhere (brand section 10: never fabricates social proof).",
+    "Frozen PMF Hooks, the planned Hooks in ../../05-social-pmf/angles.md and ab-pairs.md, are exempt from hook_max_words and banned_words_in_hook in their own words (frozen_hooks_exempt_from), by the founder's decision of 2026-10-21, so the 14-day test compares the Hooks as planned; every other Hook and all other copy still follow both rules, and every other rule still applies to frozen Hooks.",
+    "Every PMF post's caption ends with caption_call_to_action's line, its one call to action, by the founder's decision of 2026-10-22: {link} is the Waitlist link of the platform the post is on, as links gives it, so each sign-up records the channel that brought it. The line is identical in every post apart from that link, so the 14-day test still compares only the Hooks; it is caption text only, never in a Hook, on the video, or in a title, and no post carries any other link."
   ]
 }

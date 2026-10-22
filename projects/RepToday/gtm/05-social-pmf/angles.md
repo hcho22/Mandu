@@ -12,9 +12,9 @@ At zero followers, absolute engagement numbers are noise.
 Every success signal below is therefore RELATIVE: rank within this angle bank once >=10 posts have shipped, and a read only counts when the post has >=200 impressions.
 [ASSUMPTION] The 200-impression floor is a judgment call: below it, one or two random events dominate every rate.
 Measurable at zero followers: TikTok per-video analytics (views, average watch time, watched-full rate, retention graph, likes, comments, shares, saves, profile visits) and YouTube Studio Shorts analytics (viewed vs swiped away, average % viewed, likes, comments, subscribers gained).
-NOT reliably measurable at zero followers: profile-link taps (TikTok gates clickable bio links behind account requirements that a brand-new account may not meet, and no link destination exists pre-launch), conversions of any kind, and downloads (no App Store listing exists).
+NOT reliably measurable at zero followers: profile-link taps (TikTok gates clickable bio links behind account requirements that a brand-new account may not meet), conversions of any kind, and downloads (no App Store listing exists).
 No signal below depends on an unmeasurable quantity.
-Any waitlist-tap signal activates only once the waitlist exists (pre-publication action #1); until then no signal in this bank reads one.
+The waitlist is live since 2026-10-21 and records the channel each sign-up came from, but no signal in this bank reads waitlist sign-ups: every signal stays a platform metric.
 
 ## The bank
 
@@ -51,7 +51,7 @@ Any waitlist-tap signal activates only once the waitlist exists (pre-publication
 
 ## Standing guardrails on every angle
 
-- Pre-launch truth: no download CTA exists because no listing exists; captions may say "iOS, not released yet" and nothing more optimistic.
+- Pre-launch truth: no download CTA exists because no listing exists; the one call to action is the waitlist line that ends every caption (`../02-brand/brand-guidelines.md` §9, `../09-extras/marketing-agent/brand-rules.json` `caption_call_to_action`), identical in every post apart from its platform's link, so each post still tests only its Hook; captions may say "iOS, not released yet" and nothing more optimistic.
 - The free-forever angle is never aimed at Nike Training Club (its free tier is genuinely praised; see pain-point-frequency.md caveat).
 - Streak-grief creative presents the mechanism ("apps that punish a missed day"), never claims fitness-app users said the Duolingo quotes.
 - No overlay numbers that the screen does not visibly justify; the tap counter in P15 counts only visible taps.
