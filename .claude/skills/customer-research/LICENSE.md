@@ -36,7 +36,7 @@ SOFTWARE.
 In `SKILL.md`:
 
 - Added the "Mandu copy: read first" block under the title, and the `## Memory` section at the end.
-- `description`: added what this copy is for in Mandu.
+- `description`: "conduct, analyze, or synthesize" now reads "analyze or synthesize"; cut the primary-research triggers ("talk to customers," "customer interviews," "PMF survey," "product/market fit survey," "customer interview questions," "interview outreach," "Sales Safari") and the sentence "Use for analyzing existing research assets, mining online sources, AND running primary research (interviews and surveys).", since this copy uses only Mode 1; and added what this copy is for in Mandu.
 - "Before Starting": the `.agents/product-marketing.md` check now points at the product's Go-To-Market Package.
 - "Questions to Ask Before Proceeding": "the product marketing context file" now reads "the Go-To-Market Package".
 - Mode 3: removed "incentives" from the playbook list and "and **incentives** — $50/call, $5/survey" from the summary bullet.

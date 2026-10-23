@@ -36,7 +36,7 @@ SOFTWARE.
 In `SKILL.md`:
 
 - Added the "Mandu copy: read first" block under the title, and the `## Memory` section at the end.
-- `description`: removed the triggers for the cut parts (deal structuring, sponsorships, newsletters, ambassador and creator programs, UGC, thought-leader ads, gifting and seeding, whitelisting, Telegram ads, influencer pay, the ad-creative and referrals pointers) and the "briefing creators" and "measuring results" triggers, and added what this copy is for in Mandu and that it never fetches a page its `robots.txt` disallows.
+- `description`: the opening "run influencer, creator, or ambassador partnerships to promote their product" now reads "find and vet creators or influencers to approach about their product"; removed the triggers for the cut parts (deal structuring, sponsorships, newsletters, ambassador and creator programs, UGC, thought-leader ads, gifting and seeding, whitelisting, Telegram ads, influencer pay, the ad-creative and referrals pointers) and the "briefing creators" and "measuring ROI" triggers; added the 'creator scouting' and 'vet a creator' triggers, what this copy is for in Mandu, and that it never fetches a page its `robots.txt` disallows.
 - Opening paragraph: removed "and paid posts in Telegram channels", "structure fair deals", and the closing "measure real ROI" clause.
 - "Before Starting": the `.agents/product-marketing.md` check now points at the product's Go-To-Market Package, and the budget question ("budget and whether it's cash or product") is removed.
 - Added an "In Mandu" note under the untrusted-data line, before the vetting checklist, and after the "Tool Integrations" paragraph, pointing to the read-first rule that each host's `robots.txt` is binding.
