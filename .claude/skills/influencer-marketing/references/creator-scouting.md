@@ -19,7 +19,7 @@ How a search runs here:
 
 ## Upstream text
 
-From [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketingskills) `skills/marketing-loops/references/loop-catalog.md`, lines 402-415, at commit `e85f3cbc2e4a79bf33b2a12e9bdd9087d414735b`, MIT License, Copyright (c) 2025 Corey Haines (see `../LICENSE.md`).
+From [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketingskills) `skills/marketing-loops/references/loop-catalog.md`, lines 402-414, at commit `e85f3cbc2e4a79bf33b2a12e9bdd9087d414735b`, MIT License, Copyright (c) 2025 Corey Haines (see `../LICENSE.md`).
 Quoted unchanged for reference; the steps above govern where they differ.
 
 > ### The creator-scouting loop

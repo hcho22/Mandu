@@ -55,4 +55,4 @@ In `SKILL.md`:
 In `references/`:
 
 - Left out `paid-ads-creator-program.md` (performance-paid), `newsletter-sponsorships.md` (newsletter sponsorship), `ugc-creator-program.md` (a paid creator program), and `telegram-channels.md` (buying posts in Telegram channels).
-- Added `creator-scouting.md`: the creator-scouting section of `skills/marketing-loops/references/loop-catalog.md` (lines 402-415 at the same commit), quoted unchanged under the `robots.txt` rule and Mandu steps that make it a one-off search hcho runs by hand.
+- Added `creator-scouting.md`: the creator-scouting section of `skills/marketing-loops/references/loop-catalog.md` (lines 402-414 at the same commit), quoted unchanged under the `robots.txt` rule and Mandu steps that make it a one-off search hcho runs by hand.
