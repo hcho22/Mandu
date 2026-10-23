@@ -36,13 +36,14 @@ SOFTWARE.
 In `SKILL.md`:
 
 - Added the "Mandu copy: read first" block under the title, and the `## Memory` section at the end.
-- `description`: removed the triggers for the cut parts (deal structuring, sponsorships, newsletters, ambassador and creator programs, UGC, thought-leader ads, gifting and seeding, whitelisting, Telegram ads, influencer pay, the ad-creative and referrals pointers) and added what this copy is for in Mandu.
+- `description`: removed the triggers for the cut parts (deal structuring, sponsorships, newsletters, ambassador and creator programs, UGC, thought-leader ads, gifting and seeding, whitelisting, Telegram ads, influencer pay, the ad-creative and referrals pointers) and the "briefing creators" and "measuring results" triggers, and added what this copy is for in Mandu.
 - Opening paragraph: removed "and paid posts in Telegram channels" and "structure fair deals".
 - "Before Starting": the `.agents/product-marketing.md` check now points at the product's Go-To-Market Package, and the budget question ("budget and whether it's cash or product") is removed.
 - Cut "The Influencer ↔ Ambassador Spectrum" (paid, affiliate, gifted, and ambassador models, and the UGC, performance-paid, and newsletter-sponsorship paragraphs).
 - Cut the Telegram-channels vetting bullet and the Telegram line under "Tool Integrations" (Telegram channel ads are bought placements).
 - Cut "3. Structuring the Deal" (compensation, rates, usage rights and whitelisting, exclusivity, the paid agreement); the later sections keep their upstream numbers.
 - Cut the "Whitelisting performance" measurement bullet.
+- Added an "In Mandu" note at the head of sections 2, 5, and 6 and of the run-of-show "Outreach & Deal", "Execution", and "Post-Campaign" groups, pointing to the read-first rule that this copy drafts no creator messages, outreach, or briefs and measures no results.
 - Cut "Ambassador Program Design" (a paid or perks program by its own description).
 - Cut the "Not securing usage rights" common mistake.
 - Run-of-show: cut "Agree deliverables, timeline, and compensation type in writing", "Lock usage rights (paid-ad whitelisting window) and exclusivity terms", and "Decide: one-off, repeat, or move to a retainer / ambassador program".

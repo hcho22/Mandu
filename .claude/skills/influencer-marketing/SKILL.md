@@ -1,6 +1,6 @@
 ---
 name: influencer-marketing
-description: "When the user wants to find and vet creators or influencers to approach about their product — finding and vetting partners, briefing creators, disclosure compliance, and measuring results. Also use when the user mentions 'influencer marketing,' 'creator partnerships,' 'B2B influencers,' 'creator scouting,' 'vet a creator,' or 'FTC disclosure.' In Mandu this copy only vets and re-picks the creators gr0wthlab writes to, from the product's Go-To-Market Package; it never pays, gifts, or sends. For community-led advocacy, see community-marketing."
+description: "When the user wants to find and vet creators or influencers to approach about their product — finding and vetting partners and disclosure compliance. Also use when the user mentions 'influencer marketing,' 'creator partnerships,' 'B2B influencers,' 'creator scouting,' 'vet a creator,' or 'FTC disclosure.' In Mandu this copy only vets and re-picks the creators gr0wthlab writes to, from the product's Go-To-Market Package; it never pays, gifts, or sends. For community-led advocacy, see community-marketing."
 metadata:
   version: 1.4.0
 ---
@@ -22,6 +22,7 @@ metadata:
   Run the vetting checklist in section 1 on the creators the channel plan names, and on smaller candidates (about 5,000 to 10,000 followers) found once by hand with `references/creator-scouting.md`.
   Never pay or gift a creator: the ask costs them nothing.
   Early access is a material connection a creator must disclose if they post (section 4).
+- **No messages, briefs, or results.** This copy is for vetting and picking creators only; it drafts no creator messages, outreach, or briefs, because gr0wthlab drafts creator messages and the one follow-up through its Review Queue, and it measures no results, because hcho gives results only on gr0wthlab's sitting page.
 - Related skills named below are upstream skills; only those listed in `.claude/skills/README.md` are installed in Mandu.
 
 You are an expert in influencer, creator, and ambassador marketing across B2C (Instagram, TikTok, YouTube) and B2B (LinkedIn, X, newsletters, niche podcasts). Your goal is to help the user pick the right partners, keep the program compliant, and measure real ROI — not vanity reach.
@@ -61,6 +62,8 @@ For most brands, a portfolio of **micro + nano** partners out-converts one macro
 
 ## 2. Outreach
 
+**In Mandu:** this copy drafts no outreach; see "No messages, briefs, or results" in "Mandu copy: read first".
+
 Reach out **1:1 and personally** — reference specific content, why *them*, and what's in it for their audience. A generic form blast to 200 creators converts worse than 20 tailored notes. For writing the outreach itself, use **cold-email** (personalization, deliverability, follow-up cadence). Lead with the offer and the fit; don't bury the ask.
 
 ## 4. Disclosure & Compliance (non-negotiable)
@@ -78,6 +81,8 @@ Disclosure done well doesn't hurt performance — audiences expect it, and the F
 
 ## 5. The Creative Brief
 
+**In Mandu:** this copy drafts no brief; see "No messages, briefs, or results" in "Mandu copy: read first".
+
 Do **not** script the creator word-for-word — they know their audience better than you, and scripted reads convert worst. Provide:
 
 - **The "why"** — the core problem your product solves (the one sentence).
@@ -89,6 +94,8 @@ Do **not** script the creator word-for-word — they know their audience better 
 Ground the talking points in real proof (reviews, results) — same grounding discipline as **ad-creative**'s inputs. Never hand a creator a claim you can't back.
 
 ## 6. Measurement & ROI
+
+**In Mandu:** this copy measures no results; see "No messages, briefs, or results" in "Mandu copy: read first".
 
 Influencer marketing suffers from attribution gaps — fix them upfront, before the campaign runs:
 
@@ -117,16 +124,25 @@ Judge the program on **cost per qualified outcome and repeat/retained value**, n
 - [ ] Check engagement rate and comment quality for each; run the fake-follower check
 
 ### Outreach & Deal
+
+**In Mandu:** skip this group; see "No messages, briefs, or results" in "Mandu copy: read first".
+
 - [ ] Personalize outreach with a specific reference to their content
 - [ ] Put the disclosure requirement in the agreement
 
 ### Execution
+
+**In Mandu:** skip the brief and tracking items; see "No messages, briefs, or results" in "Mandu copy: read first".
+
 - [ ] Send a brief with the "why," 2–3 talking points, the CTA, and what to avoid
 - [ ] Set up tracking (unique code, UTM, or vanity URL) *before* content goes live
 - [ ] Review the draft if you have approval rights — without over-scripting
 - [ ] Confirm the disclosure actually shipped where viewers can see it
 
 ### Post-Campaign
+
+**In Mandu:** skip this group; see "No messages, briefs, or results" in "Mandu copy: read first".
+
 - [ ] Pull performance against the goal set upfront (cost per qualified outcome)
 - [ ] Share results with the creator — it builds the relationship
 
