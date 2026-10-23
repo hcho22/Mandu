@@ -51,6 +51,8 @@ Active skills:
 - `daily-loop`: runs hcho's daily operating loop: morning brief, one focused project block, and end-of-day closeout.
 - `prd`: generates a Product Requirements Document for a new feature.
 - `gr0wthlab-reader`: reads gr0wthlab's Review Queue and hcho's records for status, applies a package change he approved on gr0wthlab's sitting page, and gives hcho an approved Dispatch request to pass to firstmate; records no decision.
+- `influencer-marketing`: vets and re-picks the creators gr0wthlab writes to, from the product's Go-To-Market Package; drafts only, never pays, gifts, or sends (copied from coreyhaines31/marketingskills, MIT).
+- `customer-research`: turns reviews and threads hcho copied by hand into sourced, confidence-labeled quotes for the package's research files (copied from coreyhaines31/marketingskills, MIT).
 - `ingest`: files one learning source into the right wiki, updating every page it touches in a single pass. Run with no path, it takes the sole pending file in `inbox/`.
 
 Each skill folder also carries a `MEMORY.md` it reads at the start of each run and appends to only on explicit hcho feedback (kept under 100 lines).
