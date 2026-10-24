@@ -95,6 +95,7 @@ A market-size column is the market's numbers, not the run's, and every other col
 An HTML page is read as its blocks of visible words and also, each on its own, as every attribute a reader, search result, or share card shows and every string in its JSON-LD.
 Those attributes are `alt`, `title`, `aria-label`, `placeholder`, `label`, the `value` a button or text field shows, and the meta title, description, image alt, and site name, `og:` and `twitter:` ones included.
 A block is cited by a URL, label, or link inside that same block.
+A block inside a blockquote is also cited by that quote's citation, in the quote, its `cite` attribute, or its figure's caption, as a Markdown quote's lines are by the URL on the line after it.
 An attribute value or a JSON-LD string is cited only by a URL or label inside that same value; a link elsewhere on the page does not cover it.
 So a cited stat copied into the meta description, a button, or a FAQ answer in the JSON-LD carries its own URL or label there.
 

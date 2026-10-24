@@ -22,7 +22,8 @@ details are never invented; guesses are labeled):
    targets, thresholds, or budgets are the run's own numbers and are skipped.
    The run's machine records (`run-audit.md`, `run-evidence/`, the journal)
    and the red team's records in `08-redteam/` are not claims and are
-   skipped. An HTML block is cited only by a URL or link inside that block;
+   skipped. An HTML block is cited by a URL or link inside that block, or,
+   inside a blockquote, by that quote's citation (below);
    each attribute a reader sees (alt, title, aria-label, placeholder, label, a
    button's or text field's value, the meta title, description, image alt,
    and site name) and each JSON-LD string is checked on its own, cited only
@@ -183,19 +184,28 @@ def audit_markdown(pkg, path, text, problems):
 
 def audit_html(pkg, path, text, problems):
     page = gc.read_html(text)
-    for block, hrefs in page.page_copy():
+    for block, hrefs, quote in page.page_copy():
         found = triggers_in(block)
-        if found and not cites(" ".join([block] + ['href="%s"' % h for h in hrefs]), pkg, path):
+        if found and not cites(" ".join([block] + ['href="%s"' % h for h in hrefs]), pkg, path) \
+                and not (quote and quote_cited(pkg, path, quote)):
             problems.append(finding(pkg, path, 0, found, block))
-    for quote, caption, hrefs in page.page_quotes():
-        if quote and not cites(" ".join([quote, caption] + ['href="%s"' % h for h in hrefs]), pkg, path):
-            problems.append(finding(pkg, path, 0, ["quote"], quote))
+    for quote in page.page_quotes():
+        if quote[0] and not quote_cited(pkg, path, quote):
+            problems.append(finding(pkg, path, 0, ["quote"], quote[0]))
     ratings = sorted({name for kind, name in page.schema_terms
                       if (name.lower() in RATING_PROPERTIES if kind == "property"
                           else name.lower().endswith(RATING_TYPE_ENDINGS))})
     if ratings:
         problems.append("%s: structured data carries ratings or reviews (%s); a Product has none before launch, "
                         "so take them out" % (gc.rel(pkg, path), ", ".join(ratings)))
+
+
+def quote_cited(pkg, path, quote):
+    """Whether an HTML blockquote, as `page_quotes()` gives it, is cited: by a
+    URL, label, or citation link inside it, in its cite attribute, or in the
+    caption of the figure that holds it."""
+    text, caption, hrefs = quote
+    return cites(" ".join([text, caption] + ['href="%s"' % h for h in hrefs]), pkg, path)
 
 
 def finding(pkg, path, number, found, text):
@@ -263,7 +273,7 @@ def deliverable_text(pkg):
             text = path.read_text(encoding="utf-8", errors="replace")
             texts = [text]
             if path.suffix.lower() in (".html", ".htm"):
-                texts.append(" ".join(unit for unit, _ in gc.read_html(text).page_copy()))
+                texts.append(" ".join(unit for unit, _, _ in gc.read_html(text).page_copy()))
             out.append((gc.rel(pkg, path), [comparable(t) for t in texts]))
     return out
 

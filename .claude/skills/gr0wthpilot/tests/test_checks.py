@@ -358,6 +358,28 @@ class ClaimAuditTest(unittest.TestCase):
             self.assertTrue(has(claim_audit.check(pkg)["problems"],
                                 r"teaser.html: quote with no citation or label: I would pay"), page)
 
+    def test_a_stat_inside_a_cited_quote_is_cited_by_the_quote(self):
+        pkg = fixtures.package()
+        url = fixtures.URLS["stat"]
+        for page in ('<figure><blockquote><p>I would pay $3 for real film delay.</p></blockquote>'
+                     '<figcaption>A Reddit user, <a href="%s">r/analog</a></figcaption></figure>' % url,
+                     '<blockquote cite="%s"><p>I would pay $3 for real film delay.</p></blockquote>' % url,
+                     '<blockquote><p>I tried 5 apps before this.</p><footer><a href="%s">src</a></footer></blockquote>'
+                     % url):
+            fixtures.write(pkg, "09-extras/teaser.html", page)
+            self.assertEqual(claim_audit.check(pkg)["problems"], [], page)
+        for page, trigger in (('<blockquote><p>I would pay $3 for real film delay.</p><footer>A Reddit user</footer>'
+                               '</blockquote>', "price"),
+                              ('<blockquote><p>I tried 5 apps before this.</p></blockquote><p>Most people never print '
+                               'a photo again, per <a href="%s">this report</a>.</p>' % url, "count")):
+            fixtures.write(pkg, "09-extras/teaser.html", page)
+            problems = claim_audit.check(pkg)["problems"]
+            self.assertTrue(has(problems, r"teaser.html: %s with no citation or label: I " % trigger), page)
+            self.assertTrue(has(problems, r"teaser.html: quote with no citation or label: I "), page)
+        fixtures.write(pkg, "09-extras/teaser.html", '<blockquote cite="%s"><p>Worth it.</p></blockquote>'
+                                                     '<p>Join 50,000 users.</p>' % url)
+        self.assertTrue(has(claim_audit.check(pkg)["problems"], r"teaser.html: count with no citation or label: Join"))
+
     def test_structured_data_carries_no_ratings_or_reviews(self):
         cases = (
             '<script type="application/ld+json">{"@type": "SoftwareApplication", "name": "Testprod", "aggregateRating": '

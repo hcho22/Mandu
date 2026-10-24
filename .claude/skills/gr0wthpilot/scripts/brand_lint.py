@@ -308,7 +308,7 @@ def social_units(text):
 def copy_units(path, social=False):
     text = path.read_text(encoding="utf-8", errors="replace")
     if path.suffix.lower() in (".html", ".htm"):
-        return [(0, unit) for unit, _ in gc.read_html(text).page_copy()]
+        return [(0, unit) for unit, _, _ in gc.read_html(text).page_copy()]
     if social:
         return list(social_units(text))
     return list(gc.markdown_units(text))

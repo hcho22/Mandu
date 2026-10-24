@@ -270,6 +270,7 @@ class _TextAndLinks(html.parser.HTMLParser):
         super().__init__(convert_charrefs=True)
         self.blocks = [[]]
         self.block_links = [[]]
+        self.block_quotes = [None]
         self.links = []
         self.ids = set()
         self.skip_depth = 0
@@ -292,9 +293,6 @@ class _TextAndLinks(html.parser.HTMLParser):
             self.skip_depth += 1
         if tag == "style" or (tag == "script" and (attrs.get("type") or "").strip().lower() == "application/ld+json"):
             self.raw, self.raw_parts = tag, []
-        if tag in self.BLOCK:
-            self.blocks.append([])
-            self.block_links.append([])
         if tag == "figure":
             self.figures.append({"words": [], "links": [], "captions": 0})
         if tag == "figcaption" and self.figures:
@@ -302,6 +300,8 @@ class _TextAndLinks(html.parser.HTMLParser):
         if tag == "blockquote":
             self.open_quotes.append({"words": [], "links": [attrs["cite"]] if attrs.get("cite") else [],
                                      "figure": self.figures[-1] if self.figures else None})
+        if tag in self.BLOCK:
+            self.new_block()
         if attrs.get("href"):
             self.block_links[-1].append(attrs["href"])
             for holder in self.citing():
@@ -342,8 +342,12 @@ class _TextAndLinks(html.parser.HTMLParser):
         if tag == "figure" and self.figures:
             self.figures.pop()
         if tag in self.BLOCK:
-            self.blocks.append([])
-            self.block_links.append([])
+            self.new_block()
+
+    def new_block(self):
+        self.blocks.append([])
+        self.block_links.append([])
+        self.block_quotes.append(self.open_quotes[-1] if self.open_quotes else None)
 
     def handle_data(self, data):
         if self.raw:
@@ -364,33 +368,35 @@ class _TextAndLinks(html.parser.HTMLParser):
         self.open_quotes = []
 
     def page_copy(self):
-        """(text, hrefs) for each piece of copy the page shows a reader: each
-        block's words with the links inside that same block, then each
+        """(text, hrefs, quote) for each piece of copy the page shows a reader:
+        each block's words with the links inside that same block and the
+        blockquote it sits in (as `page_quotes()` gives it, or None), then each
         attribute a browser, screen reader, search result, or share card shows
         (alt, title, aria-label, placeholder, label, a button's or text field's
         value, and the meta title, description, image alt, and site name) and
-        each string in its JSON-LD, with no links."""
+        each string in its JSON-LD, with no links and no quote."""
         out = []
-        for words, links in zip(self.blocks, self.block_links):
+        for words, links, quote in zip(self.blocks, self.block_links, self.block_quotes):
             block = " ".join(" ".join(words).split())
             if block:
-                out.append((block, links))
+                out.append((block, links, self.quote_unit(quote) if quote else None))
         for value in self.attr_copy:
             unit = " ".join(value.split())
             if unit:
-                out.append((unit, []))
+                out.append((unit, [], None))
         return out
 
     def page_quotes(self):
         """(text, caption, links) for each blockquote: its words, the words of
         the caption of the figure that holds it, and the links inside it, in
         its cite attribute, and in that caption."""
-        out = []
-        for quote in self.quotes:
-            figure = quote["figure"] or {"words": [], "links": []}
-            out.append((" ".join(" ".join(quote["words"]).split()), " ".join(" ".join(figure["words"]).split()),
-                        quote["links"] + figure["links"]))
-        return out
+        return [self.quote_unit(quote) for quote in self.quotes]
+
+    @staticmethod
+    def quote_unit(quote):
+        figure = quote["figure"] or {"words": [], "links": []}
+        return (" ".join(" ".join(quote["words"]).split()), " ".join(" ".join(figure["words"]).split()),
+                quote["links"] + figure["links"])
 
 
 def read_html(text: str):
