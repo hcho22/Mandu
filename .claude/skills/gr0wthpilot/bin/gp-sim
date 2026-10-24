@@ -4,9 +4,12 @@
 It runs outside the sandbox (the simulator service cannot be reached from
 inside it), so it enforces the run's simulator rules itself:
   - it creates devices only under the name Gr0wthPilot-<Product>-<n>, records
-    each in the run's ledger, and touches no device the ledger does not hold;
+    each in the ledger (`<Product>.guard/simulators.json` in the guard's
+    records), which is kept per Product and so holds the devices of every run
+    of that Product, and touches no device the ledger does not hold;
   - at most two run devices exist and one is booted at a time, to spare the Mac;
-  - files it writes land only in the Candidate Package or the run's cache folder;
+  - files it writes land only in the Candidate Package or the run's cache
+    folder, besides that ledger;
   - it installs only an app gp-xcodebuild built in the guard's build folder,
     which no tool of the run can write, since the simulator runs it unsandboxed.
 
@@ -23,8 +26,9 @@ Commands:
   gp-sim status-bar UDID
   gp-sim privacy UDID grant|revoke SERVICE BUNDLE_ID
   gp-sim addmedia UDID FILE ...
-  gp-sim cleanup            shut down and delete every device this run created, then
-                            mark in the ledger exactly those that no longer exist
+  gp-sim cleanup            shut down and delete every device in the ledger (any run of
+                            this Product created it), then mark in the ledger exactly
+                            those that no longer exist
 """
 
 import json
@@ -82,7 +86,8 @@ def prefix(cfg):
 
 
 def owned(cfg, udid):
-    """Return the device only when this run created it and it still carries the run's name."""
+    """Return the device only when it is in the Product's ledger (a run of this
+    Product created it) and it still carries the Product's name prefix."""
     ledger = read_ledger(cfg)
     if udid not in [d["udid"] for d in ledger["devices"]]:
         raise ToolError("%s is not a simulator this run created; gp-sim never touches it" % udid)

@@ -52,7 +52,7 @@ class SourcesTest(unittest.TestCase):
     def test_unfetched_source_fails(self):
         pkg = fixtures.package()
         log = pkg / "run-evidence" / "fetch-log.jsonl"
-        lines = [l for l in log.read_text().splitlines() if fixtures.URLS["stat"] not in l]
+        lines = [line for line in log.read_text().splitlines() if fixtures.URLS["stat"] not in line]
         log.write_text("\n".join(lines) + "\n")
         self.assertTrue(has(check_sources.check(pkg)["problems"], r"research.example.org/report was not fetched"))
 
@@ -138,7 +138,7 @@ class SourcesTest(unittest.TestCase):
         state = Path(tempfile.mkdtemp(prefix="gp-state-"))
         live = state / "fetch-log.jsonl"
         lines = (pkg / "run-evidence" / "fetch-log.jsonl").read_text().splitlines()
-        live.write_text("\n".join(l for l in lines if fixtures.URLS["stat"] not in l) + "\n")
+        live.write_text("\n".join(line for line in lines if fixtures.URLS["stat"] not in line) + "\n")
         config = state / "guard-config.json"
         gc.write_json(config, {"fetch_log": str(live), "last30days_log": str(state / "last30days-log.jsonl")})
         with mock.patch.dict(os.environ, {"GR0WTHPILOT_CONFIG": str(config)}):
@@ -387,6 +387,7 @@ class ClaimAuditTest(unittest.TestCase):
             '<script type="application/ld+json">{"@type": "Product", "name": "Testprod", "review": [{"@type": "Review", '
             '"reviewBody": "Best film app I have used.", "url": "%s"}]}</script>' % fixtures.URLS["stat"],
             '<script type="application/ld+json">{"@graph": [{"@type": ["CreativeWork", "schema:UserReview"]}]}</script>',
+            '<script type="application/ld+json">{"@type": "Recommendation", "itemReviewed": "Testprod"}</script>',
             '<script type="application/ld+json">{"@type": "Product", "https://schema.org/reviewCount": 3}</script>',
             '<div itemscope itemtype="https://schema.org/Product"><span itemprop="aggregateRating">4.8</span></div>',
             '<div vocab="https://schema.org/" typeof="Review"><span property="reviewBody">Great</span></div>')
@@ -550,7 +551,7 @@ class LayoutTest(unittest.TestCase):
     def test_too_few_angles_and_unquoted_hook(self):
         pkg = fixtures.package()
         path = pkg / "05-social-pmf/angles.md"
-        lines = [l for l in path.read_text().splitlines() if not re.match(r"\| P1[0-5] ", l)]
+        lines = [line for line in path.read_text().splitlines() if not re.match(r"\| P1[0-5] ", line)]
         path.write_text("\n".join(lines) + "\n")
         edit(path, '"Hook number 3 for the camera"', "Hook number 3 for the camera")
         problems = self.check(pkg)["problems"]
@@ -909,7 +910,7 @@ class AuditTest(unittest.TestCase):
             os.environ.pop("GR0WTHPILOT_CONFIG", None)
             self.assertEqual(audit_run.summarize(cfg)["denied"], 2)
             self.assertIn("blocked.example.net/pricing", (pkg / gc.AUDIT_NAME).read_text())
-            copied = [json.loads(l) for l in (pkg / "run-evidence" / "tool-log.jsonl").read_text().splitlines()]
+            copied = [json.loads(line) for line in (pkg / "run-evidence" / "tool-log.jsonl").read_text().splitlines()]
             self.assertEqual({r["run_id"] for r in copied}, {"testprod-1"})
             devices = json.loads((pkg / "run-evidence" / "simulators.json").read_text())["devices"]
             self.assertEqual([d["udid"] for d in devices], ["NEW"])

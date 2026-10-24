@@ -15,9 +15,12 @@ whose URL was not fetched is deleted. This check makes that mechanical:
 3. Every entry in a `sources.d/` fragment, where parallel agents record their
    URLs, has been merged into `sources.md` (scripts/merge_sources.py).
 4. Every URL cited anywhere in the package is listed in `sources.md`, except
-   namespace and font URLs and the prefixes `sources-exempt.md` lists with a
-   reason. The run's machine records (`run-audit.md`, `run-evidence/`, the
-   journal) are not claims and are not read for citations.
+   namespace and font URLs, local addresses (localhost and 127.0.0.1), and
+   the prefixes `sources-exempt.md` lists with a reason. The run's machine
+   records (`run-audit.md`, `run-evidence/`, the journal, any `.jsonl` file),
+   the raw last30days output in `01-research/last30days/`, the `sources.d/`
+   fragments (checked by 3 instead), `sources.md`, and `sources-exempt.md`
+   are not read for citations.
 
 Usage: check_sources.py PACKAGE [--fetch-log FILE ...] [--last30days-log FILE ...] [--json]
 """

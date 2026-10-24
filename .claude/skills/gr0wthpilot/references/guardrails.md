@@ -20,12 +20,13 @@ Each layer was proven in live sessions; this page says what each one covers and,
 
 ## Layer 1: the guard hook
 
-`scripts/guard.py` runs before every tool call, in the main session and in every subagent and Workflow agent, in every permission mode, and fails closed: if it errors, the call is refused.
+`scripts/guard.py` runs before every tool call, in the main session and in every subagent and Workflow agent, in every permission mode, and fails closed on its own errors: if it errors, the call is refused.
+Hook input it cannot parse as JSON is read as an empty call, which names no tool and is allowed.
 It refuses:
 
 - Shell commands that publish, deploy, upload, or reach a remote host: `git push` and every git subcommand that is not a read, `gh`, `hub`, `glab`, wrangler, vercel, netlify, firebase, surge, heroku, fly, railway, aws, gcloud, az, rclone, scp, sftp, ssh, rsync, nc, telnet, sendmail, `npm publish` and its sign-in commands, twine, fastlane, altool, notarytool, and anything a package runner (`npx`, `bunx`, `bun x`, `npm exec`) would run of those.
   It finds them inside chains, pipes, subshells, `$(...)`, backticks (in double quotes too), an unquoted heredoc's `$(...)` and backticks, `bash -c` (or a cluster such as `-lc`), `eval`, `find -exec`, `if`/`then`/`do` and the other shell keywords, and behind `env`, `nohup`, `timeout`, `xargs`, and similar wrappers.
-  A wrapper option it does not know is refused, because its value could be the program the wrapper runs (`env -S`, `timeout -s KILL`).
+  A wrapper option it does not know is refused, because its value could be the program the wrapper runs (`env -S`).
 - Anything outside the small part of the shell the guard follows with certainty, rather than guessing how the shell reads it: a program named by a variable, a substitution, a glob, a word with a space, a leading `=`, or a `<` or `>` (`$X pr create`, `$(echo gh)`, `env -S 'gh pr'`, zsh's `=open`); any `{` or `}` outside quotes (a group, a function body, or a brace expansion; only the literal `{}` placeholder passes); a function definition (`function f`, `f()`) and zsh's `repeat` and `foreach`; an escaped space or operator before `#`; a `${...}` holding `#`, `=`, an operator, or a quote; ANSI-C quoting (`$'...'`); a heredoc whose delimiter is not one plain word; unbalanced quotes.
   The refusal says to write the command more simply; separate commands or a subshell do what a group or a function would.
   A redirection before the program is read with its target, attached (`>out.txt`) or not, so the program after it is the one checked.
@@ -74,8 +75,8 @@ Every shell command and every process it starts runs in Claude Code's sandbox (S
 
 Three wrappers run outside the sandbox, because what they drive cannot run inside it (the simulator service, Chrome, and xcodebuild's system services), and each enforces its own rules:
 
-- `gp-sim` creates simulators only as `Gr0wthPilot-<Product>-<n>`, records them in the run's ledger, touches no other device, keeps at most two and boots one at a time, and writes files only into the package or the cache folder.
-  `gp-sim cleanup` lists the devices again after deleting and marks deleted exactly the run's devices that are gone, so the ledger never calls a device deleted that still exists.
+- `gp-sim` creates simulators only as `Gr0wthPilot-<Product>-<n>`, records them in a ledger kept per Product in the guard's records (`<Product>.guard/simulators.json`), so it holds the devices of every run of that Product, touches no device the ledger does not hold, keeps at most two and boots one at a time, and writes files only into the package or the cache folder, besides that ledger.
+  `gp-sim cleanup` lists the devices again after deleting and marks deleted exactly the ledger's devices that are gone, so the ledger never calls a device deleted that still exists.
   It installs only an app gp-xcodebuild built in the guard's build folder, because the simulator runs an app unsandboxed.
 - `gp-chrome` runs headless Chrome on a fresh throwaway profile (so none of the Founder's sign-ins load), opens only local pages, and writes only into the package or the cache folder.
   It never opens a page by a `file://` URL: a page file in the package or the cache folder is served, with the rest of that folder (so a carousel slide's `../carousel.css` loads), by an http server on `127.0.0.1` that `gp-chrome` starts for that one call and stops after, and that refuses any path leaving that folder or entering a protected package, symlinks followed.
@@ -84,10 +85,12 @@ Three wrappers run outside the sandbox, because what they drive cannot run insid
   An `http` URL the run gives must be on `localhost` or `127.0.0.1` with no userinfo, backslash, or whitespace, and is rebuilt from its checked parts before Chrome sees it.
 - `gp-xcodebuild` builds only from a copy of the Product's committed tree in the guard's build folder, `<Product>.guard/build/`, which no tool of the run can write.
   `gp-xcodebuild source` records every file's SHA-256, and every build checks the copy against that record and exports it again from its commit when anything differs.
-  It accepts only the actions and options a simulator build needs (build, test, and clean actions; `-project`, `-workspace`, `-xcconfig`, `-scheme`, `-target`, `-configuration`, `-destination`, `-sdk`, `-testPlan`, `-only-testing`, `-skip-testing`, `-resultBundlePath`, a few display and package-resolution flags, and `SETTING=value`) and refuses every other one, so no option can write elsewhere (`-resultStreamPath`), archive, export, or download.
-  The project, workspace, and `.xcconfig` must lie in that copy; DerivedData, which holds the package sources a build compiles and the app `gp-sim` installs, is the build folder's own; only a result bundle may go to the cache folder.
+  It accepts only the actions and options a simulator build needs (build, test, and clean actions; `-project`, `-workspace`, `-xcconfig`, `-scheme`, `-target`, `-configuration`, `-destination`, `-sdk`, `-testPlan`, `-only-testing`, `-skip-testing`, `-resultBundlePath`, a few display and package-resolution flags, and `SETTING=value`) and refuses every other one, `-resolvePackageDependencies` included, so no option can write elsewhere (`-resultStreamPath`), archive, export, or download a platform.
+  The project, workspace, and `.xcconfig` must lie in that copy.
+  Every call, `-list` and `-showBuildSettings` included, gets the build folder's own DerivedData, which holds the Swift packages a build fetches and compiles and the app `gp-sim` installs, so xcodebuild never reads or writes the Founder's DerivedData; only a result bundle may go to the cache folder.
   A build setting may name no path outside the build folder and no `$(`, `${`, or `..`.
-  It builds for the simulator only, runs tests only on a simulator the run created (named by `id=` or `name=`, so xcodebuild never boots one of the Founder's own), and refuses archive, export, signing with a team, device registration, and App Store Connect.
+  A `-destination` must be an iOS Simulator one and an `-sdk` must be `iphonesimulator`, and tests need a simulator destination; a build that gives neither uses the project's own default SDK, and an `SDKROOT=` setting is not checked, so only tests are confined to the simulator.
+  Tests run only on a simulator in the Product's ledger (named by `id=` or `name=`, so xcodebuild never boots one of the Founder's own), and the wrapper refuses archive, export, signing with a team, device registration, and App Store Connect.
 
 ## The guard's own records
 

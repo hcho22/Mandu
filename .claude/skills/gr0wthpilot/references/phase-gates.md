@@ -2,7 +2,8 @@
 
 Each phase closes only when its mechanical gates pass (`scripts/journal.py pass <gate>`, which runs the checks named here) and its completeness critic (`workflows/critic.js`) says PASS against the criteria below.
 Pass the critic each phase's list, item by item, as its `criteria`.
-A critic's report must be newer than the phase's last work gate, so a fix after the critic needs the critic again.
+A critic's report must be newer than the first recorded pass of each of the phase's work gates.
+Re-passing a gate re-runs its checks but records no new time, so a fix made after the critic does not by itself make the critic run again.
 
 ## Read the product
 

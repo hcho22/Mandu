@@ -4,16 +4,30 @@
 `09-extras/marketing-agent/brand-rules.json` is the brand lint's one rule
 source, and gr0wthlab's post-Draft lint reads the same file after Handoff, so
 this script first validates it against the schema gr0wthlab's lint accepts
-(an unknown key there blocks every Draft), then applies it:
+(an unknown key there blocks every Draft), then applies part of it, with
+matching ported from gr0wthlab's lint (word and phrase rules match after
+lint_allow_phrases are masked):
 
-- every rule gr0wthlab applies to a post, with its matching, to every Hook in
-  `05-social-pmf/angles.md` and `ab-pairs.md` and to the social copy (the
-  Launch Set and the week-1 drafts);
-- the rules that hold for any page a stranger reads (banned characters, stock
-  phrases, fake scarcity, loss framing, [NEED:] markers) to the site, the video
-  script, and the extras, whose sourced numbers the claim audit covers; a
-  page's copy is its words and the attributes and JSON-LD a reader, search
-  result, or share card shows.
+- to any page a stranger reads (the site, the Launch Set's HTML, the video
+  script, and the extras, whose sourced numbers the claim audit covers):
+  banned_characters_anywhere, stock_phrases, fake_scarcity, loss_framing, and
+  [NEED:] markers; a page's copy is its words and the attributes and JSON-LD
+  a reader, search result, or share card shows;
+- to every Hook in `05-social-pmf/angles.md` and `ab-pairs.md` and to each
+  labeled copy field of the social copy (the Launch Set's Markdown and the
+  week-1 drafts): those page rules plus banned_words_in_hook,
+  banned_social_proof_in_hook, hook_must_not_be_question, no_emoji_in_hook,
+  no_all_caps_words_in_hook with all_caps_allowlist, capped_words with
+  capped_words_per_paragraph, and invented_proof_terms with
+  invented_proof_quantities (and any percentage or multiplier); and
+  hook_max_words to the Hooks only.
+
+It does not apply long_sentence_words, long_sentence_commas,
+sponsorship_asks, required_sections, or required_disclosure, and it ignores
+frozen_hooks_exempt_from, so the frozen Hooks in angles.md and ab-pairs.md
+still get hook_max_words and banned_words_in_hook. Passing here does not mean
+passing gr0wthlab's own post-Draft lint (outside this repo), which stays the
+authority.
 
 Usage: brand_lint.py PACKAGE [--json]
 """
@@ -112,8 +126,8 @@ def validate_rules(rules, source_tags=None):
     return problems
 
 
-# Matching ported from gr0wthlab's src/gr0wthlab/lint.py (commit 6776dd0), so a
-# Hook or post that passes here passes gr0wthlab's post-Draft lint after Handoff.
+# Matching ported from gr0wthlab's src/gr0wthlab/lint.py (commit 6776dd0), for
+# the rules this script applies; gr0wthlab's own lint stays the authority.
 EMOJI_ABOVE = 0x2100
 NUMBER = r"\d(?:[\d,.]*\d)?\s*(?:k|m|million|thousand)?\+?"
 SEPARATOR = r"[\s_\-‐-―]+"
@@ -190,9 +204,10 @@ def invented_proof(text, rules):
 
 def lint_copy(text, rules, hook=False, full=True):
     """Return findings for one piece of copy. full=True applies every rule
-    gr0wthlab applies to a post; full=False only the rules that hold for any
-    page a stranger reads (characters, stock phrases, scarcity, loss framing,
-    [NEED:] markers), since the claim audit covers a page's sourced numbers."""
+    this script ports from gr0wthlab's post lint; full=False only the rules
+    that hold for any page a stranger reads (characters, stock phrases,
+    scarcity, loss framing, [NEED:] markers), since the claim audit covers a
+    page's sourced numbers."""
     found = []
     words_text = masked(plain(text), rules)
     if hook:

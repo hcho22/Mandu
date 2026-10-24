@@ -223,10 +223,16 @@ def cmd_dom(cfg, args):
 # out about 90px shorter than the window, so the page is measured (and shot)
 # inside an iframe of the exact viewport, whose layout and media queries follow
 # the iframe's size, not the window's.
-# The iframe holds a copy of the page written beside it (so its relative
-# files still load) with a script that reports the page's size to the
-# wrapper, also beside it, by postMessage; gp-chrome serves both like any
-# other page.
+# The two commands fill that iframe differently.
+# measure (a local page file only): the iframe holds a copy of the page
+# written beside it (so its relative files still load) with a script that
+# reports the page's size to the wrapper, also beside it, by postMessage; the
+# wrapper writes the report into the DOM, which Chrome dumps.
+# screenshot: the iframe loads the page itself, with no copy and no script,
+# pinned to the window's top left; the wrapper sits beside a page file, or in
+# the cache folder for a localhost URL, and ffmpeg crops the window's shot to
+# the iframe.
+# gp-chrome serves the wrapper, and a page file, like any other page.
 REPORT_SCRIPT = """<script>
 window.addEventListener('load', function () {
   setTimeout(function () {

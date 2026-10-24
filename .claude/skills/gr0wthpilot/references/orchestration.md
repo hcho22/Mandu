@@ -18,18 +18,20 @@ After every fan-out that cites sources, run `python3 <skill>/scripts/merge_sourc
 
 One researcher per lane, each blind to the others; as each lane finishes, two skeptics (source lens, counter-evidence lens) attack its load-bearing claims.
 Each lane is `{id, title, task, outputs, skills}`.
+Each name in `skills` reaches the researcher as `<skill>/marketingskills/<name>/SKILL.md`, the copy it reads before it starts.
+Mandu's own customer-research and influencer-marketing skills are not copies there (they are `.claude/skills/customer-research/` and `.claude/skills/influencer-marketing/` in Mandu), so leave them out of `skills`: a lane gets their method only through its `task`, which names the SKILL.md path and the part to apply (customer-research's "Mode 1: Analyze Existing Assets", influencer-marketing's "Finding & Vetting Partners" checklist).
 Derive the lanes from the product-facts brief; the floor is:
 
 | id | What it covers | Outputs | Skills |
 | --- | --- | --- | --- |
 | competitors-named | One lane per competitor the Product's own records name (or the top ones by store search), each a teardown: positioning, pages, pricing, store listing, reviews' recurring complaints | `01-research/competitor-<slug>.md` | competitor-profiling, competitors |
 | competitors-scout | Competitors the records do not name, found by store search and the web | `01-research/competitors-additional.md`, more `competitor-<slug>.md` | competitors |
-| pains-reviews | Store reviews of competitors, mined for complaints that map to the Product's wedge | `01-research/review-mining.md` | customer-research method |
-| pains-communities | Reddit, YouTube, and Hacker News through `gp-last30days`, in people's own words | `01-research/pain-points.md` | customer-research method |
+| pains-reviews | Store reviews of competitors, mined for complaints that map to the Product's wedge | `01-research/review-mining.md` | none; the customer-research method goes in the task |
+| pains-communities | Reddit, YouTube, and Hacker News through `gp-last30days`, in people's own words | `01-research/pain-points.md` | none; the customer-research method goes in the task |
 | economics | Category economics with sourced benchmarks: pricing, conversion, retention | `01-research/category-economics.md`, `01-research/pricing.md` | pricing |
 | aso | App Store keyword landscape (apps only) | `01-research/aso-landscape.md` | aso |
 | channels | Where this ICP pays attention, and which channels give a zero-audience founder signal fastest, with fetched sources | `01-research/channel-evidence.md` | marketing-plan, launch |
-| creators | Creators and communities around the problem | `01-research/creator-landscape.md` | influencer-marketing method |
+| creators | Creators and communities around the problem | `01-research/creator-landscape.md` | none; the influencer-marketing checklist goes in the task |
 | names | Collisions for the current name and any candidates: App Store, domains, web | `01-research/name-collisions.md` | none |
 
 Finally `01-research/pain-points.md` ranks the pains by how often they recur across all sources; its top pains seed the Angles.

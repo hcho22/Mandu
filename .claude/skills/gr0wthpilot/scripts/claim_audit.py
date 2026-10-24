@@ -33,7 +33,11 @@ details are never invented; guesses are labeled):
    attribution, as the next line is in Markdown); a link elsewhere on the
    page does not count.
 3. A page's structured data (JSON-LD, microdata, or RDFa) carries no rating
-   or review at all, cited or not: a Product has none before launch.
+   or review, cited or not: a Product has none before launch. The audit
+   refuses a rating or review property (aggregateRating, review, reviews,
+   reviewRating, ratingValue, ratingCount, reviewCount) and a node typed as
+   one of schema.org's Review or Rating types or their subtypes, named in
+   RATING_TYPES, or any type whose name ends in Review or Rating.
 
 Usage: claim_audit.py PACKAGE [--json]
 """
@@ -87,6 +91,10 @@ SKIP_NAMES = {"sources.md", "sources-exempt.md", gc.JOURNAL_NAME, gc.AUDIT_NAME,
 SCAN_SUFFIXES = {".md", ".html", ".htm", ".txt"}
 RATING_PROPERTIES = {"aggregaterating", "review", "reviews", "reviewrating", "ratingvalue", "ratingcount",
                      "reviewcount"}
+# schema.org's Review and Rating types and their subtypes, some of whose names
+# end in neither word, and any other type whose name does.
+RATING_TYPES = {"review", "claimreview", "criticreview", "employerreview", "mediareview", "recommendation",
+                "userreview", "rating", "aggregaterating", "employeraggregaterating", "endorsementrating"}
 RATING_TYPE_ENDINGS = ("review", "rating")
 
 
@@ -194,7 +202,7 @@ def audit_html(pkg, path, text, problems):
             problems.append(finding(pkg, path, 0, ["quote"], quote[0]))
     ratings = sorted({name for kind, name in page.schema_terms
                       if (name.lower() in RATING_PROPERTIES if kind == "property"
-                          else name.lower().endswith(RATING_TYPE_ENDINGS))})
+                          else name.lower() in RATING_TYPES or name.lower().endswith(RATING_TYPE_ENDINGS))})
     if ratings:
         problems.append("%s: structured data carries ratings or reviews (%s); a Product has none before launch, "
                         "so take them out" % (gc.rel(pkg, path), ", ".join(ratings)))

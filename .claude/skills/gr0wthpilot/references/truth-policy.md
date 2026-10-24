@@ -16,7 +16,8 @@ A URL counts as fetched in the run only when the guard's WebFetch log shows a 2x
 WebFetch upgrades http to https and the check compares URLs the same way, without fragments or trailing slashes.
 
 Some URLs in the package are not claims: the Product's own planned site, a schema.org context, an SVG namespace, a font.
-Namespace and font hosts are exempt already; list any other prefix in `sources-exempt.md` with the reason.
+Namespace and font hosts and local addresses (`localhost`, `127.0.0.1`) are exempt already; list any other prefix in `sources-exempt.md` with the reason.
+The check does not look for cited URLs in `sources.md`, `sources-exempt.md`, the `sources.d/` fragments, the raw last30days output, any `.jsonl` file, or the run's machine records (`run-audit.md`, `run-evidence/`, the journal).
 A prefix covers the URLs under it at a path boundary: `https://www.reddit.com/r/testprod/` covers `.../r/testprod/comments/x`, not `.../r/testprodfans/`.
 
 ```
@@ -78,7 +79,7 @@ It reads an HTML page twice: as written, its whole source with attributes and sc
 
 ## What the claim audit refuses
 
-`scripts/claim_audit.py` reads every Markdown, HTML, and text file except `sources.md`, `run-evidence/`, the raw last30days output, and the red team's records in `08-redteam/`, whose ledger it checks on its own.
+`scripts/claim_audit.py` reads every Markdown, HTML, and text file except `sources.md`, `sources-exempt.md`, `run-audit.md`, `run-evidence/`, the raw last30days output, and the red team's records in `08-redteam/`, whose ledger it checks on its own.
 It refuses a sentence, table row, or text block holding any of these with no citation and no label:
 
 - a percentage, a price, a multiplier ("3x");
@@ -89,15 +90,16 @@ It refuses a sentence, table row, or text block holding any of these with no cit
 - a Markdown blockquote with no URL in it or on the line after it, or an HTML `<blockquote>` with no URL, label, or citation link inside it, in its `cite` attribute, or in the `<figcaption>` of the `<figure>` that holds it.
 That caption is where HTML puts a quote's attribution, as the line after the quote is in Markdown; a link elsewhere on the page does not count.
 
-Table cells under a column whose header names, as a whole word, a score, weight, signal, kill criterion, target, threshold, floor, budget, goal, margin, rank, day, slot, duration, length, or size are the run's own numbers and are skipped.
+In a Markdown table, cells under a column whose header names, as a whole word, a score, weight, signal, kill criterion, target, threshold, floor, budget, goal, margin, rank, day, slot, duration, length, or size are the run's own numbers and are skipped.
 A market-size column is the market's numbers, not the run's, and every other column (`Pain points`, `Total ratings`) is checked.
+An HTML table gets no such skip: its cells are read like the rest of its page.
 
 An HTML page is read as its blocks of visible words and also, each on its own, as every attribute a reader, search result, or share card shows and every string in its JSON-LD.
 Those attributes are `alt`, `title`, `aria-label`, `placeholder`, `label`, the `value` a button or text field shows, and the meta title, description, image alt, and site name, `og:` and `twitter:` ones included.
-A block is cited by a URL, label, or link inside that same block.
+A block is cited by a URL, label, `repo:` path, or link inside that same block.
 A block inside a blockquote is also cited by that quote's citation, in the quote, its `cite` attribute, or its figure's caption, as a Markdown quote's lines are by the URL on the line after it.
-An attribute value or a JSON-LD string is cited only by a URL or label inside that same value; a link elsewhere on the page does not cover it.
+An attribute value or a JSON-LD string is cited only by a URL, label, or `repo:` path inside that same value; a link elsewhere on the page does not cover it.
 So a cited stat copied into the meta description, a button, or a FAQ answer in the JSON-LD carries its own URL or label there.
 
 Structured data never carries ratings or reviews, because a Product has none before launch.
-The audit refuses, cited or not, any page whose JSON-LD, microdata, or RDFa holds an `aggregateRating`, `review`, `reviewRating`, `ratingValue`, `ratingCount`, or `reviewCount`, or a node typed `Review`, `AggregateRating`, `Rating`, or a subtype of one.
+The audit refuses, cited or not, any page whose JSON-LD, microdata, or RDFa holds an `aggregateRating`, `review`, `reviewRating`, `ratingValue`, `ratingCount`, or `reviewCount`, or a node typed as one of schema.org's Review or Rating types (`Review`, `ClaimReview`, `CriticReview`, `EmployerReview`, `MediaReview`, `Recommendation`, `UserReview`, `Rating`, `AggregateRating`, `EmployerAggregateRating`, `EndorsementRating`) or any other type whose name ends in `Review` or `Rating`.

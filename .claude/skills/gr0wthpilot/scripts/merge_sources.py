@@ -5,7 +5,8 @@ Parallel agents never write `sources.md` itself, since two of them would race:
 each records the URLs it cites in its own fragment, `sources.d/<name>.md`, one
 line per URL (`- URL - fetched YYYY-MM-DDTHH:MMZ - what it supports`). This
 script merges every fragment into `sources.md`, one section per fragment, in
-name order, dropping exact repeats. Run it after every fan-out; the source
+name order, dropping exact repeats within a fragment; a line two fragments
+both carry stays in each one's section. Run it after every fan-out; the source
 check refuses a fragment entry that `sources.md` does not carry.
 
 Usage: merge_sources.py PACKAGE

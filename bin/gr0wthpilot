@@ -14,14 +14,18 @@
 #   - permission mode dontAsk: anything not allowed is refused, never asked;
 #   - the macOS sandbox confines every shell command's writes to the
 #     Candidate Package and the run's cache folder, and its network to the
-#     hosts last30days reads;
+#     hosts last30days reads, except the gp-sim, gp-xcodebuild, and gp-chrome
+#     wrappers and what they start (simctl, xcodebuild, Chrome, ffmpeg), which
+#     run outside it and enforce their own rules;
 #   - the guard hook checks every tool call, in subagents and Workflow agents
 #     too, and refuses pushes, GitHub and deploy commands, uploads, posting,
 #     connector tools, questions to you, and secret values;
 #   - the guard's own records (its config, this profile, the robots.txt cache,
 #     the tool and fetch logs, and the simulator ledger) sit in
 #     <cache root>/<Product>.guard/, beside the cache folder, where no tool of
-#     the run can write.
+#     the run can write but the guard hook and the unsandboxed wrappers:
+#     gp-sim writes the simulator ledger (simulators.json) and gp-xcodebuild
+#     the build/ folder.
 # What each layer covers, and what none can, is in
 # .claude/skills/gr0wthpilot/references/guardrails.md.
 #

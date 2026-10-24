@@ -70,7 +70,7 @@ class RedTeamTest(unittest.TestCase):
         args = {"package": pkg, "product": "Testprod", "skill": "/skill",
                 "personas": [{"id": "p%d" % i, "who": "persona %d" % i, "attack": "attack"} for i in range(4)]}
         out = run_workflow("redteam.js", args, {"redteam:": findings, "fix:": fixed})
-        self.assertEqual(sorted(l for l in out["labels"] if l.startswith("fix:")), ["fix:03-site", "fix:05-social-pmf"])
+        self.assertEqual(sorted(label for label in out["labels"] if label.startswith("fix:")), ["fix:03-site", "fix:05-social-pmf"])
         self.assertEqual(out["result"]["material"], 2)
 
 
@@ -88,12 +88,12 @@ class SkepticsTest(unittest.TestCase):
 @unittest.skipUnless(shutil.which("node"), "node is not installed")
 class ResearchTest(unittest.TestCase):
     def test_a_lane_whose_researcher_returned_nothing_is_dropped(self):
-        lanes = [{"id": l, "title": "lane %s" % l, "task": "research", "outputs": ["01-research/%s.md" % l]}
-                 for l in ("L1", "L2")]
+        lanes = [{"id": lid, "title": "lane %s" % lid, "task": "research", "outputs": ["01-research/%s.md" % lid]}
+                 for lid in ("L1", "L2")]
         replies = {"research:L1": {"files": ["01-research/L1.md"], "claims": [], "gaps": []}, "research:L2": None}
         out = run_workflow("research.js", {"package": "/p", "product": "Testprod", "skill": "/s", "lanes": lanes},
                            replies)
-        self.assertEqual([l["lane"] for l in out["result"]["lanes"]], ["L1"])
+        self.assertEqual([lane["lane"] for lane in out["result"]["lanes"]], ["L1"])
         self.assertEqual(out["result"]["dropped"], ["L2"])
 
 

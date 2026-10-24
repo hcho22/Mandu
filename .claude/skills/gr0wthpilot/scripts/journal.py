@@ -6,7 +6,7 @@ The journal is `run-journal.json` in the Candidate Package. The launcher
 creates it; this script is the only thing that records a gate, and it records
 one only after that gate's mechanical checks pass and every earlier gate has
 passed. A phase's critic gate also needs the critic's report, written after
-the phase's last work gate, to end with `Verdict: PASS`.
+each of the phase's work gates was first recorded, to end with `Verdict: PASS`.
 
 Usage:
   journal.py status [PACKAGE]
@@ -41,7 +41,7 @@ import claim_audit  # noqa: E402
 GATES = [
     ("product-facts", "read", "The product-facts brief exists and cites the Product's repository"),
     ("research", "1", "Research files, competitor teardowns, and the pain corpus exist; every source was fetched"),
-    ("tournament", "1", "At least 4 blind pitches, 3 judges with differing rubrics, and a scorecard with margins"),
+    ("tournament", "1", "At least 4 blind pitches, 3 judge reports, 3 published rubrics, and a scorecard with margins"),
     ("brand", "1", "Positioning, naming verdict, brand guidelines (fresh-agent gate passed), channel plan, thesis"),
     ("claims-1", "1", "Every load-bearing claim is in the ledger with a skeptic verdict; the claim audit passes"),
     ("critic-1", "1", "The completeness critic passed phase 1"),
@@ -51,7 +51,7 @@ GATES = [
     ("launch-set", "3", "Instagram, X, and TikTok profile assets and first-week posts; brand lint passes"),
     ("video", "3", "The walkthrough video passed ffprobe, its five frames were viewed, and its strip exists"),
     ("critic-3", "3", "The completeness critic passed phase 3"),
-    ("red-team", "4", "The red team ran, its dossier lists at least one material change, and every check re-ran"),
+    ("red-team", "4", "Four persona reports, a dossier with a material change and surviving objections, the checklist"),
     ("critic-4", "4", "The completeness critic passed phase 4"),
     ("package", "5", "Every check passes, the recap links everything, the Handoff entry is written, no simulator is left"),
     ("critic-5", "5", "The completeness critic passed phase 5"),
@@ -137,7 +137,7 @@ def g_video(pkg, cfg):
         spec = gc.read_json(pkg / "04-video" / "gate.json")
     except (OSError, ValueError):
         return ["04-video/gate.json is missing: {\"video\": \"walkthrough.mp4\", \"size\": \"1080x1920\", "
-                "\"min_seconds\": 20, \"max_seconds\": 90}"]
+                "\"min_seconds\": 15, \"max_seconds\": 120}"]
     return check_video.verify(pkg / "04-video" / spec.get("video", "walkthrough.mp4"), spec.get("size", "1080x1920"),
                               int(spec.get("min_seconds", 15)), int(spec.get("max_seconds", 120)))["problems"]
 

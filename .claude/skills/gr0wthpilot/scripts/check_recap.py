@@ -2,7 +2,8 @@
 """Recap check: `recap.html` is the Candidate Package's single front door.
 
 It passes only when:
-- every relative link and image in it resolves to a file in the package, and
+- every relative link and image in it resolves to a file or folder in the
+  package, and
   every #anchor it names exists in the page it points at;
 - it has the sections a reader needs, by id: `naming` (the naming verdict),
   `thesis`, `objection` (the strongest surviving objection, beside the thesis),

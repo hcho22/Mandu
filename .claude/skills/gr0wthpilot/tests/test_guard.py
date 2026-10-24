@@ -390,7 +390,7 @@ class GuardTest(unittest.TestCase):
         self.decide("Read", file_path=str(fixtures.SCRIPTS.parent / "marketingskills" / "copywriting" / "SKILL.md"))
         guard.run_post(self.cfg, {"tool_name": "WebFetch", "tool_input": {"url": "https://a.example/x"},
                                   "tool_response": {"code": 200, "bytes": 10, "result": "ok"}})
-        entries = [json.loads(l) for l in Path(self.cfg["tool_log"]).read_text().splitlines()]
+        entries = [json.loads(line) for line in Path(self.cfg["tool_log"]).read_text().splitlines()]
         self.assertEqual(entries[0]["phase_skill"], "copywriting")
         self.assertEqual({e["run_id"] for e in entries}, {"immerse-run-2"})
         fetch = json.loads(Path(self.cfg["fetch_log"]).read_text().splitlines()[0])
@@ -885,7 +885,8 @@ class WrapperRulesTest(unittest.TestCase):
                     ["-resultBundlePath", str(build / "r.xcresult")],
                     ["-resultStreamPath", str(Path(self.cfg["protected"][0]) / "recap.html")],
                     ["-archivePath", str(work / "a.xcarchive")], ["-someNewOption"], ["docbuild"],
-                    ["-xctestrun", str(build / "x.xctestrun")], ["-downloadAllPlatforms"]):
+                    ["-xctestrun", str(build / "x.xctestrun")], ["-downloadAllPlatforms"],
+                    ["-resolvePackageDependencies"]):
             with self.assertRaises(xb.ToolError, msg=str(bad)):
                 xb.check_args(self.cfg, base + bad + ["build"])
         for good in (["-xcconfig", str(copy / "Config.xcconfig")], ["-testPlan", "Smoke"], ["ONLY_ACTIVE_ARCH=YES"],
@@ -897,7 +898,13 @@ class WrapperRulesTest(unittest.TestCase):
         with mock.patch.dict(os.environ, {"GR0WTHPILOT_CONFIG": str(config)}), \
                 mock.patch.object(xb.subprocess, "call", lambda argv: calls.append(argv) or 0):
             self.assertEqual(xb.main(base + ["build"]), 0)
-        self.assertEqual(calls[0][calls[0].index("-derivedDataPath") + 1], str(build / "DerivedData"))
+            self.assertEqual(xb.main(["-project", str(project), "-list"]), 0)
+            self.assertEqual(xb.main(["-project", str(project), "-showBuildSettings"]), 0)
+            with contextlib.redirect_stderr(io.StringIO()):
+                self.assertEqual(xb.main(["-project", str(project), "-resolvePackageDependencies"]), 1)
+        self.assertEqual(len(calls), 3)
+        for call in calls:
+            self.assertEqual(call[call.index("-derivedDataPath") + 1], str(build / "DerivedData"))
 
     def test_gp_sim_installs_only_an_app_from_the_build_folder(self):
         sim = load_wrapper("gp-sim")

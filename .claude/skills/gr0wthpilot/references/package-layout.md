@@ -46,7 +46,9 @@ One path differs from RepToday's: the launch checklist is `launch-checklist.md` 
 
 ## Files gr0wthlab parses with code
 
-These rules come from gr0wthlab's parsers (`src/gr0wthlab/kit.py`, `results.py`, `weekly_changes.py`, `lint.py`, `shots.py` at `6776dd0`); `check_layout.py` and `brand_lint.py` enforce them.
+These rules come from gr0wthlab's parsers (`src/gr0wthlab/kit.py`, `results.py`, `weekly_changes.py`, `lint.py`, `shots.py` at `6776dd0`).
+`check_layout.py` and `brand_lint.py` fail a package that breaks a rule here unless the rule is tagged or says what the check does instead.
+"(warned)" means `check_layout.py` only prints a warning, which no gate fails on; "(not checked)" means neither script tests it, so it holds only if the run writes it so.
 A table is found by its header: a header cell matches a wanted column when it equals it, starts with it, or contains it, case-insensitively, so keep headers unambiguous.
 
 ### 05-social-pmf/angles.md
@@ -59,12 +61,12 @@ A table with the columns ID, Angle, pain, Hook, Format, Platform, signal, Kill, 
 | P01 | Waiting is the point | "I miss not knowing how the photos came out" (https://www.reddit.com/r/...) | "Shoot now. See it tomorrow." | 15-20s screen record of a real roll developing | TikTok | watched-full rank in the top half of the bank once 10 posts shipped | bottom third on two reads |
 ```
 
-- IDs are `P` and a zero-padded number (`P01`); at least 15 Angles.
+- IDs are `P` and a zero-padded number (`P01`); at least 15 Angles (the check reads any `P` and digits as an ID, so zero-padding is not checked, and skips a row with any other ID).
 - The Hook cell is exactly one straight-quoted string: that is the frozen Hook.
 - The pain cell holds the pain's source URL (https).
-- Platform is `TikTok` or `YouTube Shorts`.
-- Format names a recording gr0wthlab's filming plan knows: founder on camera, screen record, time-lapse, slow motion, demo, pan, or video, optionally after a length like `15-20s`.
-- The signal and Kill cells name metrics gr0wthlab collects: watched-full, viewed versus swiped, % viewed, watch time, saves, shares, likes, profile visits, comments.
+- Platform is `TikTok` or `YouTube Shorts`; the check also passes plain `YouTube`.
+- Format names a recording gr0wthlab's filming plan knows: founder on camera, screen record, time-lapse, slow motion, high-frame-rate, demo, pan, or video, optionally after a length like `15-20s` (warned).
+- The signal and Kill cells name metrics gr0wthlab collects: watched-full, viewed versus swiped, % viewed, watch time, saves, shares, likes, profile visits, comments (not checked; the check only requires each cell to hold at least 8 characters).
 
 ### 05-social-pmf/ab-pairs.md
 
@@ -85,12 +87,13 @@ The heading names `angle P..` and ends with a parenthesis whose second part is t
 A table with Day, Asset, Angle, and a primary-platform column; days 1 to 13 at least, each once.
 A fixed day's Angle cell starts with its Angle ID; a pair leg is written `P01 / AB-1 leg A`, and the pair's Angle must be that day's Angle.
 Exactly one flex day may lack a fixed Angle, and it names exactly one fallback Angle.
-The platform cell is `TikTok` or `YouTube Shorts`.
-An optional `## ... checklist` section lists asset checks as `- ` items; a line that names `creative-log.json` and "killed" states the kill rule.
+The platform cell is `TikTok` or `YouTube Shorts`; the check ignores letter case and also passes plain `YouTube`.
+An optional `## ... checklist` section lists asset checks as `- ` items; a line that names `creative-log.json` and "killed" states the kill rule (not checked).
 
 ### 05-social-pmf/platform-assignment.md
 
 A `## The two test platforms` section holding `### 1. TikTok (primary)` and `### 2. YouTube Shorts (secondary)`, spelled exactly so.
+The check reads any `## ` heading containing "test platforms" and requires each `### <n>. <Name>` under it to name one of the two platforms exactly and the names to match `caption_call_to_action.links` in brand-rules.json; the numbering and the "(primary)" and "(secondary)" tags are not checked.
 
 ### 05-social-pmf/read-the-results.md
 
@@ -100,27 +103,30 @@ It must hold the floor line, for example:
 ### 05-social-pmf/creative-log.json
 
 Pretty-printed JSON, one key per line: an object with a `comment` and an `angles` list, one record per Angle, and only these keys: angle_id, hook, platform, hypothesis, format, preregistered_success_signal, kill_criterion, pain_rank, pain_state, verbatim_quote, pain_source_url, ab_pair, results, status.
+The check also accepts a bare list of records or an object with no `comment`, and of the pretty-printing it checks only the `angle_id` and `status` lines and the closing lines below.
 `angle_id` is the Angle's ID alone or followed by a hyphen (`"P01"` or `"P01-waiting"`, never `"P01_waiting"`), on a line of its own, and the record's `status` line follows it within the same record, because gr0wthlab's kill edits from one to the other.
-Every Angle on the same platform uses the same platform string (`tiktok`, `youtube_shorts`); `status` starts `draft` and `results` is `null`.
+Every Angle on the same platform uses the same platform string (`tiktok`, `youtube_shorts`; the check compares the strings across Angles but not their values); `status` starts `draft` and `results` is `null`.
 The file ends with a `]` line and then a `}` line.
 
 ### 09-extras/marketing-agent/brand-rules.json
 
 The brand lint's one rule source, for this package and for gr0wthlab's post Drafts; an unknown key blocks every Draft.
-Keys: `comment`, `notes`; lists of words or phrases `banned_words_in_hook`, `banned_social_proof_in_hook`, `all_caps_allowlist`, `stock_phrases`, `capped_words`, `invented_proof_terms`, `invented_proof_quantities`, `fake_scarcity`, `lint_allow_phrases`, `loss_framing`, `sponsorship_asks`; `banned_characters_anywhere` (include the em dash); whole numbers `hook_max_words`, `capped_words_per_paragraph`, `long_sentence_words`, `long_sentence_commas`; booleans `hook_must_not_be_question`, `no_emoji_in_hook`, `no_all_caps_words_in_hook`; `pain_source_url_must_start_with` (`"https://"`); `frozen_hooks_exempt_from` (only `hook_max_words` and `banned_words_in_hook`); `required_sections`, `required_disclosure`.
-`caption_call_to_action` is `{"line": "Join the waitlist: {link}", "links": {"TikTok": "<site>/tiktok", "YouTube Shorts": "<site>/youtube"}}`: one line with `{link}` once, links keyed exactly by the two platforms, bare addresses whose last part is a Waitlist Source tag, a different one per platform.
+Keys: `comment`, `notes`; lists of words or phrases `banned_words_in_hook`, `banned_social_proof_in_hook`, `all_caps_allowlist`, `stock_phrases`, `capped_words`, `invented_proof_terms`, `invented_proof_quantities`, `fake_scarcity`, `lint_allow_phrases`, `loss_framing`, `sponsorship_asks`; `banned_characters_anywhere` (include the em dash; not checked, as the check requires only non-blank strings); whole numbers `hook_max_words`, `capped_words_per_paragraph`, `long_sentence_words`, `long_sentence_commas`; booleans `hook_must_not_be_question`, `no_emoji_in_hook`, `no_all_caps_words_in_hook`; `pain_source_url_must_start_with` (`"https://"`; the check passes any non-empty string); `frozen_hooks_exempt_from` (only `hook_max_words` and `banned_words_in_hook`); `required_sections`, `required_disclosure`.
+`caption_call_to_action` is `{"line": "Join the waitlist: {link}", "links": {"TikTok": "<site>/tiktok", "YouTube Shorts": "<site>/youtube"}}`: one line with `{link}` once, links keyed exactly by the two platforms, bare addresses whose last part is a Waitlist Source tag (not checked: `brand_lint.py` compares the tags only when given the Waitlist's Source tags, and no gate gives them), a different one per platform.
 Each link is a domain with its top-level domain and no scheme (`immerse.app/tiktok`, not `immerse/tiktok`), as gr0wthlab's lint reads a link; one it cannot read as a link blocks every Draft.
 Every field of post copy, not only a Hook, is refused for a question mark when `hook_must_not_be_question` is true, as gr0wthlab's lint refuses it.
-Derive the lists from the brand guidelines' voice rules and the category's forbidden claims.
+Derive the lists from the brand guidelines' voice rules and the category's forbidden claims (not checked).
 
 ### 08-redteam/pre-publication-checklist.md
 
 Items at column 0, `- [ ] **Title** what to do (blocking: scope)`, continuation lines indented two spaces.
-An open item whose scope starts "everything public" or "social" and names no claim blocks every gr0wthlab post Draft until the Founder closes it; use that scope only for what truly must come first, such as the Waitlist going live.
+The check fails a checklist with no column-0 items and warns on an item with no bold title; it does not check the `(blocking: scope)` part or the continuation lines.
+An open item whose scope starts "everything public" or "social" and names no claim blocks every gr0wthlab post Draft until the Founder closes it (warned); use that scope only for what truly must come first, such as the Waitlist going live.
 
 ### 01-research/competitor-*.md
 
 See `research.md`: each starts `# Competitor Teardown: <Name>` and cites the US App Store page.
+The check requires only that at least one competitor name can be read across these files; the App Store citation is not checked.
 
 ## Files gr0wthlab reads as text
 

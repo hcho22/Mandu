@@ -142,7 +142,7 @@ Show real screens only; never show a screen the Product does not have, and never
 2. For missing shots and the walkthrough recording, build the Product and drive it in a simulator the run creates:
    `gp-xcodebuild source` (a copy of the repo's committed tree in the guard's build folder, which the preflight prints as `build`), then `gp-xcodebuild` on that copy, then `gp-sim create`, `boot`, `install` (the app from `<build>/DerivedData/`), `launch`, and `screenshot` or `record-start` / `record-stop`.
    Drive the app only through its own UI tests or the launch arguments its repository documents.
-3. `gp-sim cleanup` shuts down and deletes every simulator this run created, and touches no other.
+3. `gp-sim cleanup` shuts down and deletes every simulator in the Product's ledger, which is kept per Product and so holds what any run of this Product created, and touches no other.
    Run it at the end of phase 3, at the end of the run, and whenever a simulator step fails.
 
 Details, including a Product that is not an iOS app, are in `references/app-screens.md`.
@@ -163,7 +163,7 @@ It holds, each fact with its `repo:` citation:
 - Which `.env` keys exist, by name only.
 - What gr0wthlab already knows of this Product, read only from its registry (for example Immerse is listening-only today).
 
-Start `decisions-log.md` and `sources.d/`, then pass the gate: `python3 <skill>/scripts/journal.py pass product-facts`.
+Start `decisions-log.md` and `sources.d/`, build `sources.md` from the fragments with `python3 <skill>/scripts/merge_sources.py <package>` (the gate requires it), then pass the gate: `python3 <skill>/scripts/journal.py pass product-facts`.
 
 ## The arc
 
@@ -194,7 +194,7 @@ Ship two hero variants, `03-site/index.html` and `index-b.html`, for the top two
 The Waitlist form is local, with no live backend, and asks the Product's Fit question.
 Add structured data with no ratings or reviews, a conversion review, an AI-search review, and `06-channels/event-metric-schema.md`: the events worth defining before launch, with no tracking installed and no data warehouse.
 
-Gate `site`: `gp-chrome screenshot` each variant at 390x844 and 1440x900 into `03-site/screenshots/<page>-<W>x<H>.png`, `gp-chrome measure` each at both widths into `<page>-<W>.json`, view every screenshot, and write what you saw in `03-site/screenshot-gate.md`.
+Gate `site`: `gp-chrome screenshot` each variant at 390x844 and 1440x900 into `03-site/screenshots/<page>-<W>x<H>.png`, `gp-chrome measure` each at both viewports, which only prints one JSON line, and save that line with the Write tool as `03-site/screenshots/<page>-<W>.json` (a wrapper runs on its own, so the guard refuses a redirect), view every screenshot, and write what you saw in `03-site/screenshot-gate.md`.
 A broken layout at either width fails; fix it and shoot again.
 Then `critic-2`.
 
@@ -219,7 +219,9 @@ The exact formats gr0wthlab parses are in `references/package-layout.md`; gate `
 The Launch Set (in `10-launch-set/`), which the Founder posts by hand on Instagram, X, and TikTok: profile image, banner where the platform has one, bio, and first-week posts with captions and alt text, carousels as rendered PNGs, every size taken from the platform's own help page fetched in this run and recorded in `10-launch-set/manifest.json`.
 Gate `launch-set` also runs the brand lint.
 
-The walkthrough video (in `04-video/`), from real screens only: a script, the build, `scripts/check_video.py prepare`, then view every frame it extracts at 0, 25, 50, 75, and 100% and write what you saw in `gate-report.md`, with what the audio is.
+The walkthrough video (in `04-video/`), from real screens only: a script (`script.md`), the build, `scripts/check_video.py prepare`, then view every frame it extracts at 0, 25, 50, 75, and 100% and write what you saw in `gate-report.md`, with what the audio is.
+Write `04-video/gate.json`, which gate `video` refuses to run without: `{"video": "walkthrough.mp4", "size": "1080x1920", "min_seconds": 15, "max_seconds": 120}`, the defaults for any key it leaves out.
+The gate checks that video, in `04-video/`, with ffprobe for that exact size, a duration inside that range, and an audio stream.
 Gate `video`, after `gp-sim cleanup`; then `critic-3`.
 
 A creator shortlist from the `influencer-marketing` vetting checklist goes in `06-channels/`.
