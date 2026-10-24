@@ -327,7 +327,7 @@ def check_competitors(pkg, problems):
                 names.append(m.group(1))
             m = re.match(r"## \d+\. (.+)$", line)
             if m:
-                nxt = next((l for l in lines[i + 1:] if l.strip()), "")
+                nxt = next((rest for rest in lines[i + 1:] if rest.strip()), "")
                 if nxt.startswith("Source:"):
                     names.append(m.group(1))
             if line.startswith("Scope:"):

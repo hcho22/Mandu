@@ -38,7 +38,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 import gp_common as gc  # noqa: E402
-from gp_tools import ToolError, load_config, inside, require_inside  # noqa: E402
+from gp_tools import ToolError, load_config, require_inside  # noqa: E402
 
 SIMCTL = ["/usr/bin/xcrun", "simctl"]
 MAX_DEVICES = 2
