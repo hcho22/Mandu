@@ -39,6 +39,34 @@ Mandu handing development work on a Project to firstmate, which carries it out a
 **Account action**:
 Something Mandu does in one of hcho's external accounts, such as email, calendar, or a job application, that other people can see or that is hard to undo.
 
+**Gr0wthPilot**:
+The Mandu skill that takes one of hcho's existing Products and writes its Candidate Package, which hcho may hand to gr0wthlab.
+hcho starts each run himself with `bin/gr0wthpilot <Product>`; a run asks him nothing, spends nothing new, publishes nothing, and states no fact it did not fetch.
+_Avoid_: "marketing agent", which names the dry-run creative loop in RepToday's package and is easily confused with gr0wthlab.
+
+**Go-To-Market Package**:
+A Product's approved marketing decisions in `projects/<Product>/gtm/`, such as its positioning, approved claims, banned language, and Angles, which gr0wthlab reads.
+It changes only when hcho approves a proposed change, or whole at a Handoff.
+
+**Candidate Package**:
+What a Gr0wthPilot run writes for a Product: a complete, proposed Go-To-Market Package that nothing reads or acts on yet.
+For a Product already handed off, a run writes it beside the live package, in a dated `gtm-candidate-<date>/` folder, and never over it.
+_Avoid_: calling it the Go-To-Market Package before Handoff, or a Draft, which is a single post or message.
+
+**Handoff**:
+hcho's word that a Candidate Package is approved ("<Product> - hand to gr0wthlab"), which makes it the Product's Go-To-Market Package; firstmate then adds the Product to gr0wthlab's product list through a reviewed gr0wthlab change.
+Without his word there is no Handoff, however well the Candidate Package passed its own checks.
+For a Product already handed off, a Handoff replaces its package whole, only between 14-day windows, and only once gr0wthlab can take a replacement package.
+
+**Launch Set**:
+The one-off, ready-to-post first-week posts and profile assets a Candidate Package carries for Instagram, X, and TikTok, which hcho posts by hand.
+gr0wthlab never operates them.
+
+**Test Kit**:
+The 14-day set of pre-registered posting experiments in a Candidate Package, each an Angle with its Hook pairs, success signal, and kill criterion, on the platforms gr0wthlab runs, today TikTok and YouTube Shorts.
+It is the part of the package gr0wthlab operates after Handoff.
+_Avoid_: calling the Launch Set's posts part of the Test Kit.
+
 **Master profile**:
 hcho's single source of truth for job applications: a ledger of Claims, each backed by evidence.
 Every resume and cover note is assembled from it.
@@ -79,6 +107,8 @@ Volunteer work is project-scale even when done on a team.
 - A statement with neither Linked nor Attested **Evidence** is not a **Claim** and cannot enter the **Master profile**.
 - A **Capture** never records a decision on a gr0wthlab Review Queue item or anything else hcho did for gr0wthlab; he gives those on gr0wthlab's own sitting page, gr0wthlab keeps them, and Mandu only reads them.
 - A **Dispatch** from gr0wthlab starts only from a Dispatch request that gr0wthlab's queue closed as approved and whose decision record says approve; Mandu does not hand it to firstmate itself, but gives the request to hcho to pass to firstmate, and writes nothing outside Mandu.
+- A **Gr0wthPilot** run writes only its **Candidate Package** in `projects/<Product>/` and reads the Product's own repository without changing it; it never writes into a live **Go-To-Market Package**.
+- A **Candidate Package** becomes a **Go-To-Market Package** only at a **Handoff**; its **Test Kit** is what gr0wthlab then runs, and its **Launch Set** stays hcho's to post.
 - Mandu prepares an **Application packet** but never submits it; submitting is an **Account action** hcho takes himself.
 - Work from June 2025 onward requires Linked **Evidence**; Attested **Evidence** is reserved for earlier work and for coursework awaiting its certificate.
 - Independent work is described once as built solo by directing AI coding agents; a **Claim** then says "built" only for work hcho can explain, how and why, without notes in an interview, and a Claim he would need to study first is not used until he has.
