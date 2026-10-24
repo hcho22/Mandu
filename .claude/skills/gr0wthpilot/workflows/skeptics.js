@@ -44,19 +44,19 @@ ${RULES}`,
       ),
     ),
   ).then(votes => {
-    const v = votes.filter(Boolean)
-    const refuted = v.filter(x => x.verdict === 'REFUTED')
-    const weakened = v.filter(x => x.verdict === 'WEAKENED')
+    if (votes.filter(Boolean).length < LENSES.length) return null
+    const refuted = votes.filter(x => x.verdict === 'REFUTED')
+    const weakened = votes.filter(x => x.verdict === 'WEAKENED')
     // The source lens refuting is decisive: a claim its own source does not support cannot stand.
-    const sourceRefutes = votes[0] && votes[0].verdict === 'REFUTED'
+    const sourceRefutes = votes[0].verdict === 'REFUTED'
     const verdict = sourceRefutes || refuted.length >= 2 ? 'REFUTED' : refuted.length || weakened.length ? 'WEAKENED' : 'STANDS'
-    return { ...c, verdict, votes: v, corrected: (weakened[0] || refuted[0] || {}).corrected_wording || '' }
+    return { ...c, verdict, votes, corrected: (weakened[0] || refuted[0] || {}).corrected_wording || '' }
   }),
 )
 
 const rows = judged.filter(Boolean)
-const missing = A.claims.length - rows.length
-if (missing) log(`${missing} claim(s) got no verdict; rerun them before the claims gate`)
+const missing = A.claims.filter((c, i) => !judged[i]).map(c => c.id)
+if (missing.length) log(`${missing.length} claim(s) got no verdict (${missing.join(', ')}); rerun them before the claims gate`)
 phase('Ledger')
 await agent(
   `Update Gr0wthPilot's claims ledger ${P}/08-redteam/claims-ledger.md for ${A.product}.
@@ -73,4 +73,5 @@ return {
     refuted: rows.filter(r => r.verdict === 'REFUTED').length,
   },
   verdicts: rows.map(r => ({ id: r.id, verdict: r.verdict, corrected: r.corrected })),
+  missing,
 }

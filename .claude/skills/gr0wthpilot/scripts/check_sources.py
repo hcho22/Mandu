@@ -87,35 +87,41 @@ def parse_exempt(pkg):
     return prefixes, problems
 
 
-def default_logs(pkg, name):
+def run_config():
+    config = os.environ.get("GR0WTHPILOT_CONFIG")
+    return gc.read_json(Path(config)) if config and Path(config).is_file() else None
+
+
+def default_logs(pkg, name, cfg):
     """During a run, only the live log its config names, which for WebFetch is
     the guard's own record; with no run config, the copy audit_run.py made in
-    `run-evidence/`."""
-    config = os.environ.get("GR0WTHPILOT_CONFIG")
-    if config and Path(config).is_file():
-        return [Path(gc.read_json(Path(config))[gc.RUN_LOGS[name]])]
-    return [pkg / "run-evidence" / name]
+    `run-evidence/`, which holds only that run's records."""
+    return [Path(cfg[gc.RUN_LOGS[name]])] if cfg else [pkg / "run-evidence" / name]
 
 
-def read_jsonl(paths):
+def read_jsonl(paths, run_id=None):
+    """The records in these logs; with a run id, only that run's (the logs
+    are kept per Product, so they also hold earlier runs' records)."""
     for path in paths:
         if not Path(path).is_file():
             continue
         for line in Path(path).read_text(encoding="utf-8").splitlines():
             try:
-                yield json.loads(line)
+                record = json.loads(line)
             except ValueError:
                 continue
+            if isinstance(record, dict) and (not run_id or record.get("run_id") == run_id):
+                yield record
 
 
-def fetched_urls(fetch_logs, l30_logs):
+def fetched_urls(fetch_logs, l30_logs, run_id=None):
     """Return {normalized url: [codes]} from the guard's WebFetch log, plus
-    URLs inside verified last30days output (code 200)."""
+    URLs inside verified last30days output (code 200), for this run only."""
     seen = {}
-    for record in read_jsonl(fetch_logs):
+    for record in read_jsonl(fetch_logs, run_id):
         if record.get("url"):
             seen.setdefault(https(record["url"]), []).append(record.get("code"))
-    for record in read_jsonl(l30_logs):
+    for record in read_jsonl(l30_logs, run_id):
         for f in record.get("files") or []:
             p = Path(f.get("path", ""))
             if not p.is_file():
@@ -145,8 +151,10 @@ def check(pkg, fetch_logs=None, l30_logs=None):
     entries, problems = parse_sources(pkg)
     exempt, more = parse_exempt(pkg)
     problems += more
-    fetched = fetched_urls(fetch_logs or default_logs(pkg, "fetch-log.jsonl"),
-                           l30_logs or default_logs(pkg, "last30days-log.jsonl"))
+    cfg = run_config()
+    fetched = fetched_urls(fetch_logs or default_logs(pkg, "fetch-log.jsonl", cfg),
+                           l30_logs or default_logs(pkg, "last30days-log.jsonl", cfg),
+                           cfg.get("run_id") if cfg else None)
     for key, rows in sorted(entries.items()):
         codes = fetched.get(key)
         where = "sources.md:%d" % rows[0]["line"]

@@ -29,6 +29,7 @@ import claim_audit
 import gp_common as gc
 import journal
 
+FETCHED = fixtures.FETCHED
 REGISTRY = str(fixtures.SCRIPTS.parent / "references" / "registry-template.json")
 
 
@@ -135,6 +136,30 @@ class SourcesTest(unittest.TestCase):
             os.environ.pop("GR0WTHPILOT_CONFIG", None)
             self.assertEqual(check_sources.check(pkg)["problems"], [])
 
+    def test_a_rerun_counts_only_its_own_fetches(self):
+        import hashlib
+        pkg = fixtures.package()
+        state = Path(tempfile.mkdtemp(prefix="gp-state-"))
+        records = [dict(json.loads(line), run_id="run-1" if fixtures.URLS["stat"] in line else "run-2")
+                   for line in (pkg / "run-evidence" / "fetch-log.jsonl").read_text().splitlines()]
+        (state / "fetch-log.jsonl").write_text("".join(json.dumps(r) + "\n" for r in records))
+        reddit = "https://www.reddit.com/r/film/comments/abc/"
+        raw = fixtures.write(pkg, "01-research/last30days/raw.md", "Thread: %s\n" % reddit)
+        with open(str(pkg / "sources.md"), "a") as handle:
+            handle.write("- %s - fetched 2026-10-24T11:00Z - a Reddit pain\n" % reddit)
+        (state / "last30days-log.jsonl").write_text(json.dumps({"run_id": "run-1", "files": [
+            {"path": str(raw), "sha256": hashlib.sha256(raw.read_bytes()).hexdigest()}]}) + "\n")
+        config = state / "guard-config.json"
+        gc.write_json(config, {"run_id": "run-2", "fetch_log": str(state / "fetch-log.jsonl"),
+                               "last30days_log": str(state / "last30days-log.jsonl")})
+        with mock.patch.dict(os.environ, {"GR0WTHPILOT_CONFIG": str(config)}):
+            problems = check_sources.check(pkg)["problems"]
+            self.assertTrue(has(problems, r"research.example.org/report was not fetched"))
+            self.assertTrue(has(problems, r"reddit.com/r/film/comments/abc/? was not fetched"))
+            gc.write_json(config, {"run_id": "run-1", "fetch_log": str(state / "fetch-log.jsonl"),
+                                   "last30days_log": str(state / "last30days-log.jsonl")})
+            self.assertFalse(has(check_sources.check(pkg)["problems"], r"reddit.com/r/film/comments/abc/? was not"))
+
     def test_last30days_output_counts_only_when_its_hash_matches(self):
         import hashlib
         pkg = fixtures.package()
@@ -196,6 +221,26 @@ class ClaimAuditTest(unittest.TestCase):
         pkg = fixtures.package()
         fixtures.write(pkg, "06-channels/q.md", "> I would pay for this in a heartbeat\n")
         self.assertTrue(has(claim_audit.check(pkg)["problems"], r"q.md:1: quote"))
+
+    def test_an_html_stat_is_cited_only_by_its_own_links(self):
+        pkg = fixtures.package()
+        fixtures.write(pkg, "03-site/index.html",
+                       '<!doctype html><html><head><link href="https://fonts.googleapis.com/css2?family=Inter" '
+                       'rel="stylesheet"><script type="application/ld+json">{"@context": "https://schema.org"}'
+                       '</script></head><body><h1>Loved by 10,000 photographers. 87%% of users print more.</h1>'
+                       '<ul><li><a href="%s">Alpha Camera</a> charges $2.99 a month.</li></ul></body></html>'
+                       % fixtures.URLS["comp_a"])
+        problems = claim_audit.check(pkg)["problems"]
+        self.assertTrue(has(problems, r"index.html: .*Loved by 10,000 photographers"))
+        self.assertFalse(has(problems, r"Alpha Camera charges"))
+
+    def test_red_team_records_are_not_scanned_for_stats(self):
+        pkg = fixtures.package()
+        fixtures.write(pkg, "08-redteam/dossier.md", "# Dossier\n\n## Material changes\n\n- Site hero: before "
+                                                     "'loved by 10,000 photographers', after 'a camera that waits'.\n\n"
+                                                     "## Surviving objections\n\n- Copyable.\n")
+        fixtures.write(pkg, "08-redteam/redteam-user.md", "# User\n\n- user-1: '87% of users print more' is unsourced.\n")
+        self.assertEqual(claim_audit.check(pkg)["problems"], [])
 
     def test_html_stat_needs_citation(self):
         pkg = fixtures.package()
@@ -502,12 +547,21 @@ class AuditTest(unittest.TestCase):
         pkg = fixtures.package()
         state = Path(tempfile.mkdtemp(prefix="gp-state-"))
         refused = [
-            {"event": "pre", "tool": "WebFetch", "input": "https://blocked.example.net/pricing", "decision": "deny",
+            {"run_id": "testprod-1", "event": "pre", "tool": "WebFetch", "input": "https://blocked.example.net/pricing",
+             "decision": "deny",
              "reason": "https://blocked.example.net/robots.txt disallows https://blocked.example.net/pricing"},
-            {"event": "pre", "tool": "Bash", "input": "awk -F= '{print $1}' /repo/.env", "decision": "deny",
-             "reason": "reading a .env file can print secret values"},
+            {"run_id": "testprod-1", "event": "pre", "tool": "Bash", "input": "awk -F= '{print $1}' /repo/.env",
+             "decision": "deny", "reason": "reading a .env file can print secret values"},
+            {"run_id": "testprod-0", "event": "pre", "tool": "Bash", "input": "gh pr create", "decision": "deny",
+             "reason": "an earlier run's refusal"},
         ]
         (state / "tool-log.jsonl").write_text("".join(json.dumps(r) + "\n" for r in refused))
+        fetches = [dict(json.loads(line), run_id="testprod-1")
+                   for line in (pkg / "run-evidence" / "fetch-log.jsonl").read_text().splitlines()]
+        (state / "fetch-log.jsonl").write_text("".join(json.dumps(r) + "\n" for r in fetches))
+        gc.write_json(state / "simulators.json", {"devices": [
+            {"udid": "OLD", "name": "Gr0wthPilot-Testprod-1", "run_id": "testprod-0", "deleted_at": FETCHED},
+            {"udid": "NEW", "name": "Gr0wthPilot-Testprod-2", "run_id": "testprod-1", "deleted_at": FETCHED}]})
         cfg = {"package": str(pkg), "product": fixtures.PRODUCT, "package_rel": "projects/Testprod/gtm",
                "run_id": "testprod-1", "tool_log": str(state / "tool-log.jsonl"),
                "fetch_log": str(state / "fetch-log.jsonl"), "last30days_log": str(state / "last30days-log.jsonl"),
@@ -516,6 +570,10 @@ class AuditTest(unittest.TestCase):
             os.environ.pop("GR0WTHPILOT_CONFIG", None)
             self.assertEqual(audit_run.summarize(cfg)["denied"], 2)
             self.assertIn("blocked.example.net/pricing", (pkg / gc.AUDIT_NAME).read_text())
+            copied = [json.loads(l) for l in (pkg / "run-evidence" / "tool-log.jsonl").read_text().splitlines()]
+            self.assertEqual({r["run_id"] for r in copied}, {"testprod-1"})
+            devices = json.loads((pkg / "run-evidence" / "simulators.json").read_text())["devices"]
+            self.assertEqual([d["udid"] for d in devices], ["NEW"])
             self.assertEqual(check_sources.check(pkg)["problems"], [])
             self.assertEqual(claim_audit.check(pkg)["problems"], [])
 
@@ -566,6 +624,18 @@ class JournalTest(unittest.TestCase):
         pkg = fixtures.package()
         (pkg / "08-redteam/dossier.md").write_text("# Dossier\n\n## Material changes\n\nNone.\n\n## Surviving objections\n\n- x\n")
         self.assertTrue(has(journal.g_red_team(pkg, {}), r"performed, not ran"))
+
+    def test_a_passed_gate_is_checked_again(self):
+        pkg = fixtures.package()
+        for gate in journal.GATE_IDS[:journal.GATE_IDS.index("site") + 1]:
+            if gate.startswith("critic-"):
+                os.utime(str(pkg / "08-redteam" / ("critic-phase-%s.md" % gate[-1])), None)
+            self.assertEqual(self.run_gate(pkg, gate), 0, gate)
+        self.assertEqual(self.run_gate(pkg, "site"), 0)
+        (pkg / "03-site" / "screenshots" / "index-390x844.png").unlink()
+        self.assertEqual(self.run_gate(pkg, "site"), 1)
+        gates = [g["id"] for g in json.loads((pkg / "run-journal.json").read_text())["gates"]]
+        self.assertEqual(gates.count("site"), 1)
 
     def test_complete_refuses_before_the_last_gate(self):
         pkg = fixtures.package()

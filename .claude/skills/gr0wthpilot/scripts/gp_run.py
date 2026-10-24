@@ -4,12 +4,13 @@ run journal, and write the permission profile and guard config the launcher
 starts Claude Code with.
 
 Under the cache root, a run has two folders: `<Product>/`, its cache folder,
-which the run writes (workflow copies, scratch, the source copy, builds, the
-last30days log), and `<Product>.guard/`, the guard's own records (its config,
-the permission profile, the robots.txt cache, the tool and fetch logs, and the
-simulator ledger), which no tool of the run can write: it is outside the
-sandbox's writable folders and the profile's edit rules, and the guard
-refuses writes there. Only the guard hook and the unsandboxed wrappers write it.
+which the run writes (workflow copies, scratch, the last30days log), and
+`<Product>.guard/`, the guard's own records (its config, the permission
+profile, the robots.txt cache, the tool and fetch logs, the simulator ledger,
+and `build/`: the verified source copy gp-xcodebuild builds and its
+DerivedData), which no tool of the run can write: it is outside the sandbox's
+writable folders and the profile's edit rules, and the guard refuses writes
+there. Only the guard hook and the unsandboxed wrappers write it.
 
 The launcher (`bin/gr0wthpilot <Product>` at Mandu's root) calls `prepare`; the
 skill calls `preflight` as its first step, which fails unless this run's guard
@@ -480,6 +481,7 @@ def prepare(args) -> dict:
         "run_id": journal["run_id"],
         "work": str(work),
         "state": str(state),
+        "build": str(state / "build"),
         "workflows_dir": str(work / "workflows"),
         "skill_dir": str(gc.SKILL_DIR),
         "env_files": env_files(mandu, Path(target["product_dir"]), repo),
@@ -534,6 +536,7 @@ def preflight(args) -> int:
         "handoff_line": cfg.get("handoff_line"),
         "repo": cfg.get("repo"),
         "work": cfg["work"],
+        "build": cfg.get("build"),
         "workflows_dir": cfg.get("workflows_dir"),
         "protected": cfg.get("protected") or [],
         "run_id": journal.get("run_id"),

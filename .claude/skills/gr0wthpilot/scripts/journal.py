@@ -10,7 +10,7 @@ the phase's last work gate, to end with `Verdict: PASS`.
 
 Usage:
   journal.py status [PACKAGE]
-  journal.py pass GATE [PACKAGE]
+  journal.py pass GATE [PACKAGE]     (a gate passed earlier is checked again, not recorded again)
   journal.py workflow --phase PHASE --name NAME [--run-id ID] [--agents N] [PACKAGE]
   journal.py note TEXT [PACKAGE]
   journal.py complete [PACKAGE]
@@ -283,11 +283,18 @@ def main(argv=None):
         return 1
     if args.cmd == "pass":
         nxt = next_gate(journal)
+        passed = [g["id"] for g in journal.get("gates", [])]
+        if args.gate in passed:
+            problems = CHECKS[args.gate](pkg, cfg)
+            for problem in problems:
+                print("FAIL " + problem)
+            if problems:
+                print("FAIL: gate %s passed earlier, but its checks fail now (%d problem(s)); fix them"
+                      % (args.gate, len(problems)))
+                return 1
+            print("PASS: gate %s passed earlier and its checks still pass" % args.gate)
+            return 0
         if not nxt or nxt[0] != args.gate:
-            passed = [g["id"] for g in journal.get("gates", [])]
-            if args.gate in passed:
-                print("%s already passed" % args.gate)
-                return 0
             print("FAIL gates pass in order; the next gate is %s" % (nxt[0] if nxt else "none"))
             return 1
         problems = CHECKS[args.gate](pkg, cfg)

@@ -6,7 +6,9 @@ inside it), so it enforces the run's simulator rules itself:
   - it creates devices only under the name Gr0wthPilot-<Product>-<n>, records
     each in the run's ledger, and touches no device the ledger does not hold;
   - at most two run devices exist and one is booted at a time, to spare the Mac;
-  - files it writes land only in the Candidate Package or the run's cache folder.
+  - files it writes land only in the Candidate Package or the run's cache folder;
+  - it installs only an app gp-xcodebuild built in the guard's build folder,
+    which no tool of the run can write, since the simulator runs it unsandboxed.
 
 Commands:
   gp-sim list
@@ -145,8 +147,8 @@ def cmd_create(cfg, args):
         n += 1
     name = "%s%d" % (prefix(cfg), n)
     udid = simctl(["create", name, device_type, runtime]).stdout.strip()
-    ledger["devices"].append({"udid": udid, "name": name, "device_type": device_type,
-                              "runtime": runtime, "created_at": gc.iso_z(gc.utc_now())})
+    ledger["devices"].append({"udid": udid, "name": name, "device_type": device_type, "runtime": runtime,
+                              "run_id": cfg.get("run_id"), "created_at": gc.iso_z(gc.utc_now())})
     write_ledger(cfg, ledger)
     print(json.dumps({"udid": udid, "name": name, "device_type": device_type, "runtime": runtime}))
 
@@ -218,7 +220,7 @@ def out_path(cfg, path):
 
 def cmd_install(cfg, args):
     owned(cfg, args[0])
-    app = require_inside(cfg, args[1], "app", roots=("work",))
+    app = require_inside(cfg, args[1], "app", roots=("build",))
     simctl(["install", args[0], str(app)])
     print("installed %s" % app.name)
 

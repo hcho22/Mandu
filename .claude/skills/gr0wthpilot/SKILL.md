@@ -140,7 +140,7 @@ Show real screens only; never show a screen the Product does not have, and never
 
 1. First use the Product's own recorded test evidence (for Immerse, the PNGs under `Evidence/`), copied into the package with a `screens-manifest.md` row per image giving its `repo:path` and the commit.
 2. For missing shots and the walkthrough recording, build the Product and drive it in a simulator the run creates:
-   `gp-xcodebuild source` (a copy of the repo's committed tree in the cache folder), then `gp-xcodebuild` on that copy, then `gp-sim create`, `boot`, `install`, `launch`, and `screenshot` or `record-start` / `record-stop`.
+   `gp-xcodebuild source` (a copy of the repo's committed tree in the guard's build folder, which the preflight prints as `build`), then `gp-xcodebuild` on that copy, then `gp-sim create`, `boot`, `install` (the app from `<build>/DerivedData/`), `launch`, and `screenshot` or `record-start` / `record-stop`.
    Drive the app only through its own UI tests or the launch arguments its repository documents.
 3. `gp-sim cleanup` shuts down and deletes every simulator this run created, and touches no other.
    Run it at the end of phase 3, at the end of the run, and whenever a simulator step fails.
@@ -231,6 +231,7 @@ Phase skills: copy-editing.
 Run the red team over the whole package; it attacks, fix lanes rewrite what broke, and `08-redteam/dossier.md` records every finding, its disposition, the material changes with before and after, and the surviving objections, strongest first.
 At least one thing must change materially; if nothing changed, the red team performed rather than ran.
 Re-run the skeptics on any claim the fixes touched, re-shoot screenshots and re-gate the video if their content changed, and do the copy-editing sweep.
+`journal.py pass <gate>` on a gate passed earlier runs its checks again and fails while they fail, so re-gate `site`, `launch-set`, and `video` after fixes that touch them.
 Write `08-redteam/pre-publication-checklist.md`: every act the Founder must do or confirm before anything goes public, in gr0wthlab's checklist format.
 Gates `red-team`, `critic-4`.
 

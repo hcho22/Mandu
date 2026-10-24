@@ -22,13 +22,13 @@ Record each in `<package>/screens-manifest.md`:
 Every simulator step goes through `gp-sim`, every build through `gp-xcodebuild`, each run as a single command (no pipes, chains, or redirections).
 
 ```
-gp-xcodebuild source                          # a copy of the repo's committed tree in the cache folder
+gp-xcodebuild source                          # a verified copy of the repo's committed tree in <build>/source/
 gp-xcodebuild -project <copy>/App/Immerse/Immerse.xcodeproj -scheme Immerse \
   -destination 'generic/platform=iOS Simulator' build
 gp-sim create                                 # Gr0wthPilot-<Product>-1, newest iPhone Pro, newest iOS
 gp-sim boot <udid>
 gp-sim status-bar <udid>                      # 9:41, full signal, full battery
-gp-sim install <udid> <cache>/DerivedData/Build/Products/Debug-iphonesimulator/Immerse.app
+gp-sim install <udid> <build>/DerivedData/Build/Products/Debug-iphonesimulator/Immerse.app
 gp-sim launch <udid> <bundle id> [-- launch arguments the repo documents]
 gp-sim screenshot <udid> <package>/04-video/screens/<name>.png
 gp-sim record-start <udid> <package>/04-video/raw/walkthrough.mp4
@@ -36,6 +36,8 @@ gp-sim record-stop <udid>
 gp-sim cleanup
 ```
 
+`<build>` is the guard's build folder, which the preflight prints as `build`; no tool of the run can write it, which is why `gp-xcodebuild` builds there and `gp-sim` installs only from there.
+The copy is checked against its commit before every build; give `-project`, `-workspace`, and `-xcconfig` paths inside it, name a test plan with `-testPlan <name>`, and leave DerivedData to the wrapper.
 Read the Product's README and AGENTS.md for its build command, its test-only launch arguments (Immerse has a Debug testing unlock), and any simulator notes.
 To move through screens for a recording, run the Product's own UI tests against the run's simulator (`gp-xcodebuild ... -destination 'platform=iOS Simulator,id=<udid>' test -only-testing:<a UI test>`) while recording, or relaunch with the launch arguments that open each screen.
 Prefer a short sequence of real screens cut together with ffmpeg over a long unedited recording.

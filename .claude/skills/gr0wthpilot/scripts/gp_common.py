@@ -200,6 +200,7 @@ class _TextAndLinks(html.parser.HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.blocks = [[]]
+        self.block_links = [[]]
         self.links = []
         self.ids = set()
         self.skip_depth = 0
@@ -214,6 +215,9 @@ class _TextAndLinks(html.parser.HTMLParser):
             self.skip_depth += 1
         if tag in self.BLOCK:
             self.blocks.append([])
+            self.block_links.append([])
+        if attrs.get("href"):
+            self.block_links[-1].append(attrs["href"])
         for key in ("href", "src", "poster", "data"):
             if attrs.get(key):
                 self.links.append((tag, key, attrs[key]))
@@ -225,6 +229,7 @@ class _TextAndLinks(html.parser.HTMLParser):
             self.skip_depth -= 1
         if tag in self.BLOCK:
             self.blocks.append([])
+            self.block_links.append([])
 
     def handle_data(self, data):
         if not self.skip_depth:
@@ -237,6 +242,20 @@ def parse_html(text: str):
     parser.close()
     blocks = [" ".join(" ".join(b).split()) for b in parser.blocks]
     return [b for b in blocks if b], parser.links, parser.ids
+
+
+def html_blocks(text: str):
+    """(text, hrefs) for each block of an HTML page: its words, and the links
+    inside that same block."""
+    parser = _TextAndLinks()
+    parser.feed(text)
+    parser.close()
+    out = []
+    for words, links in zip(parser.blocks, parser.block_links):
+        block = " ".join(" ".join(words).split())
+        if block:
+            out.append((block, links))
+    return out
 
 
 def markdown_units(text: str):

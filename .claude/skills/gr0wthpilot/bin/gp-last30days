@@ -97,7 +97,8 @@ def main(argv):
         produced = [p for p in sorted(out.iterdir())
                     if p.is_file() and before.get(p) != p.stat().st_mtime]
         record = {
-            "at": gc.iso_z(gc.utc_now()), "topic": " ".join(args.topic), "sources": sources,
+            "at": gc.iso_z(gc.utc_now()), "run_id": cfg.get("run_id"), "topic": " ".join(args.topic),
+            "sources": sources,
             "exit": proc.returncode,
             "files": [{"path": str(p), "sha256": hashlib.sha256(p.read_bytes()).hexdigest()}
                       for p in produced],

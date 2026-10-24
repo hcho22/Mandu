@@ -79,16 +79,23 @@ WRAPPER_PROGRAMS = {"env", "nohup", "time", "command", "exec", "nice", "timeout"
 # Shell reserved words that come before the command they run.
 SHELL_KEYWORDS = {"if", "then", "else", "elif", "do", "while", "until", "!"}
 SHELLS = {"bash", "sh", "zsh", "dash", "ksh"}
-# Shell options that take a value, so the value is not the script.
-SHELL_VALUED = {"-o", "+o", "-O", "+O", "--rcfile", "--init-file"}
 SHELL_SUFFIXES = {".sh", ".bash", ".zsh", ".command"}
-INTERPRETERS = re.compile(r"^(python(\d(\.\d+)?)?|node|ruby|perl|osascript|tsx|ts-node|bun|deno)$")
 INFO_FLAGS = {"--version", "-V", "-v", "--help", "-h"}
-# The flag before inline code: a shell's -c, alone or in a cluster such as
-# -lc; an interpreter's -c or -e, alone or ending a cluster such as -Bc or
-# -ne, or Node's --eval and --print.
-SHELL_INLINE_RE = re.compile(r"-[A-Za-z]*c[A-Za-z]*")
-INLINE_CODE_RE = re.compile(r"-[A-Za-z]*[ce]|--eval|-p|--print")
+# How each family of shells and interpreters is told what to run: the short
+# option letters that start inline code or name a module, the short letters
+# and options that take a value (attached, or as the next argument), and
+# Node's options that take inline code. A shell's -c makes its first
+# argument the code; -s makes it read standard input.
+ARGV_RULES = {
+    "shell": {"inline": "c", "valued": "oO", "long_valued": {"--rcfile", "--init-file"}},
+    "python": {"inline": "c", "module": "m", "valued": "XW", "long_valued": {"--check-hash-based-pycs"}},
+    "node": {"inline_options": {"-e", "--eval", "-p", "--print"},
+             "long_valued": {"-r", "--require", "--import", "--loader", "--experimental-loader", "-C",
+                             "--conditions", "--input-type"}},
+    "deno": {"long_valued": {"--import-map", "--config", "-c"}},
+    "ruby": {"inline": "e", "valued": "IrC"},
+    "perl": {"inline": "eE", "valued": "IMm"},
+}
 READERS = {"cat", "less", "more", "head", "tail", "bat", "grep", "egrep", "fgrep", "rg",
            "sed", "awk", "strings", "xxd", "od", "hexdump", "cut", "sort", "uniq", "tr",
            "base64", "diff", "cmp", "nl", "paste", "jq", "plutil"}
@@ -301,7 +308,8 @@ def split_top_level(command):
     pull out the contents of $(...), <(...), and backticks as their own
     commands. A heredoc's body is not shell text: it is kept beside the
     command it feeds, so a command that runs it (a shell or an interpreter)
-    can be checked against it. Returns ([(command, heredoc body or None)],
+    can be checked against it. A `#` that starts a word starts a comment,
+    as in the shell. Returns ([(command, heredoc body or None)],
     has_redirect, is_compound). Raises Deny on unbalanced quotes."""
     parts, nested, current = [], [], []
     bodies, pending = [], []
@@ -357,6 +365,10 @@ def split_top_level(command):
                     body = "\n".join(lines)
                     bodies[owner] = body if bodies[owner] is None else bodies[owner] + "\n" + body
             pending = []
+            continue
+        if ch == "#" and (i == 0 or command[i - 1] in " \t\n;|&()"):
+            end = command.find("\n", i)
+            i = n if end == -1 else end
             continue
         if ch in ("'", '"'):
             quote = ch
@@ -476,12 +488,10 @@ def check_code_text(text, where):
                        "publishes, uploads, and sends nothing." % (where, prog, " " + arg if prog == "git" else ""))
 
 
-def check_shell_text(text, cfg, depth, where):
-    """Check a shell script as the commands it runs. Its full-line comments
-    are not commands, and their apostrophes would break the parse."""
-    commands = "\n".join(line for line in text.splitlines() if not line.lstrip().startswith("#"))
+def check_shell_text(text, cfg, depth, where, cwds):
+    """Check a shell script as the commands it runs."""
     try:
-        check_command(commands, cfg, depth)
+        check_command(text, cfg, depth, cwds)
     except Deny as exc:
         raise Deny("%s: %s" % (where, exc))
 
@@ -496,73 +506,148 @@ def shebang_program(text):
     return names[0] if names else None
 
 
-def check_script_file(path, cfg, depth=0, shell=None):
+def candidate_paths(path, cwds):
+    """Where a file a command names could be: the path itself when absolute,
+    else that path under each folder the command could be in. None when the
+    command's folder is not known yet (a file being written)."""
+    p = Path(path).expanduser()
+    if p.is_absolute():
+        return [p]
+    if cwds is None:
+        return None
+    if None in cwds:
+        raise Deny("after that `cd`, the guard cannot tell which folder `%s` is in; give its absolute path" % path)
+    return [Path(c) / p for c in cwds]
+
+
+def check_script_file(path, cfg, depth=0, cwds=None, shell=None):
     """Check a script the run runs: as shell commands when a shell runs it, as
     code when an interpreter does, and by its `#!` line when it is run by its
-    path (with none, the shell runs it). A binary is not a script."""
-    p = Path(path)
-    if not p.is_absolute():
-        p = Path(cfg["package"]) / p
-    # The skill's own scripts list the denied programs by name, and a run can
-    # never write there, so they are not scanned.
-    if cfg.get("skill_dir") and under(p, cfg["skill_dir"]):
+    path (with none, the shell runs it). A binary is not a script. A script
+    the guard cannot find is refused; one a written file names is checked
+    when it runs."""
+    paths = candidate_paths(path, cwds)
+    if paths is None:
         return
-    try:
-        if not p.is_file() or p.stat().st_size > 2 * 1024 * 1024:
-            return
-        data = p.read_bytes()
-    except OSError:
-        return
-    if b"\0" in data[:8192]:
-        return
-    text = data.decode("utf-8", "replace")
-    if shell is None:
-        program = shebang_program(text)
-        if program in DENIED_PROGRAMS:
-            raise Deny("Script %s runs under `%s`, which is not available in a Gr0wthPilot run." % (p.name, program))
-        shell = program is None or program in SHELLS
-    if shell:
-        check_shell_text(text, cfg, depth + 1, "Script %s" % p.name)
-    else:
-        check_code_text(text, "Script %s" % p.name)
-
-
-def script_arg(args, valued=()):
-    """The script a shell or interpreter runs: its first argument that is not
-    an option, an option's value, or a redirection."""
-    i = 0
-    while i < len(args):
-        a = args[i]
-        redirect = re.match(r"\d*[<>]+&?", a)
-        if redirect:
-            i += 2 if redirect.end() == len(a) else 1
-        elif a in valued:
-            i += 2
-        elif a[:1] in ("-", "+"):
-            i += 1
+    found = [p for p in paths if p.is_file()]
+    if not found:
+        raise Deny("`%s` is not a file the guard can find from %s, so it cannot be checked; give a path to it"
+                   % (path, " or ".join(str(c) for c in (cwds or [])) or "here"))
+    for p in found:
+        # The skill's own scripts list the denied programs by name, and a run
+        # can never write there, so they are not scanned.
+        if cfg.get("skill_dir") and under(p, cfg["skill_dir"]):
+            continue
+        try:
+            if p.stat().st_size > 2 * 1024 * 1024:
+                continue
+            data = p.read_bytes()
+        except OSError:
+            continue
+        if b"\0" in data[:8192]:
+            continue
+        text = data.decode("utf-8", "replace")
+        runs_as_shell = shell
+        if runs_as_shell is None:
+            program = shebang_program(text)
+            if program in DENIED_PROGRAMS:
+                raise Deny("Script %s runs under `%s`, which is not available in a Gr0wthPilot run."
+                           % (p.name, program))
+            runs_as_shell = program is None or program in SHELLS
+        if runs_as_shell:
+            check_shell_text(text, cfg, depth + 1, "Script %s" % p.name, cwds)
         else:
-            return a
+            check_code_text(text, "Script %s" % p.name)
+
+
+def check_module(name, cfg, cwds):
+    """Check a module `python -m` runs from one of the command's folders; a
+    module found in none of them is the Python library's or an installed one."""
+    rel = name.replace(".", "/")
+    for path in (rel + ".py", rel + "/__main__.py"):
+        for p in candidate_paths(path, cwds) or []:
+            if p.is_file() and not (cfg.get("skill_dir") and under(p, cfg["skill_dir"])):
+                check_code_text(p.read_text(encoding="utf-8", errors="replace"), "Module %s" % name)
+
+
+def argv_family(prog):
+    if prog in SHELLS:
+        return "shell"
+    if re.fullmatch(r"python(\d(\.\d+)?)?", prog):
+        return "python"
+    if prog in ("node", "tsx", "ts-node", "bun"):
+        return "node"
+    if prog in ("deno", "ruby", "perl"):
+        return prog
     return None
 
 
-def inline_flag(prog, args):
-    """The index of the flag before a shell's or interpreter's inline code."""
-    pattern = SHELL_INLINE_RE if prog in SHELLS else INLINE_CODE_RE
-    return next((i for i, a in enumerate(args) if pattern.fullmatch(a)), None)
-
-
-def reads_stdin(prog, args):
-    """Whether a shell or interpreter reads its script from standard input,
-    that is from a pipe or a redirection the guard cannot see into."""
+def parse_argv(prog, args):
+    """How a shell or interpreter is told what to run, read from its own
+    options up to its first argument that is not one: ("inline", code),
+    ("module", name), ("script", path), ("stdin", None) when it reads its
+    script from standard input, ("info", None) for a version or help request,
+    or ("subcommand", None) for a bun or deno subcommand that runs no file."""
+    family = argv_family(prog)
+    rules = ARGV_RULES[family]
     if args and all(a in INFO_FLAGS for a in args):
-        return False
-    if inline_flag(prog, args) is not None or "-m" in args:
-        return False
-    shell = prog in SHELLS
-    return (shell and "-s" in args) or script_arg(args, SHELL_VALUED if shell else ()) is None
+        return "info", None
+    inline = stdin = False
+    i = 0
+    while i < len(args):
+        a, following = args[i], args[i + 1] if i + 1 < len(args) else ""
+        redirect = re.match(r"\d*[<>]+&?", a)
+        if redirect:
+            i += 2 if redirect.end() == len(a) else 1
+            continue
+        if a == "--":
+            i += 1
+            break
+        name = a.split("=", 1)[0]
+        if name in rules.get("inline_options", ()):
+            return "inline", a.split("=", 1)[1] if "=" in a else following
+        if name in rules.get("long_valued", ()):
+            i += 1 if "=" in a else 2
+            continue
+        if a.startswith("--") or (a[:1] == "-" and family in ("node", "deno")):
+            i += 1
+            continue
+        if len(a) > 1 and (a[0] == "-" or (a[0] == "+" and family == "shell")):
+            consume = 0
+            for j, letter in enumerate(a[1:]):
+                rest = a[j + 2:]
+                if family == "shell":
+                    inline = inline or (letter == "c" and a[0] == "-")
+                    stdin = stdin or (letter == "s" and a[0] == "-")
+                    consume += letter in rules["valued"]
+                elif letter in rules.get("inline", ""):
+                    return "inline", rest or following
+                elif letter in rules.get("module", ""):
+                    return "module", rest or following
+                elif letter in rules.get("valued", ""):
+                    consume = 0 if rest else 1
+                    break
+            i += 1 + consume
+            continue
+        break
+    first = args[i] if i < len(args) else None
+    if family == "shell":
+        if inline:
+            return "inline", first or ""
+        return ("stdin", None) if stdin or first in (None, "-") else ("script", first)
+    if first in (None, "-"):
+        return "stdin", None
+    if prog in ("bun", "deno"):
+        if first == "run":
+            return parse_argv("node", args[i + 1:])
+        if prog == "deno" and first == "eval":
+            return "inline", args[i + 1] if i + 1 < len(args) else ""
+        if Path(first).suffix.lower() not in CODE_SUFFIXES and "/" not in first:
+            return "subcommand", None
+    return "script", first
 
 
-def check_simple(tokens, cfg, depth=0):
+def check_simple(tokens, cfg, depth=0, cwds=None):
     if tokens and os.path.basename(tokens[0]) == "env" and all(
             t.startswith("-") or re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", t) for t in tokens[1:]):
         raise Deny("printing the environment can print secret values")
@@ -574,25 +659,30 @@ def check_simple(tokens, cfg, depth=0):
     if prog in DENIED_PROGRAMS:
         hint = PROGRAM_HINTS.get(prog)
         raise Deny("`%s` is not available in a Gr0wthPilot run%s." % (prog, "; " + hint if hint else ""))
-    if "/" in tokens[0] and prog not in SHELLS and not INTERPRETERS.match(prog):
-        check_script_file(tokens[0], cfg, depth)
-    flag = inline_flag(prog, args) if prog in SHELLS or INTERPRETERS.match(prog) else None
-    if prog in SHELLS and flag is not None:
-        check_command(args[flag + 1] if flag + 1 < len(args) else "", cfg, depth + 1)
-        return
-    if prog in SHELLS or prog in ("source", "."):
-        script = script_arg(args, SHELL_VALUED) if prog in SHELLS else (args[0] if args else None)
-        if script:
-            check_script_file(script, cfg, depth, shell=True)
+    family = argv_family(prog)
+    if "/" in tokens[0] and not family:
+        check_script_file(tokens[0], cfg, depth, cwds)
+    if family:
+        mode, value = parse_argv(prog, args)
+        if mode == "inline" and family == "shell":
+            check_command(value, cfg, depth + 1, cwds)
+        elif mode == "inline":
+            check_code_text(value, "Inline %s code" % prog)
+        elif mode == "module":
+            check_module(value, cfg, cwds)
+        elif mode == "script":
+            check_script_file(value, cfg, depth, cwds, shell=family == "shell")
+    if prog in ("source", ".") and args:
+        check_script_file(args[0], cfg, depth, cwds, shell=True)
     if prog == "eval":
-        check_command(" ".join(args), cfg, depth + 1)
+        check_command(" ".join(args), cfg, depth + 1, cwds)
         return
     if prog == "find" and ("-exec" in args or "-execdir" in args or "-ok" in args):
         for flag in ("-exec", "-execdir", "-ok"):
             if flag in args:
                 rest = args[args.index(flag) + 1:]
                 end = next((i for i, t in enumerate(rest) if t in (";", "+", "\\;")), len(rest))
-                check_simple(rest[:end], cfg, depth + 1)
+                check_simple(rest[:end], cfg, depth + 1, cwds)
     if prog == "git":
         sub = next((a for a in args if not a.startswith("-") and a not in _git_option_values(args)), None)
         if sub not in GIT_READ:
@@ -603,14 +693,15 @@ def check_simple(tokens, cfg, depth=0):
             raise Deny("`%s %s` publishes or signs in; a run does neither." % (prog, " ".join(args[:2])))
     # A package runner runs another program: check that program.
     runner_args = None
-    if prog in ("npx", "bunx", "uvx", "pipx") or (prog in ("npm", "pnpm", "yarn") and args[:1] in (["exec"], ["dlx"], ["x"])):
-        runner_args = args[1:] if prog in ("npm", "pnpm", "yarn") or (prog == "pipx" and args[:1] == ["run"]) else args
+    if prog in ("npx", "bunx", "uvx", "pipx") or (prog in ("npm", "pnpm", "yarn") and args[:1] in (["exec"], ["dlx"], ["x"])) \
+            or (prog == "bun" and args[:1] == ["x"]):
+        runner_args = args[1:] if prog in ("npm", "pnpm", "yarn", "bun") or (prog == "pipx" and args[:1] == ["run"]) else args
         while runner_args and runner_args[0].startswith("-"):
             runner_args = runner_args[1:]
         if runner_args:
             name = re.sub(r"@[^/]*$", "", runner_args[0].split("/")[-1]) if not runner_args[0].startswith("@") \
                 else runner_args[0].split("/")[-1].split("@")[0]
-            check_simple([name] + runner_args[1:], cfg, depth + 1)
+            check_simple([name] + runner_args[1:], cfg, depth + 1, cwds)
     if prog == "curl":
         flags = {a.split("=", 1)[0] for a in args if a.startswith("-")}
         bad = flags & CURL_SEND_FLAGS
@@ -621,19 +712,6 @@ def check_simple(tokens, cfg, depth=0):
         flags = {a.split("=", 1)[0] for a in args if a.startswith("-")}
         if flags & WGET_SEND_FLAGS:
             raise Deny("wget may only read; %s sends data." % ", ".join(sorted(flags & WGET_SEND_FLAGS)))
-    if INTERPRETERS.match(prog):
-        if flag is not None:
-            if flag + 1 < len(args):
-                check_code_text(args[flag + 1], "Inline %s code" % prog)
-        elif "-m" in args:
-            module = args[args.index("-m") + 1:][:1]
-            for name in module:
-                for candidate in (name.replace(".", "/") + ".py", name.replace(".", "/") + "/__main__.py"):
-                    check_script_file(candidate, cfg, depth, shell=False)
-        else:
-            script = script_arg(args[1:] if prog in ("bun", "deno") and args[:1] == ["run"] else args)
-            if script:
-                check_script_file(script, cfg, depth, shell=False)
     if any("last30days.py" in a or "last30days/scripts" in a for a in tokens):
         raise Deny("run last30days through `gp-last30days`, which keeps its sign-up, publishing, "
                    "and cookie-reading paths off")
@@ -668,7 +746,26 @@ def _flag_value(args, names):
     return None
 
 
-def check_command(command, cfg, depth=0):
+def changed_dirs(args, cwds):
+    """The folders a `cd` or `pushd` could leave the command in, added to
+    those it could already be in (a `cd` inside a subshell does not last).
+    None stands for a folder the guard cannot know (`cd -`, `cd $DIR`)."""
+    target = next((a for a in args if a == "-" or not a.startswith("-")), None)
+    if target is None:
+        new = [str(Path.home())]
+    elif target == "-" or "$" in target or "__SUBST__" in target:
+        new = [None]
+    elif Path(target).expanduser().is_absolute():
+        new = [str(Path(target).expanduser())]
+    else:
+        new = [None if c is None else str(Path(c) / Path(target).expanduser()) for c in cwds]
+    return cwds + [d for d in new if d not in cwds]
+
+
+def check_command(command, cfg, depth=0, cwds=None):
+    """Check a shell command line. `cwds` are the folders it could run in,
+    which resolve the scripts it names; None for a file being written, whose
+    scripts are checked when it runs."""
     if depth > 4:
         raise Deny("the command nests shells too deeply to check")
     simple, redirect, compound = split_top_level(command)
@@ -679,14 +776,17 @@ def check_command(command, cfg, depth=0):
         if name in WRAPPERS and (compound or redirect or depth):
             raise Deny("run `%s` on its own: no pipes, chains, redirections, or subshells, so it "
                        "runs outside the sandbox under its own rules" % name)
-        check_simple(tokens, cfg, depth)
-        if body is None and (name in SHELLS or INTERPRETERS.match(name)) and reads_stdin(name, stripped[1:]):
+        if name in ("cd", "pushd") and cwds is not None:
+            cwds = changed_dirs(stripped[1:], cwds)
+        check_simple(tokens, cfg, depth, cwds)
+        family = argv_family(name)
+        if body is None and family and parse_argv(name, stripped[1:])[0] == "stdin":
             raise Deny("give `%s` its script by path, inline, or in a heredoc; a script it reads from a pipe "
                        "or a redirection is one the guard cannot check" % name)
         if body is not None and name:
-            if name in SHELLS or name in ("eval", "source", "."):
-                check_command(body, cfg, depth + 1)
-            elif INTERPRETERS.match(name):
+            if family == "shell" or name in ("eval", "source", "."):
+                check_command(body, cfg, depth + 1, cwds)
+            elif family:
                 check_code_text(body, "Heredoc %s code" % name)
 
 
@@ -722,7 +822,7 @@ def check_write(cfg, tool_input, secrets):
             raise Deny("the content holds a secret value from a .env file; never copy a key")
     suffix = Path(path).suffix.lower()
     if suffix in SHELL_SUFFIXES and tool_input.get("content") is not None:
-        check_shell_text(content, cfg, 1, "File %s" % Path(path).name)
+        check_shell_text(content, cfg, 1, "File %s" % Path(path).name, None)
     elif suffix in CODE_SUFFIXES:
         check_code_text(content, "File %s" % Path(path).name)
 
@@ -777,7 +877,7 @@ def decide(cfg, data, secrets):
                 raise Deny("the command holds a secret value from a .env file")
         if tool_input.get("dangerouslyDisableSandbox"):
             raise Deny("every command in a run stays inside the sandbox")
-        check_command(command, cfg)
+        check_command(command, cfg, cwds=[data.get("cwd") or cfg["package"]])
         m = re.search(r"\bGP_PREFLIGHT=([A-Za-z0-9]{8,64})\b", command)
         if m:
             receipt = Path(cfg["work"]) / ("guard-receipt-%s" % m.group(1))
@@ -811,7 +911,7 @@ def run_pre(cfg, data):
     tool = data.get("tool_name") or ""
     tool_input = data.get("tool_input") or {}
     entry = {
-        "at": gc.iso_z(gc.utc_now()), "event": "pre", "tool": tool,
+        "at": gc.iso_z(gc.utc_now()), "run_id": cfg.get("run_id"), "event": "pre", "tool": tool,
         "agent_id": data.get("agent_id"), "agent_type": data.get("agent_type"),
         "input": redact(summarize(tool, tool_input), secrets),
     }
@@ -837,12 +937,13 @@ def run_post(cfg, data):
     response = data.get("tool_response")
     now = gc.iso_z(gc.utc_now())
     if tool == "WebFetch":
-        record = {"at": now, "url": tool_input.get("url"), "agent_id": data.get("agent_id")}
+        record = {"at": now, "run_id": cfg.get("run_id"), "url": tool_input.get("url"),
+                  "agent_id": data.get("agent_id")}
         if isinstance(response, dict):
             record.update(code=response.get("code"), bytes=response.get("bytes"),
                           redirect=bool(re.search(r"redirect", str(response.get("result", ""))[:300], re.I)))
         append_log(cfg["fetch_log"], record)
-    append_log(cfg["tool_log"], {"at": now, "event": "post", "tool": tool,
+    append_log(cfg["tool_log"], {"at": now, "run_id": cfg.get("run_id"), "event": "post", "tool": tool,
                                  "agent_id": data.get("agent_id")})
 
 
@@ -864,8 +965,8 @@ def run_session_start(cfg, data):
         "Put scratch files in %s/scratch, not in Claude Code's scratchpad, which this run cannot write."
         % cfg["work"],
     ]
-    append_log(cfg["tool_log"], {"at": gc.iso_z(gc.utc_now()), "event": "session-start",
-                                 "source": data.get("source")})
+    append_log(cfg["tool_log"], {"at": gc.iso_z(gc.utc_now()), "run_id": cfg.get("run_id"),
+                                 "event": "session-start", "source": data.get("source")})
     return {"hookSpecificOutput": {"hookEventName": "SessionStart",
                                    "additionalContext": "\n".join(lines)}}
 

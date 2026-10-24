@@ -21,7 +21,8 @@ details are never invented; guesses are labeled):
    Table cells under a column for scores, weights, signals, kill criteria,
    targets, thresholds, or budgets are the run's own numbers and are skipped.
    The run's machine records (`run-audit.md`, `run-evidence/`, the journal)
-   are not claims and are skipped.
+   and the red team's records in `08-redteam/` are not claims and are
+   skipped. An HTML block is cited only by a URL or link inside that block.
 
 Usage: claim_audit.py PACKAGE [--json]
 """
@@ -65,6 +66,9 @@ OWN_NUMBER_COLUMN = re.compile(
     r"score|weight|signal|kill|target|threshold|floor|budget|goal|margin|points|rubric|rank|"
     r"total|day|slot|duration|length|size|budget", re.I)
 SKIP_DIRS = ("run-evidence", "01-research/last30days")
+# The red team's records, which quote the claims they cut word for word; the
+# claims ledger there is checked on its own.
+REVIEW_DIRS = ("08-redteam",)
 SKIP_NAMES = {"sources.md", "sources-exempt.md", gc.JOURNAL_NAME, gc.AUDIT_NAME, "claims-ledger.md"}
 SCAN_SUFFIXES = {".md", ".html", ".htm", ".txt"}
 
@@ -162,15 +166,10 @@ def audit_markdown(pkg, path, text, problems):
 
 
 def audit_html(pkg, path, text, problems):
-    blocks, _, _ = gc.parse_html(text)
-    for block in blocks:
+    for block, hrefs in gc.html_blocks(text):
         found = triggers_in(block)
-        if found and not cites(block, pkg, path):
-            # HTML text drops hrefs, so check the raw markup around the text too.
-            index = text.find(block[:40])
-            window = text[max(0, index - 600): index + len(block) + 600] if index >= 0 else ""
-            if not cites(window, pkg, path):
-                problems.append(finding(pkg, path, 0, found, block))
+        if found and not cites(" ".join([block] + ['href="%s"' % h for h in hrefs]), pkg, path):
+            problems.append(finding(pkg, path, 0, found, block))
 
 
 def finding(pkg, path, number, found, text):
@@ -222,7 +221,7 @@ def audit_ledger(pkg, problems):
 
 def deliverable_text(pkg):
     out = []
-    for path in gc.package_text_files(pkg, skip_dirs=SKIP_DIRS + ("08-redteam",)):
+    for path in gc.package_text_files(pkg, skip_dirs=SKIP_DIRS + REVIEW_DIRS):
         if path.suffix.lower() in SCAN_SUFFIXES and path.name not in SKIP_NAMES:
             out.append((gc.rel(pkg, path), " ".join(path.read_text(encoding="utf-8", errors="replace").lower().split())))
     return out
@@ -233,7 +232,7 @@ def check(pkg):
     problems = []
     claims = audit_ledger(pkg, problems)
     scanned = 0
-    for path in gc.package_text_files(pkg, skip_dirs=SKIP_DIRS):
+    for path in gc.package_text_files(pkg, skip_dirs=SKIP_DIRS + REVIEW_DIRS):
         if path.suffix.lower() not in SCAN_SUFFIXES or path.name in SKIP_NAMES or path.name.startswith("."):
             continue
         scanned += 1

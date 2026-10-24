@@ -14,10 +14,13 @@ import importlib.util
 import io
 import json
 import os
+import subprocess
 import tempfile
 import types
 import unittest
+import urllib.parse
 from pathlib import Path
+from unittest import mock
 
 import fixtures
 
@@ -60,11 +63,33 @@ def config(tmp=None):
     (robots / "blocked.example.org.json").write_text(json.dumps({"at": 9e12, "status": 403, "body": ""}))
     return {
         "product": "Immerse", "package": str(pkg), "package_rel": "projects/Immerse/gtm", "work": str(work),
-        "state": str(state), "protected": [str(live)], "skill_dir": str(fixtures.SCRIPTS.parent),
+        "state": str(state), "build": str(state / "build"), "run_id": "immerse-run-2",
+        "protected": [str(live)], "skill_dir": str(fixtures.SCRIPTS.parent),
         "env_files": [str(env)], "last30days_log": str(work / "last30days-log.jsonl"),
         "tool_log": str(state / "tool-log.jsonl"), "fetch_log": str(state / "fetch-log.jsonl"),
         "robots_dir": str(robots), "simulators": str(state / "simulators.json"), "repo": None,
     }
+
+
+def product_repo():
+    """A git repository holding a minimal app project, committed."""
+    repo = Path(tempfile.mkdtemp(prefix="gp-repo-"))
+    (repo / "App.xcodeproj").mkdir()
+    (repo / "App.xcodeproj" / "project.pbxproj").write_text("// the Founder's project\n")
+    (repo / "Config.xcconfig").write_text("SWIFT_VERSION = 5.0\n")
+    git = ["git", "-C", str(repo), "-c", "user.name=t", "-c", "user.email=t@example.org", "-c", "commit.gpgsign=false"]
+    for args in (["init", "-q"], ["add", "-A"], ["commit", "-q", "-m", "project"]):
+        subprocess.run(git + args, check=True)
+    return repo
+
+
+def exported_copy(xb, cfg):
+    """Export a Product repository with gp-xcodebuild source; return the copy."""
+    cfg["repo"] = str(product_repo())
+    out = io.StringIO()
+    with contextlib.redirect_stdout(out):
+        xb.cmd_source(cfg, [])
+    return Path(json.loads(out.getvalue())["source"])
 
 
 class GuardTest(unittest.TestCase):
@@ -174,6 +199,45 @@ class GuardTest(unittest.TestCase):
         self.assertFalse(self.denied("Write", file_path=str(pkg / "serve2.sh"),
                                      content="#!/bin/sh\n# it's fine\npython3 -m http.server\n"))
 
+    def test_options_after_the_script_are_the_scripts(self):
+        pkg = Path(self.cfg["package"])
+        (pkg / "build.py").write_text("import subprocess\nsubprocess.run(['open', 'x'])\n")
+        (pkg / "render.js").write_text("require('child_process').execFileSync('open', ['x'])\n")
+        (pkg / "serve.sh").write_text("open http://localhost:8000\n")
+        (pkg / "ok.py").write_text("print(1)\n")
+        for command in ("python3 build.py -c config.json", "python3 build.py -m fast", "node render.js -e prod",
+                        "node render.js -p", "bash serve.sh -c x", "python3 build.py -p 8000",
+                        "bash -euo pipefail serve.sh", "cat serve.sh | bash -euo pipefail", "python3 -X utf8 build.py",
+                        "python3 -W ignore build.py", "node --import tsx render.js", "bun x wrangler deploy"):
+            self.assertTrue(self.bash_denied(command), command)
+        for command in ("python3 ok.py -c config.json", "python3 -X utf8 ok.py", "bash -euo pipefail -c 'ls -la'",
+                        "python3 -m http.server 8000"):
+            self.assertFalse(self.bash_denied(command), command)
+
+    def test_scripts_are_found_from_the_commands_folder(self):
+        pkg = Path(self.cfg["package"])
+        site = pkg / "03-site"
+        site.mkdir()
+        (site / "serve.sh").write_text("open http://localhost:8000\n")
+        (site / "build.py").write_text("import subprocess\nsubprocess.run(['open', 'x'])\n")
+        (pkg / "serve.sh").write_text("ls\n")
+        for command in ("cd 03-site && bash serve.sh", "cd 03-site && ./serve.sh", "cd 03-site && source serve.sh",
+                        "cd 03-site && python3 build.py", "(cd 03-site; bash serve.sh)", "bash missing.sh",
+                        "cd - && bash serve.sh"):
+            self.assertTrue(self.bash_denied(command), command)
+        self.assertFalse(self.bash_denied("bash serve.sh"))
+        later = guard.run_pre(self.cfg, {"tool_name": "Bash", "tool_input": {"command": "./serve.sh"}, "cwd": str(site)})
+        self.assertEqual(later["hookSpecificOutput"]["permissionDecision"], "deny")
+
+    def test_a_trailing_comment_does_not_break_the_parse(self):
+        pkg = Path(self.cfg["package"])
+        self.assertFalse(self.denied("Write", file_path=str(pkg / "render.sh"),
+                                     content="#!/bin/sh\nffmpeg -i a.mp4 b.mp4 # don't rescale\n"))
+        self.assertFalse(self.bash_denied("ls -la # it's the package"))
+        self.assertFalse(self.bash_denied("echo ${#HOME}"))
+        for command in ("ls # it's fine\ngh pr create", "echo ${#HOME}; gh pr create", "echo a#b; gh pr create"):
+            self.assertTrue(self.bash_denied(command), command)
+
     def test_heredocs_are_data_unless_something_runs_them(self):
         self.assertFalse(self.bash_denied("cat >> decisions-log.md <<'EOF'\n- D-009 it's the Founder's call, isn't it\nEOF"))
         self.assertFalse(self.bash_denied("cat > a.md <<EOF\nWe won't push or deploy anything.\nEOF\nls"))
@@ -249,9 +313,10 @@ class GuardTest(unittest.TestCase):
                                   "tool_response": {"code": 200, "bytes": 10, "result": "ok"}})
         entries = [json.loads(l) for l in Path(self.cfg["tool_log"]).read_text().splitlines()]
         self.assertEqual(entries[0]["phase_skill"], "copywriting")
+        self.assertEqual({e["run_id"] for e in entries}, {"immerse-run-2"})
         fetch = json.loads(Path(self.cfg["fetch_log"]).read_text().splitlines()[0])
-        self.assertEqual((fetch["url"], fetch["code"]), ("https://a.example/x", 200))
-        self.decide("Bash", command="GP_PREFLIGHT=abcdef123456 python3 gp_run.py preflight")
+        self.assertEqual((fetch["url"], fetch["code"], fetch["run_id"]), ("https://a.example/x", 200, "immerse-run-2"))
+        self.decide("Bash", command="GP_PREFLIGHT=abcdef123456 python3 %s preflight" % (fixtures.SCRIPTS / "gp_run.py"))
         self.assertTrue((Path(self.cfg["work"]) / "guard-receipt-abcdef123456").is_file())
 
     def test_guard_fails_closed(self):
@@ -541,6 +606,38 @@ class WrapperRulesTest(unittest.TestCase):
             sim.out_path(self.cfg, "/Users/someone/Desktop/shot.png")
         self.assertTrue(str(sim.out_path(self.cfg, str(Path(self.cfg["package"]) / "a.png"))).endswith("a.png"))
 
+    def test_gp_chrome_rebuilds_local_urls_and_refuses_tricks(self):
+        chrome = load_wrapper("gp-chrome")
+        self.assertEqual(chrome.page_url(self.cfg, "http://LOCALHOST:8080/a/index.html?v=b#top"),
+                         "http://localhost:8080/a/index.html?v=b")
+        for bad in ("http://evil.example\\@localhost/", "http://user@localhost:8080/", "http://localhost.evil.example/",
+                    "https://localhost/", "http://localhost:8080/a b", "http://localhost:99999/", "http://localhost:0/"):
+            with self.assertRaises(chrome.ToolError, msg=bad):
+                chrome.page_url(self.cfg, bad)
+
+    def test_gp_chrome_measures_a_local_file_from_a_probe_in_the_cache(self):
+        chrome = load_wrapper("gp-chrome")
+        page = Path(self.cfg["package"]) / "index.html"
+        page.write_text("<p>x</p>")
+        seen = {}
+
+        def run_chrome(cfg, extra, url, timeout=120):
+            seen["probe"] = Path(urllib.parse.unquote(urllib.parse.urlsplit(url).path))
+            seen["text"] = seen["probe"].read_text()
+            return types.SimpleNamespace(stdout='<pre id="gp-measure">{"scrollWidth": 390, "innerWidth": 390, '
+                                                '"innerHeight": 844}</pre>', stderr="")
+
+        chrome.run_chrome = run_chrome
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            chrome.cmd_measure(self.cfg, [str(page), "390x844"])
+        self.assertTrue(guard.under(seen["probe"], self.cfg["work"]))
+        self.assertIn(page.resolve().as_uri(), seen["text"])
+        self.assertFalse(seen["probe"].exists())
+        self.assertFalse(json.loads(out.getvalue())["overflows"])
+        with self.assertRaises(chrome.ToolError):
+            chrome.cmd_measure(self.cfg, ["http://localhost:8000/index.html", "390x844"])
+
     def test_gp_chrome_opens_only_local_pages(self):
         chrome = load_wrapper("gp-chrome")
         page = Path(self.cfg["package"]) / "index.html"
@@ -553,8 +650,7 @@ class WrapperRulesTest(unittest.TestCase):
 
     def test_gp_xcodebuild_builds_only_for_the_simulator(self):
         xb = load_wrapper("gp-xcodebuild")
-        src = Path(self.cfg["work"]) / "source" / "abc" / "App.xcodeproj"
-        src.mkdir(parents=True)
+        src = exported_copy(xb, self.cfg) / "App.xcodeproj"
         ok = ["-project", str(src), "-scheme", "App", "-destination", "generic/platform=iOS Simulator", "build"]
         xb.check_args(self.cfg, ok)
         for bad in (["archive"], ["-exportArchive"], ["-allowProvisioningUpdates"], ["DEVELOPMENT_TEAM=X"],
@@ -567,8 +663,7 @@ class WrapperRulesTest(unittest.TestCase):
 
     def test_gp_xcodebuild_tests_only_on_a_run_simulator(self):
         xb = load_wrapper("gp-xcodebuild")
-        src = Path(self.cfg["work"]) / "source" / "abc" / "App.xcodeproj"
-        src.mkdir(parents=True)
+        src = exported_copy(xb, self.cfg) / "App.xcodeproj"
         gc.write_json(Path(self.cfg["simulators"]), {"devices": [{"udid": "MINE", "name": "Gr0wthPilot-Immerse-1"}]})
         base = ["-project", str(src), "-scheme", "App"]
         for dest in ("generic/platform=iOS Simulator", "platform=iOS Simulator", "platform=iOS Simulator,OS=26.0"):
@@ -580,6 +675,53 @@ class WrapperRulesTest(unittest.TestCase):
             xb.check_args(self.cfg, base + ["test"])
         for dest in ("platform=iOS Simulator,id=MINE", "platform=iOS Simulator,name=Gr0wthPilot-Immerse-1"):
             xb.check_args(self.cfg, base + ["-destination", dest, "test"])
+
+    def test_gp_xcodebuild_builds_only_a_verified_copy_in_the_guard_folder(self):
+        xb = load_wrapper("gp-xcodebuild")
+        copy = exported_copy(xb, self.cfg)
+        self.assertTrue(guard.under(copy, self.cfg["build"]))
+        project, work, build = copy / "App.xcodeproj", Path(self.cfg["work"]), Path(self.cfg["build"])
+        base = ["-project", str(project), "-scheme", "App", "-destination", "generic/platform=iOS Simulator"]
+        (project / "project.pbxproj").write_text("// a Run Script phase someone added\n")
+        (copy / "extra.sh").write_text("open x\n")
+        xb.check_args(self.cfg, base + ["build"])
+        self.assertEqual((project / "project.pbxproj").read_text(), "// the Founder's project\n")
+        self.assertFalse((copy / "extra.sh").exists())
+        (work / "App.xcodeproj").mkdir()
+        for bad in (["-project", str(work / "App.xcodeproj")], ["-xcconfig", str(work / "x.xcconfig")],
+                    ["-derivedDataPath", str(work / "DD")], ["-clonedSourcePackagesDirPath", str(work)],
+                    ["-testPlan", "../plan"], ["CONFIGURATION_BUILD_DIR=$(HOME)/out"], ["SYMROOT=${HOME}/out"],
+                    ["SYMROOT=../../out"], ["OTHER_CFLAGS=-I%s" % work], ["SYMROOT=%s" % work],
+                    ["-resultBundlePath", str(build / "r.xcresult")]):
+            with self.assertRaises(xb.ToolError, msg=str(bad)):
+                xb.check_args(self.cfg, base + bad + ["build"])
+        for good in (["-xcconfig", str(copy / "Config.xcconfig")], ["-testPlan", "Smoke"], ["ONLY_ACTIVE_ARCH=YES"],
+                     ["-resultBundlePath", str(work / "r.xcresult")], ["SYMROOT=%s" % (build / "out")]):
+            xb.check_args(self.cfg, base + good + ["build"])
+        config = Path(self.cfg["state"]) / "guard-config.json"
+        gc.write_json(config, self.cfg)
+        calls = []
+        with mock.patch.dict(os.environ, {"GR0WTHPILOT_CONFIG": str(config)}), \
+                mock.patch.object(xb.subprocess, "call", lambda argv: calls.append(argv) or 0):
+            self.assertEqual(xb.main(base + ["build"]), 0)
+        self.assertEqual(calls[0][calls[0].index("-derivedDataPath") + 1], str(build / "DerivedData"))
+
+    def test_gp_sim_installs_only_an_app_from_the_build_folder(self):
+        sim = load_wrapper("gp-sim")
+        gc.write_json(Path(self.cfg["simulators"]), {"devices": [{"udid": "MINE", "name": "Gr0wthPilot-Immerse-1"}]})
+        sim.all_devices = lambda: {"MINE": {"udid": "MINE", "name": "Gr0wthPilot-Immerse-1", "state": "Booted"}}
+        calls = []
+        sim.simctl = lambda args, check=True, capture=True: calls.append(args) or types.SimpleNamespace(
+            returncode=0, stdout="", stderr="")
+        tampered = Path(self.cfg["work"]) / "App.app"
+        tampered.mkdir()
+        with self.assertRaises(sim.ToolError):
+            sim.cmd_install(self.cfg, ["MINE", str(tampered)])
+        built = Path(self.cfg["build"]) / "DerivedData" / "Build" / "App.app"
+        built.mkdir(parents=True)
+        with contextlib.redirect_stdout(io.StringIO()):
+            sim.cmd_install(self.cfg, ["MINE", str(built)])
+        self.assertEqual(calls[-1][:2], ["install", "MINE"])
 
     def test_gp_sim_cleanup_records_exactly_the_devices_that_are_gone(self):
         sim = load_wrapper("gp-sim")

@@ -33,7 +33,7 @@ const agent = async (prompt, opts) => {
 const parallel = async thunks => Promise.all(thunks.map(t => t()))
 const pipeline = async (items, ...stages) => Promise.all(items.map(async item => {
   let value = item
-  for (const stage of stages) value = await stage(value)
+  for (const stage of stages) value = await stage(value, item)
   return value
 }))
 const body = fs.readFileSync(script, 'utf8').replace(/^export const meta/m, 'const meta')
@@ -72,6 +72,29 @@ class RedTeamTest(unittest.TestCase):
         out = run_workflow("redteam.js", args, {"redteam:": findings, "fix:": fixed})
         self.assertEqual(sorted(l for l in out["labels"] if l.startswith("fix:")), ["fix:03-site", "fix:05-social-pmf"])
         self.assertEqual(out["result"]["material"], 2)
+
+
+@unittest.skipUnless(shutil.which("node"), "node is not installed")
+class SkepticsTest(unittest.TestCase):
+    def test_a_claim_not_every_skeptic_checked_gets_no_verdict(self):
+        claims = [{"id": c, "claim": "claim %s" % c, "source": "https://x.example/%s" % c} for c in ("C1", "C2", "C3")]
+        replies = {"skeptic:": {"verdict": "STANDS", "reason": "it holds"}, "skeptic:C2:source": None,
+                   "skeptic:C3:scope": None}
+        out = run_workflow("skeptics.js", {"package": "/p", "product": "Testprod", "claims": claims}, replies)
+        self.assertEqual([v["id"] for v in out["result"]["verdicts"]], ["C1"])
+        self.assertEqual(out["result"]["missing"], ["C2", "C3"])
+
+
+@unittest.skipUnless(shutil.which("node"), "node is not installed")
+class ResearchTest(unittest.TestCase):
+    def test_a_lane_whose_researcher_returned_nothing_is_dropped(self):
+        lanes = [{"id": l, "title": "lane %s" % l, "task": "research", "outputs": ["01-research/%s.md" % l]}
+                 for l in ("L1", "L2")]
+        replies = {"research:L1": {"files": ["01-research/L1.md"], "claims": [], "gaps": []}, "research:L2": None}
+        out = run_workflow("research.js", {"package": "/p", "product": "Testprod", "skill": "/s", "lanes": lanes},
+                           replies)
+        self.assertEqual([l["lane"] for l in out["result"]["lanes"]], ["L1"])
+        self.assertEqual(out["result"]["dropped"], ["L2"])
 
 
 if __name__ == "__main__":

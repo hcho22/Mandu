@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Write a run's audit into its Candidate Package.
 
-Copies the run's logs into `run-evidence/` (the guard's tool log and WebFetch
-log, the last30days log, and the simulator ledger) and writes
-`run-audit.md`: every tool call by kind, every call the guard
+Copies this run's records from the run's logs into `run-evidence/` (the
+guard's tool log and WebFetch log, the last30days log, and the simulator
+ledger; the logs are kept per Product, so they also hold earlier runs'
+records, which are left out) and writes `run-audit.md`: every tool call by
+kind, every call the guard
 refused and why, every question the run tried to ask (there should be none),
 the Workflow runs and subagents, the phase skills read, last30days runs, and
 every simulator the run created and whether it was deleted.
@@ -17,7 +19,6 @@ import argparse
 import collections
 import json
 import os
-import shutil
 import sys
 from pathlib import Path
 
@@ -25,29 +26,37 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import gp_common as gc  # noqa: E402
 
 
-def read_jsonl(path):
+def read_jsonl(path, run_id):
+    """This run's records in a log."""
     out = []
     if Path(path).is_file():
         for line in Path(path).read_text(encoding="utf-8").splitlines():
             try:
-                out.append(json.loads(line))
+                record = json.loads(line)
             except ValueError:
-                pass
+                continue
+            if isinstance(record, dict) and record.get("run_id") == run_id:
+                out.append(record)
     return out
 
 
 def summarize(cfg):
     pkg = Path(cfg["package"])
+    run_id = cfg["run_id"]
     evidence = pkg / "run-evidence"
     evidence.mkdir(exist_ok=True)
+    logs = {}
     for name, key in gc.RUN_LOGS.items():
-        if Path(cfg[key]).is_file():
-            shutil.copyfile(cfg[key], str(evidence / name))
-    ledger = {}
-    if Path(cfg["simulators"]).is_file():
-        shutil.copyfile(cfg["simulators"], str(evidence / "simulators.json"))
+        logs[key] = read_jsonl(cfg[key], run_id)
+        (evidence / name).write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in logs[key]),
+                                     encoding="utf-8")
+    try:
         ledger = gc.read_json(Path(cfg["simulators"]))
-    tools = read_jsonl(cfg["tool_log"])
+    except (OSError, ValueError):
+        ledger = {}
+    devices = [d for d in ledger.get("devices", []) if d.get("run_id") == run_id]
+    gc.write_json(evidence / "simulators.json", {"devices": devices})
+    tools = logs["tool_log"]
     pre = [t for t in tools if t.get("event") == "pre"]
     by_tool = collections.Counter(t["tool"] for t in pre)
     denied = [t for t in pre if t.get("decision") == "deny"]
@@ -56,10 +65,9 @@ def summarize(cfg):
     agents = {t.get("agent_id") for t in pre if t.get("agent_id")}
     skills = sorted({t["phase_skill"] for t in pre if t.get("phase_skill")})
     sessions = [t for t in tools if t.get("event") == "session-start"]
-    fetches = read_jsonl(cfg["fetch_log"])
+    fetches = logs["fetch_log"]
     ok = [f for f in fetches if isinstance(f.get("code"), int) and 200 <= f["code"] < 300]
-    l30 = read_jsonl(cfg["last30days_log"])
-    devices = ledger.get("devices", [])
+    l30 = logs["last30days_log"]
     lines = [
         "# Run audit",
         "",

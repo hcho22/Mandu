@@ -1,11 +1,21 @@
 #!/usr/bin/env python3
-"""gp-xcodebuild: build a copy of the Product for the iOS simulator.
+"""gp-xcodebuild: build a verified copy of the Product for the iOS simulator.
 
-A run treats the Product's repository as read only, so it never builds in it:
-`gp-xcodebuild source` exports the repository's committed tree into the run's
-cache folder, and every build runs on that copy. It runs outside the sandbox
-(xcodebuild needs system services the sandbox blocks), so it enforces:
-  - the project or workspace and every output path lie in the cache folder;
+A run treats the Product's repository as read only, so it never builds in it.
+gp-xcodebuild runs outside the sandbox (xcodebuild needs system services the
+sandbox blocks), so everything it builds from or reads lies in the guard's
+build folder (`<Product>.guard/build/`), which no tool of the run can write:
+  - `gp-xcodebuild source` exports the repository's committed tree there and
+    records every file's SHA-256; every later use checks the copy against
+    that record and exports it again from its commit when anything differs;
+  - the project, workspace, and .xcconfig lie in that verified copy, and the
+    .xctestrun and test products in the build folder; a test plan is named,
+    not given as a path;
+  - DerivedData, which holds the package sources a build compiles and the app
+    gp-sim installs, is the build folder's own; only a result bundle may go
+    to the run's cache folder;
+  - a build setting names no path outside the build folder, and no `$(`,
+    `${`, or `..`;
   - builds target the iOS simulator only, and tests run only on a simulator
     this run created, named by id= or name=, so xcodebuild never boots one of
     the Founder's own;
@@ -17,8 +27,11 @@ Commands:
   gp-xcodebuild [XCODEBUILD ARGS]   run xcodebuild on the copy, after the checks above
 """
 
+import hashlib
 import json
+import os
 import re
+import shutil
 import subprocess
 import sys
 import tarfile
@@ -40,11 +53,106 @@ DENIED_FLAGS = {"-exportArchive", "-exportOptionsPlist", "-exportPath", "-archiv
                 "-allowProvisioningUpdates", "-allowProvisioningDeviceRegistration",
                 "-authenticationKeyPath", "-authenticationKeyID", "-authenticationKeyIssuerID",
                 "-exportLocalizations", "-importLocalizations", "-exportNotarizedApp"}
-PATH_FLAGS = {"-project", "-workspace", "-derivedDataPath", "-resultBundlePath",
-              "-xctestrun", "-testProductsPath", "-clonedSourcePackagesDirPath",
-              "-packageCachePath", "-xcconfig", "-testPlan"}
+# Read by the build from the Product's source: they lie in a verified copy.
+SOURCE_INPUTS = {"-project", "-workspace", "-xcconfig"}
+# Made by one build and read by a later one: they lie in the build folder.
+BUILT_INPUTS = {"-xctestrun", "-testProductsPath"}
+# Only written: they may go to the run's cache folder.
+OUTPUTS = {"-resultBundlePath"}
+# Folders of code a build compiles, which stay the build folder's own.
+OWN_FOLDERS = {"-derivedDataPath", "-clonedSourcePackagesDirPath", "-packageCachePath"}
 DENIED_SETTINGS = {"DEVELOPMENT_TEAM", "PROVISIONING_PROFILE", "PROVISIONING_PROFILE_SPECIFIER",
                    "CODE_SIGN_IDENTITY", "OTHER_CODE_SIGN_FLAGS"}
+# An absolute path inside a build setting's value, alone or after a flag such as -I.
+SETTING_PATH_RE = re.compile(r"(?:^|[\s=,]|-[A-Za-z]+)(/[^\s'\",]*)")
+
+
+def source_root(cfg):
+    return Path(cfg["build"]).resolve() / "source"
+
+
+def record_path(copy):
+    return copy.with_name(copy.name + ".json")
+
+
+def tree_digest(root):
+    """{relative path: SHA-256, or the link's target} for every file and
+    symlink under root."""
+    out = {}
+    for dirpath, dirnames, filenames in os.walk(str(root)):
+        for name in dirnames + filenames:
+            path = Path(dirpath) / name
+            rel = str(path.relative_to(root))
+            if path.is_symlink():
+                out[rel] = "link:" + os.readlink(str(path))
+            elif path.is_file():
+                out[rel] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return out
+
+
+def export_copy(cfg, sha):
+    """Export the repository at a commit into the build folder, and record
+    every file's digest beside the copy."""
+    repo = cfg.get("repo")
+    if not repo:
+        raise ToolError("this run found no Product repository")
+    copy = source_root(cfg) / sha[:12]
+    copy.parent.mkdir(parents=True, exist_ok=True)
+    staging = Path(tempfile.mkdtemp(prefix="src-", dir=str(copy.parent)))
+    try:
+        with tempfile.TemporaryFile() as tar:
+            proc = subprocess.run(["git", "-C", repo, "archive", "--format=tar", sha], stdout=tar,
+                                  stderr=subprocess.PIPE)
+            if proc.returncode != 0:
+                raise ToolError("git archive failed: %s" % proc.stderr.decode()[-300:])
+            tar.seek(0)
+            with tarfile.open(fileobj=tar) as archive:
+                for member in archive.getmembers():
+                    if not inside((staging / member.name).resolve(), staging):
+                        raise ToolError("unsafe path in the archive: %s" % member.name)
+                archive.extractall(str(staging))
+        files = tree_digest(staging)
+        if copy.exists():
+            shutil.rmtree(str(copy))
+        staging.rename(copy)
+    finally:
+        shutil.rmtree(str(staging), ignore_errors=True)
+    gc.write_json(record_path(copy), {"commit": sha, "files": files})
+    return copy
+
+
+def verify_copy(cfg, copy):
+    """Export the copy again from its commit when it differs from what
+    `gp-xcodebuild source` recorded."""
+    try:
+        record = gc.read_json(record_path(copy))
+    except (OSError, ValueError):
+        raise ToolError("%s is not a copy gp-xcodebuild source made; run gp-xcodebuild source" % copy)
+    if not (copy.is_dir() and tree_digest(copy) == record.get("files")):
+        export_copy(cfg, record["commit"])
+
+
+def copy_of(cfg, path, flag):
+    """The verified source copy a path lies in."""
+    resolved = require_inside(cfg, path, flag, roots=("build",))
+    try:
+        parts = resolved.relative_to(source_root(cfg)).parts
+    except ValueError:
+        parts = ()
+    if not parts:
+        raise ToolError("%s must lie in a copy made by gp-xcodebuild source (under %s), not %s"
+                        % (flag, source_root(cfg), resolved))
+    return source_root(cfg) / parts[0]
+
+
+def check_setting(cfg, name, value):
+    if name in DENIED_SETTINGS:
+        raise ToolError("%s is a signing setting; simulator builds need none" % name)
+    if "$(" in value or "${" in value or ".." in value:
+        raise ToolError("build setting %s may not use $(...), ${...}, or .." % name)
+    for path in SETTING_PATH_RE.findall(value):
+        if not inside(path, cfg["build"]):
+            raise ToolError("build setting %s names %s, outside the guard's build folder" % (name, path))
 
 
 def ledger_names(cfg):
@@ -73,39 +181,48 @@ def check_destination(cfg, value, testing):
 
 
 def check_args(cfg, args):
-    has_target, has_derived, has_destination = False, False, False
+    """Check xcodebuild's arguments, verify every source copy they name, and
+    return whether the call only asks for information."""
+    copies, has_target, has_destination = set(), False, False
     testing = any(a in TEST_ACTIONS for a in args)
     i = 0
     while i < len(args):
         a = args[i]
+        value = args[i + 1] if i + 1 < len(args) else None
         if a in DENIED_ACTIONS or a in DENIED_FLAGS:
             raise ToolError("`%s` archives, exports, signs, or contacts Apple; a run only builds for "
                             "the simulator" % a)
-        if a in PATH_FLAGS:
-            if i + 1 >= len(args):
+        if a in OWN_FOLDERS:
+            raise ToolError("%s is not given: a build compiles what is in that folder, so it stays in the "
+                            "guard's build folder (%s)" % (a, cfg["build"]))
+        if a in SOURCE_INPUTS | BUILT_INPUTS | OUTPUTS:
+            if value is None:
                 raise ToolError("%s needs a path" % a)
-            require_inside(cfg, args[i + 1], a, roots=("work",))
-            if a in ("-project", "-workspace"):
-                has_target = True
-            if a == "-derivedDataPath":
-                has_derived = True
+            if a in SOURCE_INPUTS:
+                copies.add(copy_of(cfg, value, a))
+                has_target = has_target or a in ("-project", "-workspace")
+            else:
+                require_inside(cfg, value, a, roots=("build",) if a in BUILT_INPUTS else ("work",))
+            i += 2
+            continue
+        if a == "-testPlan":
+            if not value or "/" in value or value.startswith("."):
+                raise ToolError("-testPlan names a test plan of the project, not a path")
             i += 2
             continue
         if a == "-destination":
-            check_destination(cfg, args[i + 1] if i + 1 < len(args) else "", testing)
+            check_destination(cfg, value or "", testing)
             has_destination = True
             i += 2
             continue
         if a == "-sdk":
-            if not (args[i + 1] if i + 1 < len(args) else "").startswith("iphonesimulator"):
+            if not (value or "").startswith("iphonesimulator"):
                 raise ToolError("-sdk must be iphonesimulator")
             i += 2
             continue
         m = re.fullmatch(r"([A-Z_][A-Z0-9_]*)=(.*)", a)
-        if m and m.group(1) in DENIED_SETTINGS:
-            raise ToolError("%s is a signing setting; simulator builds need none" % m.group(1))
-        if m and m.group(2).startswith("/") and not inside(m.group(2), cfg["work"]):
-            raise ToolError("build setting %s points outside the run's cache folder" % m.group(1))
+        if m:
+            check_setting(cfg, m.group(1), m.group(2))
         i += 1
     if testing and not has_destination:
         raise ToolError("tests run only on a simulator this run created: pass "
@@ -114,7 +231,9 @@ def check_args(cfg, args):
     if not has_target and not (info_only and args and args[0] in ("-version", "-showsdks")):
         raise ToolError("name the copy's project or workspace with -project/-workspace "
                         "(see gp-xcodebuild source)")
-    return has_derived, info_only
+    for copy in copies:
+        verify_copy(cfg, copy)
+    return info_only
 
 
 def cmd_source(cfg, args):
@@ -127,24 +246,12 @@ def cmd_source(cfg, args):
     if commit.returncode != 0:
         raise ToolError("unknown revision %s" % rev)
     sha = commit.stdout.strip()
-    dest = Path(cfg["work"]) / "source" / sha[:12]
-    if not dest.is_dir():
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        with tempfile.TemporaryFile() as tar:
-            proc = subprocess.run(["git", "-C", repo, "archive", "--format=tar", sha], stdout=tar,
-                                  stderr=subprocess.PIPE)
-            if proc.returncode != 0:
-                raise ToolError("git archive failed: %s" % proc.stderr.decode()[-300:])
-            tar.seek(0)
-            staging = Path(tempfile.mkdtemp(prefix="src-", dir=str(dest.parent)))
-            with tarfile.open(fileobj=tar) as archive:
-                for member in archive.getmembers():
-                    target = (staging / member.name).resolve()
-                    if not inside(target, staging):
-                        raise ToolError("unsafe path in the archive: %s" % member.name)
-                archive.extractall(str(staging))
-            staging.rename(dest)
-    print(json.dumps({"source": str(dest), "commit": sha}))
+    copy = source_root(cfg) / sha[:12]
+    if record_path(copy).is_file():
+        verify_copy(cfg, copy)
+    else:
+        export_copy(cfg, sha)
+    print(json.dumps({"source": str(copy), "commit": sha}))
 
 
 def main(argv):
@@ -156,10 +263,10 @@ def main(argv):
         if argv[0] == "source":
             cmd_source(cfg, argv[1:])
             return 0
-        has_derived, info_only = check_args(cfg, argv)
+        info_only = check_args(cfg, argv)
         args = list(argv)
-        if not has_derived and not info_only:
-            args += ["-derivedDataPath", str(Path(cfg["work"]) / "DerivedData")]
+        if not info_only:
+            args += ["-derivedDataPath", str(Path(cfg["build"]) / "DerivedData")]
         return subprocess.call(["/usr/bin/xcodebuild"] + args)
     except ToolError as exc:
         print("gp-xcodebuild: %s" % exc, file=sys.stderr)

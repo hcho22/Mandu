@@ -92,7 +92,8 @@ Return the files you wrote, every load-bearing claim (a fact a positioning, pric
       { label: `research:${lane.id}`, phase: 'Research', schema: RESULT },
     ),
   (found, lane) => {
-    if (!found || !found.claims || found.claims.length === 0) return { lane: lane.id, found, verdicts: [] }
+    if (!found) return null
+    if (!found.claims || found.claims.length === 0) return { lane: lane.id, found, verdicts: [] }
     const lenses = [
       'Source lens: fetch each cited URL again with WebFetch and check it says exactly this, as of now. A claim its own source does not support is REFUTED.',
       'Counter-evidence lens: search for sources that contradict, outdate, or narrow each claim. Overgeneralized or stale claims are WEAKENED with corrected wording; contradicted ones are REFUTED.',
@@ -114,9 +115,10 @@ Do not edit the research files; return one verdict per claim, with the evidence 
 )
 
 const lanes = results.filter(Boolean)
-const dropped = A.lanes.length - lanes.length
-if (dropped) log(`${dropped} lane(s) returned nothing; rerun them before passing the research gate`)
+const dropped = A.lanes.filter((lane, i) => !results[i]).map(lane => lane.id)
+if (dropped.length) log(`${dropped.length} lane(s) returned nothing (${dropped.join(', ')}); rerun them before passing the research gate`)
 return {
+  dropped,
   lanes: lanes.map(r => ({
     lane: r.lane,
     files: (r.found && r.found.files) || [],
