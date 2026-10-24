@@ -277,6 +277,7 @@ class _TextAndLinks(html.parser.HTMLParser):
         self.styles = []
         self.quotes = []
         self.open_quotes = []
+        self.figures = []
         self.schema_terms = []
         self.raw = None
         self.raw_parts = []
@@ -294,12 +295,17 @@ class _TextAndLinks(html.parser.HTMLParser):
         if tag in self.BLOCK:
             self.blocks.append([])
             self.block_links.append([])
+        if tag == "figure":
+            self.figures.append({"words": [], "links": [], "captions": 0})
+        if tag == "figcaption" and self.figures:
+            self.figures[-1]["captions"] += 1
         if tag == "blockquote":
-            self.open_quotes.append(([], [attrs["cite"]] if attrs.get("cite") else []))
+            self.open_quotes.append({"words": [], "links": [attrs["cite"]] if attrs.get("cite") else [],
+                                     "figure": self.figures[-1] if self.figures else None})
         if attrs.get("href"):
             self.block_links[-1].append(attrs["href"])
-            for _, links in self.open_quotes:
-                links.append(attrs["href"])
+            for holder in self.citing():
+                holder["links"].append(attrs["href"])
         for key in ("href", "src", "poster", "data"):
             if attrs.get(key):
                 self.links.append((tag, key, attrs[key]))
@@ -331,6 +337,10 @@ class _TextAndLinks(html.parser.HTMLParser):
             self.raw = None
         if tag == "blockquote" and self.open_quotes:
             self.quotes.append(self.open_quotes.pop())
+        if tag == "figcaption" and self.figures and self.figures[-1]["captions"]:
+            self.figures[-1]["captions"] -= 1
+        if tag == "figure" and self.figures:
+            self.figures.pop()
         if tag in self.BLOCK:
             self.blocks.append([])
             self.block_links.append([])
@@ -340,65 +350,59 @@ class _TextAndLinks(html.parser.HTMLParser):
             self.raw_parts.append(data)
         if not self.skip_depth:
             self.blocks[-1].append(data)
-            for words, _ in self.open_quotes:
-                words.append(data)
+            for holder in self.citing():
+                holder["words"].append(data)
+
+    def citing(self):
+        """The open blockquotes and the open figure captions, which collect
+        what may cite a quote."""
+        return self.open_quotes + [f for f in self.figures if f["captions"]]
 
     def close(self):
         super().close()
         self.quotes += self.open_quotes
         self.open_quotes = []
 
+    def page_copy(self):
+        """(text, hrefs) for each piece of copy the page shows a reader: each
+        block's words with the links inside that same block, then each
+        attribute a browser, screen reader, search result, or share card shows
+        (alt, title, aria-label, placeholder, label, a button's or text field's
+        value, and the meta title, description, image alt, and site name) and
+        each string in its JSON-LD, with no links."""
+        out = []
+        for words, links in zip(self.blocks, self.block_links):
+            block = " ".join(" ".join(words).split())
+            if block:
+                out.append((block, links))
+        for value in self.attr_copy:
+            unit = " ".join(value.split())
+            if unit:
+                out.append((unit, []))
+        return out
 
-def _parsed(text: str):
+    def page_quotes(self):
+        """(text, caption, links) for each blockquote: its words, the words of
+        the caption of the figure that holds it, and the links inside it, in
+        its cite attribute, and in that caption."""
+        out = []
+        for quote in self.quotes:
+            figure = quote["figure"] or {"words": [], "links": []}
+            out.append((" ".join(" ".join(quote["words"]).split()), " ".join(" ".join(figure["words"]).split()),
+                        quote["links"] + figure["links"]))
+        return out
+
+
+def read_html(text: str):
+    """An HTML page read once: its copy (`page_copy()`), its blockquotes
+    (`page_quotes()`), the links it loads or follows (`links`), its ids, its
+    CSS (`styles`: each style element and style attribute), and its
+    structured-data terms (`schema_terms`: ("property" or "type", name) for
+    each JSON-LD key and @type and each microdata and RDFa attribute)."""
     parser = _TextAndLinks()
     parser.feed(text)
     parser.close()
     return parser
-
-
-def parse_html(text: str):
-    parser = _parsed(text)
-    blocks = [" ".join(" ".join(b).split()) for b in parser.blocks]
-    return [b for b in blocks if b], parser.links, parser.ids
-
-
-def html_blocks(text: str):
-    """(text, hrefs) for each piece of copy an HTML page shows a reader: each
-    block's words with the links inside that same block, then each attribute a
-    browser, screen reader, search result, or share card shows (alt, title,
-    aria-label, placeholder, label, a button's or text field's value, and the
-    meta title, description, image alt, and site name) and each string in its
-    JSON-LD, with no links."""
-    parser = _parsed(text)
-    out = []
-    for words, links in zip(parser.blocks, parser.block_links):
-        block = " ".join(" ".join(words).split())
-        if block:
-            out.append((block, links))
-    for value in parser.attr_copy:
-        unit = " ".join(value.split())
-        if unit:
-            out.append((unit, []))
-    return out
-
-
-def html_quotes(text: str):
-    """(text, links) for each blockquote of an HTML page: its words, and the
-    links inside it with its cite attribute."""
-    return [(" ".join(" ".join(words).split()), links) for words, links in _parsed(text).quotes]
-
-
-def html_schema_terms(text: str):
-    """("property" or "type", name) for each structured-data term an HTML page
-    uses: its JSON-LD keys and @type values, and its microdata and RDFa
-    attributes."""
-    return _parsed(text).schema_terms
-
-
-def html_styles(text: str):
-    """The CSS an HTML page carries itself: each style element's text and each
-    style attribute."""
-    return _parsed(text).styles
 
 
 def markdown_units(text: str):

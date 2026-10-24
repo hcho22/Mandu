@@ -90,8 +90,7 @@ def link_target(pkg, base, href):
 def ids_of(path):
     if path.suffix.lower() not in (".html", ".htm"):
         return None
-    _, _, ids = gc.parse_html(path.read_text(encoding="utf-8", errors="replace"))
-    return ids
+    return gc.read_html(path.read_text(encoding="utf-8", errors="replace")).ids
 
 
 def check(pkg, product):

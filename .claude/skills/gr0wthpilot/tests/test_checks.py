@@ -342,6 +342,22 @@ class ClaimAuditTest(unittest.TestCase):
             fixtures.write(pkg, "09-extras/teaser.html", quote)
             self.assertEqual(claim_audit.check(pkg)["problems"], [], quote)
 
+    def test_a_blockquote_is_cited_by_the_caption_of_its_figure(self):
+        pkg = fixtures.package()
+        quote = "<blockquote><p>I would pay for real film delay.</p></blockquote>"
+        link = '<a href="%s">r/analog</a>' % fixtures.URLS["stat"]
+        for page in ("<figure>%s<figcaption>A Reddit user, %s</figcaption></figure>" % (quote, link),
+                     "<figure><figcaption>%s</figcaption><div>%s</div></figure>" % (link, quote),
+                     "<figure>%s<figcaption>A Reddit user, %s</figcaption></figure>" % (quote, fixtures.URLS["stat"])):
+            fixtures.write(pkg, "09-extras/teaser.html", page)
+            self.assertEqual(claim_audit.check(pkg)["problems"], [], page)
+        for page in ("<figure>%s<figcaption>A Reddit user</figcaption></figure>" % quote,
+                     '<figure>%s</figure><figure><img src="a.png" alt="A frame"><figcaption>%s</figcaption></figure>'
+                     % (quote, link)):
+            fixtures.write(pkg, "09-extras/teaser.html", page)
+            self.assertTrue(has(claim_audit.check(pkg)["problems"],
+                                r"teaser.html: quote with no citation or label: I would pay"), page)
+
     def test_structured_data_carries_no_ratings_or_reviews(self):
         cases = (
             '<script type="application/ld+json">{"@type": "SoftwareApplication", "name": "Testprod", "aggregateRating": '

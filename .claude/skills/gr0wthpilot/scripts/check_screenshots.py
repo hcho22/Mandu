@@ -132,10 +132,9 @@ def page_inputs(page):
     candidate too), by url(...) and @import in its style elements and style
     attributes, and by url(...) and @import in each local stylesheet it loads,
     resolved from that stylesheet."""
-    text = page.read_text(encoding="utf-8", errors="replace")
-    _, links, _ = gc.parse_html(text)
-    wanted = [local_file(page, value) for tag, _, value in links if tag in LOADED_TAGS]
-    wanted += [local_file(page, value) for css in gc.html_styles(text) for value in css_urls(css)]
+    parsed = gc.read_html(page.read_text(encoding="utf-8", errors="replace"))
+    wanted = [local_file(page, value) for tag, _, value in parsed.links if tag in LOADED_TAGS]
+    wanted += [local_file(page, value) for css in parsed.styles for value in css_urls(css)]
     found = [page]
     while wanted:
         target = wanted.pop(0)

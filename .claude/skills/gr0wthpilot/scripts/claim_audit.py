@@ -27,7 +27,10 @@ details are never invented; guesses are labeled):
    button's or text field's value, the meta title, description, image alt,
    and site name) and each JSON-LD string is checked on its own, cited only
    by a URL or label inside it. An HTML blockquote, like a Markdown one,
-   needs a URL or a citation link inside it (or a cite attribute).
+   needs a URL, label, or citation link inside it, in its cite attribute, or
+   in the caption of the figure that holds it (the HTML place for a quote's
+   attribution, as the next line is in Markdown); a link elsewhere on the
+   page does not count.
 3. A page's structured data (JSON-LD, microdata, or RDFa) carries no rating
    or review at all, cited or not: a Product has none before launch.
 
@@ -179,14 +182,15 @@ def audit_markdown(pkg, path, text, problems):
 
 
 def audit_html(pkg, path, text, problems):
-    for block, hrefs in gc.html_blocks(text):
+    page = gc.read_html(text)
+    for block, hrefs in page.page_copy():
         found = triggers_in(block)
         if found and not cites(" ".join([block] + ['href="%s"' % h for h in hrefs]), pkg, path):
             problems.append(finding(pkg, path, 0, found, block))
-    for quote, hrefs in gc.html_quotes(text):
-        if quote and not cites(" ".join([quote] + ['href="%s"' % h for h in hrefs]), pkg, path):
+    for quote, caption, hrefs in page.page_quotes():
+        if quote and not cites(" ".join([quote, caption] + ['href="%s"' % h for h in hrefs]), pkg, path):
             problems.append(finding(pkg, path, 0, ["quote"], quote))
-    ratings = sorted({name for kind, name in gc.html_schema_terms(text)
+    ratings = sorted({name for kind, name in page.schema_terms
                       if (name.lower() in RATING_PROPERTIES if kind == "property"
                           else name.lower().endswith(RATING_TYPE_ENDINGS))})
     if ratings:
@@ -259,7 +263,7 @@ def deliverable_text(pkg):
             text = path.read_text(encoding="utf-8", errors="replace")
             texts = [text]
             if path.suffix.lower() in (".html", ".htm"):
-                texts.append(" ".join(unit for unit, _ in gc.html_blocks(text)))
+                texts.append(" ".join(unit for unit, _ in gc.read_html(text).page_copy()))
             out.append((gc.rel(pkg, path), [comparable(t) for t in texts]))
     return out
 

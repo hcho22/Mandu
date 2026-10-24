@@ -86,7 +86,8 @@ It refuses a sentence, table row, or text block holding any of these with no cit
 - a star rating or a ranking ("ranked #3", "#1 in Photo & Video");
 - "studies show", "according to", "research shows", "experts say";
 - "the only app", "the first app", "no other app", "market leader", "most popular", "fastest-growing";
-- a Markdown blockquote with no URL in it or on the line after it, or an HTML `<blockquote>` with no URL, citation link, or `cite` attribute inside it.
+- a Markdown blockquote with no URL in it or on the line after it, or an HTML `<blockquote>` with no URL, label, or citation link inside it, in its `cite` attribute, or in the `<figcaption>` of the `<figure>` that holds it.
+That caption is where HTML puts a quote's attribution, as the line after the quote is in Markdown; a link elsewhere on the page does not count.
 
 Table cells under a column whose header names, as a whole word, a score, weight, signal, kill criterion, target, threshold, floor, budget, goal, margin, rank, day, slot, duration, length, or size are the run's own numbers and are skipped.
 A market-size column is the market's numbers, not the run's, and every other column (`Pain points`, `Total ratings`) is checked.
