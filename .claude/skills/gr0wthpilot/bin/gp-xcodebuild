@@ -19,9 +19,13 @@ build folder (`<Product>.guard/build/`), which no tool of the run can write:
     the run's cache folder;
   - a build setting names no path outside the build folder, and no `$(`,
     `${`, or `..`;
-  - a -destination must be an iOS Simulator one and an -sdk must be
-    iphonesimulator, but a build that gives neither uses the project's own
-    default SDK, and SDKROOT=value is not checked;
+  - every action (build, test, clean, analyze) names an iOS Simulator
+    -destination or -sdk iphonesimulator, since without one xcodebuild uses
+    the project's default SDK, a device's; a -destination must be an iOS
+    Simulator one, an -sdk and an SDKROOT=value must be iphonesimulator, an
+    -xcconfig (which overrides the command line) and every file it includes
+    lie in the copy and set SDKROOT to nothing else, and the
+    XCODE_XCCONFIG_FILE environment variable is cleared;
   - tests need a -destination naming, by id= or name=, a simulator in the
     Product's ledger (one gp-sim created for any run of this Product), so
     xcodebuild never boots one of the Founder's own;
@@ -72,6 +76,11 @@ DENIED_SETTINGS = {"DEVELOPMENT_TEAM", "PROVISIONING_PROFILE", "PROVISIONING_PRO
                    "CODE_SIGN_IDENTITY", "OTHER_CODE_SIGN_FLAGS"}
 # An absolute path inside a build setting's value, alone or after a flag such as -I.
 SETTING_PATH_RE = re.compile(r"(?:^|[\s=,]|-[A-Za-z]+)(/[^\s'\",]*)")
+# The simulator SDK, by name, optionally with its version: what -sdk and SDKROOT may say.
+SIMULATOR_SDK_RE = re.compile(r"iphonesimulator(?:\d+(?:\.\d+)*)?")
+# In an .xcconfig: an SDKROOT assignment (conditional or not), and an #include or #include?.
+XCCONFIG_SDKROOT_RE = re.compile(r"\s*SDKROOT\s*(?:\[[^\]]*\]\s*)*=\s*(.*?)\s*;?\s*$")
+XCCONFIG_INCLUDE_RE = re.compile(r"\s*#include\??\s+\"([^\"]+)\"")
 
 
 def source_root(cfg):
@@ -155,11 +164,38 @@ def copy_of(cfg, path, flag):
 def check_setting(cfg, name, value):
     if name in DENIED_SETTINGS:
         raise ToolError("%s is a signing setting; simulator builds need none" % name)
+    if name == "SDKROOT" and not SIMULATOR_SDK_RE.fullmatch(value):
+        raise ToolError("SDKROOT must be iphonesimulator, not %r" % value)
     if "$(" in value or "${" in value or ".." in value:
         raise ToolError("build setting %s may not use $(...), ${...}, or .." % name)
     for path in SETTING_PATH_RE.findall(value):
         if not inside(path, cfg["build"]):
             raise ToolError("build setting %s names %s, outside the guard's build folder" % (name, path))
+
+
+def check_xcconfig(path, copy, seen=None):
+    """Refuse an .xcconfig, or any file it includes, that lies outside the
+    verified copy or sets SDKROOT to anything but the simulator SDK: an
+    -xcconfig overrides every other setting, -sdk included."""
+    seen = set() if seen is None else seen
+    path = Path(os.path.realpath(str(path)))
+    if path in seen:
+        return
+    seen.add(path)
+    if not inside(path, copy):
+        raise ToolError("the xcconfig %s lies outside the verified copy %s" % (path, copy))
+    try:
+        text = path.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return
+    for line in text.splitlines():
+        line = line.split("//", 1)[0]
+        m = XCCONFIG_SDKROOT_RE.match(line)
+        if m and not SIMULATOR_SDK_RE.fullmatch(m.group(1)):
+            raise ToolError("%s sets SDKROOT to %r; builds target the iOS simulator only" % (path, m.group(1)))
+        m = XCCONFIG_INCLUDE_RE.match(line)
+        if m:
+            check_xcconfig(path.parent / m.group(1), copy, seen)
 
 
 def ledger_names(cfg):
@@ -189,7 +225,7 @@ def check_destination(cfg, value, testing):
 
 def check_args(cfg, args):
     """Check xcodebuild's arguments and verify every source copy they name."""
-    copies, has_target, has_destination = set(), False, False
+    copies, xcconfigs, has_target, has_destination, has_sdk = set(), [], False, False, False
     testing = any(a in TEST_ACTIONS for a in args)
     i = 0
     while i < len(args):
@@ -205,8 +241,11 @@ def check_args(cfg, args):
             continue
         if a in SOURCE_INPUTS | OUTPUTS:
             if a in SOURCE_INPUTS:
-                copies.add(copy_of(cfg, value, a))
+                copy = copy_of(cfg, value, a)
+                copies.add(copy)
                 has_target = has_target or a in ("-project", "-workspace")
+                if a == "-xcconfig":
+                    xcconfigs.append((value, copy))
             else:
                 require_inside(cfg, value, a, roots=("work",))
             i += 2
@@ -222,8 +261,9 @@ def check_args(cfg, args):
             i += 2
             continue
         if a == "-sdk":
-            if not (value or "").startswith("iphonesimulator"):
+            if not SIMULATOR_SDK_RE.fullmatch(value or ""):
                 raise ToolError("-sdk must be iphonesimulator")
+            has_sdk = True
             i += 2
             continue
         m = re.fullmatch(r"([A-Z_][A-Z0-9_]*)=(.*)", a)
@@ -237,12 +277,18 @@ def check_args(cfg, args):
     if testing and not has_destination:
         raise ToolError("tests run only on a simulator this run created: pass "
                         "-destination 'platform=iOS Simulator,id=<udid>' (gp-sim create)")
+    if any(a in ACTIONS for a in args) and not (has_destination or has_sdk):
+        raise ToolError("every build targets the iOS simulator: pass -sdk iphonesimulator or "
+                        "-destination 'generic/platform=iOS Simulator', or xcodebuild uses the project's "
+                        "default SDK, a device's")
     info_only = any(a in INFO_FLAGS for a in args) and not any(a in ACTIONS for a in args)
     if not has_target and not (info_only and args and args[0] in ("-version", "-showsdks")):
         raise ToolError("name the copy's project or workspace with -project/-workspace "
                         "(see gp-xcodebuild source)")
     for copy in copies:
         verify_copy(cfg, copy)
+    for value, copy in xcconfigs:
+        check_xcconfig(Path(value), copy)
 
 
 def cmd_source(cfg, args):
@@ -276,7 +322,9 @@ def main(argv):
         # Every call, -list and -showBuildSettings included, so xcodebuild
         # never reads or writes the Founder's own DerivedData.
         args = list(argv) + ["-derivedDataPath", str(Path(cfg["build"]) / "DerivedData")]
-        return subprocess.call(["/usr/bin/xcodebuild"] + args)
+        # XCODE_XCCONFIG_FILE would override every setting, -sdk included.
+        env = {k: v for k, v in os.environ.items() if k != "XCODE_XCCONFIG_FILE"}
+        return subprocess.call(["/usr/bin/xcodebuild"] + args, env=env)
     except ToolError as exc:
         print("gp-xcodebuild: %s" % exc, file=sys.stderr)
         return 1

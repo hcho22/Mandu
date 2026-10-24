@@ -11,11 +11,16 @@ path it names into the package, and verifies:
 
 1. every file and folder the entry names exists (a folder holds at least one
    visible file; a `files_starting_with` source has at least one match);
-2. each file gr0wthlab parses with code follows the rules its parser enforces
-   (src/gr0wthlab/kit.py, results.py, weekly_changes.py, lint.py at the
-   template's commit), and the Test Kit meets the run's own floor: at least
-   15 distinct Angles, hook-only A/B pairs, a 14-day calendar, and the two
-   platforms gr0wthlab runs, TikTok and YouTube Shorts;
+2. each file gr0wthlab parses with code follows the rules its readers
+   enforce (src/gr0wthlab/kit.py, results.py, shots.py, weekly_changes.py,
+   drafts.py, posts.py, lint.py; each check names the function it mirrors):
+   zero-padded Angle IDs; the exact platform names TikTok and YouTube Shorts;
+   Formats naming a recording the filming plan knows; signal and kill cells
+   naming numbers gr0wthlab asks that platform's Studio for; the
+   pre-publication checklist's items, titles, and blocking scopes as
+   gr0wthlab reads them; and a creative-log.json its kill and change edits
+   can make; and the Test Kit meets the run's own floor: at least 15
+   distinct Angles, hook-only A/B pairs, and a 14-day calendar;
 3. with --write-entry, writes `handoff/registry-entry.json`: RepToday's entry
    with the Product's name and the package's folder, ready for the reviewed
    gr0wthlab change at Handoff.
@@ -37,8 +42,12 @@ import gp_common as gc  # noqa: E402
 import brand_lint  # noqa: E402
 
 TEMPLATE = gc.REFERENCES / "registry-template.json"
+# The platforms gr0wthlab runs, spelled as config/platforms.json and the post
+# Draft name them: posts.py compares a calendar day's primary platform to the
+# platform assignment's names exactly, and the flex edit (weekly_changes.py
+# compose_flex) copies an Angle's Platform cell into the calendar, so both
+# cells use these exact names.
 PLATFORMS = ("TikTok", "YouTube Shorts")
-PRIMARY_CELLS = {"tiktok", "youtube shorts", "youtube"}
 MIN_ANGLES = 15
 CALENDAR_DAYS = 14
 FLOOR_RE = re.compile(r"Any post under (\d[\d,]*) impressions is unread")
@@ -46,13 +55,43 @@ PAIR_HEAD_RE = re.compile(r"^## (AB-\d+)\b.*$")
 LEG_RE = re.compile(r"^- Leg ([AB]) hook: (.*)$")
 QUOTED_RE = re.compile(r"\"([^\"]+)\"")
 PAIR_LEG_RE = re.compile(r"\b(AB-\d+) leg ([AB])\b")
-# The recording types gr0wthlab's filming plan reads from a Format (shots.py CAPTURES).
+# The recording types gr0wthlab's filming plan reads from a Format (shots.py
+# CAPTURES), after the optional length it strips first (shots.py LENGTH).
 FORMAT_KINDS = re.compile(r"\bfounder[- ]on[- ]camera\b|\bscreen[- ]record(?:ing)?s?\b|\btime-?lapse\b|"
                           r"\bslow[- ]motion\b|\bhigh-frame-rate\b|\bdemo\b|\bpan\b|\bvideo\b", re.I)
+FORMAT_LENGTH = re.compile(r"\s*(\d+)(?:\s*-\s*(\d+))?\s*s\b[\s:,]*")
+# The numbers gr0wthlab asks each platform's Studio for, and the words a
+# signal or kill criterion uses for each (results.py LABELS and TERMS).
+STUDIO_NUMBERS = {
+    "TikTok": ("watched_full_percent", "average_watch_time_seconds", "likes", "comments", "shares", "saves",
+               "profile_visits"),
+    "YouTube Shorts": ("viewed_percent", "average_percentage_viewed", "likes", "comments", "shares"),
+}
+METRIC_TERMS = (
+    ("watched_full_percent", ("watched-full", "watched full", "watch-through", "watch through")),
+    ("viewed_percent", ("viewed-vs-swiped", "viewed vs swiped", "viewed vs. swiped", "viewed rate")),
+    ("average_percentage_viewed", ("% viewed", "percent viewed", "percentage viewed")),
+    ("average_watch_time_seconds", ("watch time",)),
+    ("saves", ("saves",)),
+    ("shares", ("shares",)),
+    ("likes", ("likes",)),
+    ("profile_visits", ("profile visit",)),
+    ("comments", ("comment",)),
+)
+# The pre-publication checklist as gr0wthlab reads it (kit.py CHECKBOX, BLOCKING, NAMED_CLAIM, SOCIAL_SCOPES).
 CHECK_ITEM_RE = re.compile(r"^- \[([ xX])\] (.*)$")
+BLOCKING_RE = re.compile(r"\(blocking: ([^)]*)\)")
+BLOCKING_LIKE_RE = re.compile(r"\(\s*blocking\b", re.I)
+UNREAD_ITEM_RE = re.compile(r"\s*[-*+]\s*\[[ xX]?\]")
+NAMED_CLAIM_RE = re.compile(r"the \"([^\"]+)\" claim")
+SOCIAL_SCOPES = ("everything public", "social")
 CREATIVE_KEYS = {"angle_id", "hook", "platform", "hypothesis", "format", "preregistered_success_signal",
                  "kill_criterion", "pain_rank", "pain_state", "verbatim_quote", "pain_source_url",
                  "ab_pair", "results", "status"}
+# The creative-log fields a new Angle's record takes from its row of angles.md,
+# by the column each is read from (weekly_changes.py RECORD_CELLS).
+RECORD_CELLS = {"hypothesis": "Hypothesis", "format": "Format", "preregistered_success_signal": "signal",
+                "kill_criterion": "Kill"}
 
 
 def default_registries():
@@ -155,9 +194,9 @@ def check_calendar(text, problems):
         if day in days:
             problems.append("cadence-14-day.md: day %s repeats" % day)
         angle_cell = row[idx["Angle"]]
-        platform = " ".join(row[idx["platform"]].lower().split())
-        if platform not in PRIMARY_CELLS:
-            problems.append("cadence-14-day.md: day %s primary platform %r is not TikTok or YouTube Shorts"
+        if row[idx["platform"]] not in PLATFORMS:
+            problems.append("cadence-14-day.md: day %s primary platform %r is not exactly TikTok or YouTube Shorts "
+                            "(gr0wthlab's post Draft compares it to the platform names as written)"
                             % (day, row[idx["platform"]]))
         m = re.match(r"(P\d+)\b", angle_cell)
         leg = PAIR_LEG_RE.search(angle_cell)
@@ -176,7 +215,16 @@ def check_calendar(text, problems):
     return days
 
 
+def metrics_named(text):
+    """The numbers a signal or kill criterion names (results.py numbers_named)."""
+    lowered = text.lower()
+    return [number for number, words in METRIC_TERMS if any(word in lowered for word in words)]
+
+
 def check_angles(text, rules, problems, warnings):
+    """The Angle bank as gr0wthlab's kit.parse_angles reads it, and what its
+    filming plan (shots.py shot_list) and Weekly Read (results.py asks_for)
+    need of each row."""
     columns = ("ID", "Angle", "pain", "Hook", "Format", "Platform", "signal", "Kill")
     table = gc.find_table(text, columns)
     if not table:
@@ -188,14 +236,15 @@ def check_angles(text, rules, problems, warnings):
     prefix = (rules or {}).get("pain_source_url_must_start_with") or "https://"
     angles = {}
     for row in rows:
-        aid = row[0] if row else ""
+        cell = row[idx["ID"]].strip() if len(row) > idx["ID"] else ""
+        if not re.fullmatch(r"P\d+", cell):
+            if re.match(r"\W*[Pp]\W*\d", cell):
+                problems.append("angles.md: ID %r is not P and digits, so gr0wthlab skips its row" % cell)
+            continue
         if len(row) != len(header):
-            if row and re.fullmatch(r"P\d+", row[idx["ID"]] if len(row) > idx["ID"] else ""):
-                problems.append("angles.md: %s has %d cells, the header %d" % (row[idx["ID"]], len(row), len(header)))
+            problems.append("angles.md: %s has %d cells, the header %d" % (cell, len(row), len(header)))
             continue
-        aid = row[idx["ID"]]
-        if not re.fullmatch(r"P\d+", aid):
-            continue
+        aid = cell
         if aid in angles:
             problems.append("angles.md: %s repeats" % aid)
         hook = row[idx["Hook"]].strip()
@@ -205,21 +254,44 @@ def check_angles(text, rules, problems, warnings):
         if not any(u.startswith(prefix) for u in urls):
             problems.append("angles.md: %s pain cell has no source URL starting %s" % (aid, prefix))
         platform = row[idx["Platform"]].strip()
-        if platform not in ("TikTok", "YouTube Shorts", "YouTube"):
-            problems.append("angles.md: %s Platform %r is not TikTok or YouTube Shorts" % (aid, platform))
-        if not FORMAT_KINDS.search(row[idx["Format"]]):
-            warnings.append("angles.md: %s Format names no recording type gr0wthlab's filming plan knows "
-                            "(founder on camera, screen record, time-lapse, slow motion, demo, pan, video); "
-                            "its days stay unplanned" % aid)
-        for column in ("signal", "Kill"):
-            if len(row[idx[column]].strip()) < 8:
-                problems.append("angles.md: %s %s cell is empty" % (aid, column))
+        if platform not in PLATFORMS:
+            problems.append("angles.md: %s Platform %r is not exactly TikTok or YouTube Shorts (gr0wthlab's flex "
+                            "edit copies it into the calendar as written)" % (aid, platform))
+        fmt = row[idx["Format"]]
+        length = FORMAT_LENGTH.match(fmt)
+        if not FORMAT_KINDS.search(fmt[length.end():] if length else fmt):
+            problems.append("angles.md: %s Format names no recording type gr0wthlab's filming plan knows "
+                            "(founder on camera, screen record, time-lapse, slow motion, high-frame-rate, demo, "
+                            "pan, video), so it cannot plan the Angle's shots" % aid)
+        for column, label in (("signal", "signal"), ("Kill", "kill criterion")):
+            named = metrics_named(row[idx[column]])
+            asked = STUDIO_NUMBERS.get(platform)
+            if asked is None:
+                continue
+            missing = metric_words([n for n in named if n not in asked])
+            if not [n for n in named if n in asked]:
+                problems.append("angles.md: %s %s names no number gr0wthlab asks %s for (%s)%s"
+                                % (aid, label, platform, metric_words(asked),
+                                   "; it names only %s" % missing if missing else ""))
+            elif missing:
+                problems.append("angles.md: %s %s names %s, which gr0wthlab does not ask %s for"
+                                % (aid, label, missing, platform))
         angles[aid] = {"hook": hook.strip('"'), "platform": platform}
+    width = max(2, min((len(aid) - 1 for aid in angles), default=2))
+    unpadded = [aid for aid in angles if aid != "P%0*d" % (width, int(aid[1:]))]
+    if unpadded:
+        problems.append("angles.md: Angle IDs must be zero-padded to one width of at least two digits (P01, "
+                        "P02, ...), as gr0wthlab numbers a new Angle (weekly_changes.py next_number): %s"
+                        % ", ".join(unpadded))
     if not angles:
         problems.append("angles.md: no Angle rows (IDs like P01)")
     elif len(angles) < MIN_ANGLES:
         problems.append("angles.md: %d Angles; a Test Kit needs at least %d distinct Angles" % (len(angles), MIN_ANGLES))
     return angles
+
+
+def metric_words(numbers):
+    return ", ".join(words[0] for number, words in METRIC_TERMS if number in numbers)
 
 
 def check_pairs(text, angles, problems):
@@ -291,25 +363,72 @@ def check_platforms(text, problems):
     return found
 
 
+def checklist_items(text):
+    """The checklist's items as gr0wthlab's kit.parse_checklist reads them:
+    (line, done, title, scope, full text), and every line any item covers."""
+    items, covered = [], set()
+    lines = text.splitlines()
+    index = 0
+    while index < len(lines):
+        m = CHECK_ITEM_RE.match(lines[index])
+        if not m:
+            index += 1
+            continue
+        body, number = [m.group(2)], index + 1
+        covered.add(index)
+        index += 1
+        while index < len(lines) and lines[index].startswith("  ") and lines[index].strip():
+            body.append(lines[index].strip())
+            covered.add(index)
+            index += 1
+        full = " ".join(body)
+        bold = re.search(r"\*\*(.+?)\*\*", full)
+        title = (bold.group(1) if bold else re.split(r"(?<=[.:;])\s", full, maxsplit=1)[0]).strip()
+        scopes = BLOCKING_RE.findall(full)
+        scope = tuple(t.strip().casefold() for t in re.split(r"[,;]", scopes[-1]) if t.strip()) if scopes else None
+        items.append((number, m.group(1) != " ", title, scope, full))
+    return items, covered
+
+
 def check_checklist(text, problems, warnings):
-    items = []
-    for line in text.splitlines():
-        m = CHECK_ITEM_RE.match(line)
-        if m:
-            items.append((m.group(1) != " ", m.group(2)))
+    """Each item's title and blocking scope as gr0wthlab reads them (kit.py
+    parse_checklist, drafts.py checklist_status): an open item blocks a post
+    when its last `(blocking: ...)` scope starts with "everything public" or
+    "social", unless its title names `the "<claim>" claim`, which narrows it
+    to posts carrying that claim."""
+    items, covered = checklist_items(text)
     if not items:
         problems.append("pre-publication-checklist.md: no '- [ ] **Title** ...' items")
-    for done, body in items:
-        if not re.search(r"\*\*[^*]+\*\*", body):
-            warnings.append("pre-publication-checklist.md: item without a **bold title** (gr0wthlab titles "
-                            "an item by it): %s" % body[:60])
-        scope = re.findall(r"\(blocking: ([^)]*)\)", body)
-        if not done and scope:
-            tokens = [t.strip().lower() for t in re.split(r"[,;]", scope[-1])]
-            if any(t.startswith(("everything public", "social")) for t in tokens) and \
-                    not re.search(r"the \"[^\"]+\" claim", body):
-                warnings.append("pre-publication-checklist.md: open item blocks every gr0wthlab post Draft "
-                                "until the Founder closes it: %s" % body[:80])
+    lines = text.splitlines()
+    for index, line in enumerate(lines):
+        if index in covered:
+            continue
+        if UNREAD_ITEM_RE.match(line):
+            problems.append("pre-publication-checklist.md:%d: a checkbox gr0wthlab does not read as an item; an "
+                            "item starts '- [ ] ' at column 0" % (index + 1))
+        elif index - 1 in covered and line.strip() and not line.startswith("#") and BLOCKING_LIKE_RE.search(line):
+            problems.append("pre-publication-checklist.md:%d: this line ends the item above it in gr0wthlab's "
+                            "reading, so its blocking scope is never read; indent it two spaces" % (index + 1))
+    for number, done, title, scope, full in items:
+        where = "pre-publication-checklist.md:%d" % number
+        if not re.search(r"\w", title):
+            problems.append("%s: the item has no title gr0wthlab can read (its **bold** text, else its first "
+                            "sentence)" % where)
+        if len(BLOCKING_LIKE_RE.findall(full)) != len(BLOCKING_RE.findall(full)):
+            problems.append("%s: a blocking scope gr0wthlab cannot read; write it '(blocking: scope)', lower case, "
+                            "with one closing parenthesis" % where)
+        if scope == ():
+            problems.append("%s: '(blocking: )' names no scope" % where)
+        if len(set(BLOCKING_RE.findall(full))) > 1:
+            problems.append("%s: more than one blocking scope; gr0wthlab reads only the last" % where)
+        social = any(t.startswith(SOCIAL_SCOPES) for t in scope or ())
+        if not done and social and not NAMED_CLAIM_RE.search(title):
+            if NAMED_CLAIM_RE.search(full):
+                problems.append("%s: the item names its claim outside its title, where gr0wthlab does not read "
+                                "it, so it blocks every post Draft; put the claim in the **bold** title" % where)
+            else:
+                warnings.append("%s: open item blocks every gr0wthlab post Draft until the Founder closes it: %s"
+                                % (where, full[:80]))
     return items
 
 
@@ -350,20 +469,24 @@ def check_read_results(text, problems):
         problems.append("read-the-results.md: the floor line must say it counts each platform's views")
 
 
-def check_creative_log(text, angles, problems):
+def check_creative_log(text, angles, problems, header=()):
+    """creative-log.json as gr0wthlab's Weekly Read edits it: a list of Angle
+    records, alone or under an object's "angles" (weekly_changes.py
+    log_records), one record per Angle that its kill can mark (compose_kill),
+    and a shape that a changed Angle's new record can be added to
+    (compose_record)."""
     try:
         data = json.loads(text)
     except ValueError as exc:
         problems.append("creative-log.json is not valid JSON: %s" % exc)
         return
-    records = data if isinstance(data, list) else data.get("angles") if isinstance(data, dict) else None
+    records = data.get("angles") if isinstance(data, dict) else data
     if not isinstance(records, list):
         problems.append("creative-log.json must be a list or an object with an 'angles' list")
         return
     seen = {}
     platform_names = {}
-    lines = text.splitlines()
-    for record in records:
+    for position, record in enumerate(records):
         if not isinstance(record, dict) or "angle_id" not in record:
             problems.append("creative-log.json: every record needs an angle_id")
             continue
@@ -378,38 +501,87 @@ def check_creative_log(text, angles, problems):
             continue
         number = angle_id.split("-", 1)[0]
         seen[number] = seen.get(number, 0) + 1
+        for key, column in RECORD_CELLS.items():
+            if key in record and header and gc._match_column(header, column) is None:
+                problems.append("creative-log.json: %s holds %s, but angles.md has no %s column for a new Angle's "
+                                "record to take it from" % (angle_id, key, column))
         if number in angles:
-            platform_names.setdefault(angles[number]["platform"], set()).add(record.get("platform"))
+            platform_names.setdefault(angles[number]["platform"], set()).add(
+                record.get("platform") if isinstance(record.get("platform"), str) else None)
         if record.get("status") != "draft" or "results" not in record or record["results"] is not None:
             problems.append("creative-log.json: %s must start with status \"draft\" and results null" % angle_id)
-        if not own_status_line(lines, angle_id):
+        if not kill_edit_works(text, data, position, record):
             problems.append("creative-log.json: %s needs its angle_id on a line of its own, followed in the same "
                             "record by its status line, which gr0wthlab's kill edits" % angle_id)
     for aid in angles:
         if seen.get(aid, 0) != 1:
             problems.append("creative-log.json: %s needs exactly one record, has %d" % (aid, seen.get(aid, 0)))
     for platform, names in platform_names.items():
-        if len(names) > 1:
-            problems.append("creative-log.json: Angles on %s use different platform strings: %s"
+        if len(names) > 1 or None in names:
+            problems.append("creative-log.json: Angles on %s must all use one platform string: %s"
                             % (platform, ", ".join(sorted(str(n) for n in names))))
-    lines = text.rstrip().splitlines()
-    if len(lines) < 2 or lines[-1].strip() != "}" or lines[-2].strip() not in ("]", "],"):
-        problems.append("creative-log.json must be pretty-printed and end with a ']' line then a '}' line")
+    if records and isinstance(records[-1], dict) and not record_edit_works(text, data, records[-1]):
+        problems.append("creative-log.json must be pretty-printed, one key per line, with the last record's '}' "
+                        "line followed by the list's ']' line, so gr0wthlab can add a new Angle's record")
 
 
-def own_status_line(lines, angle_id):
-    """Whether a record's angle_id sits on exactly one line of its own and the
-    next status line after it comes before any other record's angle_id line,
-    as gr0wthlab's kill edit (weekly_changes.py id_lines, compose_kill) needs."""
-    named = re.compile(r'\s*"angle_id"\s*:\s*' + re.escape(json.dumps(angle_id)) + r"\s*,?\s*")
+def exact_edit(text, old, new):
+    """The text after one exact edit, or None when gr0wthlab would refuse it
+    (weekly_changes.py edit_problems)."""
+    if text.count(old) != 1 or "```" in old + new:
+        return None
+    if any(line.startswith("#") for line in old.split("\n") + new.split("\n")):
+        return None
+    return text.replace(old, new, 1)
+
+
+def kill_edit_works(text, data, position, record):
+    """Whether gr0wthlab's kill edit of this record (compose_kill) changes
+    exactly its status and adds the reads it was killed on."""
+    lines = text.split("\n")
+    named = re.compile(r'\s*"angle_id"\s*:\s*' + re.escape(json.dumps(record["angle_id"])) + r"\s*,?\s*")
     starts = [i for i, line in enumerate(lines) if named.fullmatch(line)]
+    status = re.compile(r'(\s*)"status"(\s*:\s*)"[^"\\]*"(,?)\s*')
     if len(starts) != 1:
         return False
-    for line in lines[starts[0] + 1:]:
-        if re.fullmatch(r'\s*"status"\s*:\s*"[^"\\]*",?\s*', line):
-            return True
-        if re.match(r'\s*"angle_id"\s*:', line):
-            return False
+    found = next((i for i in range(starts[0], len(lines)) if status.fullmatch(lines[i])), None)
+    if found is None:
+        return False
+    indent, colon, comma = status.fullmatch(lines[found]).groups()
+    reads = ["2026-01-07", "2026-01-14"]
+    new = lines[starts[0]:found] + ['%s"status"%s"killed",' % (indent, colon),
+                                     '%s"killed_on_reads"%s%s%s' % (indent, colon, json.dumps(reads), comma)]
+    changed = exact_edit(text, "\n".join(lines[starts[0]:found + 1]), "\n".join(new))
+    expected = json.loads(json.dumps(data))
+    target = expected["angles"] if isinstance(expected, dict) else expected
+    target[position] = dict(record, status="killed", killed_on_reads=reads)
+    try:
+        return changed is not None and json.loads(changed) == expected
+    except ValueError:
+        return False
+
+
+def record_edit_works(text, data, last):
+    """Whether gr0wthlab can add a record after the last one with an exact
+    edit (compose_record): a '}' line then a ']' line, and the record
+    indented as the file indents its records."""
+    record = dict(last, angle_id="P999", status="draft", results=None)
+    expected = json.loads(json.dumps(data))
+    (expected["angles"] if isinstance(expected, dict) else expected).append(record)
+    lines = text.split("\n")
+    for end in range(len(lines) - 1, 1, -1):
+        if lines[end].strip() not in ("]", "],") or lines[end - 1].strip() != "}":
+            continue
+        brace, inner = lines[end - 1], lines[end - 2]
+        indent = brace[:len(brace) - len(brace.lstrip())]
+        step = max(len(inner) - len(inner.lstrip()) - len(indent), 1)
+        added = [indent + line for line in json.dumps(record, indent=step, ensure_ascii=False).split("\n")]
+        changed = exact_edit(text, "\n".join(lines[end - 1:end + 1]), "\n".join([brace + ","] + added + [lines[end]]))
+        try:
+            if changed is not None and json.loads(changed) == expected:
+                return True
+        except ValueError:
+            continue
     return False
 
 
@@ -446,7 +618,8 @@ def check(pkg, product, registry=None, write_entry=False):
     if read(pkg, kit + "read-the-results.md") is not None:
         check_read_results(read(pkg, kit + "read-the-results.md"), problems)
     if read(pkg, kit + "creative-log.json") is not None:
-        check_creative_log(read(pkg, kit + "creative-log.json"), angles, problems)
+        bank = gc.find_table(read(pkg, kit + "angles.md") or "", ("ID", "Hook"))
+        check_creative_log(read(pkg, kit + "creative-log.json"), angles, problems, bank[0] if bank else ())
     else:
         problems.append("05-social-pmf/creative-log.json is missing (gr0wthlab writes kills into it)")
     checklist = read(pkg, "08-redteam/pre-publication-checklist.md")

@@ -48,6 +48,7 @@ One path differs from RepToday's: the launch checklist is `launch-checklist.md` 
 
 These rules come from gr0wthlab's parsers (`src/gr0wthlab/kit.py`, `results.py`, `weekly_changes.py`, `lint.py`, `shots.py` at `6776dd0`).
 `check_layout.py` and `brand_lint.py` fail a package that breaks a rule here unless the rule is tagged or says what the check does instead.
+Each check mirrors the gr0wthlab function named beside it; where gr0wthlab accepts a variant, the check accepts it too.
 "(warned)" means `check_layout.py` only prints a warning, which no gate fails on; "(not checked)" means neither script tests it, so it holds only if the run writes it so.
 A table is found by its header: a header cell matches a wanted column when it equals it, starts with it, or contains it, case-insensitively, so keep headers unambiguous.
 
@@ -61,12 +62,12 @@ A table with the columns ID, Angle, pain, Hook, Format, Platform, signal, Kill, 
 | P01 | Waiting is the point | "I miss not knowing how the photos came out" (https://www.reddit.com/r/...) | "Shoot now. See it tomorrow." | 15-20s screen record of a real roll developing | TikTok | watched-full rank in the top half of the bank once 10 posts shipped | bottom third on two reads |
 ```
 
-- IDs are `P` and a zero-padded number (`P01`); at least 15 Angles (the check reads any `P` and digits as an ID, so zero-padding is not checked, and skips a row with any other ID).
+- IDs are `P` and a number zero-padded to one width of at least two digits (`P01`), as gr0wthlab numbers a new Angle (`weekly_changes.py` `next_number`); at least 15 Angles. A row whose ID looks like one but is not `P` and digits (`P1a`, `p01`) fails, because gr0wthlab skips it (`kit.py` `parse_angles`).
 - The Hook cell is exactly one straight-quoted string: that is the frozen Hook.
 - The pain cell holds the pain's source URL (https).
-- Platform is `TikTok` or `YouTube Shorts`; the check also passes plain `YouTube`.
-- Format names a recording gr0wthlab's filming plan knows: founder on camera, screen record, time-lapse, slow motion, high-frame-rate, demo, pan, or video, optionally after a length like `15-20s` (warned).
-- The signal and Kill cells name metrics gr0wthlab collects: watched-full, viewed versus swiped, % viewed, watch time, saves, shares, likes, profile visits, comments (not checked; the check only requires each cell to hold at least 8 characters).
+- Platform is exactly `TikTok` or `YouTube Shorts`, because gr0wthlab's flex edit copies it into the calendar as written (`weekly_changes.py` `compose_flex`).
+- Format names a recording gr0wthlab's filming plan knows: founder on camera, screen record, time-lapse, slow motion, high-frame-rate, demo, pan, or video, optionally after a length like `15-20s` (`shots.py` `CAPTURES`); one that names none fails, as gr0wthlab could not plan its shots.
+- The signal and Kill cells each name a number gr0wthlab asks the Angle's platform for, in the words `results.py` `TERMS` reads, and no number that platform's Studio does not give: on TikTok watched-full, watch time, saves, shares, likes, profile visits, comments; on YouTube Shorts viewed versus swiped (or "viewed rate"), % viewed, shares, likes, comments (`results.py` `LABELS`, `asks_for`). Saves on a YouTube Shorts Angle fail.
 
 ### 05-social-pmf/ab-pairs.md
 
@@ -87,7 +88,7 @@ The heading names `angle P..` and ends with a parenthesis whose second part is t
 A table with Day, Asset, Angle, and a primary-platform column; days 1 to 13 at least, each once.
 A fixed day's Angle cell starts with its Angle ID; a pair leg is written `P01 / AB-1 leg A`, and the pair's Angle must be that day's Angle.
 Exactly one flex day may lack a fixed Angle, and it names exactly one fallback Angle.
-The platform cell is `TikTok` or `YouTube Shorts`; the check ignores letter case and also passes plain `YouTube`.
+The platform cell is exactly `TikTok` or `YouTube Shorts`, because gr0wthlab's post Draft compares it to the platform assignment's names as written (`posts.py` `render`).
 An optional `## ... checklist` section lists asset checks as `- ` items; a line that names `creative-log.json` and "killed" states the kill rule (not checked).
 
 ### 05-social-pmf/platform-assignment.md
@@ -103,10 +104,10 @@ It must hold the floor line, for example:
 ### 05-social-pmf/creative-log.json
 
 Pretty-printed JSON, one key per line: an object with a `comment` and an `angles` list, one record per Angle, and only these keys: angle_id, hook, platform, hypothesis, format, preregistered_success_signal, kill_criterion, pain_rank, pain_state, verbatim_quote, pain_source_url, ab_pair, results, status.
-The check also accepts a bare list of records or an object with no `comment`, and of the pretty-printing it checks only the `angle_id` and `status` lines and the closing lines below.
-`angle_id` is the Angle's ID alone or followed by a hyphen (`"P01"` or `"P01-waiting"`, never `"P01_waiting"`), on a line of its own, and the record's `status` line follows it within the same record, because gr0wthlab's kill edits from one to the other.
+The check also accepts a bare list of records or an object with no `comment`, as gr0wthlab does (`weekly_changes.py` `log_records`).
+`angle_id` is the Angle's ID alone or followed by a hyphen (`"P01"` or `"P01-waiting"`, never `"P01_waiting"`), on a line of its own, and the record's `status` line follows it within the same record: the check makes gr0wthlab's kill edit of every record (`compose_kill`) and fails a record whose edit would change anything but its status.
+It also makes gr0wthlab's edit that adds a changed Angle's record after the last one (`compose_record`), so the last record's `}` line must be followed by the list's `]` line, with records indented as the file indents them; `hypothesis` needs a Hypothesis column in angles.md, the cell a new record takes it from.
 Every Angle on the same platform uses the same platform string (`tiktok`, `youtube_shorts`; the check compares the strings across Angles but not their values); `status` starts `draft` and `results` is `null`.
-The file ends with a `]` line and then a `}` line.
 
 ### 09-extras/marketing-agent/brand-rules.json
 
@@ -119,9 +120,10 @@ Derive the lists from the brand guidelines' voice rules and the category's forbi
 
 ### 08-redteam/pre-publication-checklist.md
 
-Items at column 0, `- [ ] **Title** what to do (blocking: scope)`, continuation lines indented two spaces.
-The check fails a checklist with no column-0 items and warns on an item with no bold title; it does not check the `(blocking: scope)` part or the continuation lines.
-An open item whose scope starts "everything public" or "social" and names no claim blocks every gr0wthlab post Draft until the Founder closes it (warned); use that scope only for what truly must come first, such as the Waitlist going live.
+Items at column 0, `- [ ] **Title** what to do (blocking: scope)`, continuation lines indented two spaces; the check reads them as `kit.py` `parse_checklist` does.
+An item's title is its **bold** text, else its first sentence; its scope is the last `(blocking: ...)` in the item, continuation lines included.
+The check fails a checklist with no column-0 items, an item with no title, a blocking scope gr0wthlab cannot read (`(Blocking: ...)`, an unclosed or empty one), more than one scope in an item, a blocking scope on an unindented line after an item (which ends the item), and a checkbox that is not at column 0.
+An open item whose scope starts "everything public" or "social" blocks every gr0wthlab post Draft until the Founder closes it, unless its title names `the "<claim>" claim`, which narrows it to posts carrying the claim (`drafts.py` `checklist_status`); a claim named outside the title fails, and an open social item with no claim is warned; use that scope only for what truly must come first, such as the Waitlist going live.
 
 ### 01-research/competitor-*.md
 
@@ -136,7 +138,7 @@ The check requires only that at least one competitor name can be read across the
 
 ## Social copy the lint reads
 
-In `05-social-pmf/week-1-drafts.md` and the Launch Set's Markdown, put every piece of post copy in a labeled field at the start of a line, as gr0wthlab lints only what a platform shows:
+In `05-social-pmf/week-1-drafts.md` and the Launch Set's Markdown, put every piece of post copy in a labeled field at the start of a line, as gr0wthlab lints only what a platform shows; `brand_lint.py` applies every rule gr0wthlab's lint applies to a post (`lint.py` `Rules.check_one`):
 
 ```
 **Caption:** ...
@@ -148,6 +150,10 @@ In `05-social-pmf/week-1-drafts.md` and the Launch Set's Markdown, put every pie
 ```
 
 A field runs to the next blank line, label, or heading; production notes outside fields are not linted.
+A `**Hook:**` field also gets `hook_max_words`; `long_sentence_words` and `long_sentence_commas` are warnings, as in gr0wthlab, and skip alt text.
+The kit's frozen Hooks are exempt as `frozen_hooks_exempt_from` names: a Hook that is a frozen Hook word for word skips `hook_max_words`, and `banned_words_in_hook` does not count inside a frozen Hook's own words wherever a field repeats them.
+A message to a creator, in a `**Message:**` or `**Subject:**` field here or in `06-channels/`, also gets `sponsorship_asks`, which gr0wthlab reads only in a creator message (`Rules.sponsorship`).
+`required_sections` and `required_disclosure` apply to no post in gr0wthlab (`lint.py` `NOT_FOR_POSTS`), so the lint reports them as not applicable.
 
 ## 10-launch-set/manifest.json
 
