@@ -278,6 +278,41 @@ class ClaimAuditTest(unittest.TestCase):
                                                     "[film looks](https://x.example/a).\n")
         self.assertTrue(has(claim_audit.check(pkg)["problems"], r"REFUTED claim C2 still appears in 06-channels/notes.md"))
 
+    def test_a_refuted_claim_is_found_in_attributes_and_json_ld(self):
+        claim = "Every competitor charges over ten dollars a month for film looks"
+        for head, body in (('<meta name="description" content="%s.">' % claim, ""),
+                           ('<meta property="og:description" content="%s.">' % claim, ""),
+                           ('<meta name="twitter:description" content="%s.">' % claim, ""),
+                           ("", '<img src="a.png" alt="%s.">' % claim),
+                           ("", '<abbr title="%s.">Why switch</abbr>' % claim),
+                           ('<script type="application/ld+json">{"@type": "SoftwareApplication", '
+                            '"description": "%s."}</script>' % claim, "")):
+            pkg = fixtures.package()
+            fixtures.write(pkg, "09-extras/teaser.html",
+                           "<!doctype html><html><head>%s</head><body><p>A camera.</p>%s</body></html>" % (head, body))
+            self.assertTrue(has(claim_audit.check(pkg)["problems"],
+                                r"REFUTED claim C2 still appears in 09-extras/teaser.html"), head + body)
+
+    def test_html_attribute_and_json_ld_stats_need_citations(self):
+        cases = (('<meta name="description" content="Loved by 10,000 photographers.">', "", "count"),
+                 ('<meta property="og:title" content="Rated 4.9 stars">', "", "rating"),
+                 ('<meta name="twitter:description" content="87% of users print more.">', "", "percentage"),
+                 ("", '<img src="a.png" alt="The only app that develops overnight">', "superlative"),
+                 ("", '<abbr title="Studies show film makes you happier">Why film</abbr>', "research"),
+                 ('<script type="application/ld+json">{"@type": "SoftwareApplication", '
+                  '"description": "Join 50,000 users."}</script>', "", "count"))
+        for head, body, trigger in cases:
+            pkg = fixtures.package()
+            fixtures.write(pkg, "09-extras/teaser.html",
+                           "<!doctype html><html><head>%s</head><body><p>A camera.</p>%s</body></html>" % (head, body))
+            self.assertTrue(has(claim_audit.check(pkg)["problems"], r"teaser.html: %s with no citation" % trigger),
+                            head + body)
+        pkg = fixtures.package()
+        fixtures.write(pkg, "09-extras/teaser.html",
+                       '<!doctype html><html><head><meta name="description" content="Loved by 10,000 photographers '
+                       '[TARGET for year one]."></head><body><p>A camera.</p></body></html>')
+        self.assertEqual(claim_audit.check(pkg)["problems"], [])
+
     def test_refuted_claim_must_not_ship(self):
         pkg = fixtures.package()
         fixtures.write(pkg, "03-site/extra.md", "Every competitor charges over ten dollars a month for film looks.\n")
@@ -339,6 +374,20 @@ class BrandLintTest(unittest.TestCase):
         problems = brand_lint.check(pkg)["problems"]
         self.assertTrue(has(problems, r"index.html: banned character"))
         self.assertTrue(has(problems, r"stock phrase 'say goodbye to'"))
+
+    def test_page_copy_includes_attributes_and_json_ld(self):
+        for old, new, finding in (
+                ("<title>Testprod</title>", '<title>Testprod</title><meta name="description" content="Last chance '
+                                            'to shoot film.">', r"index.html: scarcity or urgency 'last chance'"),
+                ("<title>Testprod</title>", '<title>Testprod</title><meta property="og:title" content="Testprod '
+                                            '\u2014 film, overnight">', r"index.html: banned character"),
+                ("like film did.", 'like film did.<img src="a.png" alt="Say goodbye to waiting">',
+                 r"index.html: stock phrase 'say goodbye to'"),
+                ('"name": "Testprod"}', '"name": "Testprod", "description": "Only today: shoot film."}',
+                 r"index.html: scarcity or urgency 'only today'")):
+            pkg = fixtures.package()
+            edit(pkg / "03-site/index.html", old, new)
+            self.assertTrue(has(brand_lint.check(pkg)["problems"], finding), new)
 
     def test_post_copy_questions_and_cta_links_follow_gr0wthlab(self):
         rules = fixtures.BRAND_RULES
@@ -536,6 +585,44 @@ class ScreenshotTest(unittest.TestCase):
         stamp(evidence, now + 10)
         self.assertEqual(check_screenshots.check_site(pkg)["problems"], [])
 
+    def test_site_evidence_older_than_files_its_css_or_srcset_loads_fails(self):
+        pkg = fixtures.package()
+        site = pkg / "03-site"
+        edit(site / "index.html", "<title>Testprod</title>",
+             '<title>Testprod</title><link rel="stylesheet" href="css/style.css">'
+             "<style>.a { background: url('img/inline.png') }</style>")
+        edit(site / "index.html", "like film did.",
+             'like film did.<span style="background-image: url(img/attr.png)"></span>'
+             '<img src="img/a.png" srcset="img/a.png 1x, img/a@2x.png 2x" alt="A frame">'
+             '<picture><source srcset="img/b.webp 1x, img/b@2x.webp 2x"></picture>')
+        fixtures.write(pkg, "03-site/css/style.css",
+                       '@import "parts/type.css";\n/* .old { background: url(../img/old.png) } */\n'
+                       '.hero { background: url("../img/hero.png") }\n')
+        fixtures.write(pkg, "03-site/css/parts/type.css",
+                       '@font-face { font-family: Film; src: url(../../fonts/film.woff2) format("woff2") }\n')
+        loaded = ["img/inline.png", "img/attr.png", "img/a.png", "img/a@2x.png", "img/b.webp", "img/b@2x.webp",
+                  "img/hero.png", "fonts/film.woff2"]
+        for rel in loaded + ["img/old.png"]:
+            fixtures.write(pkg, "03-site/" + rel, "x")
+        inputs = [site / rel for rel in loaded + ["index.html", "css/style.css", "css/parts/type.css"]]
+        evidence = [p for p in (site / "screenshots").glob("index-*") if not p.name.startswith("index-b")]
+        now = time.time()
+
+        def stamp(paths, when):
+            for path in paths:
+                os.utime(str(path), (when, when))
+
+        stamp(inputs + [site / "img/old.png"], now - 100)
+        stamp(evidence, now - 50)
+        self.assertEqual(check_screenshots.check_site(pkg)["problems"], [])
+        for path in inputs:
+            stamp([path], now - 10)
+            self.assertTrue(has(check_screenshots.check_site(pkg)["problems"],
+                                r"index-390x844.png is older than %s" % re.escape(path.name)), path.name)
+            stamp([path], now - 100)
+        stamp([site / "img/old.png"], now - 10)
+        self.assertEqual(check_screenshots.check_site(pkg)["problems"], [])
+
     def test_launch_set_images_are_sized_rasters_with_fetched_sources(self):
         pkg = fixtures.package()
         path = pkg / "10-launch-set/manifest.json"
@@ -623,6 +710,16 @@ class RecapTest(unittest.TestCase):
         problems = check_recap.check(pkg, fixtures.PRODUCT)["problems"]
         self.assertTrue(has(problems, r"06-channels/missing.md does not resolve"))
         self.assertTrue(has(problems, r"the deliverables map does not link 06-channels/"))
+
+    def test_every_srcset_candidate_must_resolve(self):
+        pkg = fixtures.package()
+        edit(pkg / "recap.html", "<h2>Deliverables</h2>",
+             '<h2>Deliverables</h2><img src="03-site/screenshots/index-390x844.png" alt="Site" '
+             'srcset="03-site/screenshots/index-390x844.png 1x, 03-site/screenshots/index@2x.png 2x">')
+        self.assertTrue(has(check_recap.check(pkg, fixtures.PRODUCT)["problems"],
+                            r"srcset 03-site/screenshots/index@2x.png does not resolve"))
+        self.assertEqual(gc.srcset_urls("a.png?x=1,2 1x, b.png 2x,c.png 100w (x, y), d.png,"),
+                         ["a.png?x=1,2", "b.png", "c.png", "d.png"])
 
     def test_handoff_line_and_clearance(self):
         pkg = fixtures.package()

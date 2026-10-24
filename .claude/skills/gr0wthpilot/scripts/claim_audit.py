@@ -22,7 +22,10 @@ details are never invented; guesses are labeled):
    targets, thresholds, or budgets are the run's own numbers and are skipped.
    The run's machine records (`run-audit.md`, `run-evidence/`, the journal)
    and the red team's records in `08-redteam/` are not claims and are
-   skipped. An HTML block is cited only by a URL or link inside that block.
+   skipped. An HTML block is cited only by a URL or link inside that block;
+   each attribute a reader sees (alt, title, aria-label, the meta title,
+   description, and image alt) and each JSON-LD string is checked on its
+   own, cited only by a URL or label inside it.
 
 Usage: claim_audit.py PACKAGE [--json]
 """
@@ -214,8 +217,8 @@ def audit_ledger(pkg, problems):
                 if deliverables is None:
                     deliverables = deliverable_text(pkg)
                 needle = comparable(claim)
-                for name, text in deliverables:
-                    if needle in text:
+                for name, texts in deliverables:
+                    if any(needle in text for text in texts):
                         problems.append("%s: REFUTED claim %s still appears in %s" % (LEDGER, cid, name))
     if not count:
         problems.append("%s holds no claims" % LEDGER)
@@ -230,15 +233,18 @@ def comparable(text):
 
 
 def deliverable_text(pkg):
-    """Each deliverable's text as a reader sees it: an HTML page's words without
-    its markup, and Markdown without its emphasis and link addresses."""
+    """Each deliverable's texts to look for a claim in: Markdown without its
+    emphasis and link addresses, and an HTML page both as written (so a claim
+    in an attribute or a script is found) and as a reader sees it (its words
+    without markup between them, and the attribute and JSON-LD copy it shows)."""
     out = []
     for path in gc.package_text_files(pkg, skip_dirs=SKIP_DIRS + REVIEW_DIRS):
         if path.suffix.lower() in SCAN_SUFFIXES and path.name not in SKIP_NAMES:
             text = path.read_text(encoding="utf-8", errors="replace")
+            texts = [text]
             if path.suffix.lower() in (".html", ".htm"):
-                text = " ".join(gc.parse_html(text)[0])
-            out.append((gc.rel(pkg, path), comparable(text)))
+                texts.append(" ".join(unit for unit, _ in gc.html_blocks(text)))
+            out.append((gc.rel(pkg, path), [comparable(t) for t in texts]))
     return out
 
 

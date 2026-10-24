@@ -47,6 +47,8 @@ TEXT_KINDS = {"first-week-posts", "bio"}
 RASTER_SUFFIXES = (".png", ".jpg", ".jpeg", ".webp")
 # The tags whose attribute a browser loads with the page (an <a> is followed, not loaded).
 LOADED_TAGS = {"link", "script", "img", "source", "video", "audio", "iframe", "embed", "object", "track"}
+CSS_URL_RE = re.compile(r"""url\(\s*(?:"([^"]*)"|'([^']*)'|([^)\s]*))\s*\)|@import\s+(?:"([^"]*)"|'([^']*)')""",
+                        re.I)
 NOTE_MIN_CHARS = 40
 
 
@@ -110,16 +112,39 @@ def inspection_notes(text):
     return notes
 
 
+def css_urls(css):
+    """Each url(...) and @import target in a piece of CSS."""
+    css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+    return [next(g for g in m.groups() if g is not None) for m in CSS_URL_RE.finditer(css)]
+
+
+def local_file(base, value):
+    """The local file a URL written in `base` names, if it is one."""
+    parsed = urllib.parse.urlsplit(value.strip())
+    if parsed.scheme or parsed.netloc or not parsed.path:
+        return None
+    target = (base.parent / urllib.parse.unquote(parsed.path)).resolve()
+    return target if target.is_file() else None
+
+
 def page_inputs(page):
-    """The page and every local file it loads, by its own tags."""
-    _, links, _ = gc.parse_html(page.read_text(encoding="utf-8", errors="replace"))
+    """The page and every local file it loads: by its own tags (every srcset
+    candidate too), by url(...) and @import in its style elements and style
+    attributes, and by url(...) and @import in each local stylesheet it loads,
+    resolved from that stylesheet."""
+    text = page.read_text(encoding="utf-8", errors="replace")
+    _, links, _ = gc.parse_html(text)
+    wanted = [local_file(page, value) for tag, _, value in links if tag in LOADED_TAGS]
+    wanted += [local_file(page, value) for css in gc.html_styles(text) for value in css_urls(css)]
     found = [page]
-    for tag, _, value in links:
-        parsed = urllib.parse.urlsplit(value)
-        if tag in LOADED_TAGS and not (parsed.scheme or parsed.netloc) and parsed.path:
-            target = (page.parent / urllib.parse.unquote(parsed.path)).resolve()
-            if target.is_file():
-                found.append(target)
+    while wanted:
+        target = wanted.pop(0)
+        if target is None or target in found:
+            continue
+        found.append(target)
+        if target.suffix.lower() == ".css":
+            css = target.read_text(encoding="utf-8", errors="replace")
+            wanted += [local_file(target, value) for value in css_urls(css)]
     return found
 
 

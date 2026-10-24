@@ -11,7 +11,9 @@ this script first validates it against the schema gr0wthlab's lint accepts
   Launch Set and the week-1 drafts);
 - the rules that hold for any page a stranger reads (banned characters, stock
   phrases, fake scarcity, loss framing, [NEED:] markers) to the site, the video
-  script, and the extras, whose sourced numbers the claim audit covers.
+  script, and the extras, whose sourced numbers the claim audit covers; a
+  page's copy is its words and the attributes and JSON-LD a reader, search
+  result, or share card shows.
 
 Usage: brand_lint.py PACKAGE [--json]
 """
@@ -306,8 +308,7 @@ def social_units(text):
 def copy_units(path, social=False):
     text = path.read_text(encoding="utf-8", errors="replace")
     if path.suffix.lower() in (".html", ".htm"):
-        blocks, _, _ = gc.parse_html(text)
-        return [(0, b) for b in blocks]
+        return [(0, unit) for unit, _ in gc.html_blocks(text)]
     if social:
         return list(social_units(text))
     return list(gc.markdown_units(text))

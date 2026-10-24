@@ -191,6 +191,58 @@ def find_table(text: str, wanted):
 # ---------------------------------------------------------------------------
 # HTML text, for checks that read page copy.
 
+# Attributes whose words a reader sees: a tooltip, an image's alt text, a
+# screen reader's label, and the meta tags a search result or share card shows.
+COPY_ATTRS = ("alt", "title", "aria-label")
+META_COPY_RE = re.compile(r"(?:(?:og|twitter):)?(?:title|description|image:alt)$")
+
+
+def srcset_urls(value: str):
+    """Every candidate URL in a srcset, by the HTML standard's own parsing: a
+    URL runs to whitespace, and its descriptors run to a comma outside
+    parentheses."""
+    urls = []
+    i, n = 0, len(value)
+    while i < n:
+        while i < n and (value[i].isspace() or value[i] == ","):
+            i += 1
+        start = i
+        while i < n and not value[i].isspace():
+            i += 1
+        url = value[start:i]
+        if url.endswith(","):
+            url = url.rstrip(",")
+        else:
+            depth = 0
+            while i < n and (value[i] != "," or depth):
+                if value[i] == "(":
+                    depth += 1
+                elif value[i] == ")" and depth:
+                    depth -= 1
+                i += 1
+        if url:
+            urls.append(url)
+    return urls
+
+
+def json_strings(text: str):
+    """Each string value in a JSON document, or the whole text if it is not JSON."""
+    try:
+        data = json.loads(text)
+    except ValueError:
+        return [text]
+    out, stack = [], [data]
+    while stack:
+        item = stack.pop(0)
+        if isinstance(item, str):
+            out.append(item)
+        elif isinstance(item, dict):
+            stack[:0] = list(item.values())
+        elif isinstance(item, list):
+            stack[:0] = item
+    return out
+
+
 class _TextAndLinks(html.parser.HTMLParser):
     SKIP = {"script", "style", "noscript", "template"}
     BLOCK = {"p", "div", "li", "h1", "h2", "h3", "h4", "h5", "h6", "section", "article",
@@ -204,6 +256,10 @@ class _TextAndLinks(html.parser.HTMLParser):
         self.links = []
         self.ids = set()
         self.skip_depth = 0
+        self.attr_copy = []
+        self.styles = []
+        self.raw = None
+        self.raw_parts = []
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
@@ -213,6 +269,8 @@ class _TextAndLinks(html.parser.HTMLParser):
             self.ids.add(attrs["name"])
         if tag in self.SKIP:
             self.skip_depth += 1
+        if tag == "style" or (tag == "script" and (attrs.get("type") or "").strip().lower() == "application/ld+json"):
+            self.raw, self.raw_parts = tag, []
         if tag in self.BLOCK:
             self.blocks.append([])
             self.block_links.append([])
@@ -221,41 +279,73 @@ class _TextAndLinks(html.parser.HTMLParser):
         for key in ("href", "src", "poster", "data"):
             if attrs.get(key):
                 self.links.append((tag, key, attrs[key]))
-        if tag == "source" and attrs.get("srcset"):
-            self.links.append((tag, "srcset", attrs["srcset"].split()[0]))
+        for key in ("srcset", "imagesrcset"):
+            if attrs.get(key) and tag in ("img", "source", "link"):
+                self.links += [(tag, key, url) for url in srcset_urls(attrs[key])]
+        self.attr_copy += [attrs[key] for key in COPY_ATTRS if attrs.get(key)]
+        name = (attrs.get("name") or attrs.get("property") or "").strip().lower()
+        if tag == "meta" and attrs.get("content") and META_COPY_RE.match(name):
+            self.attr_copy.append(attrs["content"])
+        if attrs.get("style"):
+            self.styles.append(attrs["style"])
 
     def handle_endtag(self, tag):
         if tag in self.SKIP and self.skip_depth:
             self.skip_depth -= 1
+        if self.raw and tag == self.raw:
+            text = "".join(self.raw_parts)
+            if tag == "style":
+                self.styles.append(text)
+            else:
+                self.attr_copy += json_strings(text)
+            self.raw = None
         if tag in self.BLOCK:
             self.blocks.append([])
             self.block_links.append([])
 
     def handle_data(self, data):
+        if self.raw:
+            self.raw_parts.append(data)
         if not self.skip_depth:
             self.blocks[-1].append(data)
 
 
-def parse_html(text: str):
+def _parsed(text: str):
     parser = _TextAndLinks()
     parser.feed(text)
     parser.close()
+    return parser
+
+
+def parse_html(text: str):
+    parser = _parsed(text)
     blocks = [" ".join(" ".join(b).split()) for b in parser.blocks]
     return [b for b in blocks if b], parser.links, parser.ids
 
 
 def html_blocks(text: str):
-    """(text, hrefs) for each block of an HTML page: its words, and the links
-    inside that same block."""
-    parser = _TextAndLinks()
-    parser.feed(text)
-    parser.close()
+    """(text, hrefs) for each piece of copy an HTML page shows a reader: each
+    block's words with the links inside that same block, then each attribute a
+    browser, screen reader, search result, or share card shows (alt, title,
+    aria-label, and the meta title, description, and image alt) and each
+    string in its JSON-LD, with no links."""
+    parser = _parsed(text)
     out = []
     for words, links in zip(parser.blocks, parser.block_links):
         block = " ".join(" ".join(words).split())
         if block:
             out.append((block, links))
+    for value in parser.attr_copy:
+        unit = " ".join(value.split())
+        if unit:
+            out.append((unit, []))
     return out
+
+
+def html_styles(text: str):
+    """The CSS an HTML page carries itself: each style element's text and each
+    style attribute."""
+    return _parsed(text).styles
 
 
 def markdown_units(text: str):
