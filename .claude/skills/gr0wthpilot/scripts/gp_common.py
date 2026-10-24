@@ -18,11 +18,17 @@ REFERENCES = SKILL_DIR / "references"
 
 JOURNAL_NAME = "run-journal.json"
 JOURNAL_FORMAT = 1
+AUDIT_NAME = "run-audit.md"
+
+# A run's logs: the file name each has in `run-evidence/`, and the run-config
+# key naming where its live copy is written.
+RUN_LOGS = {"tool-log.jsonl": "tool_log", "fetch-log.jsonl": "fetch_log",
+            "last30days-log.jsonl": "last30days_log"}
 
 # Text files the checks read. Media and binary files are skipped.
 TEXT_SUFFIXES = {".md", ".html", ".htm", ".json", ".txt", ".csv", ".svg", ".yaml", ".yml"}
 
-URL_RE = re.compile(r"https?://[^\s<>\"'`)\]|]+")
+URL_RE = re.compile(r"https?://[^\s<>\"'`\]|]+")
 TRAILING_PUNCT = ".,;:!?*_"
 
 
@@ -63,10 +69,15 @@ def write_json(path: Path, data) -> None:
 
 
 def clean_url(url: str) -> str:
-    url = url.rstrip(TRAILING_PUNCT)
-    # A Markdown link's closing parenthesis is already excluded by URL_RE; an
-    # unbalanced opening parenthesis inside the URL keeps its closer.
-    return url
+    """Drop trailing punctuation, and a closing parenthesis that has no
+    opening one in the URL (a Markdown link's, or prose's around the URL)."""
+    while True:
+        stripped = url.rstrip(TRAILING_PUNCT)
+        if stripped.endswith(")") and stripped.count(")") > stripped.count("("):
+            stripped = stripped[:-1]
+        if stripped == url:
+            return url
+        url = stripped
 
 
 def normalize_url(url: str) -> str:
@@ -240,6 +251,14 @@ def markdown_units(text: str):
         if in_fence or not stripped:
             continue
         yield number, line
+
+
+def handoff_line(product: str, folder: str) -> str:
+    """The Founder's ready Handoff line for a Candidate Package in
+    `projects/<product>/<folder>/`; a package outside `gtm/` is named."""
+    if folder == "gtm":
+        return "%s - hand to gr0wthlab" % product
+    return "%s - hand to gr0wthlab (%s)" % (product, folder)
 
 
 def load_journal(pkg: Path):

@@ -21,7 +21,8 @@ Commands:
   gp-sim status-bar UDID
   gp-sim privacy UDID grant|revoke SERVICE BUNDLE_ID
   gp-sim addmedia UDID FILE ...
-  gp-sim cleanup            shut down and delete every device this run created
+  gp-sim cleanup            shut down and delete every device this run created, then
+                            mark in the ledger exactly those that no longer exist
 """
 
 import json
@@ -301,10 +302,8 @@ def cmd_addmedia(cfg, args):
 
 
 def cmd_cleanup(cfg, args):
-    ledger = read_ledger(cfg)
     devices = all_devices()
-    done = []
-    for d in ledger["devices"]:
+    for d in read_ledger(cfg)["devices"]:
         live = devices.get(d["udid"])
         if not live or not live["name"].startswith(prefix(cfg)):
             continue
@@ -312,10 +311,20 @@ def cmd_cleanup(cfg, args):
         if live["state"] == "Booted":
             simctl(["shutdown", d["udid"]], check=False)
         simctl(["delete", d["udid"]], check=False)
-        d["deleted_at"] = gc.iso_z(gc.utc_now())
-        done.append(d["name"])
+    remaining = all_devices()
+    ledger = read_ledger(cfg)
+    done = []
+    for d in ledger["devices"]:
+        if d["udid"] in remaining:
+            d.pop("deleted_at", None)
+        elif not d.get("deleted_at"):
+            d["deleted_at"] = gc.iso_z(gc.utc_now())
+            done.append(d["name"])
+    left = [d["name"] for d in ledger["devices"] if not d.get("deleted_at")]
     write_ledger(cfg, ledger)
-    print(json.dumps({"deleted": done}))
+    print(json.dumps({"deleted": done, "still_present": left}))
+    if left:
+        raise ToolError("could not delete %s" % ", ".join(left))
 
 
 COMMANDS = {

@@ -3,13 +3,20 @@
 run journal, and write the permission profile and guard config the launcher
 starts Claude Code with.
 
+Under the cache root, a run has two folders: `<Product>/`, its cache folder,
+which the run writes (workflow copies, scratch, the source copy, builds, the
+last30days log), and `<Product>.guard/`, the guard's own records (its config,
+the permission profile, the robots.txt cache, the tool and fetch logs, and the
+simulator ledger), which no tool of the run can write: it is outside the
+sandbox's writable folders and the profile's edit rules, and the guard
+refuses writes there. Only the guard hook and the unsandboxed wrappers write it.
+
 The launcher (`bin/gr0wthpilot <Product>` at Mandu's root) calls `prepare`; the
 skill calls `preflight` as its first step, which fails unless this run's guard
 hook is live in the session.
 
 Usage:
-  gp_run.py prepare --mandu DIR --product NAME [--work DIR] [--repo DIR] [--today YYYY-MM-DD]
-  gp_run.py target  --mandu DIR --product NAME [--today YYYY-MM-DD]
+  gp_run.py prepare --mandu DIR --product NAME --cache DIR [--repo DIR] [--today YYYY-MM-DD]
   gp_run.py preflight [--config FILE]
 """
 
@@ -104,16 +111,17 @@ def today_arg(text):
 
 
 def check_product(mandu: Path, product: str) -> Path:
+    """The Product's folder in Mandu. The name must match the folder's name
+    exactly, because the disk ignores case and every path rule does not."""
     if not PRODUCT_RE.fullmatch(product or ""):
         raise RunError("Product name must be letters, digits, '-' or '_': %r" % product)
-    folder = mandu / "projects" / product
-    if not folder.is_dir():
-        known = sorted(p.name for p in (mandu / "projects").iterdir() if p.is_dir())
+    known = sorted(p.name for p in (mandu / "projects").iterdir() if p.is_dir())
+    if product not in known:
         raise RunError(
             "projects/%s/ does not exist in %s. Gr0wthPilot runs only for a Product Mandu "
-            "already tracks: %s" % (product, mandu, ", ".join(known))
+            "already tracks, named exactly as its folder: %s" % (product, mandu, ", ".join(known))
         )
-    return folder
+    return mandu / "projects" / product
 
 
 def journal_status(folder: Path):
@@ -123,20 +131,51 @@ def journal_status(folder: Path):
     return journal.get("status")
 
 
-def resolve_target(mandu: Path, product: str, today: dt.date) -> dict:
+def production_registry() -> Path:
+    """gr0wthlab's product list in its production clone: ~/gr0wthlab, or the
+    clone GR0WTHLAB_DIR names."""
+    base = os.environ.get("GR0WTHLAB_DIR")
+    return (Path(base).expanduser() if base else Path.home() / "gr0wthlab") / "config" / "products.json"
+
+
+def handoff_status(registry: Path, product: str):
+    """Whether the Product is handed off: (True, why) when gr0wthlab's product
+    list names a go_to_market_package for it, (False, why) when it does not,
+    and (None, why) when the list cannot be read."""
+    try:
+        products = gc.read_json(registry).get("products")
+    except (OSError, ValueError, AttributeError):
+        products = None
+    if not isinstance(products, list):
+        return None, "gr0wthlab's product list (%s) could not be read" % registry
+    for entry in products:
+        if isinstance(entry, dict) and entry.get("name") == product and entry.get("go_to_market_package"):
+            return True, "gr0wthlab's product list (%s) names a go_to_market_package for %s" % (registry, product)
+    return False, "gr0wthlab's product list (%s) names no go_to_market_package for %s" % (registry, product)
+
+
+def resolve_target(mandu: Path, product: str, today: dt.date, registry: Path) -> dict:
     """Decide which folder this run writes.
 
-    A folder holding an in-progress run journal is resumed. Otherwise a new run
-    writes `gtm/` when it does not exist, or a dated `gtm-candidate-<date>/`
-    beside it. Every other package folder is protected: never written.
+    A handed-off Product's `gtm/` is its live package, never written; when
+    gr0wthlab's product list cannot be read, an existing `gtm/` is treated as
+    possibly live. A folder holding an in-progress run journal is resumed,
+    unless it is a live `gtm/`. Otherwise a new run writes `gtm/` when it does
+    not exist and is not live, or a dated `gtm-candidate-<date>/` beside it.
+    Every other package folder is protected: never written.
+
+    The kind is `first-package` for `gtm/`, `candidate` for a dated folder of
+    a Product not handed off, and `beside-live` for a dated folder beside a
+    live or possibly live `gtm/`, which cannot be handed off yet.
     """
     product_dir = check_product(mandu, product)
-    folders = []
     live = product_dir / "gtm"
-    if live.exists():
-        folders.append(live)
+    handed_off, reason = handoff_status(registry, product)
+    live_protected = bool(handed_off) or (handed_off is None and live.exists())
+    folders = [live] if live.exists() or live_protected else []
     folders.extend(sorted(p for p in product_dir.glob(CANDIDATE_PREFIX + "*") if p.is_dir()))
-    in_progress = [f for f in folders if journal_status(f) == "in-progress"]
+    in_progress = [f for f in folders
+                   if journal_status(f) == "in-progress" and not (live_protected and f == live)]
     if len(in_progress) > 1:
         raise RunError(
             "More than one in-progress Candidate Package for %s: %s. Mark the abandoned one "
@@ -145,7 +184,7 @@ def resolve_target(mandu: Path, product: str, today: dt.date) -> dict:
         )
     if in_progress:
         target, mode = in_progress[0], "resume"
-    elif not live.exists():
+    elif not live.exists() and not live_protected:
         target, mode = live, "new"
     else:
         base = CANDIDATE_PREFIX + today.isoformat()
@@ -155,7 +194,12 @@ def resolve_target(mandu: Path, product: str, today: dt.date) -> dict:
             n += 1
         mode = "new"
     protected = [f for f in folders if f != target]
-    kind = "first-package" if target == live else "beside-live"
+    if target == live:
+        kind = "first-package"
+    elif live_protected:
+        kind = "beside-live"
+    else:
+        kind = "candidate"
     return {
         "product": product,
         "product_dir": str(product_dir),
@@ -163,6 +207,8 @@ def resolve_target(mandu: Path, product: str, today: dt.date) -> dict:
         "package_rel": str(target.relative_to(mandu)),
         "mode": mode,
         "kind": kind,
+        "kind_reason": reason,
+        "handoff_line": None if kind == "beside-live" else gc.handoff_line(product, target.name),
         "protected": [str(f) for f in protected],
     }
 
@@ -217,7 +263,6 @@ def start_journal(target: dict, repo, mandu: Path, now: dt.datetime) -> dict:
             "run_id": "%s-%s" % (target["product"].lower(), stamp),
             "status": "in-progress",
             "package": target["package_rel"],
-            "kind": target["kind"],
             "repo": repo,
             "started_at": gc.iso_z(now),
             "sessions": [session],
@@ -231,6 +276,7 @@ def start_journal(target: dict, repo, mandu: Path, now: dt.datetime) -> dict:
         journal.setdefault("sessions", []).append(session)
         if repo and not journal.get("repo"):
             journal["repo"] = repo
+    journal.update(kind=target["kind"], kind_reason=target["kind_reason"])
     gc.write_json(package / gc.JOURNAL_NAME, journal)
     return journal
 
@@ -251,10 +297,11 @@ def build_profile(cfg: dict) -> dict:
     guard = "%s %s" % (sh_quote(sys_python()), sh_quote(str(gc.SKILL_DIR / "scripts" / "guard.py")))
     config = sh_quote(cfg["config_path"])
     package, work = cfg["package"], cfg["work"]
+    never_written = cfg["protected"] + [cfg["state"]]
     deny = list(DENIED_TOOLS)
     deny += ["Bash(%s)" % c for c in DENIED_BASH] + ["Bash(%s *)" % c for c in DENIED_BASH]
     deny += ["Read(**/.env)", "Read(**/.env.*)"]
-    deny += ["Edit(/%s/**)" % p for p in cfg["protected"]]
+    deny += ["Edit(/%s/**)" % p for p in never_written]
     profile = user_settings_subset()
     profile.update({
         "workflowSizeGuideline": WORKFLOW_SIZE_GUIDELINE,
@@ -273,7 +320,7 @@ def build_profile(cfg: dict) -> dict:
             "allowUnsandboxedCommands": False,
             "autoAllowBashIfSandboxed": True,
             "excludedCommands": ["gp-sim *", "gp-xcodebuild *", "gp-chrome *"],
-            "filesystem": {"allowWrite": [work], "denyWrite": cfg["protected"]},
+            "filesystem": {"allowWrite": [work], "denyWrite": never_written},
             "network": {
                 "allowedDomains": BASH_NETWORK,
                 "strictAllowlist": True,
@@ -379,9 +426,12 @@ def prepare(args) -> dict:
     product = args.product
     check_project_settings(mandu)
     check_claude_consent(mandu)
-    work = Path(args.work or (Path.home() / "Library" / "Caches" / "Gr0wthPilot" / product)).expanduser()
-    work.mkdir(parents=True, exist_ok=True)
-    work = work.resolve()
+    target = resolve_target(mandu, product, today_arg(args.today), production_registry())
+    cache = Path(args.cache).expanduser()
+    work, state = cache / product, cache / (product + ".guard")
+    for folder in (work, state):
+        folder.mkdir(parents=True, exist_ok=True)
+    work, state = work.resolve(), state.resolve()
     # The Workflow tool runs only scripts inside the session's working folders,
     # and the skill folder is not one, so every launch copies the shipped
     # workflow scripts into the cache folder fresh.
@@ -389,7 +439,6 @@ def prepare(args) -> dict:
     workflows.mkdir(exist_ok=True)
     for script in sorted((gc.SKILL_DIR / "workflows").glob("*.js")):
         shutil.copyfile(str(script), str(workflows / script.name))
-    target = resolve_target(mandu, product, today_arg(args.today))
     repo = find_repo(mandu, product, args.repo)
     journal = start_journal(target, repo, mandu, gc.utc_now())
     cfg = {
@@ -401,19 +450,23 @@ def prepare(args) -> dict:
         "package_rel": target["package_rel"],
         "mode": target["mode"],
         "kind": target["kind"],
+        "kind_reason": target["kind_reason"],
+        "handoff_line": target["handoff_line"],
         "protected": [str(Path(p).resolve()) for p in target["protected"]],
         "repo": repo,
         "run_id": journal["run_id"],
         "work": str(work),
+        "state": str(state),
         "workflows_dir": str(work / "workflows"),
         "skill_dir": str(gc.SKILL_DIR),
         "env_files": env_files(mandu, Path(target["product_dir"]), repo),
-        "tool_log": str(work / "tool-log.jsonl"),
-        "fetch_log": str(work / "fetch-log.jsonl"),
-        "robots_dir": str(work / "robots"),
-        "simulators": str(work / "simulators.json"),
-        "config_path": str(work / "guard-config.json"),
-        "profile_path": str(work / "profile.json"),
+        "last30days_log": str(work / "last30days-log.jsonl"),
+        "tool_log": str(state / "tool-log.jsonl"),
+        "fetch_log": str(state / "fetch-log.jsonl"),
+        "robots_dir": str(state / "robots"),
+        "simulators": str(state / "simulators.json"),
+        "config_path": str(state / "guard-config.json"),
+        "profile_path": str(state / "profile.json"),
     }
     profile = build_profile(cfg)
     problems = validate_profile(profile)
@@ -454,6 +507,8 @@ def preflight(args) -> int:
         "package_rel": cfg["package_rel"],
         "mode": cfg.get("mode"),
         "kind": cfg.get("kind"),
+        "kind_reason": cfg.get("kind_reason"),
+        "handoff_line": cfg.get("handoff_line"),
         "repo": cfg.get("repo"),
         "work": cfg["work"],
         "workflows_dir": cfg.get("workflows_dir"),
@@ -470,23 +525,15 @@ def main(argv=None) -> int:
     p = sub.add_parser("prepare")
     p.add_argument("--mandu", required=True)
     p.add_argument("--product", required=True)
-    p.add_argument("--work")
+    p.add_argument("--cache", required=True)
     p.add_argument("--repo")
     p.add_argument("--today")
-    t = sub.add_parser("target")
-    t.add_argument("--mandu", required=True)
-    t.add_argument("--product", required=True)
-    t.add_argument("--today")
     f = sub.add_parser("preflight")
     f.add_argument("--config")
     args = parser.parse_args(argv)
     try:
         if args.cmd == "prepare":
             print(json.dumps(prepare(args), indent=2))
-            return 0
-        if args.cmd == "target":
-            print(json.dumps(resolve_target(Path(args.mandu).resolve(), args.product,
-                                            today_arg(args.today)), indent=2))
             return 0
         if args.cmd == "preflight":
             return preflight(args)

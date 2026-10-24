@@ -81,7 +81,8 @@ const all = attacks.flatMap(a => a.findings)
 const toFix = all.filter(f => f.severity !== 'OBJECTION')
 const areas = {}
 for (const f of toFix) {
-  const area = (f.file || 'other').split('/')[0] || 'other'
+  const file = f.file || ''
+  const area = (file.startsWith(P + '/') ? file.slice(P.length + 1) : file).split('/')[0] || 'other'
   ;(areas[area] = areas[area] || []).push(f)
 }
 log(`${all.length} findings: ${toFix.length} to fix across ${Object.keys(areas).length} areas`)

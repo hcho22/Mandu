@@ -8,8 +8,11 @@ It passes only when:
   `thesis`, `objection` (the strongest surviving objection, beside the thesis),
   `deliverables` (the deliverables map), and `handoff`;
 - the naming section says clearance is UNVERIFIED;
-- the handoff section holds the ready one-line Handoff, `<Product> - hand to
-  gr0wthlab`, word for word;
+- the handoff section holds the package's ready one-line Handoff word for
+  word: `<Product> - hand to gr0wthlab` for `gtm/`, or `<Product> - hand to
+  gr0wthlab (<folder>)` for a dated candidate folder. A package the run
+  journal marks `beside-live` sits beside the Product's live package and
+  cannot be handed off yet, so it needs no such line;
 - the deliverables map links every numbered folder the package has, every
   extra in `09-extras/`, and the package's records.
 
@@ -30,7 +33,7 @@ import gp_common as gc  # noqa: E402
 
 SECTIONS = ("naming", "thesis", "objection", "deliverables", "handoff")
 RECORDS = ("README.md", "decisions-log.md", "sources.md", "self-grade.md", "launch-checklist.md",
-           "run-audit.md", "handoff/registry-entry.json", gc.JOURNAL_NAME)
+           gc.AUDIT_NAME, "handoff/registry-entry.json", gc.JOURNAL_NAME)
 
 
 class _Sections(gc._TextAndLinks):
@@ -125,8 +128,9 @@ def check(pkg, product):
     if "naming" in parser.section_text and "UNVERIFIED" not in naming:
         problems.append("recap.html naming section must say trademark and store-name clearance are UNVERIFIED")
     handoff = " ".join(" ".join(parser.section_text.get("handoff", [])).split())
-    line = "%s - hand to gr0wthlab" % product
-    if "handoff" in parser.section_text and line not in handoff:
+    line = gc.handoff_line(product, pkg.resolve().name)
+    beside_live = (gc.load_journal(pkg) or {}).get("kind") == "beside-live"
+    if "handoff" in parser.section_text and not beside_live and line not in handoff:
         problems.append("recap.html handoff section must hold the line %r word for word" % line)
     mapped = set()
     for href in parser.section_links.get("deliverables", []):

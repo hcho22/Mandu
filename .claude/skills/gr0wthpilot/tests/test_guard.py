@@ -7,12 +7,15 @@ Run from Mandu's root: python3 -m unittest discover -s .claude/skills/gr0wthpilo
 
 from __future__ import annotations
 
+import contextlib
 import datetime as dt
 import importlib.machinery
 import importlib.util
+import io
 import json
 import os
 import tempfile
+import types
 import unittest
 from pathlib import Path
 
@@ -46,19 +49,21 @@ def config(tmp=None):
     live.mkdir(parents=True)
     work = tmp / "work"
     work.mkdir()
+    state = tmp / "work.guard"
     env = tmp / "repo.env"
     env.write_text("OPENAI_API_KEY=sk-test-supersecret-123456\nSHORT=abc\n")
-    robots = work / "robots"
-    robots.mkdir()
+    robots = state / "robots"
+    robots.mkdir(parents=True)
     for host, body in (("allowed.example.org", "User-agent: *\nDisallow: /private/\n"),
                        ("www.reddit.com", "User-agent: *\nDisallow: /\n")):
         (robots / (host + ".json")).write_text(json.dumps({"at": 9e12, "status": 200, "body": body}))
     (robots / "blocked.example.org.json").write_text(json.dumps({"at": 9e12, "status": 403, "body": ""}))
     return {
         "product": "Immerse", "package": str(pkg), "package_rel": "projects/Immerse/gtm", "work": str(work),
-        "protected": [str(live)], "skill_dir": str(fixtures.SCRIPTS.parent), "env_files": [str(env)],
-        "tool_log": str(work / "tool-log.jsonl"), "fetch_log": str(work / "fetch-log.jsonl"),
-        "robots_dir": str(robots), "simulators": str(work / "simulators.json"), "repo": None,
+        "state": str(state), "protected": [str(live)], "skill_dir": str(fixtures.SCRIPTS.parent),
+        "env_files": [str(env)], "last30days_log": str(work / "last30days-log.jsonl"),
+        "tool_log": str(state / "tool-log.jsonl"), "fetch_log": str(state / "fetch-log.jsonl"),
+        "robots_dir": str(robots), "simulators": str(state / "simulators.json"), "repo": None,
     }
 
 
@@ -107,7 +112,7 @@ class GuardTest(unittest.TestCase):
     def test_the_skills_own_scripts_run(self):
         script = fixtures.SCRIPTS / "gp_run.py"
         self.assertFalse(self.bash_denied("GP_PREFLIGHT=abcdef123456 python3 %s preflight" % script))
-        self.assertFalse(self.bash_denied("python3 %s/check_all.py . --product Immerse" % fixtures.SCRIPTS))
+        self.assertFalse(self.bash_denied("python3 %s/journal.py status" % fixtures.SCRIPTS))
 
     def test_sending_code_is_denied(self):
         self.assertTrue(self.bash_denied("python3 -c 'import smtplib'"))
@@ -120,6 +125,27 @@ class GuardTest(unittest.TestCase):
                                     content="import ftplib\n"))
         self.assertFalse(self.denied("Write", file_path=str(Path(self.cfg["package"]) / "notes.md"),
                                      content="We will never use smtplib.\n"))
+
+    def test_code_is_refused_only_for_programs_it_runs(self):
+        site = Path(self.cfg["package"]) / "03-site"
+        allowed = {
+            "app.js": "menu.classList.toggle('open', expanded);\nconst topics = ['security', 'privacy'];\n"
+                      "window.open('https://x.example/');\n/gh/.exec('gh');\n",
+            "build.py": "import subprocess\nsubprocess.run(['ffmpeg', '-i', 'a.mp4', 'b.png'])\n"
+                        "subprocess.run(['git', 'log'])\nsubprocess.run(['git', '-C', 'repo', 'log'])\n",
+        }
+        for name, code in allowed.items():
+            self.assertFalse(self.denied("Write", file_path=str(site / name), content=code), name)
+        refused = {
+            "a.py": "import subprocess\nsubprocess.run(['/usr/bin/open', 'https://x.example'])\n",
+            "b.py": "import os\nos.system('gh api repos')\n",
+            "c.js": "const { execFileSync } = require('child_process');\nexecFileSync('git', ['push', 'origin']);\n",
+            "d.js": "require('child_process').spawn('/usr/bin/security', ['find-generic-password']);\n",
+            "e.py": "import subprocess\nsubprocess.Popen([\"xcrun\", \"simctl\", \"list\"])\n",
+        }
+        for name, code in refused.items():
+            self.assertTrue(self.denied("Write", file_path=str(site / name), content=code), name)
+        self.assertTrue(self.bash_denied("node -e \"require('child_process').execSync('open https://x.example')\""))
 
     def test_heredocs_are_data_unless_something_runs_them(self):
         self.assertFalse(self.bash_denied("cat >> decisions-log.md <<'EOF'\n- D-009 it's the Founder's call, isn't it\nEOF"))
@@ -159,6 +185,8 @@ class GuardTest(unittest.TestCase):
         self.assertTrue(self.denied("Write", file_path=str(Path(self.cfg["protected"][0]) / "angles.md"), content="x"))
         self.assertTrue(self.denied("Write", file_path="/Users/someone/Desktop/x.md", content="x"))
         self.assertTrue(self.denied("Write", file_path=str(pkg / ".." / ".." / "RepToday" / "gtm" / "a.md"), content="x"))
+        for record in ("guard-config.json", "robots/www.g2.com.json", "fetch-log.jsonl"):
+            self.assertTrue(self.denied("Write", file_path=str(Path(self.cfg["state"]) / record), content="{}"), record)
 
     def test_tools_that_reach_outside_are_denied(self):
         for tool in ("Artifact", "RemoteTrigger", "PushNotification", "SendMessage", "CronCreate",
@@ -200,7 +228,6 @@ class GuardTest(unittest.TestCase):
         self.assertTrue((Path(self.cfg["work"]) / "guard-receipt-abcdef123456").is_file())
 
     def test_guard_fails_closed(self):
-        import io
         import sys
         stdin, stdout = sys.stdin, sys.stdout
         sys.stdin, sys.stdout = io.StringIO(json.dumps({"tool_name": "Bash", "tool_input": {"command": "ls"}})), io.StringIO()
@@ -212,36 +239,98 @@ class GuardTest(unittest.TestCase):
         self.assertEqual(out["hookSpecificOutput"]["permissionDecision"], "deny")
 
 
+TODAY = dt.date(2026, 10, 24)
+
+
+def registry(*handed_off):
+    """gr0wthlab's product list naming a go_to_market_package for each Product
+    given, plus a listening-only Product with none."""
+    path = Path(tempfile.mkdtemp(prefix="gp-gr0wthlab-")) / "config" / "products.json"
+    products = [{"name": n, "go_to_market_package": {"path": "projects/%s/gtm/" % n}} for n in handed_off]
+    gc.write_json(path, {"products": products + [{"name": "Listening", "go_to_market_package": None}]})
+    return path
+
+
+def journal_at(folder, status):
+    folder.mkdir(parents=True, exist_ok=True)
+    gc.write_json(folder / gc.JOURNAL_NAME, {"gr0wthpilot_journal": 1, "status": status})
+
+
 class RunPrepTest(unittest.TestCase):
     def test_new_run_takes_gtm_then_a_dated_folder_beside_it(self):
         mandu = make_mandu(("Immerse",))
-        today = dt.date(2026, 10, 24)
-        first = gp_run.resolve_target(mandu, "Immerse", today)
+        first = gp_run.resolve_target(mandu, "Immerse", TODAY, registry())
         self.assertEqual((first["package_rel"], first["mode"], first["kind"]), ("projects/Immerse/gtm", "new", "first-package"))
         (mandu / "projects/Immerse/gtm").mkdir()
-        second = gp_run.resolve_target(mandu, "Immerse", today)
+        second = gp_run.resolve_target(mandu, "Immerse", TODAY, registry())
         self.assertEqual(second["package_rel"], "projects/Immerse/gtm-candidate-2026-10-24")
         self.assertEqual(second["protected"], [str(mandu / "projects/Immerse/gtm")])
         (mandu / "projects/Immerse/gtm-candidate-2026-10-24").mkdir()
-        third = gp_run.resolve_target(mandu, "Immerse", today)
+        third = gp_run.resolve_target(mandu, "Immerse", TODAY, registry())
         self.assertEqual(third["package_rel"], "projects/Immerse/gtm-candidate-2026-10-24-2")
 
-    def test_in_progress_run_resumes(self):
+    def test_a_product_not_handed_off_keeps_its_package_and_writes_a_candidate(self):
+        mandu = make_mandu(("Immerse",))
+        listed = registry("RepToday")
+        first = gp_run.resolve_target(mandu, "Immerse", TODAY, listed)
+        self.assertEqual((first["package_rel"], first["mode"], first["kind"], first["handoff_line"]),
+                         ("projects/Immerse/gtm", "new", "first-package", "Immerse - hand to gr0wthlab"))
+        gtm = mandu / "projects/Immerse/gtm"
+        journal_at(gtm, "in-progress")
+        resumed = gp_run.resolve_target(mandu, "Immerse", TODAY, listed)
+        self.assertEqual((resumed["package_rel"], resumed["mode"], resumed["kind"]),
+                         ("projects/Immerse/gtm", "resume", "first-package"))
+        journal_at(gtm, "complete")
+        second = gp_run.resolve_target(mandu, "Immerse", TODAY, listed)
+        self.assertEqual((second["package_rel"], second["mode"], second["kind"]),
+                         ("projects/Immerse/gtm-candidate-2026-10-24", "new", "candidate"))
+        self.assertEqual(second["handoff_line"], "Immerse - hand to gr0wthlab (gtm-candidate-2026-10-24)")
+        self.assertEqual(second["protected"], [str(gtm)])
+        self.assertIn("names no go_to_market_package", second["kind_reason"])
+
+    def test_a_handed_off_product_writes_beside_its_live_package(self):
         mandu = make_mandu(("RepToday",))
-        (mandu / "projects/RepToday/gtm").mkdir()
+        listed = registry("RepToday")
+        live = mandu / "projects/RepToday/gtm"
+        target = gp_run.resolve_target(mandu, "RepToday", TODAY, listed)
+        self.assertEqual((target["package_rel"], target["kind"], target["handoff_line"]),
+                         ("projects/RepToday/gtm-candidate-2026-10-24", "beside-live", None))
+        self.assertEqual(target["protected"], [str(live)])
+        journal_at(live, "in-progress")
+        target = gp_run.resolve_target(mandu, "RepToday", TODAY, listed)
+        self.assertEqual((target["package_rel"], target["mode"], target["kind"]),
+                         ("projects/RepToday/gtm-candidate-2026-10-24", "new", "beside-live"))
         cand = mandu / "projects/RepToday/gtm-candidate-2026-10-20"
-        cand.mkdir()
-        gc.write_json(cand / gc.JOURNAL_NAME, {"gr0wthpilot_journal": 1, "status": "in-progress"})
-        target = gp_run.resolve_target(mandu, "RepToday", dt.date(2026, 10, 24))
-        self.assertEqual((target["package_rel"], target["mode"]), ("projects/RepToday/gtm-candidate-2026-10-20", "resume"))
-        self.assertEqual(target["protected"], [str(mandu / "projects/RepToday/gtm")])
+        journal_at(cand, "in-progress")
+        target = gp_run.resolve_target(mandu, "RepToday", TODAY, listed)
+        self.assertEqual((target["package_rel"], target["mode"], target["kind"]),
+                         ("projects/RepToday/gtm-candidate-2026-10-20", "resume", "beside-live"))
+        self.assertEqual(target["protected"], [str(live)])
+        self.assertIn("names a go_to_market_package for RepToday", target["kind_reason"])
+
+    def test_an_unreadable_product_list_treats_an_existing_gtm_as_live(self):
+        mandu = make_mandu(("Immerse",))
+        missing = Path(tempfile.mkdtemp(prefix="gp-gr0wthlab-")) / "config" / "products.json"
+        first = gp_run.resolve_target(mandu, "Immerse", TODAY, missing)
+        self.assertEqual((first["package_rel"], first["kind"]), ("projects/Immerse/gtm", "first-package"))
+        journal_at(mandu / "projects/Immerse/gtm", "in-progress")
+        second = gp_run.resolve_target(mandu, "Immerse", TODAY, missing)
+        self.assertEqual((second["package_rel"], second["mode"], second["kind"], second["handoff_line"]),
+                         ("projects/Immerse/gtm-candidate-2026-10-24", "new", "beside-live", None))
+        self.assertIn("could not be read", second["kind_reason"])
 
     def test_unknown_product_and_bad_name_refused(self):
         mandu = make_mandu(("Immerse",))
         with self.assertRaises(gp_run.RunError):
-            gp_run.resolve_target(mandu, "Nope", dt.date(2026, 10, 24))
+            gp_run.resolve_target(mandu, "Nope", TODAY, registry())
         with self.assertRaises(gp_run.RunError):
-            gp_run.resolve_target(mandu, "../etc", dt.date(2026, 10, 24))
+            gp_run.resolve_target(mandu, "../etc", TODAY, registry())
+
+    def test_product_name_must_match_its_folder_exactly(self):
+        mandu = make_mandu(("Immerse",))
+        with self.assertRaises(gp_run.RunError) as raised:
+            gp_run.resolve_target(mandu, "immerse", TODAY, registry())
+        self.assertIn("Immerse", str(raised.exception))
 
     def consent(self, mandu, trusted=True, imports=True):
         path = Path(tempfile.mkdtemp(prefix="gp-claude-")) / ".claude.json"
@@ -269,8 +358,11 @@ class RunPrepTest(unittest.TestCase):
         mandu = make_mandu(("Immerse",))
         os.environ["CLAUDE_CONFIG_DIR"] = str(self.consent(mandu.resolve()).parent)
         self.addCleanup(os.environ.pop, "CLAUDE_CONFIG_DIR", None)
-        work = Path(tempfile.mkdtemp(prefix="gp-work-"))
-        args = type("A", (), {"mandu": str(mandu), "product": "Immerse", "work": str(work), "repo": None,
+        os.environ["GR0WTHLAB_DIR"] = str(registry().parent.parent)
+        self.addCleanup(os.environ.pop, "GR0WTHLAB_DIR", None)
+        cache = Path(tempfile.mkdtemp(prefix="gp-cache-"))
+        work = cache / "Immerse"
+        args = type("A", (), {"mandu": str(mandu), "product": "Immerse", "cache": str(cache), "repo": None,
                               "today": "2026-10-24"})
         old = os.environ.pop("GR0WTHPILOT_REPO", None)
         try:
@@ -299,6 +391,20 @@ class RunPrepTest(unittest.TestCase):
         self.assertEqual(profile["workflowSizeGuideline"], gp_run.WORKFLOW_SIZE_GUIDELINE)
         for event in ("SessionStart", "PreToolUse", "PostToolUse"):
             self.assertIn("guard.py", profile["hooks"][event][0]["hooks"][0]["command"])
+        self.assertEqual((cfg["kind"], cfg["handoff_line"]), ("first-package", "Immerse - hand to gr0wthlab"))
+        # The guard's records are where no tool of the run can write.
+        state = Path(cfg["state"])
+        writable = profile["sandbox"]["filesystem"]["allowWrite"] + [cfg["package"]]
+        writable += [r[len("Edit(/"):-len("/**)")] for r in perms["allow"] if r.startswith("Edit(")]
+        for key in ("config_path", "profile_path", "robots_dir", "tool_log", "fetch_log", "simulators"):
+            self.assertTrue(guard.under(cfg[key], state), key)
+            for root in writable:
+                self.assertFalse(guard.under(cfg[key], root), (key, root))
+            out = guard.run_pre(cfg, {"tool_name": "Write", "tool_input": {"file_path": cfg[key], "content": "{}"}})
+            self.assertEqual(out["hookSpecificOutput"]["permissionDecision"], "deny", key)
+        self.assertIn(cfg["state"], profile["sandbox"]["filesystem"]["denyWrite"])
+        self.assertIn("Edit(/%s/**)" % cfg["state"], perms["deny"])
+        self.assertTrue(guard.under(cfg["last30days_log"], work))
         again = gp_run.prepare(args)
         self.assertEqual(again["mode"], "resume")
         self.assertEqual(len(gc.read_json(Path(cfg["package"]) / gc.JOURNAL_NAME)["sessions"]), 2)
@@ -324,12 +430,10 @@ class RunPrepTest(unittest.TestCase):
 
     def test_preflight_needs_a_guard_receipt(self):
         cfg = config()
-        path = Path(cfg["work"]) / "guard-config.json"
+        path = Path(cfg["state"]) / "guard-config.json"
         gc.write_json(path, cfg)
         args = type("A", (), {"config": str(path)})
         os.environ.pop("GP_PREFLIGHT", None)
-        import contextlib
-        import io
         with contextlib.redirect_stdout(io.StringIO()):
             self.assertEqual(gp_run.preflight(args), 2)
         os.environ["GP_PREFLIGHT"] = "abcdef123456"
@@ -396,12 +500,56 @@ class WrapperRulesTest(unittest.TestCase):
         with self.assertRaises(xb.ToolError):
             xb.check_args(self.cfg, ["-project", "/Users/someone/Developer/App/App.xcodeproj", "build"])
 
+    def test_gp_xcodebuild_tests_only_on_a_run_simulator(self):
+        xb = load_wrapper("gp-xcodebuild")
+        src = Path(self.cfg["work"]) / "source" / "abc" / "App.xcodeproj"
+        src.mkdir(parents=True)
+        gc.write_json(Path(self.cfg["simulators"]), {"devices": [{"udid": "MINE", "name": "Gr0wthPilot-Immerse-1"}]})
+        base = ["-project", str(src), "-scheme", "App"]
+        for dest in ("generic/platform=iOS Simulator", "platform=iOS Simulator", "platform=iOS Simulator,OS=26.0"):
+            xb.check_args(self.cfg, base + ["-destination", dest, "build"])
+            for action in ("test", "test-without-building"):
+                with self.assertRaises(xb.ToolError, msg="%s %s" % (dest, action)):
+                    xb.check_args(self.cfg, base + ["-destination", dest, action])
+        with self.assertRaises(xb.ToolError):
+            xb.check_args(self.cfg, base + ["test"])
+        for dest in ("platform=iOS Simulator,id=MINE", "platform=iOS Simulator,name=Gr0wthPilot-Immerse-1"):
+            xb.check_args(self.cfg, base + ["-destination", dest, "test"])
+
+    def test_gp_sim_cleanup_records_exactly_the_devices_that_are_gone(self):
+        sim = load_wrapper("gp-sim")
+        gc.write_json(Path(self.cfg["simulators"]), {"devices": [
+            {"udid": "STUCK", "name": "Gr0wthPilot-Immerse-1"}, {"udid": "GONE", "name": "Gr0wthPilot-Immerse-2"},
+            {"udid": "OK", "name": "Gr0wthPilot-Immerse-3"}], "recordings": {}})
+        devices = {"STUCK": {"udid": "STUCK", "name": "Gr0wthPilot-Immerse-1", "state": "Booted"},
+                   "OK": {"udid": "OK", "name": "Gr0wthPilot-Immerse-3", "state": "Shutdown"},
+                   "THEIRS": {"udid": "THEIRS", "name": "iPhone 17 Pro", "state": "Booted"}}
+        calls = []
+
+        def simctl(args, check=True, capture=True):
+            calls.append(args)
+            if args == ["delete", "OK"]:
+                del devices["OK"]
+            return types.SimpleNamespace(returncode=0, stdout="", stderr="")
+
+        sim.simctl = simctl
+        sim.all_devices = lambda: {k: dict(v) for k, v in devices.items()}
+        with contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaises(sim.ToolError):
+                sim.cmd_cleanup(self.cfg, [])
+        ledger = gc.read_json(Path(self.cfg["simulators"]))
+        self.assertEqual({d["udid"]: bool(d.get("deleted_at")) for d in ledger["devices"]},
+                         {"STUCK": False, "GONE": True, "OK": True})
+        self.assertFalse([c for c in calls if "THEIRS" in c])
+        devices.pop("STUCK")
+        with contextlib.redirect_stdout(io.StringIO()):
+            sim.cmd_cleanup(self.cfg, [])
+        self.assertTrue(all(d.get("deleted_at") for d in gc.read_json(Path(self.cfg["simulators"]))["devices"]))
+
     def test_gp_last30days_keeps_paid_sources_off(self):
         l30 = load_wrapper("gp-last30days")
         os.environ["GR0WTHPILOT_CONFIG"] = str(Path(self.cfg["work"]) / "c.json")
         gc.write_json(Path(os.environ["GR0WTHPILOT_CONFIG"]), self.cfg)
-        import contextlib
-        import io
         try:
             with contextlib.redirect_stderr(io.StringIO()):
                 self.assertEqual(l30.main(["film", "--out", str(Path(self.cfg["package"]) / "r"), "--sources", "reddit,tiktok"]), 1)

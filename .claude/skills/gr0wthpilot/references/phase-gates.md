@@ -74,7 +74,7 @@ Gates: `package` (every check: sources, claims, layout with the Handoff entry wr
 
 1. Extras were chosen by "which make this company feel most real, different, and creative to a stranger", and the dropped ones are named with reasons.
 2. At least one deliverable nobody would ask for exists and is finished work.
-3. The recap explains the business in under five minutes, states the naming verdict with clearance UNVERIFIED, puts the thesis beside the strongest surviving objection, logs the orchestration topology, maps every deliverable, and ends with the Handoff line.
+3. The recap explains the business in under five minutes, states the naming verdict with clearance UNVERIFIED, puts the thesis beside the strongest surviving objection, logs the orchestration topology, maps every deliverable, and ends with the package's Handoff line, or, beside a live package, says why there is none yet.
 4. Nothing is a placeholder pretending to be finished; a stub is labeled a stub in the recap.
 5. The self-grade is honest, including what failed and why it was kept.
 6. The run audit shows no question asked and nothing published.

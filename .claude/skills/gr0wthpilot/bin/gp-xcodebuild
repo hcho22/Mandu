@@ -6,7 +6,9 @@ A run treats the Product's repository as read only, so it never builds in it:
 cache folder, and every build runs on that copy. It runs outside the sandbox
 (xcodebuild needs system services the sandbox blocks), so it enforces:
   - the project or workspace and every output path lie in the cache folder;
-  - builds target the iOS simulator only, on a device this run created;
+  - builds target the iOS simulator only, and tests run only on a simulator
+    this run created, named by id= or name=, so xcodebuild never boots one of
+    the Founder's own;
   - nothing archives, exports, signs with a team, registers devices, or
     contacts App Store Connect.
 
@@ -29,6 +31,8 @@ from gp_tools import ToolError, inside, load_config, require_inside  # noqa: E40
 
 ACTIONS = {"build", "build-for-testing", "test", "test-without-building", "clean",
            "analyze", "docbuild"}
+# Actions that boot a simulator to run on.
+TEST_ACTIONS = {"test", "test-without-building"}
 INFO_FLAGS = {"-list", "-showBuildSettings", "-version", "-showsdks", "-showdestinations",
               "-resolvePackageDependencies", "-showTestPlans"}
 DENIED_ACTIONS = {"archive", "install", "installsrc", "installhdrs", "installapi"}
@@ -52,24 +56,25 @@ def ledger_names(cfg):
     return {d["udid"] for d in live}, {d["name"] for d in live}
 
 
-def check_destination(cfg, value):
-    if value in ("generic/platform=iOS Simulator", "platform=iOS Simulator"):
-        return
+def check_destination(cfg, value, testing):
     parts = dict(p.split("=", 1) for p in value.split(",") if "=" in p)
-    if parts.get("platform") != "iOS Simulator":
+    generic = parts.pop("generic/platform", None)
+    if (generic or parts.get("platform")) != "iOS Simulator":
         raise ToolError("builds target the iOS simulator only, not %r" % value)
     udids, names = ledger_names(cfg)
-    if "id" in parts and parts["id"] in udids:
+    if not generic and (parts.get("id") in udids or parts.get("name") in names):
         return
-    if "name" in parts and parts["name"] in names:
-        return
+    if testing:
+        raise ToolError("tests run only on a simulator this run created: name it with id= or name= "
+                        "(gp-sim create)")
     if set(parts) <= {"platform", "OS", "arch"} and "id" not in parts and "name" not in parts:
         return
     raise ToolError("the destination must be a simulator this run created (gp-sim create)")
 
 
 def check_args(cfg, args):
-    has_target, has_derived = False, False
+    has_target, has_derived, has_destination = False, False, False
+    testing = any(a in TEST_ACTIONS for a in args)
     i = 0
     while i < len(args):
         a = args[i]
@@ -87,7 +92,8 @@ def check_args(cfg, args):
             i += 2
             continue
         if a == "-destination":
-            check_destination(cfg, args[i + 1] if i + 1 < len(args) else "")
+            check_destination(cfg, args[i + 1] if i + 1 < len(args) else "", testing)
+            has_destination = True
             i += 2
             continue
         if a == "-sdk":
@@ -101,6 +107,9 @@ def check_args(cfg, args):
         if m and m.group(2).startswith("/") and not inside(m.group(2), cfg["work"]):
             raise ToolError("build setting %s points outside the run's cache folder" % m.group(1))
         i += 1
+    if testing and not has_destination:
+        raise ToolError("tests run only on a simulator this run created: pass "
+                        "-destination 'platform=iOS Simulator,id=<udid>' (gp-sim create)")
     info_only = any(a in INFO_FLAGS for a in args) and not any(a in ACTIONS for a in args)
     if not has_target and not (info_only and args and args[0] in ("-version", "-showsdks")):
         raise ToolError("name the copy's project or workspace with -project/-workspace "

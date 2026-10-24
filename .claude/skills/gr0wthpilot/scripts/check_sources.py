@@ -8,14 +8,15 @@ whose URL was not fetched is deleted. This check makes that mechanical:
    `- <URL> - fetched <YYYY-MM-DDTHH:MM[:SS]Z> - <what it supports>`.
 2. Every entry was fetched in this run, by tool record rather than by anyone's
    say-so: the guard's WebFetch log (`run-evidence/fetch-log.jsonl`, or the
-   live one in the run's cache folder) shows a 2xx fetch, or the URL appears in
-   last30days output whose SHA-256 the gp-last30days wrapper recorded.
+   guard's live one) shows a 2xx fetch, or the URL appears in last30days
+   output whose SHA-256 the gp-last30days wrapper recorded.
    A URL whose only fetches failed is a dead link.
 3. Every entry in a `sources.d/` fragment, where parallel agents record their
    URLs, has been merged into `sources.md` (scripts/merge_sources.py).
 4. Every URL cited anywhere in the package is listed in `sources.md`, except
    namespace and font URLs and the prefixes `sources-exempt.md` lists with a
-   reason.
+   reason. The run's machine records (`run-audit.md`, `run-evidence/`, the
+   journal) are not claims and are not read for citations.
 
 Usage: check_sources.py PACKAGE [--fetch-log FILE ...] [--last30days-log FILE ...] [--json]
 """
@@ -42,7 +43,7 @@ BUILTIN_EXEMPT = (
     "http://127.0.0.1", "https://localhost", "http://ns.adobe.com/", "http://purl.org/",
 )
 # Files that are evidence or machine records rather than claims.
-SKIP_FILES = {"sources.md", "sources-exempt.md", gc.JOURNAL_NAME}
+SKIP_FILES = {"sources.md", "sources-exempt.md", gc.JOURNAL_NAME, gc.AUDIT_NAME}
 SKIP_DIRS = ("run-evidence", "01-research/last30days", "sources.d")
 
 
@@ -90,7 +91,7 @@ def default_logs(pkg, name):
     config = os.environ.get("GR0WTHPILOT_CONFIG")
     if config and Path(config).is_file():
         try:
-            logs.append(Path(gc.read_json(Path(config))["work"]) / name)
+            logs.append(Path(gc.read_json(Path(config))[gc.RUN_LOGS[name]]))
         except (KeyError, ValueError, OSError):
             pass
     return logs

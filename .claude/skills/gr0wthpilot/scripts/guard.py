@@ -34,7 +34,6 @@ ROBOTS_AGENT = "Claude-User"
 ROBOTS_TTL_SECONDS = 6 * 3600
 
 WRAPPERS = {"gp-sim", "gp-xcodebuild", "gp-chrome"}
-SANDBOXED_WRAPPERS = {"gp-last30days"}
 
 DENIED_TOOLS = {
     "Artifact", "ArtifactComments", "ArtifactData", "RemoteTrigger", "PushNotification",
@@ -92,7 +91,8 @@ WGET_SEND_FLAGS = {"--post-data", "--post-file", "--body-data", "--body-file", "
                    "--ftp-user", "--ftp-password", "--http-user", "--http-password"}
 
 # Code that sends: checked in inline `python -c` / `node -e` code, in scripts
-# the run executes, and in executable files the run writes.
+# the run executes, and in code files the run writes. SPAWN_RE below covers
+# code that runs a program.
 NET_SEND_PATTERNS = [
     r"\bsmtplib\b", r"\bftplib\b", r"\bparamiko\b", r"\bboto3\b", r"\bpoplib\b",
     r"\brequests\.(post|put|patch|delete)\b", r"\bhttpx\.(post|put|patch|delete)\b",
@@ -100,10 +100,18 @@ NET_SEND_PATTERNS = [
     r"\.request\(\s*['\"](POST|PUT|PATCH|DELETE)['\"]",
     r"\bsendBeacon\b", r"\bXMLHttpRequest\b", r"\bsocket\.socket\(",
     r"urlopen\([^)\n]*data\s*=", r"Request\([^)\n]*data\s*=",
-    r"['\"]git['\"]\s*,\s*['\"](push|remote|commit|config)['\"]",
-    r"['\"](gh|wrangler|vercel|netlify|firebase|scp|ssh|rsync|osascript|security|xcrun|xcodebuild|open)['\"]\s*[,\]]",
     r"last30days\.py[^\n]*(--publish-html|\bsetup\b|--github)",
 ]
+# A call that runs a program, with the program as its first string argument or
+# the first element of the argv list it is passed, and the element after it:
+# Python's subprocess and os.exec*/spawn*/system, Node's child_process, Bun,
+# Deno, and system() in Ruby and Perl.
+SPAWN_RE = re.compile(
+    r"(?:\b(?:spawn|spawnSync|execFile|execFileSync|execSync|execa|execaSync|Popen|check_output|"
+    r"check_call|getoutput|getstatusoutput|posix_spawnp?|exec[lv]p?e?|spawn[lv]p?e?)"
+    r"|\b(?:subprocess|os|child_process|cp|Bun|Deno)\s*\.\s*(?:run|call|system|popen|exec|fork|spawn|Command)"
+    r"|(?<![\w.])(?:system|exec))"
+    r"\s*\(\s*\[?\s*(['\"`])([^'\"`\n]+)\1(?:\s*,\s*\[?\s*(['\"`])([^'\"`\n]*)\3)?")
 CODE_SUFFIXES = {".py", ".sh", ".bash", ".zsh", ".js", ".mjs", ".cjs", ".ts", ".rb", ".pl",
                  ".command"}
 
@@ -230,7 +238,7 @@ def robots_opener():
 def fetch_robots(cfg, scheme, host):
     """Return (status, body) for the host's robots.txt, cached for six hours."""
     import time
-    cache_dir = Path(cfg.get("robots_dir") or (Path(cfg["work"]) / "robots"))
+    cache_dir = Path(cfg["robots_dir"])
     cache = cache_dir / (re.sub(r"[^A-Za-z0-9.-]", "_", host) + ".json")
     try:
         cached = gc.read_json(cache)
@@ -433,11 +441,28 @@ def program_name(tok):
     return os.path.basename(tok)
 
 
+def spawned_programs(text):
+    """Yield (program, the argument after it) for each call in code that runs a
+    program, the program compared by its basename."""
+    for m in SPAWN_RE.finditer(text):
+        first = m.group(2).strip()
+        if program_name(first) == "Google Chrome":
+            yield "Google Chrome", None
+            continue
+        words = first.split()
+        if words:
+            yield program_name(words[0]), words[1] if len(words) > 1 else m.group(4)
+
+
 def check_code_text(text, where):
     for pattern in NET_SEND_PATTERNS:
         if re.search(pattern, text):
             raise Deny("%s contains code that sends data or runs a denied program (%s). A run only "
                        "reads; it publishes, uploads, and sends nothing." % (where, pattern))
+    for prog, arg in spawned_programs(text):
+        if prog in DENIED_PROGRAMS or (prog == "git" and arg and not arg.startswith("-") and arg not in GIT_READ):
+            raise Deny("%s contains code that runs `%s%s`, which a run never runs. A run only reads; it "
+                       "publishes, uploads, and sends nothing." % (where, prog, " " + arg if prog == "git" else ""))
 
 
 def check_script_file(path, cfg):
@@ -734,6 +759,9 @@ def run_session_start(cfg, data):
         "Run journal: %s/%s; gates passed so far: %s." % (cfg["package"], gc.JOURNAL_NAME,
                                                           ", ".join(passed) or "none"),
         "Protected, never written: %s." % (", ".join(cfg.get("protected") or []) or "none"),
+        "Package kind: %s, because %s." % (cfg.get("kind"), cfg.get("kind_reason")),
+        "Handoff line for the recap and the last message: %s." % (
+            cfg.get("handoff_line") or "none; a package beside a live one cannot be handed off yet"),
         "Product repository, read only: %s." % (cfg.get("repo") or "not found"),
         "Run the Workflow scripts from %s (fresh copies of the skill's workflows/)." % cfg.get("workflows_dir"),
         "Put scratch files in %s/scratch, not in Claude Code's scratchpad, which this run cannot write."

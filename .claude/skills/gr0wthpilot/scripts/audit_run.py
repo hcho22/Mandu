@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Write a run's audit into its Candidate Package.
 
-Copies the guard's logs from the run's cache folder into `run-evidence/`
-(the tool log, the WebFetch log, the last30days log, and the simulator ledger)
-and writes `run-audit.md`: every tool call by kind, every call the guard
+Copies the run's logs into `run-evidence/` (the guard's tool log and WebFetch
+log, the last30days log, and the simulator ledger) and writes
+`run-audit.md`: every tool call by kind, every call the guard
 refused and why, every question the run tried to ask (there should be none),
 the Workflow runs and subagents, the phase skills read, last30days runs, and
 every simulator the run created and whether it was deleted.
@@ -24,8 +24,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import gp_common as gc  # noqa: E402
 
-LOGS = ("tool-log.jsonl", "fetch-log.jsonl", "last30days-log.jsonl")
-
 
 def read_jsonl(path):
     out = []
@@ -39,17 +37,17 @@ def read_jsonl(path):
 
 
 def summarize(cfg):
-    work, pkg = Path(cfg["work"]), Path(cfg["package"])
+    pkg = Path(cfg["package"])
     evidence = pkg / "run-evidence"
     evidence.mkdir(exist_ok=True)
-    for name in LOGS:
-        if (work / name).is_file():
-            shutil.copyfile(str(work / name), str(evidence / name))
+    for name, key in gc.RUN_LOGS.items():
+        if Path(cfg[key]).is_file():
+            shutil.copyfile(cfg[key], str(evidence / name))
     ledger = {}
     if Path(cfg["simulators"]).is_file():
         shutil.copyfile(cfg["simulators"], str(evidence / "simulators.json"))
         ledger = gc.read_json(Path(cfg["simulators"]))
-    tools = read_jsonl(work / "tool-log.jsonl")
+    tools = read_jsonl(cfg["tool_log"])
     pre = [t for t in tools if t.get("event") == "pre"]
     by_tool = collections.Counter(t["tool"] for t in pre)
     denied = [t for t in pre if t.get("decision") == "deny"]
@@ -58,9 +56,9 @@ def summarize(cfg):
     agents = {t.get("agent_id") for t in pre if t.get("agent_id")}
     skills = sorted({t["phase_skill"] for t in pre if t.get("phase_skill")})
     sessions = [t for t in tools if t.get("event") == "session-start"]
-    fetches = read_jsonl(work / "fetch-log.jsonl")
+    fetches = read_jsonl(cfg["fetch_log"])
     ok = [f for f in fetches if isinstance(f.get("code"), int) and 200 <= f["code"] < 300]
-    l30 = read_jsonl(work / "last30days-log.jsonl")
+    l30 = read_jsonl(cfg["last30days_log"])
     devices = ledger.get("devices", [])
     lines = [
         "# Run audit",
@@ -97,7 +95,7 @@ def summarize(cfg):
     lines += ["- %s (%s): created %s, %s" % (d["name"], d["udid"], d.get("created_at"),
                                              "deleted %s" % d["deleted_at"] if d.get("deleted_at") else "NOT deleted")
               for d in devices] or ["- none"]
-    (pkg / "run-audit.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    (pkg / gc.AUDIT_NAME).write_text("\n".join(lines) + "\n", encoding="utf-8")
     return {"tool_calls": len(pre), "denied": len(denied), "asked": len(asked), "workflows": len(workflows),
             "agents": len(agents), "phase_skills": skills, "simulators_left": len([d for d in devices if not d.get("deleted_at")])}
 

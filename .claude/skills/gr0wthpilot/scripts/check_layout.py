@@ -5,8 +5,9 @@ gr0wthlab can parse?
 gr0wthlab (the Marketing Engineer) reads a Product's package through its
 registry, config/products.json. This check takes RepToday's entry there as the
 template (the live registry when one is readable, else the snapshot in
-references/registry-template.json), maps every path it names into the
-package, and verifies:
+references/registry-template.json), points it at the package's own folder
+(`projects/<Product>/gtm/` or a dated `gtm-candidate-<date>/`), maps every
+path it names into the package, and verifies:
 
 1. every file and folder the entry names exists (a folder holds at least one
    visible file; a `files_starting_with` source has at least one match);
@@ -16,7 +17,8 @@ package, and verifies:
    15 distinct Angles, hook-only A/B pairs, a 14-day calendar, and the two
    platforms gr0wthlab runs, TikTok and YouTube Shorts;
 3. with --write-entry, writes `handoff/registry-entry.json`: RepToday's entry
-   with the Product's name, ready for the reviewed gr0wthlab change at Handoff.
+   with the Product's name and the package's folder, ready for the reviewed
+   gr0wthlab change at Handoff.
 
 Usage: check_layout.py PACKAGE --product NAME [--registry products.json] [--write-entry] [--json]
 """
@@ -82,18 +84,23 @@ def load_template(registry=None):
     return gc.read_json(TEMPLATE)["go_to_market_package"], str(TEMPLATE)
 
 
-def fill(entry, product):
-    return json.loads(json.dumps(entry).replace("{product}", product))
+def package_prefix(pkg, product):
+    """The registry path of the package: `projects/<Product>/<its folder>/`."""
+    return "projects/%s/%s/" % (product, Path(pkg).resolve().name)
 
 
-def to_package(pkg, product, path):
-    prefix = "projects/%s/gtm/" % product
+def fill(entry, product, prefix):
+    text = json.dumps(entry).replace("projects/{product}/gtm/", prefix)
+    return json.loads(text.replace("{product}", product))
+
+
+def to_package(pkg, prefix, path):
     if not path.startswith(prefix):
         return None
     return pkg / path[len(prefix):]
 
 
-def check_paths(pkg, product, entry, problems):
+def check_paths(pkg, prefix, entry, problems):
     needed = []
     for source in entry.get("sources", []):
         needed.append((source["path"], source.get("files_starting_with")))
@@ -103,23 +110,23 @@ def check_paths(pkg, product, entry, problems):
             if key != "note" and isinstance(value, str) and value.startswith("projects/"):
                 needed.append((value, None))
     seen = set()
-    for path, prefix in needed:
-        if not path or (path, prefix) in seen:
+    for path, starts in needed:
+        if not path or (path, starts) in seen:
             continue
-        seen.add((path, prefix))
-        target = to_package(pkg, product, path)
+        seen.add((path, starts))
+        target = to_package(pkg, prefix, path)
         if target is None:
-            problems.append("registry path %s lies outside projects/%s/gtm/" % (path, product))
+            problems.append("registry path %s lies outside %s" % (path, prefix))
             continue
         relative = gc.rel(pkg, target)
         if path.endswith("/"):
             files = [p for p in target.iterdir() if p.is_file() and not p.name.startswith(".")] \
                 if target.is_dir() else []
-            if prefix:
-                files = [p for p in files if p.name.startswith(prefix)]
+            if starts:
+                files = [p for p in files if p.name.startswith(starts)]
             if not files:
                 problems.append("%s/ holds no %sfiles gr0wthlab can read" % (
-                    relative, "'%s*' " % prefix if prefix else ""))
+                    relative, "'%s*' " % starts if starts else ""))
         elif not target.is_file():
             problems.append("%s is missing (gr0wthlab reads it)" % relative)
     return len(seen)
@@ -386,8 +393,9 @@ def check(pkg, product, registry=None, write_entry=False):
     pkg = Path(pkg)
     problems, warnings = [], []
     template, origin = load_template(registry)
-    entry = fill(template, product)
-    count = check_paths(pkg, product, entry, problems)
+    prefix = package_prefix(pkg, product)
+    entry = fill(template, product, prefix)
+    count = check_paths(pkg, prefix, entry, problems)
     rules = None
     rules_text = read(pkg, brand_lint.RULES_PATH)
     if rules_text is not None:
@@ -428,10 +436,11 @@ def check(pkg, product, registry=None, write_entry=False):
         gc.write_json(out, {
             "comment": "The go_to_market_package entry for %s in gr0wthlab's config/products.json, ready "
                        "for the reviewed gr0wthlab change firstmate makes at Handoff. It is RepToday's entry "
-                       "with the name changed; only launch_checklist differs, pointing inside the package. "
+                       "with the name changed and every path pointing into %s; only launch_checklist differs, "
+                       "pointing inside the package. "
                        "The rest of the Product's registry entry (repository, filming, waitlist, "
                        "beta_recruiting) is product-specific and is set by that change; see handoff/README.md."
-                       % product,
+                       % (product, prefix),
             "template": origin,
             "go_to_market_package": entry,
         })

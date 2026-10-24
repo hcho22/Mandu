@@ -164,7 +164,7 @@ def site_html(variant):
 
 
 def build(root=None, video=True):
-    root = Path(root or tempfile.mkdtemp(prefix="gp-pkg-"))
+    root = Path(root) if root else Path(tempfile.mkdtemp(prefix="gp-pkg-")) / "gtm"
     write(root, "run-journal.json", json.dumps({
         "gr0wthpilot_journal": 1, "product": PRODUCT, "run_id": "testprod-1", "status": "in-progress",
         "package": "projects/Testprod/gtm", "kind": "first-package", "repo": None, "started_at": FETCHED,
@@ -284,10 +284,15 @@ def build(root=None, video=True):
 _CACHE = {}
 
 
-def package():
-    """A fresh copy of the passing package (built once per test run)."""
+def package(folder="gtm", kind=None):
+    """A fresh copy of the passing package (built once per test run), in a
+    package folder of that name, its run journal marked with that kind."""
     if "base" not in _CACHE:
         _CACHE["base"] = build()
-    dest = Path(tempfile.mkdtemp(prefix="gp-case-")) / "gtm"
+    dest = Path(tempfile.mkdtemp(prefix="gp-case-")) / folder
     shutil.copytree(str(_CACHE["base"]), str(dest))
+    if kind:
+        journal = json.loads((dest / "run-journal.json").read_text(encoding="utf-8"))
+        journal["kind"] = kind
+        (dest / "run-journal.json").write_text(json.dumps(journal), encoding="utf-8")
     return dest

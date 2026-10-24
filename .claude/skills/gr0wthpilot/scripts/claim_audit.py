@@ -20,6 +20,8 @@ details are never invented; guesses are labeled):
        [DECIDED BY AGENT ...].
    Table cells under a column for scores, weights, signals, kill criteria,
    targets, thresholds, or budgets are the run's own numbers and are skipped.
+   The run's machine records (`run-audit.md`, `run-evidence/`, the journal)
+   are not claims and are skipped.
 
 Usage: claim_audit.py PACKAGE [--json]
 """
@@ -63,7 +65,7 @@ OWN_NUMBER_COLUMN = re.compile(
     r"score|weight|signal|kill|target|threshold|floor|budget|goal|margin|points|rubric|rank|"
     r"total|day|slot|duration|length|size|budget", re.I)
 SKIP_DIRS = ("run-evidence", "01-research/last30days")
-SKIP_NAMES = {"sources.md", "sources-exempt.md", gc.JOURNAL_NAME, "claims-ledger.md"}
+SKIP_NAMES = {"sources.md", "sources-exempt.md", gc.JOURNAL_NAME, gc.AUDIT_NAME, "claims-ledger.md"}
 SCAN_SUFFIXES = {".md", ".html", ".htm", ".txt"}
 
 

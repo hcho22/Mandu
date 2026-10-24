@@ -9,12 +9,16 @@ from __future__ import annotations
 import contextlib
 import io
 import json
+import os
 import re
+import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import fixtures
 
+import audit_run
 import brand_lint
 import check_layout
 import check_recap
@@ -22,6 +26,7 @@ import check_screenshots
 import check_sources
 import check_video
 import claim_audit
+import gp_common as gc
 import journal
 
 REGISTRY = str(fixtures.SCRIPTS.parent / "references" / "registry-template.json")
@@ -93,6 +98,19 @@ class SourcesTest(unittest.TestCase):
         self.assertTrue(has(problems, r"new.example.org/x was not fetched"))
         self.assertFalse(has(problems, r"is not in sources.md"))
         self.assertIn("## lane", (pkg / "sources.md").read_text())
+
+    def test_urls_with_parentheses_match_their_sources_entry(self):
+        pkg = fixtures.package()
+        url = "https://en.wikipedia.org/wiki/Polaroid_(brand)"
+        with open(str(pkg / "sources.md"), "a") as handle:
+            handle.write("- %s - fetched 2026-10-24T10:00Z - the brand's history\n" % url)
+        with open(str(pkg / "run-evidence" / "fetch-log.jsonl"), "a") as handle:
+            handle.write(json.dumps({"url": url, "code": 200}) + "\n")
+        fixtures.write(pkg, "06-channels/history.md", "See [Polaroid](%s).\n\nThe brand (%s) made instant film.\n"
+                       % (url, url))
+        self.assertEqual(check_sources.check(pkg)["problems"], [])
+        self.assertEqual(gc.find_urls("(see https://x.example/a), then https://y.example/b_(c)."),
+                         ["https://x.example/a", "https://y.example/b_(c)"])
 
     def test_last30days_output_counts_only_when_its_hash_matches(self):
         import hashlib
@@ -243,6 +261,18 @@ class LayoutTest(unittest.TestCase):
         self.assertIn("projects/Testprod/gtm/05-social-pmf/angles.md", paths)
         self.assertNotIn("RepToday", json.dumps(entry["go_to_market_package"]))
         self.assertEqual(entry["go_to_market_package"]["launch_checklist"], "projects/Testprod/gtm/launch-checklist.md")
+
+    def test_entry_points_at_the_package_folder(self):
+        for kind, folder in (("first-package", "gtm"), ("candidate", "gtm-candidate-2026-10-24"),
+                             ("beside-live", "gtm-candidate-2026-10-24")):
+            pkg = fixtures.package(folder, kind)
+            result = check_layout.check(pkg, fixtures.PRODUCT, registry=REGISTRY, write_entry=True)
+            self.assertEqual(result["problems"], [], kind)
+            entry = json.loads((pkg / "handoff" / "registry-entry.json").read_text())["go_to_market_package"]
+            prefix = "projects/Testprod/%s/" % folder
+            self.assertEqual(entry["path"], prefix, kind)
+            self.assertEqual(entry["launch_checklist"], prefix + "launch-checklist.md", kind)
+            self.assertTrue(all(s["path"].startswith(prefix) for s in entry["sources"]), kind)
 
     def test_template_matches_rep_today_entry(self):
         template = json.loads(Path(REGISTRY).read_text())["go_to_market_package"]
@@ -415,6 +445,19 @@ class RecapTest(unittest.TestCase):
         self.assertTrue(has(problems, r"'Testprod - hand to gr0wthlab' word for word"))
         self.assertTrue(has(problems, r"UNVERIFIED"))
 
+    def test_candidate_folder_needs_its_own_handoff_line(self):
+        pkg = fixtures.package("gtm-candidate-2026-10-24", "candidate")
+        problems = check_recap.check(pkg, fixtures.PRODUCT)["problems"]
+        self.assertTrue(has(problems, r"'Testprod - hand to gr0wthlab \(gtm-candidate-2026-10-24\)' word for word"))
+        edit(pkg / "recap.html", "Testprod - hand to gr0wthlab", "Testprod - hand to gr0wthlab (gtm-candidate-2026-10-24)")
+        self.assertEqual(check_recap.check(pkg, fixtures.PRODUCT)["problems"], [])
+
+    def test_beside_live_package_needs_no_handoff_line(self):
+        pkg = fixtures.package("gtm-candidate-2026-10-24", "beside-live")
+        edit(pkg / "recap.html", "When you approve it, say: <code>Testprod - hand to gr0wthlab</code>",
+             "Testprod's live package stays in place until gr0wthlab can take a replacement package.")
+        self.assertEqual(check_recap.check(pkg, fixtures.PRODUCT)["problems"], [])
+
     def test_every_extra_must_be_mapped(self):
         pkg = fixtures.package()
         fixtures.write(pkg, "09-extras/pitch-deck.html", "<p>deck</p>")
@@ -431,14 +474,43 @@ def quiet(func, *args):
         return func(*args)
 
 
+class AuditTest(unittest.TestCase):
+    def test_refused_calls_in_the_audit_are_not_claims(self):
+        pkg = fixtures.package()
+        state = Path(tempfile.mkdtemp(prefix="gp-state-"))
+        refused = [
+            {"event": "pre", "tool": "WebFetch", "input": "https://blocked.example.net/pricing", "decision": "deny",
+             "reason": "https://blocked.example.net/robots.txt disallows https://blocked.example.net/pricing"},
+            {"event": "pre", "tool": "Bash", "input": "awk -F= '{print $1}' /repo/.env", "decision": "deny",
+             "reason": "reading a .env file can print secret values"},
+        ]
+        (state / "tool-log.jsonl").write_text("".join(json.dumps(r) + "\n" for r in refused))
+        cfg = {"package": str(pkg), "product": fixtures.PRODUCT, "package_rel": "projects/Testprod/gtm",
+               "run_id": "testprod-1", "tool_log": str(state / "tool-log.jsonl"),
+               "fetch_log": str(state / "fetch-log.jsonl"), "last30days_log": str(state / "last30days-log.jsonl"),
+               "simulators": str(state / "simulators.json")}
+        with mock.patch.dict(os.environ):
+            os.environ.pop("GR0WTHPILOT_CONFIG", None)
+            self.assertEqual(audit_run.summarize(cfg)["denied"], 2)
+            self.assertIn("blocked.example.net/pricing", (pkg / gc.AUDIT_NAME).read_text())
+            self.assertEqual(check_sources.check(pkg)["problems"], [])
+            self.assertEqual(claim_audit.check(pkg)["problems"], [])
+
+
 class JournalTest(unittest.TestCase):
+    def setUp(self):
+        for patcher in (mock.patch.object(check_layout, "default_registries", lambda: [Path(REGISTRY)]),
+                        mock.patch.dict(os.environ)):
+            patcher.start()
+            self.addCleanup(patcher.stop)
+        os.environ.pop("GR0WTHPILOT_CONFIG", None)
+
     def run_gate(self, pkg, gate):
         return quiet(journal.main, ["pass", gate, str(pkg)])
 
     def test_gates_pass_in_order_on_the_fixture(self):
         pkg = fixtures.package()
         self.assertEqual(self.run_gate(pkg, "research"), 1)
-        import os
         for gate in journal.GATE_IDS:
             if gate.startswith("critic-"):
                 os.utime(str(pkg / "08-redteam" / ("critic-phase-%s.md" % gate[-1])), None)
@@ -459,7 +531,6 @@ class JournalTest(unittest.TestCase):
         for gate in journal.GATE_IDS[:5]:
             self.assertEqual(self.run_gate(pkg, gate), 0, gate)
         report = pkg / "08-redteam/critic-phase-1.md"
-        import os
         report.write_text("Round 1\n\nVerdict: PASS\n\nRound 2\n\nVerdict: SEND BACK\n")
         self.assertEqual(self.run_gate(pkg, "critic-1"), 1)
         report.write_text("Round 3\n\nVerdict: PASS\n")

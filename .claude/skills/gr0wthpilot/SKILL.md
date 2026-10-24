@@ -1,15 +1,15 @@
 ---
 name: gr0wthpilot
-description: "Gr0wthPilot takes one of hcho's existing Products and writes a complete Candidate Package in Mandu: research, a blind name and positioning tournament, brand guidelines, a landing page, the 14-day Test Kit gr0wthlab runs, a Launch Set for Instagram, X, and TikTok, a walkthrough video of real app screens, a red-team dossier, and a recap page ending in the ready Handoff line. It runs parallel researchers, judge panels, skeptics, red-team personas, and a completeness critic through the Workflow tool, never asks anything, publishes nothing, spends nothing new, and states no fact it did not fetch. Use only when hcho starts it with `bin/gr0wthpilot <Product>` (which opens a session already running `/gr0wthpilot <Product>`); in any other session it stops and points him to the launcher."
+description: "Gr0wthPilot takes one of hcho's existing Products and writes a complete Candidate Package in Mandu: research, a blind name and positioning tournament, brand guidelines, a landing page, the 14-day Test Kit gr0wthlab runs, a Launch Set for Instagram, X, and TikTok, a walkthrough video of real app screens, a red-team dossier, and a recap page ending in its Handoff line. It runs parallel researchers, judge panels, skeptics, red-team personas, and a completeness critic through the Workflow tool, never asks anything, publishes nothing, spends nothing new, and states no fact it did not fetch. Use only when hcho starts it with `bin/gr0wthpilot <Product>` (which opens a session already running `/gr0wthpilot <Product>`); in any other session it stops and points him to the launcher."
 ---
 
 # Gr0wthPilot
 
 Gr0wthPilot takes one of the Founder's existing Products and produces its Candidate Package: a complete, proposed Go-To-Market Package that nothing reads until the Founder hands it off.
-At Handoff (the Founder's words "<Product> - hand to gr0wthlab"), firstmate adds the Product to gr0wthlab's registry through a reviewed gr0wthlab change, and gr0wthlab's next weekly run starts the Test Kit.
+At Handoff (the Founder's words "<Product> - hand to gr0wthlab", naming the package's folder when it is not `gtm/`), firstmate adds the Product to gr0wthlab's registry through a reviewed gr0wthlab change, and gr0wthlab's next weekly run starts the Test Kit.
 The Founder is hcho; a Product is an app he builds in its own repository, such as Immerse, RepToday, or Purvia.
 The terms are defined in Mandu's `CONTEXT.md`: Gr0wthPilot, Candidate Package, Handoff, Launch Set, Test Kit.
-The decisions behind this skill are in `decisions/log.md` (2026-10-23 and 2026-10-24 entries).
+The decisions behind this skill are in `decisions/log.md` (2026-10-23 entries).
 
 This run is not a proof.
 It is a falsifiable case: a reader should finish either convinced, or knowing exactly why not, and the second outcome counts as success.
@@ -32,8 +32,15 @@ Do these before anything else, in order.
    With no gate passed, this is a new run: start at "Read the product".
    With gates passed, this is a resumed run, usually after a session limit: read the journal's notes, `decisions-log.md`, and the files behind the passed gates, then continue at the next gate.
    Never redo a passed gate unless a later phase sends it back, and say so in the journal with `journal.py note`.
-5. If the preflight says `kind: beside-live`, this Product already has a live Go-To-Market Package, which is protected: read it, compare against it, and never write into it.
-   A Candidate Package beside a live one cannot be handed off yet: a second Handoff replaces the live package whole, only between 14-day windows, and needs a gr0wthlab change of its own first (decision of 2026-10-23).
+5. The preflight's `kind` says what this package is and `kind_reason` says why; a Product is handed off only when gr0wthlab's product list names a `go_to_market_package` for it.
+   - `first-package`: the package is `gtm/`, and the Product is not handed off.
+   - `candidate`: the Product is not handed off, and `gtm/` (or an earlier dated folder) already holds a Candidate Package, which is protected and kept; this run writes a dated folder beside it.
+     Both are Candidate Packages: never call either one live.
+   - `beside-live`: the Product is handed off, so `gtm/` is its live Go-To-Market Package; or gr0wthlab's product list could not be read, so an existing `gtm/` is treated as possibly live.
+     It is protected: read it, compare against it, and never write into it.
+     A Candidate Package beside a live one cannot be handed off yet: a second Handoff replaces the live package whole, only between 14-day windows, and needs a gr0wthlab change of its own first (decision of 2026-10-23).
+   The preflight's `handoff_line` is the ready Handoff line the recap and your last message carry, word for word: `<Product> - hand to gr0wthlab` for `gtm/`, or `<Product> - hand to gr0wthlab (<folder>)` for a dated folder.
+   For `beside-live` it is `null`: the recap's handoff section has no ready line and says why, from `kind_reason`.
 
 ## The four guardrails
 
@@ -200,6 +207,7 @@ The Test Kit (in `05-social-pmf/`, read by gr0wthlab after Handoff, on TikTok an
 - A/B pairs where only the Hook changes.
 - Platform assignment with reasoning against the ICP.
 - A 14-day cadence with a mid-point review and rules for killing losers and doubling down on winners.
+- `09-extras/marketing-agent/brand-rules.json`, the brand lint's one rule source, which gr0wthlab's post-Draft lint reads after Handoff (format in `references/package-layout.md`); gates `test-kit` and `launch-set` read it, so write it before them.
 - A read-the-results guide: what a win looks like at zero followers, what is noise at this sample size, and which result should change the product rather than the copy.
 - `creative-log.json` with one record per Angle, and ready week-1 drafts.
 - No fabricated engagement and no "here is what happened when I posted this".
@@ -235,10 +243,10 @@ Every extra goes in the recap's deliverables map.
 
 Always write:
 
-- `09-extras/marketing-agent/brand-rules.json` and `BUILD-SPEC.md`, which gr0wthlab reads (formats in `references/package-layout.md`).
+- `09-extras/marketing-agent/BUILD-SPEC.md`, which gr0wthlab reads (format in `references/package-layout.md`), beside the `brand-rules.json` phase 3 wrote; update the rules if the red team changed what they must catch.
 - `launch-checklist.md`, the Founder's ordered path from this package to the first post.
 - `handoff/README.md` and, through `scripts/check_layout.py <package> --product <Product> --write-entry`, `handoff/registry-entry.json`.
-- `recap.html`, the single front door: the business explained in under five minutes, the naming verdict with clearance UNVERIFIED, the thesis beside the strongest surviving objection, the topology you used, the deliverables map linking everything, and the ready Handoff line.
+- `recap.html`, the single front door: the business explained in under five minutes, the naming verdict with clearance UNVERIFIED, the thesis beside the strongest surviving objection, the topology you used, the deliverables map linking everything, and a handoff section holding the preflight's `handoff_line` (for `beside-live`, why there is none yet).
 - `README.md`: open the recap, serve the site, and play the video, in three commands.
 - `self-grade.md`: every item in `references/phase-gates.md` "Self-grade", honestly, including what failed and why you did not fix it.
 
@@ -265,11 +273,11 @@ Log every decision the Founder would otherwise have been asked.
 
 ## Ending the run
 
-The last message to the Founder says, briefly: where the recap is, what the package holds, which extras were picked and which dropped, what failed and was kept honestly, that every simulator the run started is shut down, and the ready Handoff line on its own line:
+The last message to the Founder says, briefly: where the recap is, what the package holds, which extras were picked and which dropped, what failed and was kept honestly, that every simulator the run started is shut down, and the preflight's `handoff_line` on its own line:
 
-`<Product> - hand to gr0wthlab`
+`<Product> - hand to gr0wthlab` for `gtm/`, or `<Product> - hand to gr0wthlab (<folder>)` for a dated folder.
 
-For a Candidate Package beside a live package, say instead that it cannot be handed off until gr0wthlab can take a replacement package, between 14-day windows.
+For a `beside-live` package, say instead that it cannot be handed off until gr0wthlab can take a replacement package, between 14-day windows, and why the package beside it is treated as live.
 
 ## Memory
 

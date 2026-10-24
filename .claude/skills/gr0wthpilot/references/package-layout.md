@@ -1,6 +1,6 @@
 # Package layout and the formats gr0wthlab reads
 
-A Candidate Package mirrors RepToday's Go-To-Market Package (`projects/RepToday/gtm/`), so that at Handoff a new Product's entry in gr0wthlab's registry (`config/products.json`) is RepToday's with the name changed.
+A Candidate Package mirrors RepToday's Go-To-Market Package (`projects/RepToday/gtm/`), so that at Handoff a new Product's entry in gr0wthlab's registry (`config/products.json`) is RepToday's with the name changed and its paths pointing into the package's own folder (`gtm/`, or a dated `gtm-candidate-<date>/`).
 `registry-template.json` here is that entry, from gr0wthlab at commit `6776dd0`; `scripts/check_layout.py` prefers gr0wthlab's live registry when it can read one (`~/gr0wthlab`, or `GR0WTHLAB_DIR`).
 One path differs from RepToday's: the launch checklist is `launch-checklist.md` inside the package, because a run writes only inside the package, while RepToday's sits beside its package.
 
@@ -154,6 +154,6 @@ Platforms are `instagram`, `x`, and `tiktok`; each needs at least a `profile-ima
 
 ## handoff/
 
-`registry-entry.json` is written by `check_layout.py <package> --product <Product> --write-entry` once the layout check passes.
-`README.md` says what Handoff does (the Founder's words "<Product> - hand to gr0wthlab"; firstmate's reviewed gr0wthlab change adding the entry; the next weekly run picking it up) and what that change must still set that is not a package file: the repository block, the Waitlist view and its Source tags and Fit answers, filming, and the Beta Cohort size.
-For a Candidate Package beside a live one, it says a second Handoff waits for gr0wthlab to take a replacement package.
+`registry-entry.json` is written by `check_layout.py <package> --product <Product> --write-entry` once the layout check passes; every path in it points into the package's own folder, the one that would be handed off.
+`README.md` says what Handoff does (the Founder's words, the package's Handoff line from the preflight: "<Product> - hand to gr0wthlab" for `gtm/`, "<Product> - hand to gr0wthlab (<folder>)" for a dated folder; firstmate's reviewed gr0wthlab change adding the entry; the next weekly run picking it up) and what that change must still set that is not a package file: the repository block, the Waitlist view and its Source tags and Fit answers, filming, and the Beta Cohort size.
+For a Candidate Package beside a live one (`beside-live`), it says a second Handoff waits for gr0wthlab to take a replacement package, and gives no ready Handoff line.
