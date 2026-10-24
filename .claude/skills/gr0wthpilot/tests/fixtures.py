@@ -214,7 +214,8 @@ def build(root=None, video=True):
             name = "%s-%dx%d.png" % (stem, w, h)
             png(root / "03-site" / "screenshots" / name, "%dx%d" % (w, h))
             write(root, "03-site/screenshots/%s-%d.json" % (stem, w),
-                  json.dumps({"scrollWidth": w, "innerWidth": w, "innerHeight": h, "overflows": False}))
+                  json.dumps({"scrollWidth": w, "innerWidth": w, "innerHeight": h, "overflows": False,
+                              "viewport": "%dx%d" % (w, h)}))
             notes.append("- %s: hero, waitlist card, and footer all visible; no clipped text or overflow at this width." % name)
     write(root, "03-site/screenshot-gate.md", "# Screenshot gate\n\n" + "\n".join(notes) + "\n")
     kit = "05-social-pmf/"

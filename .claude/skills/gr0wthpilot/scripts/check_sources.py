@@ -48,6 +48,14 @@ SKIP_FILES = {"sources.md", "sources-exempt.md", gc.JOURNAL_NAME, gc.AUDIT_NAME}
 SKIP_DIRS = ("run-evidence", "01-research/last30days", "sources.d")
 
 
+def under_prefix(key, prefix):
+    """Whether a normalized URL lies under an exempt prefix, matched at a path
+    boundary: `.../r/testprod/` covers `.../r/testprod/comments/x`, not
+    `.../r/testprodfans/`."""
+    base = https(prefix)
+    return key == base or (key.startswith(base) and key[len(base)] in "/?#:")
+
+
 def https(url):
     url = gc.normalize_url(url)
     return "https://" + url[len("http://"):] if url.startswith("http://") else url
@@ -173,7 +181,7 @@ def check(pkg, fetch_logs=None, l30_logs=None):
                                 % (fragment.name, number, m.group(1)))
     cited = cited_urls(pkg)
     for key, places in sorted(cited.items()):
-        if key in entries or any(key.startswith(https(p)) or key.startswith(p) for p in exempt):
+        if key in entries or any(under_prefix(key, p) for p in exempt):
             continue
         problems.append("%s: %s is cited but not listed in sources.md" % (places[0], key))
     return {"sources": len(entries), "cited": len(cited), "problems": problems}

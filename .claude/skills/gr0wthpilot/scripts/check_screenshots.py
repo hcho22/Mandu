@@ -6,15 +6,19 @@ site PACKAGE
   screenshots, `03-site/screenshots/<page>-390x844.png` and
   `<page>-1440x900.png` (at 1x, 2x, or 3x), each a real render (not blank),
   a width measurement `03-site/screenshots/<page>-<width>.json` from
-  `gp-chrome measure` showing no horizontal overflow, and an inspection note in
-  `03-site/screenshot-gate.md`: a line naming the file followed by what the
-  inspecting agent saw, after it viewed the image.
+  `gp-chrome measure` at that viewport showing no horizontal overflow, and an
+  inspection note in `03-site/screenshot-gate.md`: a line naming the file
+  followed by what the inspecting agent saw, after it viewed the image. Each
+  screenshot and measurement is newer than its page and every local file the
+  page loads, so a re-gate never passes on evidence of an older page.
 
 launch-set PACKAGE
   Phase 3's Launch Set gate. `10-launch-set/manifest.json` lists every asset
-  with its platform, kind, path, and expected size; each listed image exists at
-  that size and is not blank; each of Instagram, X, and TikTok has a profile
-  image and first-week posts.
+  with its platform, kind, path, and expected size; every asset that is not
+  text (`first-week-posts` or `bio`) is a PNG, JPEG, or WebP image at exactly
+  that size and not blank; each `size_source` is the http(s) URL of the
+  platform page that gives the size; each of Instagram, X, and TikTok has a
+  profile image and first-week posts.
 
 image FILE --size WIDTHxHEIGHT
   One image at one size.
@@ -31,6 +35,7 @@ import re
 import struct
 import subprocess
 import sys
+import urllib.parse
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -38,6 +43,10 @@ import gp_common as gc  # noqa: E402
 
 SITE_SIZES = ((390, 844), (1440, 900))
 LAUNCH_PLATFORMS = ("instagram", "x", "tiktok")
+TEXT_KINDS = {"first-week-posts", "bio"}
+RASTER_SUFFIXES = (".png", ".jpg", ".jpeg", ".webp")
+# The tags whose attribute a browser loads with the page (an <a> is followed, not loaded).
+LOADED_TAGS = {"link", "script", "img", "source", "video", "audio", "iframe", "embed", "object", "track"}
 NOTE_MIN_CHARS = 40
 
 
@@ -101,6 +110,26 @@ def inspection_notes(text):
     return notes
 
 
+def page_inputs(page):
+    """The page and every local file it loads, by its own tags."""
+    _, links, _ = gc.parse_html(page.read_text(encoding="utf-8", errors="replace"))
+    found = [page]
+    for tag, _, value in links:
+        parsed = urllib.parse.urlsplit(value)
+        if tag in LOADED_TAGS and not (parsed.scheme or parsed.netloc) and parsed.path:
+            target = (page.parent / urllib.parse.unquote(parsed.path)).resolve()
+            if target.is_file():
+                found.append(target)
+    return found
+
+
+def stale_evidence(evidence, inputs):
+    """A problem for each evidence file older than the newest of its inputs."""
+    newest = max(inputs, key=lambda p: p.stat().st_mtime)
+    return ["%s is older than %s; make it again from what ships now" % (e.name, newest.name)
+            for e in evidence if e.is_file() and e.stat().st_mtime < newest.stat().st_mtime]
+
+
 def check_site(pkg):
     pkg = Path(pkg)
     problems = []
@@ -114,6 +143,7 @@ def check_site(pkg):
         problems.append("03-site/screenshot-gate.md is missing")
     shots = 0
     for page in pages:
+        inputs = page_inputs(page)
         for width, height in SITE_SIZES:
             shot = site / "screenshots" / ("%s-%dx%d.png" % (page.stem, width, height))
             shots += 1
@@ -123,14 +153,21 @@ def check_site(pkg):
                 problems.append("03-site/screenshot-gate.md has no inspection note for %s (view the image, "
                                 "then say what is on it and whether the layout holds)" % shot.name)
             measure = site / "screenshots" / ("%s-%d.json" % (page.stem, width))
+            problems += stale_evidence([shot, measure], inputs)
             try:
                 data = gc.read_json(measure)
-                if data.get("overflows") or data.get("scrollWidth", 0) > data.get("innerWidth", 0):
-                    problems.append("%s overflows horizontally at %dpx (scroll width %s)"
-                                    % (page.name, width, data.get("scrollWidth")))
             except (OSError, ValueError):
                 problems.append("%s is missing: run gp-chrome measure %s %dx%d and save its output"
                                 % (gc.rel(pkg, measure), gc.rel(pkg, page), width, height))
+                continue
+            data = data if isinstance(data, dict) else {}
+            scroll, inner = data.get("scrollWidth"), data.get("innerWidth")
+            if data.get("viewport") != "%dx%d" % (width, height) \
+                    or not all(isinstance(v, int) and not isinstance(v, bool) for v in (scroll, inner)):
+                problems.append("%s is not gp-chrome measure's output for %s at %dx%d (viewport, scrollWidth, "
+                                "innerWidth); measure it again" % (gc.rel(pkg, measure), page.name, width, height))
+            elif data.get("overflows") or scroll > inner:
+                problems.append("%s overflows horizontally at %dpx (scroll width %s)" % (page.name, width, scroll))
     return {"pages": len(pages), "screenshots": shots, "problems": problems}
 
 
@@ -159,18 +196,21 @@ def check_launch_set(pkg):
             problems.append("manifest: %s has platform %r (want instagram, x, or tiktok)" % (asset.get("path"), platform))
             continue
         kinds[platform].add(kind)
-        if path.suffix.lower() in (".png", ".jpg", ".jpeg", ".webp"):
-            try:
-                width, height = parse_size(asset.get("size"))
-            except ValueError as exc:
-                problems.append("manifest: %s: %s" % (asset.get("path"), exc))
-                continue
-            check_image(path, width, height, problems, scales=(1,))
+        if kind not in TEXT_KINDS:
+            if path.suffix.lower() not in RASTER_SUFFIXES:
+                problems.append("manifest: %s is a %s, which must be a PNG, JPEG, or WebP image rendered at its "
+                                "size" % (asset.get("path"), kind))
+            else:
+                try:
+                    width, height = parse_size(asset.get("size"))
+                    check_image(path, width, height, problems, scales=(1,))
+                except ValueError as exc:
+                    problems.append("manifest: %s: %s" % (asset.get("path"), exc))
         elif not path.is_file():
             problems.append("%s is missing" % gc.rel(pkg, path))
-        if not asset.get("size_source"):
-            problems.append("manifest: %s needs size_source, the fetched platform page that gives its size"
-                            % asset.get("path"))
+        if not re.match(r"https?://\S+$", str(asset.get("size_source") or "")):
+            problems.append("manifest: %s needs size_source, the http(s) URL of the platform page fetched in this "
+                            "run that gives its size" % asset.get("path"))
     for platform, found in kinds.items():
         for needed in ("profile-image", "first-week-posts"):
             if needed not in found:

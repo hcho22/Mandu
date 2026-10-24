@@ -97,8 +97,9 @@ def validate_rules(rules, source_tags=None):
                     problems.append("caption_call_to_action.links keys must be exactly %s" % ", ".join(TEST_PLATFORMS))
                 tags = []
                 for name, value in links.items():
-                    if not isinstance(value, str) or "://" in value or "/" not in value:
-                        problems.append("link for %s must be a bare address like site/tag" % name)
+                    if not isinstance(value, str) or found_links(value) != [value] or "://" in value \
+                            or "/" not in value:
+                        problems.append("link for %s must be a bare address with a domain, like site.app/tag" % name)
                         continue
                     tags.append(value.rsplit("/", 1)[1])
                 if len(set(tags)) != len(tags):
@@ -119,6 +120,20 @@ LETTER = r"[^\W_]"
 BEFORE, AFTER = "(?<!%s)" % LETTER, "(?!%s)" % LETTER
 QUOTES = str.maketrans({"‘": "'", "’": "'", "“": '"', "”": '"'})
 NEED_MARKER = re.compile(r"\[NEED:[^\]]*\]", re.IGNORECASE)
+# Anything a reader could follow: an address with its scheme, a www. name, a bare domain, or a Markdown link.
+LINK = re.compile(
+    r"(?:https?://|www\.)[^\s<>\"]+"
+    r"|(?<![\w@./-])(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}(?![a-z0-9-])(?:/[^\s<>\"]*)?",
+    re.IGNORECASE,
+)
+MARKDOWN_LINK = re.compile(r"\]\(")
+
+
+def found_links(text):
+    """Everything in a text a reader could follow as a link, as gr0wthlab's lint
+    reads it: as written, without the punctuation that ends a sentence."""
+    found = [m.group(0).rstrip(".,;:!?)'") for m in LINK.finditer(text)]
+    return found + ["a Markdown link"] * len(MARKDOWN_LINK.findall(text))
 
 
 def plain(text):
@@ -183,8 +198,8 @@ def lint_copy(text, rules, hook=False, full=True):
         cap = rules.get("hook_max_words")
         if isinstance(cap, int) and len(text.split()) > cap:
             found.append("the Hook has %d words; at most %d" % (len(text.split()), cap))
-        if rules.get("hook_must_not_be_question") and "?" in text:
-            found.append("the Hook asks a question")
+    if full and rules.get("hook_must_not_be_question") and "?" in text:
+        found.append("asks a question")
     if full:
         for key, label in (("banned_words_in_hook", "banned word"), ("banned_social_proof_in_hook", "social proof")):
             for term in rules.get(key) or []:

@@ -16,7 +16,8 @@ A URL counts as fetched in the run only when the guard's WebFetch log shows a 2x
 WebFetch upgrades http to https and the check compares URLs the same way, without fragments or trailing slashes.
 
 Some URLs in the package are not claims: the Product's own planned site, a schema.org context, an SVG namespace, a font.
-Namespace and font hosts are exempt already; list any other prefix in `sources-exempt.md` with the reason:
+Namespace and font hosts are exempt already; list any other prefix in `sources-exempt.md` with the reason.
+A prefix covers the URLs under it at a path boundary: `https://www.reddit.com/r/testprod/` covers `.../r/testprod/comments/x`, not `.../r/testprodfans/`.
 
 ```
 - https://immerse.example/ - the Product's planned site address, used in drafts; not a claim
@@ -70,7 +71,7 @@ A link to a file in `01-research/`, to `sources.md`, or to the claims ledger als
 | C11 | No competitor develops photos on a delay | https://... | REFUTED - Gudak and Huji both delay | cut |
 ```
 
-The skeptics write it (`workflows/skeptics.js`); a REFUTED claim is cut everywhere and its "Shipped as" says `cut`; the claim audit refuses a REFUTED claim of six or more words that still appears in a deliverable.
+The skeptics write it (`workflows/skeptics.js`); a REFUTED claim is cut everywhere and its "Shipped as" says `cut`; the claim audit refuses a REFUTED claim of six or more words that still appears in a deliverable, read as a reader sees it (an HTML page without its markup, Markdown without emphasis or link addresses).
 
 ## What the claim audit refuses
 
@@ -84,4 +85,5 @@ It refuses a sentence, table row, or text block holding any of these with no cit
 - "the only app", "the first app", "no other app", "market leader", "most popular", "fastest-growing";
 - a blockquote with no URL in it or on the line after it.
 
-Table cells under a column whose header names a score, weight, signal, kill criterion, target, threshold, floor, budget, goal, margin, rank, day, slot, duration, length, or size are the run's own numbers and are skipped.
+Table cells under a column whose header names, as a whole word, a score, weight, signal, kill criterion, target, threshold, floor, budget, goal, margin, rank, day, slot, duration, length, or size are the run's own numbers and are skipped.
+A market-size column is the market's numbers, not the run's, and every other column (`Pain points`, `Total ratings`) is checked.

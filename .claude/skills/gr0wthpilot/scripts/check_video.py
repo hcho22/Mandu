@@ -13,7 +13,9 @@ verify VIDEO --size WxH --min-seconds N --max-seconds N
   the range, and an audio stream; the five frames and the strip exist and are
   not blank; `gate-report.md` beside the video holds a viewing note for each
   frame (a line naming the frame file, then what the agent saw after viewing
-  it) and states what the audio is; and `script.md` exists.
+  it) and states what the audio is; `script.md` exists; and the frames, the
+  strip, and the ffprobe report are newer than the video, so a re-gate never
+  passes on evidence of an older cut.
 
 Usage: check_video.py prepare VIDEO
        check_video.py verify VIDEO --size 1080x1920 --min-seconds 20 --max-seconds 90 [--json]
@@ -30,6 +32,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import check_screenshots as cs  # noqa: E402
+import gp_common as gc  # noqa: E402
 
 POINTS = (0, 25, 50, 75, 100)
 NOTE_MIN_CHARS = 40
@@ -136,6 +139,9 @@ def verify(video, size, min_seconds, max_seconds):
         problems.append("frame-strip.png is blank")
     if text and not re.search(r"^\s*(?:[-*]\s+)?\**audio\**\s*:", text, re.I | re.M):
         problems.append("gate-report.md must say what the audio is ('Audio: ...')")
+    evidence = [folder / "frames" / frame_name(p) for p in POINTS] + [strip, folder / "ffprobe-report.txt"]
+    problems += ["%s is older than %s; run check_video.py prepare again" % (gc.rel(folder, e), video.name)
+                 for e in evidence if e.is_file() and e.stat().st_mtime < video.stat().st_mtime]
     return dict(info, problems=problems)
 
 

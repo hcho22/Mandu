@@ -362,19 +362,29 @@ def check_creative_log(text, angles, problems):
         return
     seen = {}
     platform_names = {}
+    lines = text.splitlines()
     for record in records:
         if not isinstance(record, dict) or "angle_id" not in record:
             problems.append("creative-log.json: every record needs an angle_id")
             continue
+        angle_id = record["angle_id"]
         extra = set(record) - CREATIVE_KEYS
         if extra:
             problems.append("creative-log.json: %s has keys gr0wthlab does not accept: %s"
-                            % (record["angle_id"], ", ".join(sorted(extra))))
-        aid = re.match(r"(P\d+)", str(record["angle_id"]))
-        if aid:
-            seen[aid.group(1)] = seen.get(aid.group(1), 0) + 1
-            if aid.group(1) in angles:
-                platform_names.setdefault(angles[aid.group(1)]["platform"], set()).add(record.get("platform"))
+                            % (angle_id, ", ".join(sorted(extra))))
+        if not isinstance(angle_id, str) or not re.fullmatch(r"P\d+(?:-.*)?", angle_id):
+            problems.append("creative-log.json: angle_id %r must be its Angle's ID, alone or followed by a hyphen "
+                            "(P01 or P01-waiting), as gr0wthlab finds a record to kill" % (angle_id,))
+            continue
+        number = angle_id.split("-", 1)[0]
+        seen[number] = seen.get(number, 0) + 1
+        if number in angles:
+            platform_names.setdefault(angles[number]["platform"], set()).add(record.get("platform"))
+        if record.get("status") != "draft" or "results" not in record or record["results"] is not None:
+            problems.append("creative-log.json: %s must start with status \"draft\" and results null" % angle_id)
+        if not own_status_line(lines, angle_id):
+            problems.append("creative-log.json: %s needs its angle_id on a line of its own, followed in the same "
+                            "record by its status line, which gr0wthlab's kill edits" % angle_id)
     for aid in angles:
         if seen.get(aid, 0) != 1:
             problems.append("creative-log.json: %s needs exactly one record, has %d" % (aid, seen.get(aid, 0)))
@@ -385,8 +395,22 @@ def check_creative_log(text, angles, problems):
     lines = text.rstrip().splitlines()
     if len(lines) < 2 or lines[-1].strip() != "}" or lines[-2].strip() not in ("]", "],"):
         problems.append("creative-log.json must be pretty-printed and end with a ']' line then a '}' line")
-    elif '"angle_id":' in text and not re.search(r'^\s*"angle_id": "[^"]+",?\s*$', text, re.M):
-        problems.append("creative-log.json: each angle_id must sit on its own line")
+
+
+def own_status_line(lines, angle_id):
+    """Whether a record's angle_id sits on exactly one line of its own and the
+    next status line after it comes before any other record's angle_id line,
+    as gr0wthlab's kill edit (weekly_changes.py id_lines, compose_kill) needs."""
+    named = re.compile(r'\s*"angle_id"\s*:\s*' + re.escape(json.dumps(angle_id)) + r"\s*,?\s*")
+    starts = [i for i, line in enumerate(lines) if named.fullmatch(line)]
+    if len(starts) != 1:
+        return False
+    for line in lines[starts[0] + 1:]:
+        if re.fullmatch(r'\s*"status"\s*:\s*"[^"\\]*",?\s*', line):
+            return True
+        if re.match(r'\s*"angle_id"\s*:', line):
+            return False
+    return False
 
 
 def check(pkg, product, registry=None, write_entry=False):

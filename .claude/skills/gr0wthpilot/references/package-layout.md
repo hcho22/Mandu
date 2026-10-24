@@ -99,7 +99,8 @@ It must hold the floor line, for example:
 
 ### 05-social-pmf/creative-log.json
 
-Pretty-printed JSON, one key per line: an object with a `comment` and an `angles` list, one record per Angle, `angle_id` on its own line (`"P01-waiting"`), and only these keys: angle_id, hook, platform, hypothesis, format, preregistered_success_signal, kill_criterion, pain_rank, pain_state, verbatim_quote, pain_source_url, ab_pair, results, status.
+Pretty-printed JSON, one key per line: an object with a `comment` and an `angles` list, one record per Angle, and only these keys: angle_id, hook, platform, hypothesis, format, preregistered_success_signal, kill_criterion, pain_rank, pain_state, verbatim_quote, pain_source_url, ab_pair, results, status.
+`angle_id` is the Angle's ID alone or followed by a hyphen (`"P01"` or `"P01-waiting"`, never `"P01_waiting"`), on a line of its own, and the record's `status` line follows it within the same record, because gr0wthlab's kill edits from one to the other.
 Every Angle on the same platform uses the same platform string (`tiktok`, `youtube_shorts`); `status` starts `draft` and `results` is `null`.
 The file ends with a `]` line and then a `}` line.
 
@@ -108,6 +109,8 @@ The file ends with a `]` line and then a `}` line.
 The brand lint's one rule source, for this package and for gr0wthlab's post Drafts; an unknown key blocks every Draft.
 Keys: `comment`, `notes`; lists of words or phrases `banned_words_in_hook`, `banned_social_proof_in_hook`, `all_caps_allowlist`, `stock_phrases`, `capped_words`, `invented_proof_terms`, `invented_proof_quantities`, `fake_scarcity`, `lint_allow_phrases`, `loss_framing`, `sponsorship_asks`; `banned_characters_anywhere` (include the em dash); whole numbers `hook_max_words`, `capped_words_per_paragraph`, `long_sentence_words`, `long_sentence_commas`; booleans `hook_must_not_be_question`, `no_emoji_in_hook`, `no_all_caps_words_in_hook`; `pain_source_url_must_start_with` (`"https://"`); `frozen_hooks_exempt_from` (only `hook_max_words` and `banned_words_in_hook`); `required_sections`, `required_disclosure`.
 `caption_call_to_action` is `{"line": "Join the waitlist: {link}", "links": {"TikTok": "<site>/tiktok", "YouTube Shorts": "<site>/youtube"}}`: one line with `{link}` once, links keyed exactly by the two platforms, bare addresses whose last part is a Waitlist Source tag, a different one per platform.
+Each link is a domain with its top-level domain and no scheme (`immerse.app/tiktok`, not `immerse/tiktok`), as gr0wthlab's lint reads a link; one it cannot read as a link blocks every Draft.
+Every field of post copy, not only a Hook, is refused for a question mark when `hook_must_not_be_question` is true, as gr0wthlab's lint refuses it.
 Derive the lists from the brand guidelines' voice rules and the category's forbidden claims.
 
 ### 08-redteam/pre-publication-checklist.md
@@ -150,7 +153,8 @@ A field runs to the next blank line, label, or heading; production notes outside
 ]}
 ```
 
-Platforms are `instagram`, `x`, and `tiktok`; each needs at least a `profile-image` and `first-week-posts`; images must be exactly their stated size.
+Platforms are `instagram`, `x`, and `tiktok`; each needs at least a `profile-image` and `first-week-posts`.
+Every asset whose kind is not text (`first-week-posts` or `bio`) is a PNG, JPEG, or WebP image at exactly its stated size, and every `size_source` is the http(s) URL of the platform page fetched in this run that gives the size, which `sources.md` lists.
 
 ## handoff/
 

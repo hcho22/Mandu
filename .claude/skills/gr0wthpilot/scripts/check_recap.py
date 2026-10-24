@@ -9,10 +9,11 @@ It passes only when:
   `deliverables` (the deliverables map), and `handoff`;
 - the naming section says clearance is UNVERIFIED;
 - the handoff section holds the package's ready one-line Handoff word for
-  word: `<Product> - hand to gr0wthlab` for `gtm/`, or `<Product> - hand to
-  gr0wthlab (<folder>)` for a dated candidate folder. A package the run
-  journal marks `beside-live` sits beside the Product's live package and
-  cannot be handed off yet, so it needs no such line;
+  word, and no other: `<Product> - hand to gr0wthlab` for `gtm/`, or
+  `<Product> - hand to gr0wthlab (<folder>)` for a dated candidate folder. A
+  package the run journal marks `beside-live` sits beside the Product's live
+  package and cannot be handed off yet, so its handoff section holds no
+  Handoff line at all;
 - the deliverables map links every numbered folder the package has, every
   extra in `09-extras/`, and the package's records.
 
@@ -130,8 +131,13 @@ def check(pkg, product):
     handoff = " ".join(" ".join(parser.section_text.get("handoff", [])).split())
     line = gc.handoff_line(product, pkg.resolve().name)
     beside_live = (gc.load_journal(pkg) or {}).get("kind") == "beside-live"
-    if "handoff" in parser.section_text and not beside_live and line not in handoff:
-        problems.append("recap.html handoff section must hold the line %r word for word" % line)
+    given = re.findall(r"(?<![\w-])%s - hand to gr0wthlab(?: \([^)]*\))?" % re.escape(product), handoff)
+    if "handoff" in parser.section_text and beside_live and given:
+        problems.append("recap.html handoff section holds %r, but a package beside a live one has no ready "
+                        "Handoff line" % given[0])
+    elif "handoff" in parser.section_text and not beside_live and (not given or set(given) != {line}):
+        problems.append("recap.html handoff section must hold the line %r word for word, and no other Handoff "
+                        "line" % line)
     mapped = set()
     for href in parser.section_links.get("deliverables", []):
         target, _ = link_target(pkg, recap, href)

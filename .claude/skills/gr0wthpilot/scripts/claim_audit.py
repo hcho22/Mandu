@@ -62,9 +62,12 @@ TRIGGERS = [
 LABEL_RE = re.compile(r"\[(?:ASSUMPTION|PROJECTION|TARGET|PROPOSAL|DECIDED BY AGENT)\b", re.I)
 REPO_RE = re.compile(r"\brepo:\s?[\w./-]+")
 LINK_RE = re.compile(r"\]\(([^)\s]+)\)|href=\"([^\"]+)\"")
+# A column whose header names one of these, as a whole word, holds the run's
+# own numbers; a market-size column holds the market's, which need a source.
 OWN_NUMBER_COLUMN = re.compile(
-    r"score|weight|signal|kill|target|threshold|floor|budget|goal|margin|points|rubric|rank|"
-    r"total|day|slot|duration|length|size|budget", re.I)
+    r"\b(?:scores?|weights?|signals?|kill|targets?|thresholds?|floors?|budgets?|goals?|margins?|ranks?|days?|"
+    r"slots?|durations?|lengths?|sizes?)\b", re.I)
+MARKET_COLUMN = re.compile(r"\bmarket\b", re.I)
 SKIP_DIRS = ("run-evidence", "01-research/last30days")
 # The red team's records, which quote the claims they cut word for word; the
 # claims ledger there is checked on its own.
@@ -144,7 +147,7 @@ def audit_markdown(pkg, path, text, problems):
                             all(part.strip() in keys for part in re.split(r"[,;/ ]+", cell) if part.strip()):
                         row_cites = bool(cell.strip())
             for column, cell in table_cells(line, header):
-                if column and OWN_NUMBER_COLUMN.search(column):
+                if column and OWN_NUMBER_COLUMN.search(column) and not MARKET_COLUMN.search(column):
                     continue
                 found = triggers_in(cell)
                 if found and not row_cites:
@@ -210,7 +213,7 @@ def audit_ledger(pkg, problems):
             if len(claim.split()) >= 6:
                 if deliverables is None:
                     deliverables = deliverable_text(pkg)
-                needle = " ".join(claim.lower().split())
+                needle = comparable(claim)
                 for name, text in deliverables:
                     if needle in text:
                         problems.append("%s: REFUTED claim %s still appears in %s" % (LEDGER, cid, name))
@@ -219,11 +222,23 @@ def audit_ledger(pkg, problems):
     return count
 
 
+def comparable(text):
+    """Text as a reader sees it, for finding a claim in it: a Markdown link's
+    words without its address, no emphasis marks, lower case, single spaces."""
+    text = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", text)
+    return " ".join(re.sub(r"[*_~`]", "", text).lower().split())
+
+
 def deliverable_text(pkg):
+    """Each deliverable's text as a reader sees it: an HTML page's words without
+    its markup, and Markdown without its emphasis and link addresses."""
     out = []
     for path in gc.package_text_files(pkg, skip_dirs=SKIP_DIRS + REVIEW_DIRS):
         if path.suffix.lower() in SCAN_SUFFIXES and path.name not in SKIP_NAMES:
-            out.append((gc.rel(pkg, path), " ".join(path.read_text(encoding="utf-8", errors="replace").lower().split())))
+            text = path.read_text(encoding="utf-8", errors="replace")
+            if path.suffix.lower() in (".html", ".htm"):
+                text = " ".join(gc.parse_html(text)[0])
+            out.append((gc.rel(pkg, path), comparable(text)))
     return out
 
 

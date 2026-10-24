@@ -12,6 +12,7 @@ import json
 import os
 import re
 import tempfile
+import time
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -60,6 +61,16 @@ class SourcesTest(unittest.TestCase):
         log = pkg / "run-evidence" / "fetch-log.jsonl"
         edit(log, '"url": "%s", "code": 200' % fixtures.URLS["stat"], '"url": "%s", "code": 404' % fixtures.URLS["stat"])
         self.assertTrue(has(check_sources.check(pkg)["problems"], r"dead or refused link \(HTTP 404\)"))
+
+    def test_an_exempt_prefix_ends_at_a_path_boundary(self):
+        pkg = fixtures.package()
+        fixtures.write(pkg, "sources-exempt.md", "- https://www.reddit.com/r/testprod/ - the Product's own planned "
+                                                 "subreddit, not a claim\n")
+        fixtures.write(pkg, "06-channels/extra.md", "Ours: https://www.reddit.com/r/testprod/comments/a1\n\n"
+                                                    "Theirs: https://www.reddit.com/r/testprodfans/comments/b2\n")
+        problems = check_sources.check(pkg)["problems"]
+        self.assertTrue(has(problems, r"r/testprodfans/comments/b2 is cited but not listed"))
+        self.assertFalse(has(problems, r"r/testprod/comments/a1"))
 
     def test_cited_url_missing_from_sources_fails(self):
         pkg = fixtures.package()
@@ -247,6 +258,26 @@ class ClaimAuditTest(unittest.TestCase):
         fixtures.write(pkg, "09-extras/teaser.html", "<p>The market grew 30% last year.</p>")
         self.assertTrue(has(claim_audit.check(pkg)["problems"], r"teaser.html: percentage"))
 
+    def test_only_the_runs_own_number_columns_are_skipped(self):
+        pkg = fixtures.package()
+        for header, cell in (("Pain points", "40% of film shooters cannot afford development"),
+                             ("Total ratings", "12,400 ratings"), ("Market size", "$2.1B a year"),
+                             ("Today", "9% churn")):
+            fixtures.write(pkg, "06-channels/table.md", "| Item | %s |\n|---|---|\n| A | %s |\n" % (header, cell))
+            self.assertTrue(has(claim_audit.check(pkg)["problems"], r"table.md:3"), header)
+        fixtures.write(pkg, "06-channels/table.md", "| Channel | Kill criteria |\n|---|---|\n| Search | under 5% |\n")
+        self.assertEqual(claim_audit.check(pkg)["problems"], [])
+
+    def test_a_refuted_claim_is_found_through_markup(self):
+        pkg = fixtures.package()
+        fixtures.write(pkg, "09-extras/teaser.html",
+                       "<p><strong>Every competitor</strong> charges over ten dollars a month for film looks.</p>")
+        self.assertTrue(has(claim_audit.check(pkg)["problems"], r"REFUTED claim C2 still appears in 09-extras/teaser.html"))
+        pkg = fixtures.package()
+        fixtures.write(pkg, "06-channels/notes.md", "**Every competitor** charges over ten dollars a month for "
+                                                    "[film looks](https://x.example/a).\n")
+        self.assertTrue(has(claim_audit.check(pkg)["problems"], r"REFUTED claim C2 still appears in 06-channels/notes.md"))
+
     def test_refuted_claim_must_not_ship(self):
         pkg = fixtures.package()
         fixtures.write(pkg, "03-site/extra.md", "Every competitor charges over ten dollars a month for film looks.\n")
@@ -308,6 +339,20 @@ class BrandLintTest(unittest.TestCase):
         problems = brand_lint.check(pkg)["problems"]
         self.assertTrue(has(problems, r"index.html: banned character"))
         self.assertTrue(has(problems, r"stock phrase 'say goodbye to'"))
+
+    def test_post_copy_questions_and_cta_links_follow_gr0wthlab(self):
+        rules = fixtures.BRAND_RULES
+        self.assertTrue(has(brand_lint.lint_copy("Remember waiting for prints?", rules), r"asks a question"))
+        self.assertFalse(brand_lint.lint_copy("Remember waiting for prints?", rules, full=False))
+        pkg = fixtures.package()
+        edit(pkg / "10-launch-set/x/week-1.md", "Shoot now. See it tomorrow.", "Remember waiting for prints?")
+        self.assertTrue(has(brand_lint.check(pkg)["problems"], r"x/week-1.md:3: asks a question"))
+        bad = dict(rules, caption_call_to_action={"line": "Join: {link}", "links": {
+            "TikTok": "immerse/tiktok", "YouTube Shorts": "immerse/youtube"}})
+        self.assertTrue(has(brand_lint.validate_rules(bad), r"bare address with a domain"))
+        good = dict(rules, caption_call_to_action={"line": "Join: {link}", "links": {
+            "TikTok": "immerse.app/tiktok", "YouTube Shorts": "immerse.app/youtube"}})
+        self.assertEqual(brand_lint.validate_rules(good), [])
 
     def test_notes_outside_copy_fields_are_not_linted(self):
         pkg = fixtures.package()
@@ -398,6 +443,21 @@ class LayoutTest(unittest.TestCase):
         self.assertTrue(has(problems, r"flex day 7 must name exactly one fallback"))
         self.assertTrue(has(problems, r"2 flex days"))
 
+    def test_creative_log_records_are_what_gr0wthlabs_kill_edits(self):
+        pkg = fixtures.package()
+        path = pkg / "05-social-pmf/creative-log.json"
+        data = json.loads(path.read_text())
+        data["angles"][0]["angle_id"] = "P01_angle"
+        data["angles"][1]["status"] = "live"
+        data["angles"][2]["results"] = {"views": 10}
+        del data["angles"][3]["status"]
+        path.write_text(json.dumps(data, indent=2) + "\n")
+        problems = self.check(pkg)["problems"]
+        self.assertTrue(has(problems, r"angle_id 'P01_angle' must be its Angle's ID"))
+        self.assertTrue(has(problems, r'P02-angle must start with status "draft" and results null'))
+        self.assertTrue(has(problems, r"P03-angle must start with status"))
+        self.assertTrue(has(problems, r"P04-angle needs its angle_id on a line of its own"))
+
     def test_platform_assignment_and_floor_and_creative_log(self):
         pkg = fixtures.package()
         edit(pkg / "05-social-pmf/platform-assignment.md", "### 2. YouTube Shorts (secondary)", "### 2. Instagram Reels (secondary)")
@@ -436,13 +496,57 @@ class ScreenshotTest(unittest.TestCase):
         pkg = fixtures.package()
         fixtures.png(pkg / "03-site/screenshots/index-390x844.png", "780x1688")
         self.assertEqual(check_screenshots.check_site(pkg)["problems"], [])
-        fixtures.write(pkg, "03-site/screenshots/index-390.json", json.dumps({"scrollWidth": 470, "innerWidth": 390, "overflows": True}))
+        fixtures.write(pkg, "03-site/screenshots/index-390.json", json.dumps({"scrollWidth": 470, "innerWidth": 390, "overflows": True,
+                                                                               "viewport": "390x844"}))
         self.assertTrue(has(check_screenshots.check_site(pkg)["problems"], r"index.html overflows horizontally at 390px"))
 
     def test_one_variant_fails(self):
         pkg = fixtures.package()
         (pkg / "03-site/index-b.html").unlink()
         self.assertTrue(has(check_screenshots.check_site(pkg)["problems"], r"needs two hero variants"))
+
+    def test_a_measurement_must_be_for_its_own_viewport(self):
+        pkg = fixtures.package()
+        shots = pkg / "03-site" / "screenshots"
+        (shots / "index-390.json").write_text((shots / "index-1440.json").read_text())
+        (shots / "index-b-390.json").write_text("{}")
+        problems = check_screenshots.check_site(pkg)["problems"]
+        self.assertTrue(has(problems, r"index-390.json is not gp-chrome measure's output for index.html at 390x844"))
+        self.assertTrue(has(problems, r"index-b-390.json is not gp-chrome measure's output"))
+
+    def test_site_evidence_older_than_its_page_or_its_files_fails(self):
+        pkg = fixtures.package()
+        page = pkg / "03-site" / "index.html"
+        edit(page, "<title>Testprod</title>", '<title>Testprod</title><link rel="stylesheet" href="style.css">')
+        css = fixtures.write(pkg, "03-site/style.css", "body { margin: 0 }")
+        now = time.time()
+        evidence = [p for p in (pkg / "03-site" / "screenshots").glob("index-*") if not p.name.startswith("index-b")]
+
+        def stamp(paths, when):
+            for path in paths:
+                os.utime(str(path), (when, when))
+
+        stamp([page, css], now - 100)
+        stamp(evidence, now - 50)
+        self.assertEqual(check_screenshots.check_site(pkg)["problems"], [])
+        stamp([css], now - 10)
+        self.assertTrue(has(check_screenshots.check_site(pkg)["problems"], r"index-390x844.png is older than style.css"))
+        stamp([page], now)
+        self.assertTrue(has(check_screenshots.check_site(pkg)["problems"], r"index-390.json is older than index.html"))
+        stamp(evidence, now + 10)
+        self.assertEqual(check_screenshots.check_site(pkg)["problems"], [])
+
+    def test_launch_set_images_are_sized_rasters_with_fetched_sources(self):
+        pkg = fixtures.package()
+        path = pkg / "10-launch-set/manifest.json"
+        data = json.loads(path.read_text())
+        (pkg / "10-launch-set/instagram/profile.svg").write_text("<svg/>")
+        data["assets"][0]["path"] = "instagram/profile.svg"
+        data["assets"][2]["size_source"] = "X help center"
+        path.write_text(json.dumps(data))
+        problems = check_screenshots.check_launch_set(pkg)["problems"]
+        self.assertTrue(has(problems, r"instagram/profile.svg is a profile-image, which must be a PNG"))
+        self.assertTrue(has(problems, r"x/profile.png needs size_source, the http\(s\) URL"))
 
     def test_launch_set_needs_each_platform_and_sizes(self):
         pkg = fixtures.package()
@@ -481,6 +585,21 @@ class VideoTest(unittest.TestCase):
         self.assertTrue(has(problems, r"no viewing note for frame-000.png"))
         self.assertTrue(has(problems, r"no viewing note for frame-100.png"))
         self.assertTrue(has(problems, r"must say what the audio is"))
+
+    def test_video_evidence_older_than_the_video_fails(self):
+        pkg = fixtures.package()
+        video = self.video(pkg)
+        folder = video.parent
+        past = video.stat().st_mtime - 60
+        for path in list((folder / "frames").glob("frame-*.png")) + [folder / "frame-strip.png",
+                                                                    folder / "ffprobe-report.txt"]:
+            os.utime(str(path), (past, past))
+        problems = check_video.verify(video, "270x480", 2, 10)["problems"]
+        self.assertTrue(has(problems, r"frames/frame-000.png is older than walkthrough.mp4"))
+        self.assertTrue(has(problems, r"frame-strip.png is older than walkthrough.mp4"))
+        self.assertTrue(has(problems, r"ffprobe-report.txt is older than walkthrough.mp4"))
+        quiet(check_video.prepare, video)
+        self.assertEqual(check_video.verify(video, "270x480", 2, 10)["problems"], [])
 
     def test_prepare_writes_frames_strip_and_report(self):
         pkg = fixtures.package()
@@ -530,6 +649,16 @@ class RecapTest(unittest.TestCase):
         pkg = fixtures.package()
         fixtures.write(pkg, "09-extras/pitch-deck.html", "<p>deck</p>")
         self.assertTrue(has(check_recap.check(pkg, fixtures.PRODUCT)["problems"], r"does not link the extra 09-extras/pitch-deck.html"))
+
+    def test_handoff_line_is_exact_and_absent_beside_live(self):
+        pkg = fixtures.package()
+        edit(pkg / "recap.html", "<code>Testprod - hand to gr0wthlab</code>",
+             "<code>Testprod - hand to gr0wthlab (gtm-candidate-2026-10-01)</code>")
+        self.assertTrue(has(check_recap.check(pkg, fixtures.PRODUCT)["problems"],
+                            r"'Testprod - hand to gr0wthlab' word for word"))
+        pkg = fixtures.package("gtm-candidate-2026-10-24", "beside-live")
+        self.assertTrue(has(check_recap.check(pkg, fixtures.PRODUCT)["problems"],
+                            r"a package beside a live one has no ready Handoff line"))
 
     def test_missing_section(self):
         pkg = fixtures.package()
