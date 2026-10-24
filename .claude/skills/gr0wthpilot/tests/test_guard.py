@@ -147,6 +147,33 @@ class GuardTest(unittest.TestCase):
             self.assertTrue(self.denied("Write", file_path=str(site / name), content=code), name)
         self.assertTrue(self.bash_denied("node -e \"require('child_process').execSync('open https://x.example')\""))
 
+    def test_shell_scripts_are_checked_as_the_commands_they_run(self):
+        pkg = Path(self.cfg["package"])
+        scripts = {
+            "serve.sh": "#!/bin/sh\n# it's the local server\nopen http://localhost:8000\n",
+            "ok.sh": "#!/bin/sh\n# it's the local server\npython3 -m http.server 8000\n",
+            "tool": "#!/usr/bin/env python3\nimport subprocess\nsubprocess.run(['gh', 'pr', 'create'])\n",
+            "plain": "if true; then gh pr create; fi\n",
+            "apple": "#!/usr/bin/osascript\ndisplay dialog \"x\"\n",
+            "mod.py": "import smtplib\n",
+            "send.ts": "fetch('https://x.example', {method: 'POST'})\n",
+        }
+        for name, text in scripts.items():
+            (pkg / name).write_text(text)
+        for command in ("bash serve.sh", "sh serve.sh", "zsh serve.sh", "source serve.sh", ". ./serve.sh",
+                        "./serve.sh", "./tool", "./plain", "./apple", "bash < serve.sh", "cat serve.sh | sh",
+                        "cat mod.py | python3", "python3 -m mod", "npx tsx send.ts", "bun run send.ts",
+                        "if true; then gh pr create; fi", "for f in a; do open $f; done", "bash -lc 'open x'",
+                        "python3 -Bc 'import smtplib'",
+                        "node -p \"require('child_process').execSync('open x')\""):
+            self.assertTrue(self.bash_denied(command), command)
+        for command in ("bash ok.sh", "./ok.sh", "source ok.sh", "bash --version", "python3 -m http.server 8080",
+                        "/bin/ls -la"):
+            self.assertFalse(self.bash_denied(command), command)
+        self.assertTrue(self.denied("Write", file_path=str(pkg / "deploy.sh"), content="#!/bin/sh\ngh pr create\n"))
+        self.assertFalse(self.denied("Write", file_path=str(pkg / "serve2.sh"),
+                                     content="#!/bin/sh\n# it's fine\npython3 -m http.server\n"))
+
     def test_heredocs_are_data_unless_something_runs_them(self):
         self.assertFalse(self.bash_denied("cat >> decisions-log.md <<'EOF'\n- D-009 it's the Founder's call, isn't it\nEOF"))
         self.assertFalse(self.bash_denied("cat > a.md <<EOF\nWe won't push or deploy anything.\nEOF\nls"))
@@ -242,11 +269,11 @@ class GuardTest(unittest.TestCase):
 TODAY = dt.date(2026, 10, 24)
 
 
-def registry(*handed_off):
-    """gr0wthlab's product list naming a go_to_market_package for each Product
-    given, plus a listening-only Product with none."""
+def registry(*handed_off, folder="gtm"):
+    """gr0wthlab's product list naming a go_to_market_package in that folder
+    for each Product given, plus a listening-only Product with none."""
     path = Path(tempfile.mkdtemp(prefix="gp-gr0wthlab-")) / "config" / "products.json"
-    products = [{"name": n, "go_to_market_package": {"path": "projects/%s/gtm/" % n}} for n in handed_off]
+    products = [{"name": n, "go_to_market_package": {"path": "projects/%s/%s/" % (n, folder)}} for n in handed_off]
     gc.write_json(path, {"products": products + [{"name": "Listening", "go_to_market_package": None}]})
     return path
 
@@ -308,16 +335,54 @@ class RunPrepTest(unittest.TestCase):
         self.assertEqual(target["protected"], [str(live)])
         self.assertIn("names a go_to_market_package for RepToday", target["kind_reason"])
 
-    def test_an_unreadable_product_list_treats_an_existing_gtm_as_live(self):
+    def test_the_live_package_is_the_folder_gr0wthlab_names(self):
+        mandu = make_mandu(("Immerse",))
+        gtm = mandu / "projects/Immerse/gtm"
+        handed = mandu / "projects/Immerse/gtm-candidate-2026-11-01"
+        journal_at(gtm, "complete")
+        journal_at(handed, "in-progress")
+        listed = registry("Immerse", folder="gtm-candidate-2026-11-01")
+        target = gp_run.resolve_target(mandu, "Immerse", TODAY, listed)
+        self.assertEqual((target["package_rel"], target["mode"], target["kind"], target["handoff_line"]),
+                         ("projects/Immerse/gtm-candidate-2026-10-24", "new", "beside-live", None))
+        self.assertEqual(target["protected"], [str(gtm), str(handed)])
+        self.assertIn("projects/Immerse/gtm-candidate-2026-11-01/ is its live package", target["kind_reason"])
+        journal_at(gtm, "in-progress")
+        resumed = gp_run.resolve_target(mandu, "Immerse", TODAY, listed)
+        self.assertEqual((resumed["package_rel"], resumed["mode"], resumed["kind"]),
+                         ("projects/Immerse/gtm", "resume", "beside-live"))
+        self.assertEqual(resumed["protected"], [str(handed)])
+        missing = gp_run.resolve_target(make_mandu(("Immerse",)), "Immerse", TODAY,
+                                        registry("Immerse", folder="gtm-candidate-2026-10-24"))
+        self.assertEqual(missing["package_rel"], "projects/Immerse/gtm-candidate-2026-10-24-2")
+        self.assertTrue(missing["protected"][0].endswith("projects/Immerse/gtm-candidate-2026-10-24"))
+
+    def test_an_unreadable_product_list_still_resumes_an_unfinished_gtm(self):
         mandu = make_mandu(("Immerse",))
         missing = Path(tempfile.mkdtemp(prefix="gp-gr0wthlab-")) / "config" / "products.json"
         first = gp_run.resolve_target(mandu, "Immerse", TODAY, missing)
         self.assertEqual((first["package_rel"], first["kind"]), ("projects/Immerse/gtm", "first-package"))
         journal_at(mandu / "projects/Immerse/gtm", "in-progress")
-        second = gp_run.resolve_target(mandu, "Immerse", TODAY, missing)
-        self.assertEqual((second["package_rel"], second["mode"], second["kind"], second["handoff_line"]),
-                         ("projects/Immerse/gtm-candidate-2026-10-24", "new", "beside-live", None))
-        self.assertIn("could not be read", second["kind_reason"])
+        again = gp_run.resolve_target(mandu, "Immerse", TODAY, missing)
+        self.assertEqual((again["package_rel"], again["mode"], again["kind"], again["handoff_line"]),
+                         ("projects/Immerse/gtm", "resume", "first-package", "Immerse - hand to gr0wthlab"))
+        self.assertEqual(again["protected"], [])
+
+    def test_an_unreadable_product_list_treats_a_finished_gtm_as_live(self):
+        missing = Path(tempfile.mkdtemp(prefix="gp-gr0wthlab-")) / "config" / "products.json"
+        for status in ("complete", None):
+            mandu = make_mandu(("Immerse",))
+            gtm = mandu / "projects/Immerse/gtm"
+            if status:
+                journal_at(gtm, status)
+            else:
+                gtm.mkdir()
+            target = gp_run.resolve_target(mandu, "Immerse", TODAY, missing)
+            self.assertEqual((target["package_rel"], target["mode"], target["kind"], target["handoff_line"]),
+                             ("projects/Immerse/gtm-candidate-2026-10-24", "new", "beside-live", None), status)
+            self.assertEqual(target["protected"], [str(gtm)], status)
+            self.assertIn("could not be read", target["kind_reason"])
+            self.assertIn("projects/Immerse/gtm/ is treated as possibly live", target["kind_reason"])
 
     def test_unknown_product_and_bad_name_refused(self):
         mandu = make_mandu(("Immerse",))

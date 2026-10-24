@@ -138,44 +138,67 @@ def production_registry() -> Path:
     return (Path(base).expanduser() if base else Path.home() / "gr0wthlab") / "config" / "products.json"
 
 
+def registered_folder(package, product: str) -> str:
+    """The folder in projects/<Product>/ a go_to_market_package's path names,
+    or `gtm` when its path names none."""
+    path = package.get("path") if isinstance(package, dict) else None
+    parts = path.strip("/").split("/") if isinstance(path, str) else []
+    if len(parts) == 3 and parts[:2] == ["projects", product] and parts[2] not in (".", ".."):
+        return parts[2]
+    return "gtm"
+
+
 def handoff_status(registry: Path, product: str):
-    """Whether the Product is handed off: (True, why) when gr0wthlab's product
-    list names a go_to_market_package for it, (False, why) when it does not,
-    and (None, why) when the list cannot be read."""
+    """Whether the Product is handed off: (True, its live folder, why) when
+    gr0wthlab's product list names a go_to_market_package for it, (False,
+    None, why) when it does not, and (None, None, why) when the list cannot
+    be read."""
     try:
         products = gc.read_json(registry).get("products")
     except (OSError, ValueError, AttributeError):
         products = None
     if not isinstance(products, list):
-        return None, "gr0wthlab's product list (%s) could not be read" % registry
+        return None, None, "gr0wthlab's product list (%s) could not be read" % registry
     for entry in products:
         if isinstance(entry, dict) and entry.get("name") == product and entry.get("go_to_market_package"):
-            return True, "gr0wthlab's product list (%s) names a go_to_market_package for %s" % (registry, product)
-    return False, "gr0wthlab's product list (%s) names no go_to_market_package for %s" % (registry, product)
+            return (True, registered_folder(entry["go_to_market_package"], product),
+                    "gr0wthlab's product list (%s) names a go_to_market_package for %s" % (registry, product))
+    return False, None, "gr0wthlab's product list (%s) names no go_to_market_package for %s" % (registry, product)
 
 
 def resolve_target(mandu: Path, product: str, today: dt.date, registry: Path) -> dict:
     """Decide which folder this run writes.
 
-    A handed-off Product's `gtm/` is its live package, never written; when
-    gr0wthlab's product list cannot be read, an existing `gtm/` is treated as
-    possibly live. A folder holding an in-progress run journal is resumed,
-    unless it is a live `gtm/`. Otherwise a new run writes `gtm/` when it does
-    not exist and is not live, or a dated `gtm-candidate-<date>/` beside it.
-    Every other package folder is protected: never written.
+    A handed-off Product's live package is the folder gr0wthlab's product list
+    names (`gtm/` when it names none), never written or resumed. When the list
+    cannot be read, a `gtm/` holding a finished package, or one with no
+    Gr0wthPilot journal, is treated as possibly live; an unfinished run in
+    `gtm/` cannot have been handed off, so it still resumes. A folder holding
+    an in-progress run journal is resumed unless it is live. Otherwise a new
+    run writes `gtm/` when it does not exist and the Product is not handed off,
+    or a dated `gtm-candidate-<date>/` beside it. Every other package folder
+    is protected: never written.
 
-    The kind is `first-package` for `gtm/`, `candidate` for a dated folder of
-    a Product not handed off, and `beside-live` for a dated folder beside a
-    live or possibly live `gtm/`, which cannot be handed off yet.
+    The kind is `beside-live` for any package beside a live or possibly live
+    one, which cannot be handed off yet; otherwise `first-package` for `gtm/`
+    and `candidate` for a dated folder.
     """
     product_dir = check_product(mandu, product)
-    live = product_dir / "gtm"
-    handed_off, reason = handoff_status(registry, product)
-    live_protected = bool(handed_off) or (handed_off is None and live.exists())
-    folders = [live] if live.exists() or live_protected else []
+    gtm = product_dir / "gtm"
+    handed_off, registered, reason = handoff_status(registry, product)
+    if handed_off:
+        live = product_dir / registered
+        reason += ", so %s/ is its live package" % live.relative_to(mandu)
+    elif handed_off is None and gtm.exists() and journal_status(gtm) != "in-progress":
+        live = gtm
+        reason += ", so the existing %s/ is treated as possibly live" % gtm.relative_to(mandu)
+    else:
+        live = None
+    folders = [gtm] if gtm.exists() else []
     folders.extend(sorted(p for p in product_dir.glob(CANDIDATE_PREFIX + "*") if p.is_dir()))
-    in_progress = [f for f in folders
-                   if journal_status(f) == "in-progress" and not (live_protected and f == live)]
+    if live is not None and live not in folders:
+        folders.insert(0, live)
+    in_progress = [f for f in folders if journal_status(f) == "in-progress" and f != live]
     if len(in_progress) > 1:
         raise RunError(
             "More than one in-progress Candidate Package for %s: %s. Mark the abandoned one "
@@ -184,20 +207,20 @@ def resolve_target(mandu: Path, product: str, today: dt.date, registry: Path) ->
         )
     if in_progress:
         target, mode = in_progress[0], "resume"
-    elif not live.exists() and not live_protected:
-        target, mode = live, "new"
+    elif not gtm.exists() and not handed_off:
+        target, mode = gtm, "new"
     else:
         base = CANDIDATE_PREFIX + today.isoformat()
         target, n = product_dir / base, 2
-        while target.exists():
+        while target.exists() or target == live:
             target = product_dir / ("%s-%d" % (base, n))
             n += 1
         mode = "new"
     protected = [f for f in folders if f != target]
-    if target == live:
-        kind = "first-package"
-    elif live_protected:
+    if live is not None:
         kind = "beside-live"
+    elif target == gtm:
+        kind = "first-package"
     else:
         kind = "candidate"
     return {

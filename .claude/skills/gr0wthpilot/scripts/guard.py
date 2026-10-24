@@ -76,8 +76,19 @@ NPM_DENIED = {"publish", "unpublish", "login", "logout", "adduser", "add-user", 
               "owner", "deprecate", "dist-tag", "access", "team", "org", "star", "hook"}
 WRAPPER_PROGRAMS = {"env", "nohup", "time", "command", "exec", "nice", "timeout",
                     "caffeinate", "stdbuf", "xargs"}
+# Shell reserved words that come before the command they run.
+SHELL_KEYWORDS = {"if", "then", "else", "elif", "do", "while", "until", "!"}
 SHELLS = {"bash", "sh", "zsh", "dash", "ksh"}
-INTERPRETERS = re.compile(r"^(python(\d(\.\d+)?)?|node|ruby|perl|osascript)$")
+# Shell options that take a value, so the value is not the script.
+SHELL_VALUED = {"-o", "+o", "-O", "+O", "--rcfile", "--init-file"}
+SHELL_SUFFIXES = {".sh", ".bash", ".zsh", ".command"}
+INTERPRETERS = re.compile(r"^(python(\d(\.\d+)?)?|node|ruby|perl|osascript|tsx|ts-node|bun|deno)$")
+INFO_FLAGS = {"--version", "-V", "-v", "--help", "-h"}
+# The flag before inline code: a shell's -c, alone or in a cluster such as
+# -lc; an interpreter's -c or -e, alone or ending a cluster such as -Bc or
+# -ne, or Node's --eval and --print.
+SHELL_INLINE_RE = re.compile(r"-[A-Za-z]*c[A-Za-z]*")
+INLINE_CODE_RE = re.compile(r"-[A-Za-z]*[ce]|--eval|-p|--print")
 READERS = {"cat", "less", "more", "head", "tail", "bat", "grep", "egrep", "fgrep", "rg",
            "sed", "awk", "strings", "xxd", "od", "hexdump", "cut", "sort", "uniq", "tr",
            "base64", "diff", "cmp", "nl", "paste", "jq", "plutil"}
@@ -418,7 +429,7 @@ def strip_prefix(tokens):
     out = list(tokens)
     while out:
         tok = out[0]
-        if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", tok):
+        if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", tok) or tok in SHELL_KEYWORDS:
             out.pop(0)
             continue
         if re.fullmatch(r"\d*[<>]+&?\d*", tok):
@@ -465,7 +476,30 @@ def check_code_text(text, where):
                        "publishes, uploads, and sends nothing." % (where, prog, " " + arg if prog == "git" else ""))
 
 
-def check_script_file(path, cfg):
+def check_shell_text(text, cfg, depth, where):
+    """Check a shell script as the commands it runs. Its full-line comments
+    are not commands, and their apostrophes would break the parse."""
+    commands = "\n".join(line for line in text.splitlines() if not line.lstrip().startswith("#"))
+    try:
+        check_command(commands, cfg, depth)
+    except Deny as exc:
+        raise Deny("%s: %s" % (where, exc))
+
+
+def shebang_program(text):
+    """The program a script's `#!` line runs it with, or None."""
+    if not text.startswith("#!"):
+        return None
+    names = [os.path.basename(w) for w in text[2:].split("\n", 1)[0].split() if not w.startswith("-")]
+    if names[:1] == ["env"]:
+        names = names[1:]
+    return names[0] if names else None
+
+
+def check_script_file(path, cfg, depth=0, shell=None):
+    """Check a script the run runs: as shell commands when a shell runs it, as
+    code when an interpreter does, and by its `#!` line when it is run by its
+    path (with none, the shell runs it). A binary is not a script."""
     p = Path(path)
     if not p.is_absolute():
         p = Path(cfg["package"]) / p
@@ -474,10 +508,58 @@ def check_script_file(path, cfg):
     if cfg.get("skill_dir") and under(p, cfg["skill_dir"]):
         return
     try:
-        if p.is_file() and p.stat().st_size <= 2 * 1024 * 1024:
-            check_code_text(p.read_text(encoding="utf-8", errors="replace"), "Script %s" % p.name)
+        if not p.is_file() or p.stat().st_size > 2 * 1024 * 1024:
+            return
+        data = p.read_bytes()
     except OSError:
-        pass
+        return
+    if b"\0" in data[:8192]:
+        return
+    text = data.decode("utf-8", "replace")
+    if shell is None:
+        program = shebang_program(text)
+        if program in DENIED_PROGRAMS:
+            raise Deny("Script %s runs under `%s`, which is not available in a Gr0wthPilot run." % (p.name, program))
+        shell = program is None or program in SHELLS
+    if shell:
+        check_shell_text(text, cfg, depth + 1, "Script %s" % p.name)
+    else:
+        check_code_text(text, "Script %s" % p.name)
+
+
+def script_arg(args, valued=()):
+    """The script a shell or interpreter runs: its first argument that is not
+    an option, an option's value, or a redirection."""
+    i = 0
+    while i < len(args):
+        a = args[i]
+        redirect = re.match(r"\d*[<>]+&?", a)
+        if redirect:
+            i += 2 if redirect.end() == len(a) else 1
+        elif a in valued:
+            i += 2
+        elif a[:1] in ("-", "+"):
+            i += 1
+        else:
+            return a
+    return None
+
+
+def inline_flag(prog, args):
+    """The index of the flag before a shell's or interpreter's inline code."""
+    pattern = SHELL_INLINE_RE if prog in SHELLS else INLINE_CODE_RE
+    return next((i for i, a in enumerate(args) if pattern.fullmatch(a)), None)
+
+
+def reads_stdin(prog, args):
+    """Whether a shell or interpreter reads its script from standard input,
+    that is from a pipe or a redirection the guard cannot see into."""
+    if args and all(a in INFO_FLAGS for a in args):
+        return False
+    if inline_flag(prog, args) is not None or "-m" in args:
+        return False
+    shell = prog in SHELLS
+    return (shell and "-s" in args) or script_arg(args, SHELL_VALUED if shell else ()) is None
 
 
 def check_simple(tokens, cfg, depth=0):
@@ -492,10 +574,16 @@ def check_simple(tokens, cfg, depth=0):
     if prog in DENIED_PROGRAMS:
         hint = PROGRAM_HINTS.get(prog)
         raise Deny("`%s` is not available in a Gr0wthPilot run%s." % (prog, "; " + hint if hint else ""))
-    if prog in SHELLS and "-c" in args:
-        inner = args[args.index("-c") + 1] if args.index("-c") + 1 < len(args) else ""
-        check_command(inner, cfg, depth + 1)
+    if "/" in tokens[0] and prog not in SHELLS and not INTERPRETERS.match(prog):
+        check_script_file(tokens[0], cfg, depth)
+    flag = inline_flag(prog, args) if prog in SHELLS or INTERPRETERS.match(prog) else None
+    if prog in SHELLS and flag is not None:
+        check_command(args[flag + 1] if flag + 1 < len(args) else "", cfg, depth + 1)
         return
+    if prog in SHELLS or prog in ("source", "."):
+        script = script_arg(args, SHELL_VALUED) if prog in SHELLS else (args[0] if args else None)
+        if script:
+            check_script_file(script, cfg, depth, shell=True)
     if prog == "eval":
         check_command(" ".join(args), cfg, depth + 1)
         return
@@ -534,15 +622,18 @@ def check_simple(tokens, cfg, depth=0):
         if flags & WGET_SEND_FLAGS:
             raise Deny("wget may only read; %s sends data." % ", ".join(sorted(flags & WGET_SEND_FLAGS)))
     if INTERPRETERS.match(prog):
-        if "-c" in args or "-e" in args or "--eval" in args:
-            flag = "-c" if "-c" in args else ("-e" if "-e" in args else "--eval")
-            idx = args.index(flag) + 1
-            if idx < len(args):
-                check_code_text(args[idx], "Inline %s code" % prog)
+        if flag is not None:
+            if flag + 1 < len(args):
+                check_code_text(args[flag + 1], "Inline %s code" % prog)
+        elif "-m" in args:
+            module = args[args.index("-m") + 1:][:1]
+            for name in module:
+                for candidate in (name.replace(".", "/") + ".py", name.replace(".", "/") + "/__main__.py"):
+                    check_script_file(candidate, cfg, depth, shell=False)
         else:
-            script = next((a for a in args if not a.startswith("-")), None)
+            script = script_arg(args[1:] if prog in ("bun", "deno") and args[:1] == ["run"] else args)
             if script:
-                check_script_file(script, cfg)
+                check_script_file(script, cfg, depth, shell=False)
     if any("last30days.py" in a or "last30days/scripts" in a for a in tokens):
         raise Deny("run last30days through `gp-last30days`, which keeps its sign-up, publishing, "
                    "and cookie-reading paths off")
@@ -589,6 +680,9 @@ def check_command(command, cfg, depth=0):
             raise Deny("run `%s` on its own: no pipes, chains, redirections, or subshells, so it "
                        "runs outside the sandbox under its own rules" % name)
         check_simple(tokens, cfg, depth)
+        if body is None and (name in SHELLS or INTERPRETERS.match(name)) and reads_stdin(name, stripped[1:]):
+            raise Deny("give `%s` its script by path, inline, or in a heredoc; a script it reads from a pipe "
+                       "or a redirection is one the guard cannot check" % name)
         if body is not None and name:
             if name in SHELLS or name in ("eval", "source", "."):
                 check_command(body, cfg, depth + 1)
@@ -626,7 +720,10 @@ def check_write(cfg, tool_input, secrets):
     for value in secrets:
         if value in content:
             raise Deny("the content holds a secret value from a .env file; never copy a key")
-    if Path(path).suffix.lower() in CODE_SUFFIXES:
+    suffix = Path(path).suffix.lower()
+    if suffix in SHELL_SUFFIXES and tool_input.get("content") is not None:
+        check_shell_text(content, cfg, 1, "File %s" % Path(path).name)
+    elif suffix in CODE_SUFFIXES:
         check_code_text(content, "File %s" % Path(path).name)
 
 

@@ -7,9 +7,10 @@ whose URL was not fetched is deleted. This check makes that mechanical:
 1. Every entry in `sources.md` is well formed:
    `- <URL> - fetched <YYYY-MM-DDTHH:MM[:SS]Z> - <what it supports>`.
 2. Every entry was fetched in this run, by tool record rather than by anyone's
-   say-so: the guard's WebFetch log (`run-evidence/fetch-log.jsonl`, or the
-   guard's live one) shows a 2xx fetch, or the URL appears in last30days
-   output whose SHA-256 the gp-last30days wrapper recorded.
+   say-so: the guard's WebFetch log (its live one during a run, which the run
+   cannot write; otherwise the copy in `run-evidence/fetch-log.jsonl`) shows a
+   2xx fetch, or the URL appears in last30days output whose SHA-256 the
+   gp-last30days wrapper recorded.
    A URL whose only fetches failed is a dead link.
 3. Every entry in a `sources.d/` fragment, where parallel agents record their
    URLs, has been merged into `sources.md` (scripts/merge_sources.py).
@@ -87,14 +88,13 @@ def parse_exempt(pkg):
 
 
 def default_logs(pkg, name):
-    logs = [pkg / "run-evidence" / name]
+    """During a run, only the live log its config names, which for WebFetch is
+    the guard's own record; with no run config, the copy audit_run.py made in
+    `run-evidence/`."""
     config = os.environ.get("GR0WTHPILOT_CONFIG")
     if config and Path(config).is_file():
-        try:
-            logs.append(Path(gc.read_json(Path(config))[gc.RUN_LOGS[name]]))
-        except (KeyError, ValueError, OSError):
-            pass
-    return logs
+        return [Path(gc.read_json(Path(config))[gc.RUN_LOGS[name]])]
+    return [pkg / "run-evidence" / name]
 
 
 def read_jsonl(paths):

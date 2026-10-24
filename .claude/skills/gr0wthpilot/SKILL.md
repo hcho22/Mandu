@@ -33,10 +33,12 @@ Do these before anything else, in order.
    With gates passed, this is a resumed run, usually after a session limit: read the journal's notes, `decisions-log.md`, and the files behind the passed gates, then continue at the next gate.
    Never redo a passed gate unless a later phase sends it back, and say so in the journal with `journal.py note`.
 5. The preflight's `kind` says what this package is and `kind_reason` says why; a Product is handed off only when gr0wthlab's product list names a `go_to_market_package` for it.
-   - `first-package`: the package is `gtm/`, and the Product is not handed off.
+   - `first-package`: the package is `gtm/`, and no live package sits beside it.
+     An unfinished run in `gtm/` resumes even when gr0wthlab's product list cannot be read, because a package cannot be handed off before its recap is finished.
    - `candidate`: the Product is not handed off, and `gtm/` (or an earlier dated folder) already holds a Candidate Package, which is protected and kept; this run writes a dated folder beside it.
      Both are Candidate Packages: never call either one live.
-   - `beside-live`: the Product is handed off, so `gtm/` is its live Go-To-Market Package; or gr0wthlab's product list could not be read, so an existing `gtm/` is treated as possibly live.
+   - `beside-live`: the Product is handed off, so the folder gr0wthlab's product list names for it (usually `gtm/`, but a dated folder once one is handed off) is its live Go-To-Market Package; or the list could not be read, so a `gtm/` holding a finished package, or one with no Gr0wthPilot journal, is treated as possibly live.
+     `kind_reason` names that folder.
      It is protected: read it, compare against it, and never write into it.
      A Candidate Package beside a live one cannot be handed off yet: a second Handoff replaces the live package whole, only between 14-day windows, and needs a gr0wthlab change of its own first (decision of 2026-10-23).
    The preflight's `handoff_line` is the ready Handoff line the recap and your last message carry, word for word: `<Product> - hand to gr0wthlab` for `gtm/`, or `<Product> - hand to gr0wthlab (<folder>)` for a dated folder.

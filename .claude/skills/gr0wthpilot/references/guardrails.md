@@ -24,9 +24,12 @@ Each layer was proven in live sessions; this page says what each one covers and,
 It refuses:
 
 - Shell commands that publish, deploy, upload, or reach a remote host: `git push` and every git subcommand that is not a read, `gh`, `hub`, `glab`, wrangler, vercel, netlify, firebase, surge, heroku, fly, railway, aws, gcloud, az, rclone, scp, sftp, ssh, rsync, nc, telnet, sendmail, `npm publish` and its sign-in commands, twine, fastlane, altool, notarytool, and anything a package runner (`npx`, `bunx`, `npm exec`) would run of those.
-  It finds them inside chains, pipes, subshells, `$(...)`, backticks, `bash -c`, `eval`, `find -exec`, and behind `env`, `nohup`, `timeout`, and similar wrappers.
+  It finds them inside chains, pipes, subshells, `$(...)`, backticks, `bash -c` (or a cluster such as `-lc`), `eval`, `find -exec`, `if`/`then`/`do` and the other shell keywords, and behind `env`, `nohup`, `timeout`, and similar wrappers.
+- Shell scripts as the commands they run, by the same rules: a script run with `bash`, `sh`, or `zsh`, with `source` or `.`, or by its path (`./serve.sh`), and a shell-suffixed file the run writes whole.
+  A script run by its path is checked by its `#!` line (a script with none runs in the shell), and one whose `#!` names a denied program is refused.
+  A shell or interpreter that would read its script from a pipe or a redirection is refused, because the guard cannot see that script; give it a path, inline code, or a heredoc.
 - curl or wget with any flag that sends data or credentials (`-d`, `-F`, `-T`, `-X POST`, `--json`, `-u`, `--post-data`).
-- Inline Python or Node code, scripts the run executes, and code files the run writes, when they hold code that sends (smtplib, `requests.post`, a POST `fetch`, `urlopen(..., data=...)`, raw sockets) or runs a denied program: the program a subprocess, `os.exec*`, `child_process`, or `system()` call is given, compared by its basename, so `'/usr/bin/open'` is caught and a page's `classList.toggle('open', ...)` is not.
+- Inline code (`-c`, `-e`, Node's `-p`, and clusters such as `-Bc` or `-ne`), scripts the run executes (by an interpreter, `python3 -m` from the package, `tsx`, `ts-node`, `bun`, or `deno`, or by their path), and code files the run writes, when they hold code that sends (smtplib, `requests.post`, a POST `fetch`, `urlopen(..., data=...)`, raw sockets) or runs a denied program: the program a subprocess, `os.exec*`, `child_process`, or `system()` call is given, compared by its basename, so `'/usr/bin/open'` is caught and a page's `classList.toggle('open', ...)` is not.
 - Programs that act as the Founder: `open`, osascript, `security` (the keychain), `chrome-devtools-axi` (his signed-in Chrome), `claude`, codex, and other agents.
 - Reading a `.env` file, printing the environment, and any command or file content holding a value from a `.env` file.
 - Any write outside the Candidate Package and the run's cache folder, which includes the guard's own records, and any write into a protected package (the live package, or an earlier Candidate Package).
@@ -67,7 +70,7 @@ A run's folders sit under the cache root, `~/Library/Caches/Gr0wthPilot` (or `GR
 - `<Product>.guard/`, the guard's records: its config, the permission profile, the robots.txt cache, the tool log, the WebFetch log, and the simulator ledger.
   No tool of the run can write it: it is outside the sandbox's writable folders and in its denied ones, outside the profile's edit allow rules and in its deny rules, and outside what the guard's write check allows.
   Only the guard hook, which runs outside the sandbox, and the unsandboxed wrappers (`gp-sim` keeps the simulator ledger) write it.
-  So a run cannot forge a robots.txt verdict, turn off the guard's secret or script checks through its config, or rewrite which pages it fetched.
+  So a run cannot forge a robots.txt verdict, turn off the guard's secret or script checks through its config, or rewrite which pages it fetched: during a run the source check reads only the guard's live WebFetch log.
 
 These records the run could still alter, because a sandboxed command or the run itself must write them:
 
@@ -87,6 +90,7 @@ These gaps remain, and are accepted for a run the Founder starts and watches him
   They are the Founder's own code, and the build runs on a copy, never in the repository.
 - In the interactive session, the Founder can change the permission mode himself (Shift+Tab); the guard and the sandbox still apply in every mode.
   `disableAutoMode` is honored only in managed settings, so auto mode stays selectable.
-- The guard reads shell commands; a determined script could hide a denied program in a way it cannot parse.
+- The guard reads shell commands and the scripts they run by name; a determined script could hide a denied program in a way it cannot parse, and the guard does not read what a build tool runs from its own files (`package.json` scripts, a Makefile).
   The sandbox's write and network limits still hold for whatever runs inside it.
-- The last30days log and the copies in `run-evidence/` are writable by the run (see "The guard's own records"); the source check treats them as the run's record, not as tamper-proof evidence, and reads the guard's live WebFetch log beside them when the run's config is present.
+- The last30days log and the copies in `run-evidence/` are writable by the run (see "The guard's own records"), so they are the run's record, not tamper-proof evidence.
+  The source check reads the `run-evidence/` copy of the WebFetch log only with no run config present, as when the package is checked after the run.

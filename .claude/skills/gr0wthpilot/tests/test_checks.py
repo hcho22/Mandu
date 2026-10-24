@@ -112,6 +112,29 @@ class SourcesTest(unittest.TestCase):
         self.assertEqual(gc.find_urls("(see https://x.example/a), then https://y.example/b_(c)."),
                          ["https://x.example/a", "https://y.example/b_(c)"])
 
+    def test_adjacent_markdown_links_are_separate_urls(self):
+        self.assertEqual(gc.find_urls("[1](https://a.example/x)[2](https://b.example/y) and "
+                                      "(https://c.example/z),[4](https://d.example/w)"),
+                         ["https://a.example/x", "https://b.example/y", "https://c.example/z", "https://d.example/w"])
+        pkg = fixtures.package()
+        fixtures.write(pkg, "06-channels/cites.md", "Sources: [1](%s)[2](%s),[3](%s)\n"
+                       % (fixtures.URLS["stat"], fixtures.URLS["comp_a"], fixtures.URLS["comp_b"]))
+        self.assertEqual(check_sources.check(pkg)["problems"], [])
+
+    def test_the_live_fetch_log_is_the_only_record_during_a_run(self):
+        pkg = fixtures.package()
+        state = Path(tempfile.mkdtemp(prefix="gp-state-"))
+        live = state / "fetch-log.jsonl"
+        lines = (pkg / "run-evidence" / "fetch-log.jsonl").read_text().splitlines()
+        live.write_text("\n".join(l for l in lines if fixtures.URLS["stat"] not in l) + "\n")
+        config = state / "guard-config.json"
+        gc.write_json(config, {"fetch_log": str(live), "last30days_log": str(state / "last30days-log.jsonl")})
+        with mock.patch.dict(os.environ, {"GR0WTHPILOT_CONFIG": str(config)}):
+            self.assertTrue(has(check_sources.check(pkg)["problems"], r"research.example.org/report was not fetched"))
+        with mock.patch.dict(os.environ):
+            os.environ.pop("GR0WTHPILOT_CONFIG", None)
+            self.assertEqual(check_sources.check(pkg)["problems"], [])
+
     def test_last30days_output_counts_only_when_its_hash_matches(self):
         import hashlib
         pkg = fixtures.package()

@@ -28,7 +28,7 @@ RUN_LOGS = {"tool-log.jsonl": "tool_log", "fetch-log.jsonl": "fetch_log",
 # Text files the checks read. Media and binary files are skipped.
 TEXT_SUFFIXES = {".md", ".html", ".htm", ".json", ".txt", ".csv", ".svg", ".yaml", ".yml"}
 
-URL_RE = re.compile(r"https?://[^\s<>\"'`\]|]+")
+URL_RE = re.compile(r"https?://[^\s<>\"'`\[\]|]+")
 TRAILING_PUNCT = ".,;:!?*_"
 
 
