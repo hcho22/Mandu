@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+# Start a Gr0wthPilot run for one Product: bin/gr0wthpilot <Product>
+#
+# Run it from your own Mandu (~/Mandu). It opens an interactive Claude Code
+# session with the gr0wthpilot skill invoked for that Product, under a
+# permission profile that allows what a run needs and refuses anything that
+# could publish, spend, or write outside the run's Candidate Package:
+#   - Claude Code loads none of your user or local settings, no plugins, and no
+#     MCP servers or connectors: only Mandu's shared project settings (which is
+#     what loads Mandu's skills, and which gp_run.py refuses to start with if
+#     they ever set permissions or hooks) and this run's own profile (written by
+#     .claude/skills/gr0wthpilot/scripts/gp_run.py); every other Mandu session and
+#     Mandu's .claude/settings.json are untouched;
+#   - permission mode dontAsk: anything not allowed is refused, never asked;
+#   - the macOS sandbox confines every shell command's writes to the
+#     Candidate Package and the run's cache folder, and its network to the
+#     hosts last30days reads;
+#   - the guard hook checks every tool call, in subagents and Workflow agents
+#     too, and refuses pushes, GitHub and deploy commands, uploads, posting,
+#     connector tools, questions to you, and secret values.
+# What each layer covers, and what none can, is in
+# .claude/skills/gr0wthpilot/references/guardrails.md.
+#
+# The Mac is held awake (system sleep only; the display may still sleep) for
+# exactly as long as the run's Claude session lives: caffeinate watches the
+# session's own process and lets go when it ends, however it ends.
+#
+# Usage:
+#   bin/gr0wthpilot <Product> [--repo DIR]
+#   bin/gr0wthpilot <Product> [--repo DIR] -- CLAUDE_ARGS...   (checks: replaces the opening /gr0wthpilot prompt)
+# Starting it again for the same Product resumes the run from its last passed gate.
+set -euo pipefail
+
+usage() {
+  awk 'NR > 1 && /^#/ { sub(/^# ?/, ""); print; next } NR > 1 { exit }' "$0"
+  exit 2
+}
+
+[ $# -ge 1 ] || usage
+case "$1" in -h|--help) usage ;; esac
+PRODUCT="$1"
+shift
+REPO_ARG=()
+EXTRA=()
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --repo) [ $# -ge 2 ] || usage; REPO_ARG=(--repo "$2"); shift 2 ;;
+    --) shift; EXTRA=("$@"); break ;;
+    -h|--help) usage ;;
+    *) echo "gr0wthpilot: unknown option $1" >&2; usage ;;
+  esac
+done
+
+# Arguments that would loosen the profile are refused, even for checks.
+for arg in ${EXTRA[@]+"${EXTRA[@]}"}; do
+  case "$arg" in
+    --dangerously-skip-permissions|--allow-dangerously-skip-permissions|--permission-mode*|--settings*|\
+    --setting-sources*|--allowedTools*|--allowed-tools*|--disallowedTools*|--disallowed-tools*|--mcp-config*|\
+    --add-dir*|--plugin-dir*|--plugin-url*|--agents*|--tools*|--chrome|--ide|--remote-control*|--cloud*|--bg|\
+    --background|--worktree*|-w)
+      echo "gr0wthpilot: $arg would change the run's permission profile; refused" >&2
+      exit 2 ;;
+  esac
+done
+
+MANDU="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+SKILL="$MANDU/.claude/skills/gr0wthpilot"
+for tool in claude python3 caffeinate; do
+  command -v "$tool" >/dev/null 2>&1 || { echo "gr0wthpilot: $tool is not installed" >&2; exit 2; }
+done
+
+WORK="${GR0WTHPILOT_WORK:-$HOME/Library/Caches/Gr0wthPilot}/$PRODUCT"
+CONFIG_JSON="$(python3 "$SKILL/scripts/gp_run.py" prepare --mandu "$MANDU" --product "$PRODUCT" --work "$WORK" \
+  ${REPO_ARG[@]+"${REPO_ARG[@]}"})"
+field() { python3 -c 'import json,sys; v=json.loads(sys.argv[1]).get(sys.argv[2]); print(v if v is not None else "")' "$CONFIG_JSON" "$1"; }
+PACKAGE="$(field package)"
+PACKAGE_REL="$(field package_rel)"
+MODE="$(field mode)"
+REPO="$(field repo)"
+PROFILE="$(field profile_path)"
+CONFIG="$(field config_path)"
+
+export GR0WTHPILOT_CONFIG="$CONFIG"
+export PATH="$SKILL/bin:$PATH"
+export FROM_BROWSER=off
+export LAST30DAYS_NATIVE_SEARCH=1
+
+echo "Gr0wthPilot: $PRODUCT ($MODE run)"
+echo "  Candidate Package: $PACKAGE_REL"
+echo "  Product repository (read only): ${REPO:-not found}"
+echo "  Run cache: $WORK"
+echo "  The Mac stays awake while this session runs."
+
+cd "$PACKAGE"
+# Hold system sleep off for this process's life. `exec` below keeps the same
+# process id, so caffeinate follows the Claude session itself and releases the
+# moment it exits, crashes, is killed, or loses its terminal.
+caffeinate -i -s -w $$ &
+
+CLAUDE_ARGS=(--setting-sources project --settings "$PROFILE" --strict-mcp-config --no-chrome
+             --permission-mode dontAsk --name "Gr0wthPilot $PRODUCT")
+if [ ${#EXTRA[@]} -gt 0 ]; then
+  exec claude "${CLAUDE_ARGS[@]}" "${EXTRA[@]}"
+fi
+exec claude "${CLAUDE_ARGS[@]}" "/gr0wthpilot $PRODUCT"

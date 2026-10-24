@@ -1,0 +1,161 @@
+#!/usr/bin/env python3
+"""gp-xcodebuild: build a copy of the Product for the iOS simulator.
+
+A run treats the Product's repository as read only, so it never builds in it:
+`gp-xcodebuild source` exports the repository's committed tree into the run's
+cache folder, and every build runs on that copy. It runs outside the sandbox
+(xcodebuild needs system services the sandbox blocks), so it enforces:
+  - the project or workspace and every output path lie in the cache folder;
+  - builds target the iOS simulator only, on a device this run created;
+  - nothing archives, exports, signs with a team, registers devices, or
+    contacts App Store Connect.
+
+Commands:
+  gp-xcodebuild source [REV]        export the repo at REV (default HEAD); prints the copy's path
+  gp-xcodebuild [XCODEBUILD ARGS]   run xcodebuild on the copy, after the checks above
+"""
+
+import json
+import re
+import subprocess
+import sys
+import tarfile
+import tempfile
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+import gp_common as gc  # noqa: E402
+from gp_tools import ToolError, inside, load_config, require_inside  # noqa: E402
+
+ACTIONS = {"build", "build-for-testing", "test", "test-without-building", "clean",
+           "analyze", "docbuild"}
+INFO_FLAGS = {"-list", "-showBuildSettings", "-version", "-showsdks", "-showdestinations",
+              "-resolvePackageDependencies", "-showTestPlans"}
+DENIED_ACTIONS = {"archive", "install", "installsrc", "installhdrs", "installapi"}
+DENIED_FLAGS = {"-exportArchive", "-exportOptionsPlist", "-exportPath", "-archivePath",
+                "-allowProvisioningUpdates", "-allowProvisioningDeviceRegistration",
+                "-authenticationKeyPath", "-authenticationKeyID", "-authenticationKeyIssuerID",
+                "-exportLocalizations", "-importLocalizations", "-exportNotarizedApp"}
+PATH_FLAGS = {"-project", "-workspace", "-derivedDataPath", "-resultBundlePath",
+              "-xctestrun", "-testProductsPath", "-clonedSourcePackagesDirPath",
+              "-packageCachePath", "-xcconfig", "-testPlan"}
+DENIED_SETTINGS = {"DEVELOPMENT_TEAM", "PROVISIONING_PROFILE", "PROVISIONING_PROFILE_SPECIFIER",
+                   "CODE_SIGN_IDENTITY", "OTHER_CODE_SIGN_FLAGS"}
+
+
+def ledger_names(cfg):
+    try:
+        ledger = gc.read_json(Path(cfg["simulators"]))
+    except (OSError, ValueError):
+        return set(), set()
+    live = [d for d in ledger.get("devices", []) if not d.get("deleted_at")]
+    return {d["udid"] for d in live}, {d["name"] for d in live}
+
+
+def check_destination(cfg, value):
+    if value in ("generic/platform=iOS Simulator", "platform=iOS Simulator"):
+        return
+    parts = dict(p.split("=", 1) for p in value.split(",") if "=" in p)
+    if parts.get("platform") != "iOS Simulator":
+        raise ToolError("builds target the iOS simulator only, not %r" % value)
+    udids, names = ledger_names(cfg)
+    if "id" in parts and parts["id"] in udids:
+        return
+    if "name" in parts and parts["name"] in names:
+        return
+    if set(parts) <= {"platform", "OS", "arch"} and "id" not in parts and "name" not in parts:
+        return
+    raise ToolError("the destination must be a simulator this run created (gp-sim create)")
+
+
+def check_args(cfg, args):
+    has_target, has_derived = False, False
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if a in DENIED_ACTIONS or a in DENIED_FLAGS:
+            raise ToolError("`%s` archives, exports, signs, or contacts Apple; a run only builds for "
+                            "the simulator" % a)
+        if a in PATH_FLAGS:
+            if i + 1 >= len(args):
+                raise ToolError("%s needs a path" % a)
+            require_inside(cfg, args[i + 1], a, roots=("work",))
+            if a in ("-project", "-workspace"):
+                has_target = True
+            if a == "-derivedDataPath":
+                has_derived = True
+            i += 2
+            continue
+        if a == "-destination":
+            check_destination(cfg, args[i + 1] if i + 1 < len(args) else "")
+            i += 2
+            continue
+        if a == "-sdk":
+            if not (args[i + 1] if i + 1 < len(args) else "").startswith("iphonesimulator"):
+                raise ToolError("-sdk must be iphonesimulator")
+            i += 2
+            continue
+        m = re.fullmatch(r"([A-Z_][A-Z0-9_]*)=(.*)", a)
+        if m and m.group(1) in DENIED_SETTINGS:
+            raise ToolError("%s is a signing setting; simulator builds need none" % m.group(1))
+        if m and m.group(2).startswith("/") and not inside(m.group(2), cfg["work"]):
+            raise ToolError("build setting %s points outside the run's cache folder" % m.group(1))
+        i += 1
+    info_only = any(a in INFO_FLAGS for a in args) and not any(a in ACTIONS for a in args)
+    if not has_target and not (info_only and args and args[0] in ("-version", "-showsdks")):
+        raise ToolError("name the copy's project or workspace with -project/-workspace "
+                        "(see gp-xcodebuild source)")
+    return has_derived, info_only
+
+
+def cmd_source(cfg, args):
+    repo = cfg.get("repo")
+    if not repo:
+        raise ToolError("this run found no Product repository")
+    rev = args[0] if args else "HEAD"
+    commit = subprocess.run(["git", "-C", repo, "rev-parse", rev + "^{commit}"], stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE, universal_newlines=True)
+    if commit.returncode != 0:
+        raise ToolError("unknown revision %s" % rev)
+    sha = commit.stdout.strip()
+    dest = Path(cfg["work"]) / "source" / sha[:12]
+    if not dest.is_dir():
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryFile() as tar:
+            proc = subprocess.run(["git", "-C", repo, "archive", "--format=tar", sha], stdout=tar,
+                                  stderr=subprocess.PIPE)
+            if proc.returncode != 0:
+                raise ToolError("git archive failed: %s" % proc.stderr.decode()[-300:])
+            tar.seek(0)
+            staging = Path(tempfile.mkdtemp(prefix="src-", dir=str(dest.parent)))
+            with tarfile.open(fileobj=tar) as archive:
+                for member in archive.getmembers():
+                    target = (staging / member.name).resolve()
+                    if not inside(target, staging):
+                        raise ToolError("unsafe path in the archive: %s" % member.name)
+                archive.extractall(str(staging))
+            staging.rename(dest)
+    print(json.dumps({"source": str(dest), "commit": sha}))
+
+
+def main(argv):
+    if argv[:1] in (["--help"], ["-h"]) or not argv:
+        print(__doc__)
+        return 2
+    try:
+        cfg = load_config()
+        if argv[0] == "source":
+            cmd_source(cfg, argv[1:])
+            return 0
+        has_derived, info_only = check_args(cfg, argv)
+        args = list(argv)
+        if not has_derived and not info_only:
+            args += ["-derivedDataPath", str(Path(cfg["work"]) / "DerivedData")]
+        return subprocess.call(["/usr/bin/xcodebuild"] + args)
+    except ToolError as exc:
+        print("gp-xcodebuild: %s" % exc, file=sys.stderr)
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

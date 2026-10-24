@@ -1,0 +1,137 @@
+{
+  "comment": "The go_to_market_package entry of RepToday in gr0wthlab's config/products.json (github.com/hcho22/gr0wthlab, commit 6776dd0, 2026-10-24), with RepToday's name replaced by {product}. A Candidate Package holds every file it names at the same path inside the package, so at Handoff a new Product's entry is this one with the name filled in. One path differs from RepToday's: launch_checklist names projects/{product}/gtm/launch-checklist.md, because a run writes only inside the package, while RepToday's launch checklist sits beside its package. scripts/check_layout.py reads this file, and prefers gr0wthlab's live registry when it can read one.",
+  "gr0wthlab_commit": "6776dd0",
+  "go_to_market_package": {
+    "in": "mandu",
+    "path": "projects/{product}/gtm/",
+    "launch_checklist": "projects/{product}/gtm/launch-checklist.md",
+    "access": "read-only",
+    "sources": [
+      {
+        "path": "projects/{product}/gtm/05-social-pmf/cadence-14-day.md",
+        "needed_by": [
+          "post-drafts",
+          "filming-plan",
+          "weekly-read"
+        ]
+      },
+      {
+        "path": "projects/{product}/gtm/05-social-pmf/angles.md",
+        "needed_by": [
+          "post-drafts",
+          "filming-plan",
+          "weekly-read",
+          "listening"
+        ]
+      },
+      {
+        "path": "projects/{product}/gtm/05-social-pmf/ab-pairs.md",
+        "needed_by": [
+          "post-drafts",
+          "filming-plan",
+          "weekly-read"
+        ]
+      },
+      {
+        "path": "projects/{product}/gtm/05-social-pmf/platform-assignment.md",
+        "needed_by": [
+          "post-drafts"
+        ]
+      },
+      {
+        "path": "projects/{product}/gtm/05-social-pmf/read-the-results.md",
+        "needed_by": [
+          "weekly-read"
+        ]
+      },
+      {
+        "path": "projects/{product}/gtm/02-brand/brand-guidelines.md",
+        "needed_by": [
+          "post-drafts",
+          "outreach-drafts",
+          "beta-recruiting"
+        ]
+      },
+      {
+        "path": "projects/{product}/gtm/02-brand/positioning.md",
+        "needed_by": [
+          "listening"
+        ]
+      },
+      {
+        "path": "projects/{product}/gtm/09-extras/marketing-agent/brand-rules.json",
+        "needed_by": [
+          "post-drafts",
+          "outreach-drafts",
+          "beta-recruiting"
+        ]
+      },
+      {
+        "path": "projects/{product}/gtm/08-redteam/pre-publication-checklist.md",
+        "needed_by": [
+          "post-drafts",
+          "outreach-drafts"
+        ]
+      },
+      {
+        "path": "projects/{product}/gtm/06-channels/",
+        "needed_by": [
+          "waitlist-counts",
+          "outreach-drafts",
+          "beta-recruiting"
+        ]
+      },
+      {
+        "path": "projects/{product}/gtm/07-thesis/",
+        "needed_by": [
+          "beta-recruiting"
+        ]
+      },
+      {
+        "path": "projects/{product}/gtm/launch-checklist.md",
+        "needed_by": [
+          "post-drafts",
+          "outreach-drafts"
+        ]
+      },
+      {
+        "path": "projects/{product}/gtm/09-extras/marketing-agent/BUILD-SPEC.md",
+        "needed_by": [
+          "post-drafts"
+        ]
+      },
+      {
+        "path": "projects/{product}/gtm/01-research/",
+        "files_starting_with": "competitor",
+        "needed_by": [
+          "post-drafts",
+          "listening"
+        ]
+      }
+    ],
+    "sources_note": "The package sources each run snapshots, from the PRD's list; a path ending in / covers every file under it, or only the files whose names start with files_starting_with. Every source also feeds the package review, so a failed one makes that review incomplete as well as the outputs it names.",
+    "post_drafts": {
+      "calendar": "projects/{product}/gtm/05-social-pmf/cadence-14-day.md",
+      "angles": "projects/{product}/gtm/05-social-pmf/angles.md",
+      "pairs": "projects/{product}/gtm/05-social-pmf/ab-pairs.md",
+      "platforms": "projects/{product}/gtm/05-social-pmf/platform-assignment.md",
+      "brand_rules": "projects/{product}/gtm/09-extras/marketing-agent/brand-rules.json",
+      "checklist": "projects/{product}/gtm/08-redteam/pre-publication-checklist.md",
+      "competitors": "projects/{product}/gtm/01-research/",
+      "note": "Which package file plays each part in the post-Draft checks (US-ME08); each is one of the sources above, so every run snapshots it. The competitors are the ones the research names in its files that start with competitor. The filming plan (US-ME09) reads its shot lists from the same calendar, angles, and pairs files."
+    },
+    "weekly_read": {
+      "read_the_results": "projects/{product}/gtm/05-social-pmf/read-the-results.md",
+      "creative_log": "projects/{product}/gtm/05-social-pmf/creative-log.json",
+      "note": "read_the_results is the package file that holds the binding rules for reading results (US-ME12), which the Weekly Read session applies; the launcher reads it only for the floor's own figure, and for whether it already says the floor counts views. It is one of the sources above, and the rules are never restated here. The calendar, the Angle bank, and the pairs the read covers are post_drafts' files. creative_log is the package's own record of each Angle's status, where the calendar's kill rule marks a killed Angle: the launcher reads it only in a run whose approved Weekly Read kill or change owes its package-change proposal, to make that proposal's exact edit, a change's adding the new Angle's record (src/gr0wthlab/weekly_changes.py). It is not one of the sources above, so no run snapshots it and the package review does not review it; it lies under the package path, which the sandbox reads."
+    },
+    "listening": {
+      "fit": "projects/{product}/gtm/02-brand/positioning.md",
+      "note": "The package file that defines the customer the Product is built for, which the Marketing Engineer reads to score each Listening quote's Fit (US-ME13); it is one of the sources above, and the definition is never restated here. The competitors whose App Store reviews are read are post_drafts.competitors, each by the store page its own section of the research cites. The places Listening reads are in config/sources.json."
+    },
+    "outreach": {
+      "channel_plan": "projects/{product}/gtm/06-channels/channel-plan.md",
+      "note": "The package file that names the personal-network ask and the creators worth writing to (US-ME14); one of the sources above covers it. A run drafts a message only for a creator in config/run.json that this file still names."
+    }
+  }
+}

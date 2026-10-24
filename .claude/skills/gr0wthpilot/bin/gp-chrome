@@ -1,0 +1,184 @@
+#!/usr/bin/env python3
+"""gp-chrome: headless Chrome for a Gr0wthPilot run's screenshots and PDFs.
+
+It runs outside the sandbox (Chrome cannot start inside it), so it enforces:
+  - headless only, on a fresh throwaway profile in the run's cache folder, so no
+    sign-in, cookie, or extension of the Founder's ever loads;
+  - it opens only local pages: files in the Candidate Package or the cache
+    folder, or a server on localhost;
+  - files it writes land only in the Candidate Package or the cache folder.
+
+Commands:
+  gp-chrome screenshot PAGE OUT.png WIDTHxHEIGHT [--scale N]
+  gp-chrome pdf PAGE OUT.pdf
+  gp-chrome measure PAGE WIDTHxHEIGHT     prints the page's scroll width at that viewport
+  gp-chrome dom PAGE                      prints the DOM after scripts run
+
+PAGE is a path or a file://, http://localhost:PORT, or http://127.0.0.1:PORT URL.
+"""
+
+import json
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import urllib.parse
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+from gp_tools import ToolError, load_config, require_inside  # noqa: E402
+
+CHROME_CANDIDATES = [
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/Applications/Chromium.app/Contents/MacOS/Chromium",
+]
+SIZE_RE = re.compile(r"(\d{2,5})x(\d{2,5})")
+
+
+def chrome_binary():
+    for path in CHROME_CANDIDATES:
+        if Path(path).is_file():
+            return path
+    raise ToolError("Google Chrome is not installed")
+
+
+def page_url(cfg, page):
+    parsed = urllib.parse.urlsplit(page)
+    if parsed.scheme in ("http", "https"):
+        if parsed.hostname not in ("localhost", "127.0.0.1"):
+            raise ToolError("gp-chrome opens only local pages, not %s" % page)
+        return page
+    if parsed.scheme == "file":
+        path = urllib.parse.unquote(parsed.path)
+    elif parsed.scheme == "":
+        path = page
+    else:
+        raise ToolError("unsupported page %s" % page)
+    resolved = require_inside(cfg, path, "page")
+    if not resolved.is_file():
+        raise ToolError("%s does not exist" % resolved)
+    return resolved.as_uri()
+
+
+def run_chrome(cfg, extra, url, timeout=120):
+    profile = Path(tempfile.mkdtemp(prefix="chrome-", dir=str(Path(cfg["work"]))))
+    args = [chrome_binary(), "--headless=new", "--user-data-dir=%s" % profile,
+            "--no-first-run", "--no-default-browser-check", "--disable-extensions",
+            "--disable-sync", "--disable-background-networking", "--disable-component-update",
+            "--disable-default-apps", "--hide-scrollbars", "--mute-audio",
+            "--virtual-time-budget=4000"] + extra + [url]
+    try:
+        proc = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                              universal_newlines=True, timeout=timeout)
+    except subprocess.TimeoutExpired:
+        raise ToolError("Chrome did not finish within %ds" % timeout)
+    finally:
+        shutil.rmtree(str(profile), ignore_errors=True)
+    return proc
+
+
+def size_arg(text):
+    m = SIZE_RE.fullmatch(text)
+    if not m:
+        raise ToolError("size must be WIDTHxHEIGHT, such as 390x844")
+    return int(m.group(1)), int(m.group(2))
+
+
+def cmd_screenshot(cfg, args):
+    url = page_url(cfg, args[0])
+    out = require_inside(cfg, args[1], "output")
+    width, height = size_arg(args[2])
+    scale = args[args.index("--scale") + 1] if "--scale" in args else "1"
+    if scale not in ("1", "2", "3"):
+        raise ToolError("--scale is 1, 2, or 3")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    proc = run_chrome(cfg, ["--window-size=%d,%d" % (width, height),
+                            "--force-device-scale-factor=%s" % scale,
+                            "--screenshot=%s" % out], url)
+    if not out.is_file():
+        raise ToolError("Chrome wrote no screenshot: %s" % proc.stderr.strip()[-400:])
+    print(str(out))
+
+
+def cmd_pdf(cfg, args):
+    url = page_url(cfg, args[0])
+    out = require_inside(cfg, args[1], "output")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    proc = run_chrome(cfg, ["--no-pdf-header-footer", "--print-to-pdf=%s" % out], url)
+    if not out.is_file():
+        raise ToolError("Chrome wrote no PDF: %s" % proc.stderr.strip()[-400:])
+    print(str(out))
+
+
+def cmd_dom(cfg, args):
+    proc = run_chrome(cfg, ["--dump-dom"], page_url(cfg, args[0]))
+    sys.stdout.write(proc.stdout)
+
+
+# Headless Chrome keeps a window of at least about 500px wide when it dumps
+# the DOM, so the page is measured inside an iframe of the exact viewport,
+# whose layout and media queries follow the iframe's size, not the window's.
+MEASURE_PAGE = """<!doctype html><html><head><meta charset="utf-8"></head>
+<body style="margin:0"><iframe id="f" src="%(src)s" style="border:0;width:%(w)dpx;height:%(h)dpx"></iframe>
+<script>
+document.getElementById('f').addEventListener('load', function () {
+  setTimeout(function () {
+    var out = document.createElement('pre'); out.id = 'gp-measure';
+    try {
+      var f = document.getElementById('f'), d = f.contentDocument.documentElement, b = f.contentDocument.body;
+      out.textContent = JSON.stringify({scrollWidth: Math.max(d.scrollWidth, b ? b.scrollWidth : 0),
+                                        innerWidth: f.contentWindow.innerWidth,
+                                        innerHeight: f.contentWindow.innerHeight});
+    } catch (e) { out.textContent = JSON.stringify({error: String(e)}); }
+    document.body.appendChild(out);
+  }, 500);
+});
+</script></body></html>
+"""
+
+
+def cmd_measure(cfg, args):
+    width, height = size_arg(args[1])
+    url = page_url(cfg, args[0])
+    source = Path(urllib.parse.unquote(urllib.parse.urlsplit(url).path))
+    probe = source.with_name(".gp-measure-" + source.name)
+    probe.write_text(MEASURE_PAGE % {"src": source.name, "w": width, "h": height}, encoding="utf-8")
+    try:
+        proc = run_chrome(cfg, ["--window-size=%d,%d" % (max(width, 800), height + 100),
+                                "--allow-file-access-from-files", "--dump-dom"], probe.as_uri())
+    finally:
+        probe.unlink()
+    m = re.search(r'<pre id="gp-measure">([^<]+)</pre>', proc.stdout)
+    if not m:
+        raise ToolError("the page did not report its size: %s" % proc.stderr.strip()[-300:])
+    data = json.loads(m.group(1).replace("&quot;", '"'))
+    if "error" in data:
+        raise ToolError("could not measure the page: %s" % data["error"])
+    data["overflows"] = data["scrollWidth"] > data["innerWidth"]
+    data["viewport"] = "%dx%d" % (width, height)
+    print(json.dumps(data))
+
+
+COMMANDS = {"screenshot": (cmd_screenshot, 3), "pdf": (cmd_pdf, 2), "dom": (cmd_dom, 1),
+            "measure": (cmd_measure, 2)}
+
+
+def main(argv):
+    if not argv or argv[0] not in COMMANDS:
+        print(__doc__)
+        return 2
+    func, minimum = COMMANDS[argv[0]]
+    if len(argv) - 1 < minimum:
+        print("gp-chrome %s needs %d argument(s)" % (argv[0], minimum), file=sys.stderr)
+        return 2
+    try:
+        func(load_config(), argv[1:])
+    except ToolError as exc:
+        print("gp-chrome: %s" % exc, file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

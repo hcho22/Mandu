@@ -1,0 +1,348 @@
+#!/usr/bin/env python3
+"""gp-sim: the only way a Gr0wthPilot run drives the iOS simulator.
+
+It runs outside the sandbox (the simulator service cannot be reached from
+inside it), so it enforces the run's simulator rules itself:
+  - it creates devices only under the name Gr0wthPilot-<Product>-<n>, records
+    each in the run's ledger, and touches no device the ledger does not hold;
+  - at most two run devices exist and one is booted at a time, to spare the Mac;
+  - files it writes land only in the Candidate Package or the run's cache folder.
+
+Commands:
+  gp-sim list
+  gp-sim create [--device-type NAME_OR_ID] [--runtime NAME_OR_ID]
+  gp-sim boot UDID | shutdown UDID | delete UDID
+  gp-sim install UDID APP_PATH
+  gp-sim launch UDID BUNDLE_ID [ARG ...]
+  gp-sim terminate UDID BUNDLE_ID
+  gp-sim screenshot UDID OUT.png
+  gp-sim record-start UDID OUT.mp4 | record-stop UDID
+  gp-sim appearance UDID light|dark
+  gp-sim status-bar UDID
+  gp-sim privacy UDID grant|revoke SERVICE BUNDLE_ID
+  gp-sim addmedia UDID FILE ...
+  gp-sim cleanup            shut down and delete every device this run created
+"""
+
+import json
+import os
+import re
+import signal
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+import gp_common as gc  # noqa: E402
+from gp_tools import ToolError, load_config, inside, require_inside  # noqa: E402
+
+SIMCTL = ["/usr/bin/xcrun", "simctl"]
+MAX_DEVICES = 2
+
+
+def simctl(args, check=True, capture=True):
+    proc = subprocess.run(SIMCTL + args, stdout=subprocess.PIPE if capture else None,
+                          stderr=subprocess.PIPE if capture else None, universal_newlines=True)
+    if check and proc.returncode != 0:
+        raise ToolError("simctl %s failed: %s" % (" ".join(args[:2]), (proc.stderr or "").strip()[-400:]))
+    return proc
+
+
+def all_devices():
+    data = json.loads(simctl(["list", "-j", "devices"]).stdout)
+    out = {}
+    for runtime, devices in data.get("devices", {}).items():
+        for d in devices:
+            d["runtime"] = runtime
+            out[d["udid"]] = d
+    return out
+
+
+def ledger_path(cfg):
+    return Path(cfg["simulators"])
+
+
+def read_ledger(cfg):
+    try:
+        return gc.read_json(ledger_path(cfg))
+    except (OSError, ValueError):
+        return {"devices": [], "recordings": {}}
+
+
+def write_ledger(cfg, ledger):
+    gc.write_json(ledger_path(cfg), ledger)
+
+
+def prefix(cfg):
+    return "Gr0wthPilot-%s-" % cfg["product"]
+
+
+def owned(cfg, udid):
+    """Return the device only when this run created it and it still carries the run's name."""
+    ledger = read_ledger(cfg)
+    if udid not in [d["udid"] for d in ledger["devices"]]:
+        raise ToolError("%s is not a simulator this run created; gp-sim never touches it" % udid)
+    device = all_devices().get(udid)
+    if not device:
+        raise ToolError("%s no longer exists" % udid)
+    if not device["name"].startswith(prefix(cfg)):
+        raise ToolError("%s is not named %s*; refusing" % (udid, prefix(cfg)))
+    return device
+
+
+def pick(items, wanted, label):
+    if wanted:
+        for item in items:
+            if wanted in (item.get("identifier"), item.get("name")):
+                return item["identifier"]
+        raise ToolError("no %s named %s" % (label, wanted))
+    return None
+
+
+def newest_iphone(device_types):
+    """The newest numbered iPhone Pro (for example "iPhone 17 Pro"), else the
+    newest numbered iPhone; Apple's list is not ordered by age."""
+    def number(t):
+        m = re.match(r"iPhone (\d+)", t.get("name", ""))
+        return int(m.group(1)) if m else -1
+    phones = [t for t in device_types if t.get("productFamily") == "iPhone" or t.get("name", "").startswith("iPhone")]
+    for pool in ([t for t in phones if re.fullmatch(r"iPhone \d+ Pro", t.get("name", ""))], phones):
+        numbered = [t for t in pool if number(t) >= 0]
+        if numbered:
+            return max(numbered, key=number)["identifier"]
+    return phones[-1]["identifier"] if phones else None
+
+
+def cmd_create(cfg, args):
+    ledger = read_ledger(cfg)
+    devices = all_devices()
+    live = [d for d in ledger["devices"] if d["udid"] in devices]
+    if len(live) >= MAX_DEVICES:
+        raise ToolError("this run already has %d simulators; reuse one or delete one first" % len(live))
+    data = json.loads(simctl(["list", "-j", "devicetypes", "runtimes"]).stdout)
+    device_type = None
+    runtime = None
+    if "--device-type" in args:
+        device_type = pick(data["devicetypes"], args[args.index("--device-type") + 1], "device type")
+    if "--runtime" in args:
+        runtime = pick(data["runtimes"], args[args.index("--runtime") + 1], "runtime")
+    ios = [r for r in data["runtimes"] if r.get("isAvailable") and r.get("platform", "iOS") == "iOS"
+           and "iOS" in r.get("name", "")]
+    if not runtime:
+        if not ios:
+            raise ToolError("no iOS simulator runtime is installed")
+        runtime = sorted(ios, key=lambda r: [int(x) for x in r["version"].split(".")])[-1]["identifier"]
+    if not device_type:
+        supported = [t for r in ios if r["identifier"] == runtime for t in r.get("supportedDeviceTypes", [])]
+        device_type = newest_iphone(supported)
+        if not device_type:
+            raise ToolError("no iPhone device type supports %s" % runtime)
+    used = {d["name"] for d in devices.values()}
+    n = 1
+    while "%s%d" % (prefix(cfg), n) in used:
+        n += 1
+    name = "%s%d" % (prefix(cfg), n)
+    udid = simctl(["create", name, device_type, runtime]).stdout.strip()
+    ledger["devices"].append({"udid": udid, "name": name, "device_type": device_type,
+                              "runtime": runtime, "created_at": gc.iso_z(gc.utc_now())})
+    write_ledger(cfg, ledger)
+    print(json.dumps({"udid": udid, "name": name, "device_type": device_type, "runtime": runtime}))
+
+
+def cmd_list(cfg, args):
+    devices = all_devices()
+    ledger = read_ledger(cfg)
+    rows = []
+    for d in ledger["devices"]:
+        live = devices.get(d["udid"])
+        rows.append({"udid": d["udid"], "name": d["name"], "state": live["state"] if live else "deleted"})
+    print(json.dumps({"run_devices": rows}, indent=2))
+
+
+def cmd_boot(cfg, args):
+    udid = args[0]
+    owned(cfg, udid)
+    devices = all_devices()
+    others = [d for d in read_ledger(cfg)["devices"]
+              if d["udid"] != udid and devices.get(d["udid"], {}).get("state") == "Booted"]
+    if others:
+        raise ToolError("another run simulator (%s) is booted; shut it down first" % others[0]["name"])
+    if devices[udid]["state"] != "Booted":
+        simctl(["boot", udid])
+    simctl(["bootstatus", udid, "-b"])
+    print("booted %s" % udid)
+
+
+def cmd_shutdown(cfg, args):
+    udid = args[0]
+    if owned(cfg, udid)["state"] == "Booted":
+        simctl(["shutdown", udid])
+    print("shut down %s" % udid)
+
+
+def stop_recording(cfg, udid):
+    ledger = read_ledger(cfg)
+    rec = ledger.get("recordings", {}).pop(udid, None)
+    write_ledger(cfg, ledger)
+    if rec:
+        try:
+            os.kill(rec["pid"], signal.SIGINT)
+            for _ in range(50):
+                time.sleep(0.2)
+                os.kill(rec["pid"], 0)
+        except OSError:
+            pass
+    return rec
+
+
+def cmd_delete(cfg, args):
+    udid = args[0]
+    device = owned(cfg, udid)
+    stop_recording(cfg, udid)
+    if device["state"] == "Booted":
+        simctl(["shutdown", udid], check=False)
+    simctl(["delete", udid])
+    ledger = read_ledger(cfg)
+    for d in ledger["devices"]:
+        if d["udid"] == udid:
+            d["deleted_at"] = gc.iso_z(gc.utc_now())
+    write_ledger(cfg, ledger)
+    print("deleted %s" % udid)
+
+
+def out_path(cfg, path):
+    return require_inside(cfg, path, "output")
+
+
+def cmd_install(cfg, args):
+    owned(cfg, args[0])
+    app = require_inside(cfg, args[1], "app", roots=("work",))
+    simctl(["install", args[0], str(app)])
+    print("installed %s" % app.name)
+
+
+def cmd_launch(cfg, args):
+    owned(cfg, args[0])
+    extra = args[2:]
+    if extra and extra[0] == "--":
+        extra = extra[1:]
+    print(simctl(["launch", args[0], args[1]] + extra).stdout.strip())
+
+
+def cmd_terminate(cfg, args):
+    owned(cfg, args[0])
+    simctl(["terminate", args[0], args[1]], check=False)
+    print("terminated %s" % args[1])
+
+
+def cmd_screenshot(cfg, args):
+    owned(cfg, args[0])
+    out = out_path(cfg, args[1])
+    out.parent.mkdir(parents=True, exist_ok=True)
+    simctl(["io", args[0], "screenshot", str(out)])
+    print(str(out))
+
+
+def cmd_record_start(cfg, args):
+    udid = args[0]
+    owned(cfg, udid)
+    out = out_path(cfg, args[1])
+    out.parent.mkdir(parents=True, exist_ok=True)
+    ledger = read_ledger(cfg)
+    if udid in ledger.get("recordings", {}):
+        raise ToolError("a recording is already running on %s" % udid)
+    proc = subprocess.Popen(SIMCTL + ["io", udid, "recordVideo", "--codec=h264", "--force", str(out)],
+                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+    ledger.setdefault("recordings", {})[udid] = {"pid": proc.pid, "out": str(out),
+                                                 "started_at": gc.iso_z(gc.utc_now())}
+    write_ledger(cfg, ledger)
+    time.sleep(1.5)
+    print("recording %s to %s (pid %d); stop with gp-sim record-stop %s" % (udid, out, proc.pid, udid))
+
+
+def cmd_record_stop(cfg, args):
+    owned(cfg, args[0])
+    rec = stop_recording(cfg, args[0])
+    print("stopped; wrote %s" % rec["out"] if rec else "no recording was running")
+
+
+def cmd_appearance(cfg, args):
+    owned(cfg, args[0])
+    if args[1] not in ("light", "dark"):
+        raise ToolError("appearance is light or dark")
+    simctl(["ui", args[0], "appearance", args[1]])
+    print("appearance %s" % args[1])
+
+
+def cmd_status_bar(cfg, args):
+    owned(cfg, args[0])
+    simctl(["status_bar", args[0], "override", "--time", "9:41", "--dataNetwork", "wifi",
+            "--wifiMode", "active", "--wifiBars", "3", "--cellularMode", "active",
+            "--cellularBars", "4", "--batteryState", "charged", "--batteryLevel", "100"])
+    print("status bar set to 9:41, full signal, full battery")
+
+
+def cmd_privacy(cfg, args):
+    owned(cfg, args[0])
+    if args[1] not in ("grant", "revoke"):
+        raise ToolError("privacy action is grant or revoke")
+    simctl(["privacy", args[0], args[1], args[2], args[3]])
+    print("%s %s for %s" % (args[1], args[2], args[3]))
+
+
+def cmd_addmedia(cfg, args):
+    owned(cfg, args[0])
+    files = [str(require_inside(cfg, f, "media", roots=("work", "package", "repo"))) for f in args[1:]]
+    if not files:
+        raise ToolError("name at least one file")
+    simctl(["addmedia", args[0]] + files)
+    print("added %d file(s)" % len(files))
+
+
+def cmd_cleanup(cfg, args):
+    ledger = read_ledger(cfg)
+    devices = all_devices()
+    done = []
+    for d in ledger["devices"]:
+        live = devices.get(d["udid"])
+        if not live or not live["name"].startswith(prefix(cfg)):
+            continue
+        stop_recording(cfg, d["udid"])
+        if live["state"] == "Booted":
+            simctl(["shutdown", d["udid"]], check=False)
+        simctl(["delete", d["udid"]], check=False)
+        d["deleted_at"] = gc.iso_z(gc.utc_now())
+        done.append(d["name"])
+    write_ledger(cfg, ledger)
+    print(json.dumps({"deleted": done}))
+
+
+COMMANDS = {
+    "list": (cmd_list, 0), "create": (cmd_create, 0), "boot": (cmd_boot, 1),
+    "shutdown": (cmd_shutdown, 1), "delete": (cmd_delete, 1), "install": (cmd_install, 2),
+    "launch": (cmd_launch, 2), "terminate": (cmd_terminate, 2), "screenshot": (cmd_screenshot, 2),
+    "record-start": (cmd_record_start, 2), "record-stop": (cmd_record_stop, 1),
+    "appearance": (cmd_appearance, 2), "status-bar": (cmd_status_bar, 1),
+    "privacy": (cmd_privacy, 4), "addmedia": (cmd_addmedia, 2), "cleanup": (cmd_cleanup, 0),
+}
+
+
+def main(argv):
+    if not argv or argv[0] not in COMMANDS:
+        print(__doc__)
+        return 2
+    func, minimum = COMMANDS[argv[0]]
+    if len(argv) - 1 < minimum:
+        print("gp-sim %s needs %d argument(s); see gp-sim --help" % (argv[0], minimum), file=sys.stderr)
+        return 2
+    try:
+        func(load_config(), argv[1:])
+    except ToolError as exc:
+        print("gp-sim: %s" % exc, file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

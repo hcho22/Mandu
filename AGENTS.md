@@ -53,6 +53,7 @@ Active skills:
 - `gr0wthlab-reader`: reads gr0wthlab's Review Queue and hcho's records for status, applies a package change he approved on gr0wthlab's sitting page, and gives hcho an approved Dispatch request to pass to firstmate; records no decision.
 - `influencer-marketing`: vets and re-picks the creators gr0wthlab writes to, from the product's Go-To-Market Package; drafts only, never pays, gifts, or sends (copied from coreyhaines31/marketingskills, MIT).
 - `customer-research`: turns reviews and threads hcho copied by hand into sourced, confidence-labeled quotes for the package's research files (copied from coreyhaines31/marketingskills, MIT).
+- `gr0wthpilot`: hcho starts it with `bin/gr0wthpilot <Product>`; a multi-agent run writes that Product's Candidate Package (research, brand, landing page, Test Kit, Launch Set, walkthrough video, red team, recap) into `projects/<Product>/`, never asks, publishes, or spends, and ends with the line that hands it to gr0wthlab.
 - `ingest`: files one learning source into the right wiki, updating every page it touches in a single pass. Run with no path, it takes the sole pending file in `inbox/`.
 
 Each skill folder also carries a `MEMORY.md` it reads at the start of each run and appends to only on explicit hcho feedback (kept under 100 lines).
@@ -103,6 +104,7 @@ Mandu reads gr0wthlab's Review Queue, items, run reports, Weekly Read memos, and
 It never records a decision, a sitting, a Beta Build, Beta Cohort counts, or what he sent or heard back, nor the Weekly Read numbers, comments, and posting days he types on the sitting page from TikTok Studio or YouTube Studio (his results records), nor the Immerse Listening confirmation; all of those are given on the sitting page, and a decision or a number told to Mandu in chat is not one.
 It applies a package change to `projects/RepToday/gtm/` only when gr0wthlab's queue lists the item closed as approved and his decision record says approve, and on the same two records it gives hcho an approved Dispatch request to pass to firstmate.
 Use the `gr0wthlab-reader` skill for all of it.
+The one other writer of a Product's package folder is the `gr0wthpilot` skill, which writes a Candidate Package that nothing reads until hcho hands it off, and never writes into a live package.
 
 `projects/Education/` contains learning tracks and durable knowledge bases.
 Learning covers anything hcho studies, organized by subject as material arrives.

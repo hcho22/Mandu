@@ -1,0 +1,114 @@
+#!/usr/bin/env python3
+"""gp-last30days: run the installed last30days research engine for a Gr0wthPilot run.
+
+The Founder chose (decisions/log.md, 2026-10-23) that a run's research uses the
+whole of the installed last30days tool, its Reddit route included, and that its
+ScrapeCreators sources (TikTok, Instagram, X, YouTube comments) stay off with
+its sign-up declined. This wrapper is how that stays true:
+  - it runs only the engine's research path: never `setup`, its sign-up flows,
+    `--publish-html`, or a browser-cookie read (FROM_BROWSER=off);
+  - it reads only the free sources this Mac has: Reddit, YouTube, Hacker News,
+    and Polymarket (GitHub is unreachable from a run's sandbox);
+  - it saves the engine's raw output into the Candidate Package and records
+    each file's SHA-256, so a source check can tell engine output from a file
+    an agent wrote.
+
+Usage:
+  gp-last30days TOPIC --out DIR [--sources reddit,youtube,hackernews,polymarket]
+                [--subreddits A,B] [--days N] [--quick|--deep] [--plan FILE]
+"""
+
+import argparse
+import glob
+import hashlib
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+import gp_common as gc  # noqa: E402
+from gp_tools import ToolError, load_config, require_inside  # noqa: E402
+
+FREE_SOURCES = ("reddit", "youtube", "hackernews", "polymarket")
+
+
+def engine():
+    home = Path.home() / ".claude" / "plugins"
+    found = sorted(glob.glob(str(home / "cache" / "last30days-skill" / "last30days" / "*" /
+                                 "skills" / "last30days" / "scripts" / "last30days.py")))
+    found += glob.glob(str(home / "marketplaces" / "last30days-skill" / "skills" / "last30days" /
+                           "scripts" / "last30days.py"))
+    if not found:
+        raise ToolError("the last30days plugin is not installed on this Mac")
+    return found[-1] if "cache" in found[-1] else found[0]
+
+
+def python312():
+    for name in ("python3.14", "python3.13", "python3.12"):
+        for d in os.environ.get("PATH", "").split(os.pathsep):
+            p = Path(d) / name
+            if p.is_file():
+                return str(p)
+    raise ToolError("last30days needs Python 3.12 or later")
+
+
+def main(argv):
+    parser = argparse.ArgumentParser(prog="gp-last30days", description=__doc__.splitlines()[0])
+    parser.add_argument("topic", nargs="+")
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--sources", default=",".join(FREE_SOURCES))
+    parser.add_argument("--subreddits")
+    parser.add_argument("--days", type=int)
+    parser.add_argument("--quick", action="store_true")
+    parser.add_argument("--deep", action="store_true")
+    parser.add_argument("--plan")
+    args = parser.parse_args(argv)
+    try:
+        cfg = load_config()
+        out = require_inside(cfg, args.out, "--out", roots=("package",))
+        sources = [s.strip() for s in args.sources.split(",") if s.strip()]
+        bad = [s for s in sources if s not in FREE_SOURCES]
+        if bad:
+            raise ToolError("sources %s are off for Gr0wthPilot (use %s)" % (", ".join(bad), ", ".join(FREE_SOURCES)))
+        out.mkdir(parents=True, exist_ok=True)
+        before = {p: p.stat().st_mtime for p in out.iterdir()}
+        cmd = [python312(), engine(), " ".join(args.topic), "--emit", "md", "--save-dir", str(out),
+               "--no-browser-cookies", "--search", ",".join(sources)]
+        if args.subreddits:
+            cmd += ["--subreddits", args.subreddits]
+        if args.days:
+            cmd += ["--days", str(args.days)]
+        if args.quick:
+            cmd.append("--quick")
+        if args.deep:
+            cmd.append("--deep")
+        if args.plan:
+            cmd += ["--plan", str(require_inside(cfg, args.plan, "--plan", roots=("package", "work")))]
+        env = dict(os.environ, FROM_BROWSER="off", LAST30DAYS_NATIVE_SEARCH="1",
+                   LAST30DAYS_MEMORY_DIR=str(out))
+        env.pop("LAST30DAYS_STORE", None)
+        proc = subprocess.run(cmd, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                              universal_newlines=True, timeout=1800)
+        sys.stdout.write(proc.stdout)
+        if proc.returncode != 0:
+            sys.stderr.write(proc.stderr[-2000:])
+        produced = [p for p in sorted(out.iterdir())
+                    if p.is_file() and before.get(p) != p.stat().st_mtime]
+        record = {
+            "at": gc.iso_z(gc.utc_now()), "topic": " ".join(args.topic), "sources": sources,
+            "exit": proc.returncode,
+            "files": [{"path": str(p), "sha256": hashlib.sha256(p.read_bytes()).hexdigest()}
+                      for p in produced],
+        }
+        with open(str(Path(cfg["work"]) / "last30days-log.jsonl"), "a", encoding="utf-8") as log:
+            log.write(json.dumps(record) + "\n")
+        return proc.returncode
+    except ToolError as exc:
+        print("gp-last30days: %s" % exc, file=sys.stderr)
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
