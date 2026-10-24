@@ -8,9 +8,10 @@ build folder (`<Product>.guard/build/`), which no tool of the run can write:
   - `gp-xcodebuild source` exports the repository's committed tree there and
     records every file's SHA-256; every later use checks the copy against
     that record and exports it again from its commit when anything differs;
-  - the project, workspace, and .xcconfig lie in that verified copy, and the
-    .xctestrun and test products in the build folder; a test plan is named,
-    not given as a path;
+  - it accepts only the actions and options a simulator build needs, which
+    a refusal lists, and refuses every other one;
+  - the project, workspace, and .xcconfig lie in that verified copy; a test
+    plan is named, not given as a path;
   - DerivedData, which holds the package sources a build compiles and the app
     gp-sim installs, is the build folder's own; only a result bundle may go
     to the run's cache folder;
@@ -42,25 +43,26 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 import gp_common as gc  # noqa: E402
 from gp_tools import ToolError, inside, load_config, require_inside  # noqa: E402
 
-ACTIONS = {"build", "build-for-testing", "test", "test-without-building", "clean",
-           "analyze", "docbuild"}
+# The actions and options a simulator build needs. Every other word
+# xcodebuild would take (archive, install, export, upload, signing, platform
+# downloads, any output path it would write) is refused.
+ACTIONS = {"build", "build-for-testing", "test", "test-without-building", "clean", "analyze"}
 # Actions that boot a simulator to run on.
 TEST_ACTIONS = {"test", "test-without-building"}
 INFO_FLAGS = {"-list", "-showBuildSettings", "-version", "-showsdks", "-showdestinations",
               "-resolvePackageDependencies", "-showTestPlans"}
-DENIED_ACTIONS = {"archive", "install", "installsrc", "installhdrs", "installapi"}
-DENIED_FLAGS = {"-exportArchive", "-exportOptionsPlist", "-exportPath", "-archivePath",
-                "-allowProvisioningUpdates", "-allowProvisioningDeviceRegistration",
-                "-authenticationKeyPath", "-authenticationKeyID", "-authenticationKeyIssuerID",
-                "-exportLocalizations", "-importLocalizations", "-exportNotarizedApp"}
+FLAGS = INFO_FLAGS | {"-json", "-quiet", "-verbose", "-hideShellScriptEnvironment", "-parallelizeTargets",
+                      "-alltargets", "-retry-tests-on-failure", "-showBuildTimingSummary",
+                      "-disableAutomaticPackageResolution", "-onlyUsePackageVersionsFromResolvedFile",
+                      "-skipPackageUpdates"}
+# Options whose value is a name or a number, never a path.
+NAMED = {"-scheme", "-target", "-configuration", "-arch", "-jobs", "-only-testing", "-skip-testing",
+         "-test-iterations", "-parallel-testing-enabled", "-parallel-testing-worker-count",
+         "-maximum-concurrent-test-simulator-destinations", "-enableCodeCoverage"}
 # Read by the build from the Product's source: they lie in a verified copy.
 SOURCE_INPUTS = {"-project", "-workspace", "-xcconfig"}
-# Made by one build and read by a later one: they lie in the build folder.
-BUILT_INPUTS = {"-xctestrun", "-testProductsPath"}
-# Only written: they may go to the run's cache folder.
+# Only written: they lie in the run's cache folder.
 OUTPUTS = {"-resultBundlePath"}
-# Folders of code a build compiles, which stay the build folder's own.
-OWN_FOLDERS = {"-derivedDataPath", "-clonedSourcePackagesDirPath", "-packageCachePath"}
 DENIED_SETTINGS = {"DEVELOPMENT_TEAM", "PROVISIONING_PROFILE", "PROVISIONING_PROFILE_SPECIFIER",
                    "CODE_SIGN_IDENTITY", "OTHER_CODE_SIGN_FLAGS"}
 # An absolute path inside a build setting's value, alone or after a flag such as -I.
@@ -189,20 +191,20 @@ def check_args(cfg, args):
     while i < len(args):
         a = args[i]
         value = args[i + 1] if i + 1 < len(args) else None
-        if a in DENIED_ACTIONS or a in DENIED_FLAGS:
-            raise ToolError("`%s` archives, exports, signs, or contacts Apple; a run only builds for "
-                            "the simulator" % a)
-        if a in OWN_FOLDERS:
-            raise ToolError("%s is not given: a build compiles what is in that folder, so it stays in the "
-                            "guard's build folder (%s)" % (a, cfg["build"]))
-        if a in SOURCE_INPUTS | BUILT_INPUTS | OUTPUTS:
-            if value is None:
-                raise ToolError("%s needs a path" % a)
+        if a in ACTIONS or a in FLAGS or re.match(r"-(only|skip)-testing:", a):
+            i += 1
+            continue
+        if a in NAMED | SOURCE_INPUTS | OUTPUTS | {"-testPlan", "-destination", "-sdk"} and value is None:
+            raise ToolError("%s needs a value" % a)
+        if a in NAMED:
+            i += 2
+            continue
+        if a in SOURCE_INPUTS | OUTPUTS:
             if a in SOURCE_INPUTS:
                 copies.add(copy_of(cfg, value, a))
                 has_target = has_target or a in ("-project", "-workspace")
             else:
-                require_inside(cfg, value, a, roots=("build",) if a in BUILT_INPUTS else ("work",))
+                require_inside(cfg, value, a, roots=("work",))
             i += 2
             continue
         if a == "-testPlan":
@@ -221,8 +223,12 @@ def check_args(cfg, args):
             i += 2
             continue
         m = re.fullmatch(r"([A-Z_][A-Z0-9_]*)=(.*)", a)
-        if m:
-            check_setting(cfg, m.group(1), m.group(2))
+        if not m:
+            raise ToolError("`%s` is not an action or option a simulator build needs; gp-xcodebuild allows only "
+                            "%s, and SETTING=value" % (a, ", ".join(sorted(
+                                ACTIONS | FLAGS | NAMED | SOURCE_INPUTS | OUTPUTS | {"-testPlan", "-destination",
+                                                                                     "-sdk"}))))
+        check_setting(cfg, m.group(1), m.group(2))
         i += 1
     if testing and not has_destination:
         raise ToolError("tests run only on a simulator this run created: pass "

@@ -56,6 +56,8 @@ DENIED_PROGRAMS = {
     "no-mistakes", "treehouse", "docker", "podman", "pkill", "killall", "launchctl",
     "crontab", "at", "sudo", "su", "printenv", "Google Chrome", "chromium",
     "safaridriver", "shortcuts", "automator", "pbcopy",
+    # Shell builtins that run a command later or under another name.
+    "alias", "hash", "enable", "trap", "bind", "complete", "compgen", "fc",
 }
 PROGRAM_HINTS = {
     "xcrun": "use `gp-sim` for simulators; nothing else in xcrun is needed",
@@ -74,28 +76,58 @@ GIT_READ = {
 }
 NPM_DENIED = {"publish", "unpublish", "login", "logout", "adduser", "add-user", "token",
               "owner", "deprecate", "dist-tag", "access", "team", "org", "star", "hook"}
-WRAPPER_PROGRAMS = {"env", "nohup", "time", "command", "exec", "nice", "timeout",
-                    "caffeinate", "stdbuf", "xargs"}
+# Programs that run another program, with their options: those that take no
+# value, and those that take one (as the next word, or attached). An option
+# not listed could hide the program the wrapper runs, so it is refused.
+WRAPPER_OPTIONS = {
+    "env": ({"-i", "-", "--ignore-environment"}, {"-u", "--unset", "-C", "--chdir"}),
+    "nohup": (set(), set()),
+    "time": ({"-p", "-l"}, set()),
+    "command": ({"-p", "-v", "-V"}, set()),
+    "builtin": (set(), set()),
+    "noglob": (set(), set()),
+    "nocorrect": (set(), set()),
+    "exec": ({"-c", "-l"}, {"-a"}),
+    "nice": (set(), {"-n"}),
+    "timeout": ({"--preserve-status", "--foreground", "-v", "--verbose"},
+                {"-s", "--signal", "-k", "--kill-after"}),
+    "caffeinate": ({"-d", "-i", "-m", "-s", "-u"}, {"-t", "-w"}),
+    "stdbuf": (set(), {"-i", "-o", "-e", "--input", "--output", "--error"}),
+    "xargs": ({"-0", "-t", "-r", "-x", "-o", "-p", "--null", "--no-run-if-empty"},
+              {"-I", "-J", "-L", "-n", "-P", "-s", "-E", "-d", "-R", "-a"}),
+}
 # Shell reserved words that come before the command they run.
-SHELL_KEYWORDS = {"if", "then", "else", "elif", "do", "while", "until", "!"}
+SHELL_KEYWORDS = {"if", "then", "else", "elif", "do", "while", "until", "!", "coproc", "{", "}"}
 SHELLS = {"bash", "sh", "zsh", "dash", "ksh"}
 SHELL_SUFFIXES = {".sh", ".bash", ".zsh", ".command"}
-INFO_FLAGS = {"--version", "-V", "-v", "--help", "-h"}
+ASSIGNMENT_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*=.*")
+# Variables that make a shell or interpreter load or run code the guard
+# never sees. A run neither sets nor names them: a word that is one of them,
+# assigns one, or points a name at one (`declare -n ref=BASH_ENV`) is refused.
+CODE_ENV_RE = re.compile(
+    r"(?:[A-Za-z_][A-Za-z0-9_]*=)?(BASH_ENV|ENV|ZDOTDIR|PS4|PROMPT_COMMAND|SHELLOPTS|BASHOPTS|NODE_OPTIONS|"
+    r"NODE_PATH|PYTHONPATH|PYTHONSTARTUP|PYTHONHOME|PYTHONINSPECT|PERL5OPT|PERL5LIB|PERLLIB|RUBYOPT|RUBYLIB|"
+    r"LD_PRELOAD|LD_LIBRARY_PATH|DYLD_INSERT_LIBRARIES|DYLD_LIBRARY_PATH|DYLD_FRAMEWORK_PATH)(?:=.*)?", re.S)
+# The only modules `python -m` may run: the standard library's own.
+PYTHON_MODULES = {"http.server", "json.tool"}
 # How each family of shells and interpreters is told what to run: the short
-# option letters that start inline code or name a module, the short letters
-# and options that take a value (attached, or as the next argument), and
-# Node's options that take inline code. A shell's -c makes its first
-# argument the code; -s makes it read standard input.
+# option letters that start inline code, name a module, load a code file, or
+# take a value (attached, or as the next argument), and the long options
+# that take inline code, load a code file (read and checked like a script),
+# take a value, or are refused because they load code the guard cannot read.
+# A shell's -c makes its first argument the code; -s makes it read stdin.
 ARGV_RULES = {
-    "shell": {"inline": "c", "valued": "oO", "long_valued": {"--rcfile", "--init-file"}},
-    "python": {"inline": "c", "module": "m", "valued": "XW", "long_valued": {"--check-hash-based-pycs"}},
+    "shell": {"inline": "c", "valued": "oO", "load_options": {"--rcfile", "--init-file"}},
+    "python": {"inline": "c", "module": "m", "valued": "XW"},
     "node": {"inline_options": {"-e", "--eval", "-p", "--print"},
-             "long_valued": {"-r", "--require", "--import", "--loader", "--experimental-loader", "-C",
-                             "--conditions", "--input-type"}},
-    "deno": {"long_valued": {"--import-map", "--config", "-c"}},
-    "ruby": {"inline": "e", "valued": "IrC"},
-    "perl": {"inline": "eE", "valued": "IMm"},
+             "load_options": {"-r", "--require", "--import", "--loader", "--experimental-loader", "--preload"},
+             "valued_options": {"-C", "--conditions", "--input-type"},
+             "refused_options": {"--import-map", "--config", "-c"}},
+    "deno": {"refused_options": {"--import-map", "--config", "-c"}},
+    "ruby": {"inline": "e", "load": "r", "refused": "I", "valued": "C"},
+    "perl": {"inline": "eE", "refused": "IMm"},
 }
+SIMPLER = "the command holds %s, which the guard cannot follow with certainty; write it more simply"
 READERS = {"cat", "less", "more", "head", "tail", "bat", "grep", "egrep", "fgrep", "rg",
            "sed", "awk", "strings", "xxd", "od", "hexdump", "cut", "sort", "uniq", "tr",
            "base64", "diff", "cmp", "nl", "paste", "jq", "plutil"}
@@ -308,14 +340,19 @@ def split_top_level(command):
     pull out the contents of $(...), <(...), and backticks as their own
     commands. A heredoc's body is not shell text: it is kept beside the
     command it feeds, so a command that runs it (a shell or an interpreter)
-    can be checked against it. A `#` that starts a word starts a comment,
-    as in the shell. Returns ([(command, heredoc body or None)],
-    has_redirect, is_compound). Raises Deny on unbalanced quotes."""
+    can be checked against it, and an unquoted heredoc's $(...) and
+    backticks run like any other. A `#` that starts a word (at the start, or
+    after unescaped whitespace, `;`, `|`, or `&`) starts a comment; an escaped
+    character never ends a word. What the guard cannot follow with certainty
+    (an escaped space or operator before `#`, `${...}` holding `#`, an operator,
+    or a quote, ANSI-C quoting, an odd heredoc, unbalanced quotes) is refused.
+    Returns ([(command, heredoc body or None)], has_redirect, is_compound)."""
     parts, nested, current = [], [], []
     bodies, pending = [], []
     i, n = 0, len(command)
     quote = None
     redirect = False
+    word_start = True
 
     def finish():
         text = "".join(current).strip()
@@ -338,21 +375,31 @@ def split_top_level(command):
                 nested.append(inner)
                 current.append(command[i + 1:end + 1])
                 i = end
+            elif quote == '"' and ch == "`":
+                end = command.find("`", i + 1)
+                if end == -1:
+                    raise Deny(SIMPLER % "an unbalanced backtick")
+                nested.append(command[i + 1:end])
+                current.append(command[i + 1:end + 1])
+                i = end
             i += 1
             continue
         if command.startswith("<<", i) and not command.startswith("<<<", i):
             m = HEREDOC_RE.match(command, i)
-            if m:
-                pending.append((m.group(1) == "-", m.group(2) or m.group(3) or m.group(4)))
-                current.append(m.group(0))
-                redirect = True
-                i = m.end()
-                continue
+            if not m or (m.end() < n and command[m.end()] not in " \t\n;|&<>()"):
+                raise Deny(SIMPLER % "a heredoc whose delimiter is not one plain word")
+            quoted = bool(m.group(2) or m.group(3)) or "\\" in m.group(0)
+            pending.append((m.group(1) == "-", m.group(2) or m.group(3) or m.group(4), quoted))
+            current.append(m.group(0))
+            redirect = True
+            word_start = False
+            i = m.end()
+            continue
         if ch == "\n" and pending:
             current = finish()
             owner = len(parts) - 1
             i += 1
-            for strip_tabs, delimiter in pending:
+            for strip_tabs, delimiter, quoted in pending:
                 lines = []
                 while i <= n:
                     end = command.find("\n", i)
@@ -361,21 +408,35 @@ def split_top_level(command):
                     if (line.lstrip("\t") if strip_tabs else line) == delimiter:
                         break
                     lines.append(line)
+                body = "\n".join(lines)
+                if not quoted:
+                    nested.extend(substitutions(body))
                 if owner >= 0:
-                    body = "\n".join(lines)
                     bodies[owner] = body if bodies[owner] is None else bodies[owner] + "\n" + body
             pending = []
+            word_start = True
             continue
-        if ch == "#" and (i == 0 or command[i - 1] in " \t\n;|&()"):
+        if ch == "#" and word_start:
             end = command.find("\n", i)
             i = n if end == -1 else end
             continue
+        boundary = ch in " \t\n;|&"
         if ch in ("'", '"'):
             quote = ch
             current.append(ch)
+        elif command.startswith("$'", i):
+            raise Deny(SIMPLER % "ANSI-C quoting ($'...')")
         elif ch == "\\" and i + 1 < n:
+            if command[i + 1] in " \t;|&()<>" and command[i + 2:i + 3] == "#":
+                raise Deny(SIMPLER % "an escaped space or operator before #")
             current.append(command[i:i + 2])
             i += 1
+        elif command.startswith("${", i):
+            end = command.find("}", i + 2)
+            if end == -1 or re.search(r"[#;|&()<>`'\"\\{$\n]", command[i + 2:end]):
+                raise Deny(SIMPLER % "a ${...} expansion holding #, an operator, or a quote")
+            current.append(command[i:end + 1])
+            i = end
         elif command.startswith("$(", i) or command.startswith("<(", i) or command.startswith(">(", i):
             inner, end = _balanced(command, i + 2)
             nested.append(inner)
@@ -391,7 +452,7 @@ def split_top_level(command):
         elif command.startswith("&&", i) or command.startswith("||", i):
             current = finish()
             i += 1
-        elif ch in ";|&\n(){}":
+        elif ch in ";|&\n()":
             if ch in "&|" and current and current[-1].endswith(">"):
                 current.append(ch)
             else:
@@ -400,9 +461,10 @@ def split_top_level(command):
             if ch in "<>":
                 redirect = True
             current.append(ch)
+        word_start = boundary
         i += 1
     if quote:
-        raise Deny("unbalanced quotes in the command")
+        raise Deny(SIMPLER % "unbalanced quotes")
     finish()
     simple = list(zip(parts, bodies))
     for inner in nested:
@@ -429,30 +491,86 @@ def _balanced(text, start):
     raise Deny("unbalanced parentheses in the command")
 
 
+def substitutions(text):
+    """The commands an unquoted heredoc body runs as the shell expands it:
+    its $(...) and backticks."""
+    found, i = [], 0
+    while i < len(text):
+        if text[i] == "\\":
+            i += 2
+        elif text.startswith("$(", i):
+            inner, end = _balanced(text, i + 2)
+            found.append(inner)
+            i = end + 1
+        elif text[i] == "`":
+            end = text.find("`", i + 1)
+            if end == -1:
+                raise Deny(SIMPLER % "an unbalanced backtick in a heredoc")
+            found.append(text[i + 1:end])
+            i = end + 1
+        else:
+            i += 1
+    return found
+
+
 def tokens_of(simple):
     try:
-        return shlex.split(simple, comments=True)
+        return shlex.split(simple)
     except ValueError:
         raise Deny("the command could not be parsed; write it more simply")
 
 
+def strip_wrapper(name, args):
+    """The words after a wrapper program's own options: the program it runs
+    and that program's arguments."""
+    flags, valued = WRAPPER_OPTIONS[name]
+    replaced = []
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if a == "--":
+            i += 1
+            break
+        if name == "env" and ASSIGNMENT_RE.fullmatch(a):
+            i += 1
+            continue
+        if not a.startswith("-"):
+            break
+        option = a.split("=", 1)[0] if a.startswith("--") else a[:2]
+        if a in flags or (name == "nice" and re.fullmatch(r"-\d+", a)):
+            i += 1
+        elif option in valued:
+            attached = "=" in a if a.startswith("--") else len(a) > 2
+            if name == "xargs" and option in ("-I", "-J"):
+                replaced.append(a[2:] if attached else (args[i + 1] if i + 1 < len(args) else ""))
+            i += 1 if attached else 2
+        else:
+            raise Deny("`%s %s` is an option the guard cannot follow; write the command without it" % (name, a))
+    rest = args[i:]
+    if rest and any(r and r in rest[0] for r in replaced):
+        raise Deny("`xargs` would put its input in place of the program it runs; name the program")
+    if name == "timeout":
+        if not rest or not re.fullmatch(r"\d+(\.\d+)?[smhd]?", rest[0]):
+            raise Deny("give `timeout` its duration as a plain number before the command")
+        rest = rest[1:]
+    return rest
+
+
 def strip_prefix(tokens):
-    """Drop env assignments, redirections, and wrapper programs before the real program."""
+    """Drop env assignments, shell keywords, redirections, and wrapper
+    programs before the real program."""
     out = list(tokens)
     while out:
         tok = out[0]
-        if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", tok) or tok in SHELL_KEYWORDS:
+        if ASSIGNMENT_RE.fullmatch(tok) or tok in SHELL_KEYWORDS:
             out.pop(0)
             continue
         if re.fullmatch(r"\d*[<>]+&?\d*", tok):
             out = out[2:] if len(out) > 1 and not re.fullmatch(r"\d*[<>]+&\d+", tok) else out[1:]
             continue
         name = os.path.basename(tok)
-        if name in WRAPPER_PROGRAMS:
-            out.pop(0)
-            while out and (out[0].startswith("-") or re.fullmatch(r"\d+[smhd]?", out[0])
-                           or re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", out[0])):
-                out.pop(0)
+        if name in WRAPPER_OPTIONS:
+            out = strip_wrapper(name, out[1:])
             continue
         break
     return out
@@ -561,13 +679,17 @@ def check_script_file(path, cfg, depth=0, cwds=None, shell=None):
 
 
 def check_module(name, cfg, cwds):
-    """Check a module `python -m` runs from one of the command's folders; a
-    module found in none of them is the Python library's or an installed one."""
-    rel = name.replace(".", "/")
-    for path in (rel + ".py", rel + "/__main__.py"):
-        for p in candidate_paths(path, cwds) or []:
-            if p.is_file() and not (cfg.get("skill_dir") and under(p, cfg["skill_dir"])):
-                check_code_text(p.read_text(encoding="utf-8", errors="replace"), "Module %s" % name)
+    """`python -m` runs only the standard library's own modules, and only
+    when no file in the command's folders would be imported in their place."""
+    if name not in PYTHON_MODULES:
+        raise Deny("`python -m %s` runs code the guard cannot read; a run uses only `python3 -m %s`, and runs "
+                   "anything else as a script by its path" % (name, "` or `python3 -m ".join(sorted(PYTHON_MODULES))))
+    top = name.split(".")[0]
+    for folder in candidate_paths(".", cwds) or []:
+        shadows = list(folder.glob(top + ".*")) + list((folder / top).glob("__init__.*"))
+        if shadows:
+            raise Deny("%s would run in place of the standard library's %s; remove it or run from another folder"
+                       % (shadows[0], name))
 
 
 def argv_family(prog):
@@ -582,16 +704,17 @@ def argv_family(prog):
     return None
 
 
-def parse_argv(prog, args):
+def parse_argv(prog, args, loads=None, after_run=False):
     """How a shell or interpreter is told what to run, read from its own
     options up to its first argument that is not one: ("inline", code),
     ("module", name), ("script", path), ("stdin", None) when it reads its
-    script from standard input, ("info", None) for a version or help request,
-    or ("subcommand", None) for a bun or deno subcommand that runs no file."""
+    code from standard input (a pipe, a here-string, or a redirection), or
+    ("subcommand", None) for a bun or deno subcommand that runs no file.
+    Code files its options load are added to `loads` as (path, is_shell);
+    an option that loads code the guard cannot read is refused."""
     family = argv_family(prog)
     rules = ARGV_RULES[family]
-    if args and all(a in INFO_FLAGS for a in args):
-        return "info", None
+    loads = [] if loads is None else loads
     inline = stdin = False
     i = 0
     while i < len(args):
@@ -603,11 +726,17 @@ def parse_argv(prog, args):
         if a == "--":
             i += 1
             break
-        name = a.split("=", 1)[0]
+        name, attached = a.split("=", 1) if "=" in a else (a, None)
+        if name in rules.get("refused_options", ()):
+            raise Deny("`%s %s` loads code the guard cannot read; a run does not use it" % (prog, name))
         if name in rules.get("inline_options", ()):
-            return "inline", a.split("=", 1)[1] if "=" in a else following
-        if name in rules.get("long_valued", ()):
-            i += 1 if "=" in a else 2
+            return "inline", attached if attached is not None else following, loads
+        if name in rules.get("load_options", ()):
+            loads.append((attached if attached is not None else following, family == "shell"))
+            i += 1 if attached is not None else 2
+            continue
+        if name in rules.get("valued_options", ()):
+            i += 1 if attached is not None else 2
             continue
         if a.startswith("--") or (a[:1] == "-" and family in ("node", "deno")):
             i += 1
@@ -621,10 +750,18 @@ def parse_argv(prog, args):
                     stdin = stdin or (letter == "s" and a[0] == "-")
                     consume += letter in rules["valued"]
                 elif letter in rules.get("inline", ""):
-                    return "inline", rest or following
+                    return "inline", rest or following, loads
                 elif letter in rules.get("module", ""):
-                    return "module", rest or following
-                elif letter in rules.get("valued", ""):
+                    return "module", rest or following, loads
+                elif letter in rules.get("refused", ""):
+                    raise Deny("`%s -%s` loads code the guard cannot read; a run does not use it" % (prog, letter))
+                elif letter in rules.get("load", "") or letter in rules.get("valued", ""):
+                    value = rest or following
+                    if letter in rules.get("load", ""):
+                        loads.append((value, False))
+                    if prog.startswith("python") and letter == "W" and "." in (value.split(":") + ["", "", ""])[2]:
+                        raise Deny("`%s -W %s` imports a module to find its warning class; a run does not use it"
+                                   % (prog, value))
                     consume = 0 if rest else 1
                     break
             i += 1 + consume
@@ -633,37 +770,51 @@ def parse_argv(prog, args):
     first = args[i] if i < len(args) else None
     if family == "shell":
         if inline:
-            return "inline", first or ""
-        return ("stdin", None) if stdin or first in (None, "-") else ("script", first)
+            return "inline", first or "", loads
+        return ("stdin", None, loads) if stdin or first in (None, "-") else ("script", first, loads)
     if first in (None, "-"):
-        return "stdin", None
-    if prog in ("bun", "deno"):
+        return "stdin", None, loads
+    if prog in ("bun", "deno") and not after_run:
         if first == "run":
-            return parse_argv("node", args[i + 1:])
+            return parse_argv(prog, args[i + 1:], loads, after_run=True)
         if prog == "deno" and first == "eval":
-            return "inline", args[i + 1] if i + 1 < len(args) else ""
+            return "inline", args[i + 1] if i + 1 < len(args) else "", loads
         if Path(first).suffix.lower() not in CODE_SUFFIXES and "/" not in first:
-            return "subcommand", None
-    return "script", first
+            return "subcommand", None, loads
+    return "script", first, loads
 
 
 def check_simple(tokens, cfg, depth=0, cwds=None):
     if tokens and os.path.basename(tokens[0]) == "env" and all(
-            t.startswith("-") or re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", t) for t in tokens[1:]):
+            t.startswith("-") or ASSIGNMENT_RE.fullmatch(t) for t in tokens[1:]):
         raise Deny("printing the environment can print secret values")
+    for token in tokens:
+        m = CODE_ENV_RE.fullmatch(token)
+        if m:
+            raise Deny("`%s` makes a program load code the guard never sees; a run neither sets nor names it"
+                       % m.group(1))
+    original = tokens
     tokens = strip_prefix(tokens)
-    if not tokens or tokens[0] == "__SUBST__":
+    if not tokens:
         return
     prog = program_name(tokens[0])
     args = tokens[1:]
     if prog in DENIED_PROGRAMS:
         hint = PROGRAM_HINTS.get(prog)
         raise Deny("`%s` is not available in a Gr0wthPilot run%s." % (prog, "; " + hint if hint else ""))
+    if tokens[0] not in ("[", "[[") and (tokens[0] == "__SUBST__" or tokens[0].startswith("-")
+                                          or re.search(r"[\s$`{}*?\[\]]", tokens[0])):
+        raise Deny("the program a command runs must be written out as a plain word, not %r; write the "
+                   "command more simply" % tokens[0])
     family = argv_family(prog)
+    if family and "xargs" in [os.path.basename(t) for t in original[:len(original) - len(tokens)]]:
+        raise Deny("`xargs` would hand `%s` code the guard cannot see; run it on a script by its path" % prog)
     if "/" in tokens[0] and not family:
         check_script_file(tokens[0], cfg, depth, cwds)
     if family:
-        mode, value = parse_argv(prog, args)
+        mode, value, loads = parse_argv(prog, args)
+        for path, as_shell in loads:
+            check_script_file(path, cfg, depth, cwds, shell=as_shell)
         if mode == "inline" and family == "shell":
             check_command(value, cfg, depth + 1, cwds)
         elif mode == "inline":
@@ -781,8 +932,8 @@ def check_command(command, cfg, depth=0, cwds=None):
         check_simple(tokens, cfg, depth, cwds)
         family = argv_family(name)
         if body is None and family and parse_argv(name, stripped[1:])[0] == "stdin":
-            raise Deny("give `%s` its script by path, inline, or in a heredoc; a script it reads from a pipe "
-                       "or a redirection is one the guard cannot check" % name)
+            raise Deny("give `%s` its script by path, inline, or in a heredoc; code it reads from a pipe, a "
+                       "here-string, or standard input is code the guard cannot check" % name)
         if body is not None and name:
             if family == "shell" or name in ("eval", "source", "."):
                 check_command(body, cfg, depth + 1, cwds)

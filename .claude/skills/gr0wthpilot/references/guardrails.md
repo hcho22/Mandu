@@ -24,15 +24,24 @@ Each layer was proven in live sessions; this page says what each one covers and,
 It refuses:
 
 - Shell commands that publish, deploy, upload, or reach a remote host: `git push` and every git subcommand that is not a read, `gh`, `hub`, `glab`, wrangler, vercel, netlify, firebase, surge, heroku, fly, railway, aws, gcloud, az, rclone, scp, sftp, ssh, rsync, nc, telnet, sendmail, `npm publish` and its sign-in commands, twine, fastlane, altool, notarytool, and anything a package runner (`npx`, `bunx`, `bun x`, `npm exec`) would run of those.
-  It finds them inside chains, pipes, subshells, `$(...)`, backticks, `bash -c` (or a cluster such as `-lc`), `eval`, `find -exec`, `if`/`then`/`do` and the other shell keywords, and behind `env`, `nohup`, `timeout`, and similar wrappers.
+  It finds them inside chains, pipes, subshells, `$(...)`, backticks (in double quotes too), an unquoted heredoc's `$(...)` and backticks, `bash -c` (or a cluster such as `-lc`), `eval`, `find -exec`, `if`/`then`/`do` and the other shell keywords, and behind `env`, `nohup`, `timeout`, `xargs`, and similar wrappers.
+  A wrapper option it does not know is refused, because its value could be the program the wrapper runs (`env -S`, `timeout -s KILL`).
+- Anything in a command the guard cannot follow with certainty, rather than guessing how the shell reads it: a program named by a variable, a substitution, a glob, or a word with a space (`$X pr create`, `$(echo gh)`, `env -S 'gh pr'`); an escaped space or operator before `#`; a `${...}` holding `#`, an operator, or a quote; ANSI-C quoting (`$'...'`); a heredoc whose delimiter is not one plain word; unbalanced quotes.
+  The refusal says to write the command more simply.
+- Shell builtins that run a command later or under another name: `alias`, `hash`, `enable`, `trap`, `bind`, `complete`, `compgen`, `fc`.
+- Variables that make a program load code the guard never sees, set or named anywhere in a command: `BASH_ENV`, `ENV`, `ZDOTDIR`, `PS4`, `PROMPT_COMMAND`, `NODE_OPTIONS`, `PYTHONPATH`, `PYTHONSTARTUP`, `PERL5OPT`, `RUBYOPT`, `DYLD_INSERT_LIBRARIES`, `LD_PRELOAD`, and the like.
 - Shell scripts as the commands they run, by the same rules: a script run with `bash`, `sh`, or `zsh`, with `source` or `.`, or by its path (`./serve.sh`), and a shell-suffixed file the run writes whole.
   A script run by its path is checked by its `#!` line (a script with none runs in the shell), and one whose `#!` names a denied program is refused.
-  A shell's or interpreter's own options are read only up to the script, so a flag passed to the script (`build.py -c config.json`) is the script's, and options that take a value (`-o pipefail`, `-X utf8`, `--import tsx`) are skipped with it.
+  A shell's or interpreter's own options are read only up to the script, so a flag passed to the script (`build.py -c config.json`) is the script's, and options that take a value (`-o pipefail`, `-X utf8`) are skipped with it.
+  An option that loads a code file is checked like a script: Node's `-r`, `--require`, `--import`, and `--loader`, bun's `--preload`, Ruby's `-r`, and a shell's `--rcfile` and `--init-file`; one that names a package rather than a file the guard can read (`--import tsx`) is refused, so run `npx tsx` instead.
+  Options that load code the guard cannot read at all are refused: Perl's `-M`, `-m`, and `-I`, Ruby's `-I`, Deno's and bun's `--import-map` and `--config`, and Python's `-W` naming a dotted warning class.
+  `python3 -m` runs only the standard library's `http.server` and `json.tool`, and only when no file in the command's folder would be imported in their place.
   A relative script path is found from the command's working folder, as moved by any `cd` earlier in the command; a script the guard cannot find, or one after a `cd` it cannot follow (`cd -`, `cd $DIR`), is refused, so give its path.
-  A shell or interpreter that would read its script from a pipe or a redirection is refused, because the guard cannot see that script; give it a path, inline code, or a heredoc.
-  A `#` that starts a word starts a comment, as in the shell, so a comment's apostrophe does not break the parse.
+  A shell or interpreter that would read code from a pipe, a here-string, or standard input is refused, whatever its flags (`bash -v` and `python3 -v` still run what they read), because the guard cannot see that code; give it a path, inline code, or a heredoc, whose body the guard reads.
+  `xargs` handing words to a shell or interpreter is refused for the same reason.
+  A `#` that starts a word (at the start, or after an unescaped space, tab, newline, `;`, `|`, or `&`) starts a comment, as in the shell, so a comment's apostrophe does not break the parse; an escaped character never ends a word or starts a comment.
 - curl or wget with any flag that sends data or credentials (`-d`, `-F`, `-T`, `-X POST`, `--json`, `-u`, `--post-data`).
-- Inline code (`-c`, `-e`, Node's and bun's `-p`, and clusters such as `-Bc` or `-ne`), scripts the run executes (by an interpreter, `python3 -m` from the command's folder, `tsx`, `ts-node`, `bun`, or `deno`, or by their path), and code files the run writes, when they hold code that sends (smtplib, `requests.post`, a POST `fetch`, `urlopen(..., data=...)`, raw sockets) or runs a denied program: the program a subprocess, `os.exec*`, `child_process`, or `system()` call is given, compared by its basename, so `'/usr/bin/open'` is caught and a page's `classList.toggle('open', ...)` is not.
+- Inline code (`-c`, `-e`, Node's and bun's `-p`, and clusters such as `-Bc` or `-ne`), scripts the run executes (by an interpreter, `tsx`, `ts-node`, `bun`, or `deno`, or by their path), and code files the run writes, when they hold code that sends (smtplib, `requests.post`, a POST `fetch`, `urlopen(..., data=...)`, raw sockets) or runs a denied program: the program a subprocess, `os.exec*`, `child_process`, or `system()` call is given, compared by its basename, so `'/usr/bin/open'` is caught and a page's `classList.toggle('open', ...)` is not.
 - Programs that act as the Founder: `open`, osascript, `security` (the keychain), `chrome-devtools-axi` (his signed-in Chrome), `claude`, codex, and other agents.
 - Reading a `.env` file, printing the environment, and any command or file content holding a value from a `.env` file.
 - Any write outside the Candidate Package and the run's cache folder, which includes the guard's own records, and any write into a protected package (the live package, or an earlier Candidate Package).
@@ -65,9 +74,11 @@ Three wrappers run outside the sandbox, because what they drive cannot run insid
   `gp-sim cleanup` lists the devices again after deleting and marks deleted exactly the run's devices that are gone, so the ledger never calls a device deleted that still exists.
   It installs only an app gp-xcodebuild built in the guard's build folder, because the simulator runs an app unsandboxed.
 - `gp-chrome` runs headless Chrome on a fresh throwaway profile (so none of the Founder's sign-ins load), opens only local pages (a file in the package or the cache folder, or an `http` URL on `localhost` or `127.0.0.1` with no userinfo, backslash, or whitespace, which it rebuilds from its checked parts before Chrome sees it), and writes only into the package or the cache folder.
+  It never grants a page access to local files: `measure` frames a copy of the page that reports its size by `postMessage`, so Chrome runs without `--allow-file-access-from-files`, and a page's own script cannot read the Founder's files (his `.env` files or the `gh` token among them).
 - `gp-xcodebuild` builds only from a copy of the Product's committed tree in the guard's build folder, `<Product>.guard/build/`, which no tool of the run can write.
   `gp-xcodebuild source` records every file's SHA-256, and every build checks the copy against that record and exports it again from its commit when anything differs.
-  The project, workspace, and `.xcconfig` must lie in that copy, and `.xctestrun` and test products in the build folder; DerivedData, which holds the package sources a build compiles and the app `gp-sim` installs, is the build folder's own; only a result bundle may go to the cache folder.
+  It accepts only the actions and options a simulator build needs (build, test, and clean actions; `-project`, `-workspace`, `-xcconfig`, `-scheme`, `-target`, `-configuration`, `-destination`, `-sdk`, `-testPlan`, `-only-testing`, `-skip-testing`, `-resultBundlePath`, a few display and package-resolution flags, and `SETTING=value`) and refuses every other one, so no option can write elsewhere (`-resultStreamPath`), archive, export, or download.
+  The project, workspace, and `.xcconfig` must lie in that copy; DerivedData, which holds the package sources a build compiles and the app `gp-sim` installs, is the build folder's own; only a result bundle may go to the cache folder.
   A build setting may name no path outside the build folder and no `$(`, `${`, or `..`.
   It builds for the simulator only, runs tests only on a simulator the run created (named by `id=` or `name=`, so xcodebuild never boots one of the Founder's own), and refuses archive, export, signing with a team, device registration, and App Store Connect.
 
@@ -93,7 +104,9 @@ These records the run could still alter, because a sandboxed command or the run 
 These gaps remain, and are accepted for a run the Founder starts and watches himself:
 
 - A page the run writes and then renders with `gp-chrome` could run its own JavaScript, and Chrome there reaches the network, so a page written to send data would send it.
-  The run never writes such a page, the guard refuses code files that send, and the throwaway profile carries no account; but HTML is not scanned for scripts that send.
+  What such a page can reach is the network and its own folder's files as a page loads them; it cannot read other local files, and the throwaway profile carries no account or cookie.
+  The run never writes such a page, and the guard refuses code files that send; but HTML is not scanned for scripts that send.
+- The guard reads the script a command runs, not the modules that script imports (a local `helpers.py` or `require('./lib')`).
 - A process inside the sandbox can still send a request to an allowed research host (Reddit, YouTube, Hacker News, Polymarket); it holds no credentials for any of them, so it cannot post as the Founder.
 - `gp-xcodebuild` runs the Product's own build scripts unsandboxed.
   They are the Founder's own committed code, checked against its commit before every build, and the build runs on a copy, never in the repository.

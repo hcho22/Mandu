@@ -8,7 +8,9 @@ It runs outside the sandbox (Chrome cannot start inside it), so it enforces:
     folder, or an http URL on localhost or 127.0.0.1 with no userinfo,
     backslash, or whitespace; Chrome gets the URL rebuilt from the checked
     parts, never the string it was given;
-  - files it writes land only in the Candidate Package or the cache folder.
+  - files it writes land only in the Candidate Package or the cache folder;
+  - it never grants a page access to local files, so a page's own script
+    cannot read the Founder's files; it can still reach the network.
 
 Commands:
   gp-chrome screenshot PAGE OUT.png WIDTHxHEIGHT [--scale N]
@@ -132,25 +134,36 @@ def cmd_dom(cfg, args):
 # Headless Chrome keeps a window of at least about 500px wide when it dumps
 # the DOM, so the page is measured inside an iframe of the exact viewport,
 # whose layout and media queries follow the iframe's size, not the window's.
-# The probe page sits in a fresh folder in the cache and loads the page by its
-# own file:// URL (an http page would be another origin it cannot read).
-MEASURE_PAGE = """<!doctype html><html><head><meta charset="utf-8"></head>
-<body style="margin:0"><iframe id="f" src="%(src)s" style="border:0;width:%(w)dpx;height:%(h)dpx"></iframe>
-<script>
-document.getElementById('f').addEventListener('load', function () {
+# The iframe holds a copy of the page written beside it (so its relative
+# files still load) with a script that reports the page's size to the
+# wrapper by postMessage. That needs no file access, so Chrome runs without
+# --allow-file-access-from-files and no page script can read a local file.
+REPORT_SCRIPT = """<script>
+window.addEventListener('load', function () {
   setTimeout(function () {
-    var out = document.createElement('pre'); out.id = 'gp-measure';
-    try {
-      var f = document.getElementById('f'), d = f.contentDocument.documentElement, b = f.contentDocument.body;
-      out.textContent = JSON.stringify({scrollWidth: Math.max(d.scrollWidth, b ? b.scrollWidth : 0),
-                                        innerWidth: f.contentWindow.innerWidth,
-                                        innerHeight: f.contentWindow.innerHeight});
-    } catch (e) { out.textContent = JSON.stringify({error: String(e)}); }
-    document.body.appendChild(out);
+    var d = document.documentElement, b = document.body;
+    parent.postMessage(JSON.stringify({scrollWidth: Math.max(d.scrollWidth, b ? b.scrollWidth : 0),
+                                       innerWidth: window.innerWidth, innerHeight: window.innerHeight}), '*');
   }, 500);
+});
+</script>
+"""
+WRAPPER_PAGE = """<!doctype html><html><head><meta charset="utf-8"></head>
+<body style="margin:0"><iframe src="%(src)s" style="border:0;width:%(w)dpx;height:%(h)dpx"></iframe>
+<script>
+window.addEventListener('message', function (event) {
+  var out = document.createElement('pre'); out.id = 'gp-measure';
+  out.textContent = String(event.data);
+  document.body.appendChild(out);
 });
 </script></body></html>
 """
+
+
+def with_report(text):
+    """The page's HTML with the size-reporting script before its </body>."""
+    at = text.lower().rfind("</body>")
+    return text + REPORT_SCRIPT if at == -1 else text[:at] + REPORT_SCRIPT + text[at:]
 
 
 def cmd_measure(cfg, args):
@@ -158,21 +171,27 @@ def cmd_measure(cfg, args):
     url = page_url(cfg, args[0])
     if not url.startswith("file://"):
         raise ToolError("measure reads a local page file in the package or the cache folder, not %s" % args[0])
+    page = Path(urllib.parse.unquote(urllib.parse.urlsplit(url).path))
     folder = Path(tempfile.mkdtemp(prefix="measure-", dir=str(Path(cfg["work"]))))
-    probe = folder / "probe.html"
-    probe.write_text(MEASURE_PAGE % {"src": html.escape(url), "w": width, "h": height}, encoding="utf-8")
+    with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=str(page.parent), prefix=".gp-measure-",
+                                     suffix=".html", delete=False) as handle:
+        handle.write(with_report(page.read_text(encoding="utf-8", errors="replace")))
+        copy = Path(handle.name)
+    wrapper = folder / "wrapper.html"
+    wrapper.write_text(WRAPPER_PAGE % {"src": html.escape(copy.as_uri()), "w": width, "h": height},
+                       encoding="utf-8")
     try:
-        proc = run_chrome(cfg, ["--window-size=%d,%d" % (max(width, 800), height + 100),
-                                "--allow-file-access-from-files", "--dump-dom"], probe.as_uri())
+        proc = run_chrome(cfg, ["--window-size=%d,%d" % (max(width, 800), height + 100), "--dump-dom"],
+                          wrapper.as_uri())
     finally:
+        copy.unlink()
         shutil.rmtree(str(folder), ignore_errors=True)
-    m = re.search(r'<pre id="gp-measure">([^<]+)</pre>', proc.stdout)
-    if not m:
+    reports = re.findall(r'<pre id="gp-measure">([^<]+)</pre>', proc.stdout)
+    try:
+        data = json.loads(html.unescape(reports[-1]))
+        data["overflows"] = data["scrollWidth"] > data["innerWidth"]
+    except (IndexError, ValueError, KeyError, TypeError):
         raise ToolError("the page did not report its size: %s" % proc.stderr.strip()[-300:])
-    data = json.loads(m.group(1).replace("&quot;", '"'))
-    if "error" in data:
-        raise ToolError("could not measure the page: %s" % data["error"])
-    data["overflows"] = data["scrollWidth"] > data["innerWidth"]
     data["viewport"] = "%dx%d" % (width, height)
     print(json.dumps(data))
 

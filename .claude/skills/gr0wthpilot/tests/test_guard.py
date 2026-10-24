@@ -14,6 +14,7 @@ import importlib.util
 import io
 import json
 import os
+import re
 import subprocess
 import tempfile
 import types
@@ -192,7 +193,7 @@ class GuardTest(unittest.TestCase):
                         "python3 -Bc 'import smtplib'",
                         "node -p \"require('child_process').execSync('open x')\""):
             self.assertTrue(self.bash_denied(command), command)
-        for command in ("bash ok.sh", "./ok.sh", "source ok.sh", "bash --version", "python3 -m http.server 8080",
+        for command in ("bash ok.sh", "./ok.sh", "source ok.sh", "python3 -m http.server 8080",
                         "/bin/ls -la"):
             self.assertFalse(self.bash_denied(command), command)
         self.assertTrue(self.denied("Write", file_path=str(pkg / "deploy.sh"), content="#!/bin/sh\ngh pr create\n"))
@@ -234,9 +235,53 @@ class GuardTest(unittest.TestCase):
         self.assertFalse(self.denied("Write", file_path=str(pkg / "render.sh"),
                                      content="#!/bin/sh\nffmpeg -i a.mp4 b.mp4 # don't rescale\n"))
         self.assertFalse(self.bash_denied("ls -la # it's the package"))
-        self.assertFalse(self.bash_denied("echo ${#HOME}"))
-        for command in ("ls # it's fine\ngh pr create", "echo ${#HOME}; gh pr create", "echo a#b; gh pr create"):
+        self.assertFalse(self.bash_denied("echo \"${HOME} #1\" && ls"))
+        for command in ("ls # it's fine\ngh pr create", "echo ${#HOME}; gh pr create", "echo a#b; gh pr create",
+                        "echo a\\;#b; gh pr create", "echo hi\\|#x; git push origin main",
+                        "echo ${x:-a #b}; gh pr create", "echo ${x:-a #b}; open https://example.com",
+                        "x=1#y gh pr create", "echo \"`gh pr create`\"", "cat > a.md <<EOF\n$(gh pr create)\nEOF",
+                        "cat > a.md <<EOF\n`gh pr create`\nEOF", "$'\\x67h' pr create", "cat <<E\"O\"F\ngh\nEOF"):
             self.assertTrue(self.bash_denied(command), command)
+        self.assertFalse(self.bash_denied("cat > a.md <<'EOF'\n$(not run) and `not run`\nEOF"))
+
+    def test_code_from_standard_input_is_refused_whatever_the_flags(self):
+        for command in ("echo 'gh pr create' | bash -v", "echo 'gh pr create' | bash -h",
+                        "echo 'import os' | python3 -v", "echo 'gh pr create' | zsh -v", "bash --version",
+                        "python3 <<< 'print(1)'", "bash <<< 'gh pr create'", "cat run.sh | bash -s x"):
+            self.assertTrue(self.bash_denied(command), command)
+
+    def test_options_and_variables_that_load_code_are_checked(self):
+        pkg = Path(self.cfg["package"])
+        (pkg / "pre.js").write_text("require('child_process').execFileSync('open', ['x'])\n")
+        (pkg / "ok.js").write_text("console.log(1)\n")
+        (pkg / "app.js").write_text("console.log(2)\n")
+        (pkg / "pre.rb").write_text("system('open', 'x')\n")
+        (pkg / "ok.rb").write_text("puts 1\n")
+        (pkg / "evil.sh").write_text("open http://x\n")
+        for command in ("node -r ./pre.js app.js", "node --import ./pre.js app.js", "node --require=./pre.js app.js",
+                        "node --import tsx app.js", "ruby -r ./pre.rb ok.rb", "ruby -I lib ok.rb", "perl -Mstrict -e 1",
+                        "bash --rcfile ./evil.sh -i -c ls", "BASH_ENV=./evil.sh bash -c 'ls'",
+                        "export BASH_ENV=./evil.sh", "env ZDOTDIR=. zsh -c ls", "PS4='$(gh pr create)' bash -xc ls",
+                        "NODE_OPTIONS=--require=./pre.js node app.js", "PYTHONPATH=. python3 ok.py",
+                        "declare -n ref=BASH_ENV", "python3 -m evilmod", "python3 -m pip install x",
+                        "python3 -W error::evil.Warning ok.py", "deno run --import-map=m.json x.ts"):
+            self.assertTrue(self.bash_denied(command), command)
+        for command in ("node -r ./ok.js app.js", "python3 -m json.tool data.json", "echo 'copy it to ENV'"):
+            self.assertFalse(self.bash_denied(command), command)
+        (pkg / "http").mkdir()
+        (pkg / "http" / "__init__.py").write_text("import os\n")
+        self.assertTrue(self.bash_denied("python3 -m http.server 8000"))
+
+    def test_the_program_a_command_runs_must_be_plain(self):
+        for command in ("X=gh; $X pr create", "$(echo gh) pr create", "\"$(which gh)\" pr create",
+                        "env -S 'gh pr create'", "timeout -s KILL 5 gh pr create", "echo gh | xargs -I X X pr create",
+                        "echo x | xargs -I{} sh -c {}", "ls | xargs bash", "builtin eval 'gh pr create'",
+                        "noglob gh pr create", "alias g=gh", "trap 'gh pr create' EXIT", "hash -p /usr/bin/true g",
+                        "/usr/bin/g? pr create"):
+            self.assertTrue(self.bash_denied(command), command)
+        for command in ("[ -f x ] && ls", "[[ -f x ]] && ls", "timeout 60 ls", "env -i HOME=/tmp ls",
+                        "ls *.png | xargs -n1 ffprobe", "for f in a b; do ffprobe $f; done", "command -v ffmpeg"):
+            self.assertFalse(self.bash_denied(command), command)
 
     def test_heredocs_are_data_unless_something_runs_them(self):
         self.assertFalse(self.bash_denied("cat >> decisions-log.md <<'EOF'\n- D-009 it's the Founder's call, isn't it\nEOF"))
@@ -622,8 +667,11 @@ class WrapperRulesTest(unittest.TestCase):
         seen = {}
 
         def run_chrome(cfg, extra, url, timeout=120):
+            seen["extra"] = extra
             seen["probe"] = Path(urllib.parse.unquote(urllib.parse.urlsplit(url).path))
-            seen["text"] = seen["probe"].read_text()
+            src = re.search(r'src="([^"]+)"', seen["probe"].read_text()).group(1)
+            seen["copy"] = Path(urllib.parse.unquote(urllib.parse.urlsplit(src).path))
+            seen["copy_text"] = seen["copy"].read_text()
             return types.SimpleNamespace(stdout='<pre id="gp-measure">{"scrollWidth": 390, "innerWidth": 390, '
                                                 '"innerHeight": 844}</pre>', stderr="")
 
@@ -632,11 +680,32 @@ class WrapperRulesTest(unittest.TestCase):
         with contextlib.redirect_stdout(out):
             chrome.cmd_measure(self.cfg, [str(page), "390x844"])
         self.assertTrue(guard.under(seen["probe"], self.cfg["work"]))
-        self.assertIn(page.resolve().as_uri(), seen["text"])
-        self.assertFalse(seen["probe"].exists())
+        self.assertEqual(seen["copy"].parent, page.resolve().parent)
+        self.assertTrue(seen["copy_text"].startswith("<p>x</p>"))
+        self.assertNotIn("--allow-file-access-from-files", seen["extra"])
+        self.assertFalse(seen["probe"].exists() or seen["copy"].exists())
         self.assertFalse(json.loads(out.getvalue())["overflows"])
         with self.assertRaises(chrome.ToolError):
             chrome.cmd_measure(self.cfg, ["http://localhost:8000/index.html", "390x844"])
+
+    @unittest.skipUnless(Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome").is_file(),
+                         "Google Chrome is not installed")
+    def test_gp_chrome_measure_gives_a_page_no_access_to_local_files(self):
+        chrome = load_wrapper("gp-chrome")
+        secret = Path(tempfile.mkdtemp(prefix="gp-secret-")) / "hosts.yml"
+        secret.write_text("TOKEN-123\n")
+        page = Path(self.cfg["package"]) / "03-site" / "index.html"
+        page.parent.mkdir()
+        page.write_text("<!doctype html><html><body style=\"margin:0\"><div id=\"box\">x</div><script>\n"
+                        "var ok = false;\ntry { var x = new XMLHttpRequest(); x.open('GET', '%s', false); x.send();\n"
+                        "  ok = x.responseText.indexOf('TOKEN-123') >= 0; } catch (e) {}\n"
+                        "document.getElementById('box').style.width = ok ? '3000px' : '100px';\n"
+                        "</script></body></html>\n" % secret.as_uri())
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            chrome.cmd_measure(self.cfg, [str(page), "390x844"])
+        measured = json.loads(out.getvalue())
+        self.assertEqual((measured["scrollWidth"], measured["overflows"]), (390, False))
 
     def test_gp_chrome_opens_only_local_pages(self):
         chrome = load_wrapper("gp-chrome")
@@ -692,7 +761,10 @@ class WrapperRulesTest(unittest.TestCase):
                     ["-derivedDataPath", str(work / "DD")], ["-clonedSourcePackagesDirPath", str(work)],
                     ["-testPlan", "../plan"], ["CONFIGURATION_BUILD_DIR=$(HOME)/out"], ["SYMROOT=${HOME}/out"],
                     ["SYMROOT=../../out"], ["OTHER_CFLAGS=-I%s" % work], ["SYMROOT=%s" % work],
-                    ["-resultBundlePath", str(build / "r.xcresult")]):
+                    ["-resultBundlePath", str(build / "r.xcresult")],
+                    ["-resultStreamPath", str(Path(self.cfg["protected"][0]) / "recap.html")],
+                    ["-archivePath", str(work / "a.xcarchive")], ["-someNewOption"], ["docbuild"],
+                    ["-xctestrun", str(build / "x.xctestrun")], ["-downloadAllPlatforms"]):
             with self.assertRaises(xb.ToolError, msg=str(bad)):
                 xb.check_args(self.cfg, base + bad + ["build"])
         for good in (["-xcconfig", str(copy / "Config.xcconfig")], ["-testPlan", "Smoke"], ["ONLY_ACTIVE_ARCH=YES"],
