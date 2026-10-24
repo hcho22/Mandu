@@ -192,9 +192,14 @@ def find_table(text: str, wanted):
 # HTML text, for checks that read page copy.
 
 # Attributes whose words a reader sees: a tooltip, an image's alt text, a
-# screen reader's label, and the meta tags a search result or share card shows.
-COPY_ATTRS = ("alt", "title", "aria-label")
-META_COPY_RE = re.compile(r"(?:(?:og|twitter):)?(?:title|description|image:alt)$")
+# screen reader's label, a form field's placeholder, an option's label, the
+# value a button or text field shows, and the meta tags a search result or
+# share card shows.
+COPY_ATTRS = ("alt", "title", "aria-label", "placeholder", "label")
+SHOWN_VALUE_TYPES = {"submit", "button", "reset", "text", "search", "email", "tel", "url"}
+META_COPY_RE = re.compile(r"(?:(?:og|twitter):)?(?:title|description|image:alt|site_name)$")
+# Attributes naming structured-data terms: microdata's and RDFa's.
+SCHEMA_ATTRS = (("itemprop", "property"), ("property", "property"), ("itemtype", "type"), ("typeof", "type"))
 
 
 def srcset_urls(value: str):
@@ -225,22 +230,34 @@ def srcset_urls(value: str):
     return urls
 
 
-def json_strings(text: str):
-    """Each string value in a JSON document, or the whole text if it is not JSON."""
+def schema_name(term: str) -> str:
+    """A structured-data term's own name: `Review` for `https://schema.org/Review` or `schema:Review`."""
+    return re.split(r"[/#:]", term.strip())[-1]
+
+
+def json_ld(text: str):
+    """(strings, terms) of a JSON-LD document: each string value, and each
+    key as ("property", name) and each @type as ("type", name). Text that is
+    not JSON is one string with no terms."""
     try:
         data = json.loads(text)
     except ValueError:
-        return [text]
-    out, stack = [], [data]
+        return [text], []
+    strings, terms, stack = [], [], [data]
     while stack:
         item = stack.pop(0)
         if isinstance(item, str):
-            out.append(item)
+            strings.append(item)
         elif isinstance(item, dict):
+            for key, value in item.items():
+                terms.append(("property", schema_name(key)))
+                if key == "@type":
+                    terms += [("type", schema_name(t)) for t in (value if isinstance(value, list) else [value])
+                              if isinstance(t, str)]
             stack[:0] = list(item.values())
         elif isinstance(item, list):
             stack[:0] = item
-    return out
+    return strings, terms
 
 
 class _TextAndLinks(html.parser.HTMLParser):
@@ -258,6 +275,9 @@ class _TextAndLinks(html.parser.HTMLParser):
         self.skip_depth = 0
         self.attr_copy = []
         self.styles = []
+        self.quotes = []
+        self.open_quotes = []
+        self.schema_terms = []
         self.raw = None
         self.raw_parts = []
 
@@ -274,8 +294,12 @@ class _TextAndLinks(html.parser.HTMLParser):
         if tag in self.BLOCK:
             self.blocks.append([])
             self.block_links.append([])
+        if tag == "blockquote":
+            self.open_quotes.append(([], [attrs["cite"]] if attrs.get("cite") else []))
         if attrs.get("href"):
             self.block_links[-1].append(attrs["href"])
+            for _, links in self.open_quotes:
+                links.append(attrs["href"])
         for key in ("href", "src", "poster", "data"):
             if attrs.get(key):
                 self.links.append((tag, key, attrs[key]))
@@ -283,6 +307,10 @@ class _TextAndLinks(html.parser.HTMLParser):
             if attrs.get(key) and tag in ("img", "source", "link"):
                 self.links += [(tag, key, url) for url in srcset_urls(attrs[key])]
         self.attr_copy += [attrs[key] for key in COPY_ATTRS if attrs.get(key)]
+        if tag == "input" and attrs.get("value") and (attrs.get("type") or "text").strip().lower() in SHOWN_VALUE_TYPES:
+            self.attr_copy.append(attrs["value"])
+        for key, kind in SCHEMA_ATTRS:
+            self.schema_terms += [(kind, schema_name(t)) for t in (attrs.get(key) or "").split()]
         name = (attrs.get("name") or attrs.get("property") or "").strip().lower()
         if tag == "meta" and attrs.get("content") and META_COPY_RE.match(name):
             self.attr_copy.append(attrs["content"])
@@ -297,8 +325,12 @@ class _TextAndLinks(html.parser.HTMLParser):
             if tag == "style":
                 self.styles.append(text)
             else:
-                self.attr_copy += json_strings(text)
+                strings, terms = json_ld(text)
+                self.attr_copy += strings
+                self.schema_terms += terms
             self.raw = None
+        if tag == "blockquote" and self.open_quotes:
+            self.quotes.append(self.open_quotes.pop())
         if tag in self.BLOCK:
             self.blocks.append([])
             self.block_links.append([])
@@ -308,6 +340,13 @@ class _TextAndLinks(html.parser.HTMLParser):
             self.raw_parts.append(data)
         if not self.skip_depth:
             self.blocks[-1].append(data)
+            for words, _ in self.open_quotes:
+                words.append(data)
+
+    def close(self):
+        super().close()
+        self.quotes += self.open_quotes
+        self.open_quotes = []
 
 
 def _parsed(text: str):
@@ -327,8 +366,9 @@ def html_blocks(text: str):
     """(text, hrefs) for each piece of copy an HTML page shows a reader: each
     block's words with the links inside that same block, then each attribute a
     browser, screen reader, search result, or share card shows (alt, title,
-    aria-label, and the meta title, description, and image alt) and each
-    string in its JSON-LD, with no links."""
+    aria-label, placeholder, label, a button's or text field's value, and the
+    meta title, description, image alt, and site name) and each string in its
+    JSON-LD, with no links."""
     parser = _parsed(text)
     out = []
     for words, links in zip(parser.blocks, parser.block_links):
@@ -340,6 +380,19 @@ def html_blocks(text: str):
         if unit:
             out.append((unit, []))
     return out
+
+
+def html_quotes(text: str):
+    """(text, links) for each blockquote of an HTML page: its words, and the
+    links inside it with its cite attribute."""
+    return [(" ".join(" ".join(words).split()), links) for words, links in _parsed(text).quotes]
+
+
+def html_schema_terms(text: str):
+    """("property" or "type", name) for each structured-data term an HTML page
+    uses: its JSON-LD keys and @type values, and its microdata and RDFa
+    attributes."""
+    return _parsed(text).schema_terms
 
 
 def html_styles(text: str):

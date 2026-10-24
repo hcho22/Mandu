@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Claim audit for a Candidate Package.
 
-Two checks, both from the truth policy (facts, numbers, quotes, and competitor
+Three checks, all from the truth policy (facts, numbers, quotes, and competitor
 details are never invented; guesses are labeled):
 
 1. The claims ledger, `08-redteam/claims-ledger.md`, holds every load-bearing
@@ -23,9 +23,13 @@ details are never invented; guesses are labeled):
    The run's machine records (`run-audit.md`, `run-evidence/`, the journal)
    and the red team's records in `08-redteam/` are not claims and are
    skipped. An HTML block is cited only by a URL or link inside that block;
-   each attribute a reader sees (alt, title, aria-label, the meta title,
-   description, and image alt) and each JSON-LD string is checked on its
-   own, cited only by a URL or label inside it.
+   each attribute a reader sees (alt, title, aria-label, placeholder, label, a
+   button's or text field's value, the meta title, description, image alt,
+   and site name) and each JSON-LD string is checked on its own, cited only
+   by a URL or label inside it. An HTML blockquote, like a Markdown one,
+   needs a URL or a citation link inside it (or a cite attribute).
+3. A page's structured data (JSON-LD, microdata, or RDFa) carries no rating
+   or review at all, cited or not: a Product has none before launch.
 
 Usage: claim_audit.py PACKAGE [--json]
 """
@@ -77,6 +81,9 @@ SKIP_DIRS = ("run-evidence", "01-research/last30days")
 REVIEW_DIRS = ("08-redteam",)
 SKIP_NAMES = {"sources.md", "sources-exempt.md", gc.JOURNAL_NAME, gc.AUDIT_NAME, "claims-ledger.md"}
 SCAN_SUFFIXES = {".md", ".html", ".htm", ".txt"}
+RATING_PROPERTIES = {"aggregaterating", "review", "reviews", "reviewrating", "ratingvalue", "ratingcount",
+                     "reviewcount"}
+RATING_TYPE_ENDINGS = ("review", "rating")
 
 
 REF_DEF_RE = re.compile(r"^\s*\[([^\]\s]{1,40})\]:\s*(?:<)?https?://\S+", re.M)
@@ -176,6 +183,15 @@ def audit_html(pkg, path, text, problems):
         found = triggers_in(block)
         if found and not cites(" ".join([block] + ['href="%s"' % h for h in hrefs]), pkg, path):
             problems.append(finding(pkg, path, 0, found, block))
+    for quote, hrefs in gc.html_quotes(text):
+        if quote and not cites(" ".join([quote] + ['href="%s"' % h for h in hrefs]), pkg, path):
+            problems.append(finding(pkg, path, 0, ["quote"], quote))
+    ratings = sorted({name for kind, name in gc.html_schema_terms(text)
+                      if (name.lower() in RATING_PROPERTIES if kind == "property"
+                          else name.lower().endswith(RATING_TYPE_ENDINGS))})
+    if ratings:
+        problems.append("%s: structured data carries ratings or reviews (%s); a Product has none before launch, "
+                        "so take them out" % (gc.rel(pkg, path), ", ".join(ratings)))
 
 
 def finding(pkg, path, number, found, text):

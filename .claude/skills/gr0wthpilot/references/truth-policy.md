@@ -71,11 +71,14 @@ A link to a file in `01-research/`, to `sources.md`, or to the claims ledger als
 | C11 | No competitor develops photos on a delay | https://... | REFUTED - Gudak and Huji both delay | cut |
 ```
 
-The skeptics write it (`workflows/skeptics.js`); a REFUTED claim is cut everywhere and its "Shipped as" says `cut`; the claim audit refuses a REFUTED claim of six or more words that still appears in a deliverable, read as a reader sees it (an HTML page without its markup, Markdown without emphasis or link addresses).
+The skeptics write it (`workflows/skeptics.js`); a REFUTED claim is cut everywhere and its "Shipped as" says `cut`.
+The claim audit refuses a REFUTED claim of six or more words that still appears in a deliverable.
+It reads Markdown without emphasis or link addresses.
+It reads an HTML page twice: as written, its whole source with attributes and scripts, and as a reader sees it, its words without the markup between them together with the attribute and JSON-LD copy below.
 
 ## What the claim audit refuses
 
-`scripts/claim_audit.py` reads every Markdown, HTML, and text file except `sources.md`, the ledger, `run-evidence/`, and the raw last30days output.
+`scripts/claim_audit.py` reads every Markdown, HTML, and text file except `sources.md`, `run-evidence/`, the raw last30days output, and the red team's records in `08-redteam/`, whose ledger it checks on its own.
 It refuses a sentence, table row, or text block holding any of these with no citation and no label:
 
 - a percentage, a price, a multiplier ("3x");
@@ -83,7 +86,16 @@ It refuses a sentence, table row, or text block holding any of these with no cit
 - a star rating or a ranking ("ranked #3", "#1 in Photo & Video");
 - "studies show", "according to", "research shows", "experts say";
 - "the only app", "the first app", "no other app", "market leader", "most popular", "fastest-growing";
-- a blockquote with no URL in it or on the line after it.
+- a Markdown blockquote with no URL in it or on the line after it, or an HTML `<blockquote>` with no URL, citation link, or `cite` attribute inside it.
 
 Table cells under a column whose header names, as a whole word, a score, weight, signal, kill criterion, target, threshold, floor, budget, goal, margin, rank, day, slot, duration, length, or size are the run's own numbers and are skipped.
 A market-size column is the market's numbers, not the run's, and every other column (`Pain points`, `Total ratings`) is checked.
+
+An HTML page is read as its blocks of visible words and also, each on its own, as every attribute a reader, search result, or share card shows and every string in its JSON-LD.
+Those attributes are `alt`, `title`, `aria-label`, `placeholder`, `label`, the `value` a button or text field shows, and the meta title, description, image alt, and site name, `og:` and `twitter:` ones included.
+A block is cited by a URL, label, or link inside that same block.
+An attribute value or a JSON-LD string is cited only by a URL or label inside that same value; a link elsewhere on the page does not cover it.
+So a cited stat copied into the meta description, a button, or a FAQ answer in the JSON-LD carries its own URL or label there.
+
+Structured data never carries ratings or reviews, because a Product has none before launch.
+The audit refuses, cited or not, any page whose JSON-LD, microdata, or RDFa holds an `aggregateRating`, `review`, `reviewRating`, `ratingValue`, `ratingCount`, or `reviewCount`, or a node typed `Review`, `AggregateRating`, `Rating`, or a subtype of one.

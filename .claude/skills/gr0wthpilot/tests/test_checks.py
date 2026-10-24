@@ -313,6 +313,58 @@ class ClaimAuditTest(unittest.TestCase):
                        '[TARGET for year one]."></head><body><p>A camera.</p></body></html>')
         self.assertEqual(claim_audit.check(pkg)["problems"], [])
 
+    def test_form_copy_stats_need_citations(self):
+        for field, trigger in (('<input type="email" placeholder="Join 10,000 photographers">', "count"),
+                               ('<textarea placeholder="Rated 4.9 stars by film fans"></textarea>', "rating"),
+                               ('<input type="submit" value="Last chance: 40% off">', "percentage"),
+                               ('<input type="button" value="Save $5 today">', "price")):
+            pkg = fixtures.package()
+            fixtures.write(pkg, "09-extras/teaser.html", "<form>%s</form>" % field)
+            self.assertTrue(has(claim_audit.check(pkg)["problems"], r"teaser.html: %s with no citation" % trigger), field)
+        pkg = fixtures.package()
+        fixtures.write(pkg, "09-extras/teaser.html", '<form><input type="hidden" name="ref" value="40% campaign">'
+                                                     '<input type="checkbox" value="10,000 users"></form>')
+        self.assertEqual(claim_audit.check(pkg)["problems"], [])
+
+    def test_an_html_blockquote_needs_a_citation_inside_it(self):
+        pkg = fixtures.package()
+        fixtures.write(pkg, "09-extras/teaser.html", "<blockquote><p>Best film app I have used.</p>"
+                                                     "<footer>A photographer</footer></blockquote>")
+        self.assertTrue(has(claim_audit.check(pkg)["problems"], r"teaser.html: quote with no citation or label: Best film"))
+        fixtures.write(pkg, "09-extras/teaser.html", "<blockquote><p>Best film app I have used.</p></blockquote>"
+                                                     '<p><a href="%s">source</a></p>' % fixtures.URLS["stat"])
+        self.assertTrue(has(claim_audit.check(pkg)["problems"], r"teaser.html: quote with no citation"))
+        for quote in ('<blockquote cite="%s"><p>Best film app I have used.</p></blockquote>' % fixtures.URLS["stat"],
+                      '<blockquote><p>Best film app I have used.</p><footer><a href="%s">A photographer</a></footer>'
+                      '</blockquote>' % fixtures.URLS["stat"],
+                      '<blockquote><p>Best film app I have used.</p><footer><a href="../sources.md">sources</a>'
+                      '</footer></blockquote>'):
+            fixtures.write(pkg, "09-extras/teaser.html", quote)
+            self.assertEqual(claim_audit.check(pkg)["problems"], [], quote)
+
+    def test_structured_data_carries_no_ratings_or_reviews(self):
+        cases = (
+            '<script type="application/ld+json">{"@type": "SoftwareApplication", "name": "Testprod", "aggregateRating": '
+            '{"@type": "AggregateRating", "ratingValue": "4.8", "ratingCount": "1250"}}</script>',
+            '<script type="application/ld+json">{"@type": "Product", "name": "Testprod", "review": [{"@type": "Review", '
+            '"reviewBody": "Best film app I have used.", "url": "%s"}]}</script>' % fixtures.URLS["stat"],
+            '<script type="application/ld+json">{"@graph": [{"@type": ["CreativeWork", "schema:UserReview"]}]}</script>',
+            '<script type="application/ld+json">{"@type": "Product", "https://schema.org/reviewCount": 3}</script>',
+            '<div itemscope itemtype="https://schema.org/Product"><span itemprop="aggregateRating">4.8</span></div>',
+            '<div vocab="https://schema.org/" typeof="Review"><span property="reviewBody">Great</span></div>')
+        for case in cases:
+            pkg = fixtures.package()
+            fixtures.write(pkg, "09-extras/teaser.html", "<html><head>%s</head><body><p>A camera.</p></body></html>" % case)
+            self.assertTrue(has(claim_audit.check(pkg)["problems"],
+                                r"teaser.html: structured data carries ratings or reviews"), case)
+        pkg = fixtures.package()
+        fixtures.write(pkg, "09-extras/teaser.html",
+                       '<html><head><script type="application/ld+json">{"@type": "SoftwareApplication", "name": "Testprod", '
+                       '"contentRating": "4+", "applicationCategory": "PhotographyApplication"}</script></head>'
+                       '<body><div itemscope itemtype="https://schema.org/Product"><span itemprop="name">Testprod</span>'
+                       '</div></body></html>')
+        self.assertEqual(claim_audit.check(pkg)["problems"], [])
+
     def test_refuted_claim_must_not_ship(self):
         pkg = fixtures.package()
         fixtures.write(pkg, "03-site/extra.md", "Every competitor charges over ten dollars a month for film looks.\n")
@@ -384,6 +436,10 @@ class BrandLintTest(unittest.TestCase):
                 ("like film did.", 'like film did.<img src="a.png" alt="Say goodbye to waiting">',
                  r"index.html: stock phrase 'say goodbye to'"),
                 ('"name": "Testprod"}', '"name": "Testprod", "description": "Only today: shoot film."}',
+                 r"index.html: scarcity or urgency 'only today'"),
+                ('<input type="email">', '<input type="email" placeholder="Last chance to join">',
+                 r"index.html: scarcity or urgency 'last chance'"),
+                ('<button type="button">Join the waitlist</button>', '<input type="submit" value="Only today: join">',
                  r"index.html: scarcity or urgency 'only today'")):
             pkg = fixtures.package()
             edit(pkg / "03-site/index.html", old, new)
