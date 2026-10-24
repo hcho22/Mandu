@@ -5,8 +5,11 @@
 
 prepare VIDEO
   Runs ffprobe and writes `ffprobe-report.txt` and `ffprobe.json` beside the
-  video, extracts one frame at 0, 25, 50, 75, and 100% of its length into
-  `frames/frame-000.png` .. `frame-100.png`, and builds `frame-strip.png`.
+  video, extracts one frame at 0, 25, 50, 75, and 100% of the way from its
+  first to its last video frame into `frames/frame-000.png` .. `frame-100.png`,
+  and builds `frame-strip.png`. A simulator recording writes a frame only when
+  the screen changes, so its last frame can come seconds before the end of the
+  file; the frames are timed by the video's own frames, not the file's length.
 
 verify VIDEO --size WxH --min-seconds N --max-seconds N
   Passes only when ffprobe shows the expected resolution, a duration inside
@@ -25,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import subprocess
 import sys
@@ -66,6 +70,22 @@ def frame_name(point):
     return "frame-%03d.png" % point
 
 
+def frame_span(video):
+    """The timestamps of the video stream's first and last frames."""
+    proc = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "packet=pts_time",
+                           "-of", "csv=p=0", str(video)], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                          universal_newlines=True)
+    times = []
+    for line in proc.stdout.splitlines():
+        try:
+            times.append(float(line.strip().rstrip(",")))
+        except ValueError:
+            pass
+    if proc.returncode != 0 or not times:
+        raise ValueError("ffprobe found no video frames in %s: %s" % (video, proc.stderr.strip()[-300:]))
+    return min(times), max(times)
+
+
 def prepare(video):
     video = Path(video)
     data = probe(video)
@@ -76,12 +96,19 @@ def prepare(video):
     (folder / "ffprobe-report.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
     frames = folder / "frames"
     frames.mkdir(exist_ok=True)
+    first, last = frame_span(video)
     outputs = []
     for point in POINTS:
-        at = max(0.0, min(info["duration"] * point / 100.0, info["duration"] - 0.1))
+        # Rounded down, so the 100% seek never lands past the last frame.
+        at = math.floor((first + (last - first) * point / 100.0) * 1000) / 1000
         out = frames / frame_name(point)
+        if out.exists():
+            out.unlink()
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", "%.3f" % at, "-i", str(video), "-frames:v", "1",
                         str(out)], check=True)
+        if not out.is_file():
+            raise ValueError("ffmpeg wrote no frame at %.3fs of %s, whose video frames run %.3f-%.3fs"
+                             % (at, video.name, first, last))
         outputs.append(out)
     inputs = []
     for out in outputs:

@@ -792,6 +792,25 @@ class VideoTest(unittest.TestCase):
         self.assertTrue((pkg / "04-video" / "frame-strip.png").is_file())
         self.assertIn("has_audio: True", (pkg / "04-video" / "ffprobe-report.txt").read_text())
 
+    def test_prepare_times_frames_by_the_video_frames_not_the_file_length(self):
+        # Like a simulator recording, whose last frame comes seconds before the file ends.
+        pkg = fixtures.package()
+        fixtures.ffmpeg("-f", "lavfi", "-i", "testsrc2=s=270x480:r=1:d=4", "-f", "lavfi", "-i",
+                        "sine=frequency=440:duration=4", "-shortest", "-pix_fmt", "yuv420p", str(self.video(pkg)))
+        self.assertEqual(quiet(check_video.main, ["prepare", str(self.video(pkg))]), 0)
+        frames = pkg / "04-video" / "frames"
+        self.assertTrue(all((frames / check_video.frame_name(p)).is_file() for p in check_video.POINTS))
+        self.assertEqual(check_video.verify(self.video(pkg), "270x480", 2, 10)["problems"], [])
+
+    def test_prepare_names_a_video_with_no_frames(self):
+        pkg = fixtures.package()
+        audio = pkg / "04-video" / "tone.m4a"
+        fixtures.ffmpeg("-f", "lavfi", "-i", "sine=frequency=440:duration=2", str(audio))
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(check_video.main(["prepare", str(audio)]), 1)
+        self.assertIn("FAIL ffprobe found no video frames in", out.getvalue())
+
 
 class RecapTest(unittest.TestCase):
     def test_fixture_passes(self):

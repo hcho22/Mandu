@@ -800,6 +800,33 @@ class WrapperRulesTest(unittest.TestCase):
                                     "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE, check=True).stdout
             self.assertNotEqual(tuple(pixel[:3]), (255, 0, 0), name)
 
+    @unittest.skipUnless(Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome").is_file()
+                         and shutil.which("ffmpeg"), "Google Chrome or ffmpeg is not installed")
+    def test_gp_chrome_screenshot_lays_the_page_out_at_the_asked_size(self):
+        chrome = load_wrapper("gp-chrome")
+        page = Path(self.cfg["package"]) / "03-site" / "probe.html"
+        page.parent.mkdir()
+        # Two squares whose colors spell the page's innerWidth and innerHeight.
+        page.write_text("<!doctype html><html><body style=\"margin:0\"><div id=\"w\"></div><div id=\"h\"></div><script>\n"
+                        "function paint(id, n) { var s = document.getElementById(id).style;\n"
+                        "  s.width = s.height = '20px'; s.background = 'rgb(' + (n >> 8) + ',' + (n & 255) + ',0)'; }\n"
+                        "paint('w', innerWidth); paint('h', innerHeight);\n</script></body></html>\n")
+        for width, height, scale in ((390, 844, "1"), (200, 200, "1"), (1440, 900, "1"), (390, 844, "2")):
+            shot = Path(self.cfg["work"]) / ("probe-%dx%d@%s.png" % (width, height, scale))
+            with contextlib.redirect_stdout(io.StringIO()):
+                chrome.cmd_screenshot(self.cfg, [str(page), str(shot), "%dx%d" % (width, height), "--scale", scale])
+            size = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "stream=width,height", "-of",
+                                   "csv=p=0", str(shot)], stdout=subprocess.PIPE, universal_newlines=True).stdout
+            self.assertEqual(size.strip(), "%d,%d" % (width * int(scale), height * int(scale)))
+            seen = []
+            for y in (5, 25):
+                pixel = subprocess.run(["ffmpeg", "-v", "error", "-i", str(shot), "-vf", "crop=1:1:5:%d" % (
+                    y * int(scale)), "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE,
+                    check=True).stdout
+                seen.append(pixel[0] * 256 + pixel[1])
+            self.assertEqual(seen, [width, height], "%dx%d at scale %s" % (width, height, scale))
+        self.assertEqual(sorted(p.name for p in page.parent.iterdir()), ["probe.html"])
+
     def test_gp_chrome_opens_only_local_pages_by_its_own_server(self):
         chrome = load_wrapper("gp-chrome")
         page = Path(self.cfg["package"]) / "index.html"

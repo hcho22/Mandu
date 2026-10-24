@@ -162,18 +162,44 @@ def size_arg(text):
 
 
 def cmd_screenshot(cfg, args):
+    """Shoots the page in an iframe of exactly WIDTHxHEIGHT inside a larger
+    window, then crops the shot to the iframe (see the note above
+    REPORT_SCRIPT): headless Chrome lays a page out at least about 500px wide
+    and about 90px shorter than its window."""
     out = require_inside(cfg, args[1], "output")
     width, height = size_arg(args[2])
     scale = args[args.index("--scale") + 1] if "--scale" in args else "1"
     if scale not in ("1", "2", "3"):
         raise ToolError("--scale is 1, 2, or 3")
     out.parent.mkdir(parents=True, exist_ok=True)
-    with opened(cfg, args[0]) as url:
-        proc = run_chrome(cfg, ["--window-size=%d,%d" % (width, height),
-                                "--force-device-scale-factor=%s" % scale,
-                                "--screenshot=%s" % out], url)
+    kind, page, root = page_source(cfg, args[0])
+    if kind == "file":
+        folder, src = page.parent, urllib.parse.quote(page.name)
+    else:
+        folder = root = Path(cfg["work"]).resolve()
+        src = page
+    wrapper = page_file(folder, ".gp-shot-wrap-", SHOT_PAGE % {"src": html.escape(src), "w": width, "h": height})
+    shots = Path(tempfile.mkdtemp(prefix="shot-", dir=str(Path(cfg["work"]))))
+    window = shots / "window.png"
+    try:
+        with served(root, cfg.get("protected") or ()) as base:
+            proc = run_chrome(cfg, ["--window-size=%d,%d" % (max(width, 800), height + 100),
+                                    "--force-device-scale-factor=%s" % scale, "--screenshot=%s" % window],
+                              base + urllib.parse.quote(wrapper.relative_to(root).as_posix()))
+        if not window.is_file():
+            raise ToolError("Chrome wrote no screenshot: %s" % proc.stderr.strip()[-400:])
+        try:
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(window), "-vf", "crop=%d:%d:0:0" % (
+                width * int(scale), height * int(scale)), "-frames:v", "1", str(out)],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, check=True)
+        except (OSError, subprocess.CalledProcessError) as exc:
+            raise ToolError("could not crop the screenshot to %dx%d: %s"
+                            % (width, height, (getattr(exc, "stderr", None) or str(exc)).strip()[-300:]))
+    finally:
+        wrapper.unlink()
+        shutil.rmtree(str(shots), ignore_errors=True)
     if not out.is_file():
-        raise ToolError("Chrome wrote no screenshot: %s" % proc.stderr.strip()[-400:])
+        raise ToolError("ffmpeg wrote no screenshot at %s" % out)
     print(str(out))
 
 
@@ -193,9 +219,10 @@ def cmd_dom(cfg, args):
     sys.stdout.write(proc.stdout)
 
 
-# Headless Chrome keeps a window of at least about 500px wide when it dumps
-# the DOM, so the page is measured inside an iframe of the exact viewport,
-# whose layout and media queries follow the iframe's size, not the window's.
+# Headless Chrome keeps a window of at least about 500px wide, and lays a page
+# out about 90px shorter than the window, so the page is measured (and shot)
+# inside an iframe of the exact viewport, whose layout and media queries follow
+# the iframe's size, not the window's.
 # The iframe holds a copy of the page written beside it (so its relative
 # files still load) with a script that reports the page's size to the
 # wrapper, also beside it, by postMessage; gp-chrome serves both like any
@@ -219,6 +246,10 @@ window.addEventListener('message', function (event) {
   document.body.appendChild(out);
 });
 </script></body></html>
+"""
+SHOT_PAGE = """<!doctype html><html><head><meta charset="utf-8"></head>
+<body style="margin:0"><iframe src="%(src)s"
+style="position:fixed;top:0;left:0;border:0;width:%(w)dpx;height:%(h)dpx"></iframe></body></html>
 """
 
 
