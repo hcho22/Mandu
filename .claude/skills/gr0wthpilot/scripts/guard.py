@@ -58,6 +58,9 @@ DENIED_PROGRAMS = {
     "safaridriver", "shortcuts", "automator", "pbcopy",
     # Shell builtins that run a command later or under another name.
     "alias", "hash", "enable", "trap", "bind", "complete", "compgen", "fc",
+    # Shell words that define or repeat a command; separate commands or a
+    # subshell do the same within what the guard can follow.
+    "function", "repeat", "foreach",
 }
 PROGRAM_HINTS = {
     "xcrun": "use `gp-sim` for simulators; nothing else in xcrun is needed",
@@ -97,17 +100,32 @@ WRAPPER_OPTIONS = {
               {"-I", "-J", "-L", "-n", "-P", "-s", "-E", "-d", "-R", "-a"}),
 }
 # Shell reserved words that come before the command they run.
-SHELL_KEYWORDS = {"if", "then", "else", "elif", "do", "while", "until", "!", "coproc", "{", "}"}
+SHELL_KEYWORDS = {"if", "then", "else", "elif", "do", "while", "until", "!", "coproc"}
 SHELLS = {"bash", "sh", "zsh", "dash", "ksh"}
 SHELL_SUFFIXES = {".sh", ".bash", ".zsh", ".command"}
-ASSIGNMENT_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*=.*")
+ASSIGNMENT_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*\+?=.*", re.S)
+# A redirection word, with its target attached (`>out.txt`, `2>&1`) or not (`>`).
+REDIRECT_RE = re.compile(r"(?:\d*|&)[<>]+&?(.*)", re.S)
+NAME_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 # Variables that make a shell or interpreter load or run code the guard
-# never sees. A run neither sets nor names them: a word that is one of them,
-# assigns one, or points a name at one (`declare -n ref=BASH_ENV`) is refused.
+# never sees. A run never sets them, in any form.
 CODE_ENV_RE = re.compile(
-    r"(?:[A-Za-z_][A-Za-z0-9_]*=)?(BASH_ENV|ENV|ZDOTDIR|PS4|PROMPT_COMMAND|SHELLOPTS|BASHOPTS|NODE_OPTIONS|"
-    r"NODE_PATH|PYTHONPATH|PYTHONSTARTUP|PYTHONHOME|PYTHONINSPECT|PERL5OPT|PERL5LIB|PERLLIB|RUBYOPT|RUBYLIB|"
-    r"LD_PRELOAD|LD_LIBRARY_PATH|DYLD_INSERT_LIBRARIES|DYLD_LIBRARY_PATH|DYLD_FRAMEWORK_PATH)(?:=.*)?", re.S)
+    r"BASH_ENV|ENV|ZDOTDIR|PS4|PROMPT_COMMAND|SHELLOPTS|BASHOPTS|NODE_OPTIONS|NODE_PATH|PYTHONPATH|"
+    r"PYTHONSTARTUP|PYTHONHOME|PYTHONINSPECT|PERL5OPT|PERL5LIB|PERLLIB|RUBYOPT|RUBYLIB|LD_PRELOAD|"
+    r"LD_LIBRARY_PATH|DYLD_[A-Za-z0-9_]*")
+# Builtins that set a variable they name: their options that take a value,
+# and their options whose value is a variable name. Their other words are
+# names (`NAME` or `NAME=value`), except printf's, whose only name is -v's,
+# and getopts', whose name is its second word.
+NAMING_BUILTINS = {
+    "export": (set(), set()), "declare": (set(), set()), "typeset": (set(), set()),
+    "local": (set(), set()), "readonly": (set(), set()),
+    "read": ({"-d", "-i", "-n", "-N", "-p", "-t", "-u"}, {"-a"}),
+    "mapfile": ({"-d", "-n", "-O", "-s", "-u", "-C", "-c"}, set()),
+    "readarray": ({"-d", "-n", "-O", "-s", "-u", "-C", "-c"}, set()),
+    "printf": (set(), {"-v"}),
+    "getopts": (set(), set()),
+}
 # The only modules `python -m` may run: the standard library's own.
 PYTHON_MODULES = {"http.server", "json.tool"}
 # How each family of shells and interpreters is told what to run: the short
@@ -433,10 +451,17 @@ def split_top_level(command):
             i += 1
         elif command.startswith("${", i):
             end = command.find("}", i + 2)
-            if end == -1 or re.search(r"[#;|&()<>`'\"\\{$\n]", command[i + 2:end]):
-                raise Deny(SIMPLER % "a ${...} expansion holding #, an operator, or a quote")
+            if end == -1 or re.search(r"[#;|&()<>`'\"\\{$=\n]", command[i + 2:end]):
+                raise Deny(SIMPLER % "a ${...} expansion holding #, =, an operator, or a quote")
             current.append(command[i:end + 1])
             i = end
+        elif command.startswith("{}", i):
+            current.append("{}")
+            i += 1
+        elif ch in "{}":
+            raise Deny(SIMPLER % "a { or } outside quotes (a group, a function body, or a brace expansion)")
+        elif ch == "(" and command[i + 1:].lstrip(" \t").startswith(")"):
+            raise Deny(SIMPLER % "a function definition or an empty ()")
         elif command.startswith("$(", i) or command.startswith("<(", i) or command.startswith(">(", i):
             inner, end = _balanced(command, i + 2)
             nested.append(inner)
@@ -565,8 +590,9 @@ def strip_prefix(tokens):
         if ASSIGNMENT_RE.fullmatch(tok) or tok in SHELL_KEYWORDS:
             out.pop(0)
             continue
-        if re.fullmatch(r"\d*[<>]+&?\d*", tok):
-            out = out[2:] if len(out) > 1 and not re.fullmatch(r"\d*[<>]+&\d+", tok) else out[1:]
+        redirect = REDIRECT_RE.fullmatch(tok)
+        if redirect:
+            out = out[1:] if redirect.group(1) else out[2:]
             continue
         name = os.path.basename(tok)
         if name in WRAPPER_OPTIONS:
@@ -784,17 +810,57 @@ def parse_argv(prog, args, loads=None, after_run=False):
     return "script", first, loads
 
 
+def check_variable(word):
+    """A variable a command sets (`NAME`, `NAME=value`, or `NAME+=value`)
+    must be named by one plain word and must not be one that loads code."""
+    name = re.sub(r"\+$", "", word.split("=", 1)[0])
+    if not NAME_RE.fullmatch(name):
+        raise Deny("a variable a command sets must be named by one plain word, not %r; write it more simply"
+                   % word)
+    if CODE_ENV_RE.fullmatch(name):
+        raise Deny("`%s` makes a program load code the guard never sees; a run never sets it" % name)
+
+
+def check_named_variables(prog, args):
+    """Check the variables a naming builtin (export, declare, read, printf -v,
+    and the like) sets, and refuse one pointed at a variable that loads code
+    (`declare -n ref=BASH_ENV`)."""
+    valued, naming = NAMING_BUILTINS[prog]
+    names, positional, i = [], [], 0
+    while i < len(args):
+        a = args[i]
+        redirect = REDIRECT_RE.fullmatch(a)
+        if redirect:
+            i += 1 if redirect.group(1) else 2
+            continue
+        if not positional and len(a) > 1 and a[0] in "-+":
+            if a in naming:
+                names.append(args[i + 1] if i + 1 < len(args) else "")
+            elif a[:2] in naming:
+                names.append(a[2:])
+            i += 2 if a in naming or a in valued else 1
+            continue
+        positional.append(a)
+        i += 1
+    if prog == "getopts":
+        names += positional[1:2]
+    elif prog != "printf":
+        names += positional
+    for word in names:
+        check_variable(word)
+        if "=" in word and CODE_ENV_RE.fullmatch(word.split("=", 1)[1]):
+            raise Deny("`%s` points a name at a variable that loads code; a run never sets it" % word)
+
+
 def check_simple(tokens, cfg, depth=0, cwds=None):
     if tokens and os.path.basename(tokens[0]) == "env" and all(
             t.startswith("-") or ASSIGNMENT_RE.fullmatch(t) for t in tokens[1:]):
         raise Deny("printing the environment can print secret values")
-    for token in tokens:
-        m = CODE_ENV_RE.fullmatch(token)
-        if m:
-            raise Deny("`%s` makes a program load code the guard never sees; a run neither sets nor names it"
-                       % m.group(1))
     original = tokens
     tokens = strip_prefix(tokens)
+    for word in original[:len(original) - len(tokens)]:
+        if ASSIGNMENT_RE.fullmatch(word):
+            check_variable(word)
     if not tokens:
         return
     prog = program_name(tokens[0])
@@ -802,10 +868,17 @@ def check_simple(tokens, cfg, depth=0, cwds=None):
     if prog in DENIED_PROGRAMS:
         hint = PROGRAM_HINTS.get(prog)
         raise Deny("`%s` is not available in a Gr0wthPilot run%s." % (prog, "; " + hint if hint else ""))
-    if tokens[0] not in ("[", "[[") and (tokens[0] == "__SUBST__" or tokens[0].startswith("-")
-                                          or re.search(r"[\s$`{}*?\[\]]", tokens[0])):
+    if tokens[0] not in ("[", "[[") and (tokens[0] == "__SUBST__" or tokens[0].startswith(("-", "="))
+                                          or re.search(r"[\s$`{}*?\[\]<>]", tokens[0])
+                                          or CODE_ENV_RE.fullmatch(tokens[0])):
         raise Deny("the program a command runs must be written out as a plain word, not %r; write the "
                    "command more simply" % tokens[0])
+    if prog in NAMING_BUILTINS:
+        check_named_variables(prog, args)
+    if prog == "let" and any(re.search(r"[$`]", a) or any(CODE_ENV_RE.fullmatch(w) for w in NAME_RE.findall(a))
+                             for a in args):
+        raise Deny("`let` here names a variable the guard cannot follow or one that loads code; write it "
+                   "more simply")
     family = argv_family(prog)
     if family and "xargs" in [os.path.basename(t) for t in original[:len(original) - len(tokens)]]:
         raise Deny("`xargs` would hand `%s` code the guard cannot see; run it on a script by its path" % prog)

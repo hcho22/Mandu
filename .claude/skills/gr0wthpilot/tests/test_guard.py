@@ -15,11 +15,14 @@ import io
 import json
 import os
 import re
+import shutil
 import subprocess
 import tempfile
 import types
 import unittest
+import urllib.error
 import urllib.parse
+import urllib.request
 from pathlib import Path
 from unittest import mock
 
@@ -70,6 +73,16 @@ def config(tmp=None):
         "tool_log": str(state / "tool-log.jsonl"), "fetch_log": str(state / "fetch-log.jsonl"),
         "robots_dir": str(robots), "simulators": str(state / "simulators.json"), "repo": None,
     }
+
+
+def http_get(url):
+    """(status, body) of a GET straight to a local server, past any proxy."""
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+    try:
+        with opener.open(url, timeout=10) as response:
+            return response.status, response.read().decode("utf-8", "replace")
+    except urllib.error.HTTPError as exc:
+        return exc.code, exc.read().decode("utf-8", "replace")
 
 
 def product_repo():
@@ -282,6 +295,27 @@ class GuardTest(unittest.TestCase):
         for command in ("[ -f x ] && ls", "[[ -f x ]] && ls", "timeout 60 ls", "env -i HOME=/tmp ls",
                         "ls *.png | xargs -n1 ffprobe", "for f in a b; do ffprobe $f; done", "command -v ffmpeg"):
             self.assertFalse(self.bash_denied(command), command)
+
+    def test_groups_functions_and_variable_names_stay_simple(self):
+        pkg = Path(self.cfg["package"])
+        (pkg / "ok.py").write_text("print(1)\n")
+        for command in ("function f { open https://x.com; }; f", "f() { open https://x.com; }; f", "f() (ls); f",
+                        "{ ls; }", "echo a.{png,jpg}", ">out.txt open https://x.com", "2>err.txt osascript -e x",
+                        "=open https://x.com", "repeat 1 open https://x.com",
+                        'x=BASH; export "${x}_ENV=./evil.txt"; bash -c ls',
+                        "export {BASH,X}_ENV=./evil.txt; bash -c ls",
+                        'printf -v "${x}_ENV" ./evil.txt; export "${x}_ENV"', "BASH_ENV+=./evil.txt bash -c ls",
+                        "echo ${BASH_ENV:=./evil.txt}", "let BASH_ENV=1", "(( BASH_ENV = 1 ))",
+                        "read -r BASH_ENV < f", "mapfile -t DYLD_INSERT_LIBRARIES < f", "declare -x PYTHONHOME=/tmp",
+                        "getopts a BASH_ENV", "printf -vBASH_ENV x"):
+            self.assertTrue(self.bash_denied(command), command)
+        for command in ("grep -rn ENV .", "ls", "git -C /repo log", "ffmpeg -i a.mp4 b.mp4",
+                        "python3 %s" % (pkg / "ok.py"), "cat >> notes.md <<'EOF'\nline\nEOF",
+                        "export PATH=\"$PATH:/x\"", "read -r line < f", "printf '%s\\n' x",
+                        "find . -name '*.md' -exec wc -l {} \\;", "echo \"{a,b}\""):
+            self.assertFalse(self.bash_denied(command), command)
+        self.assertTrue(self.denied("Write", file_path=str(pkg / "serve.sh"),
+                                    content="function f { open https://x.com; }\nf\n"))
 
     def test_heredocs_are_data_unless_something_runs_them(self):
         self.assertFalse(self.bash_denied("cat >> decisions-log.md <<'EOF'\n- D-009 it's the Founder's call, isn't it\nEOF"))
@@ -653,12 +687,12 @@ class WrapperRulesTest(unittest.TestCase):
 
     def test_gp_chrome_rebuilds_local_urls_and_refuses_tricks(self):
         chrome = load_wrapper("gp-chrome")
-        self.assertEqual(chrome.page_url(self.cfg, "http://LOCALHOST:8080/a/index.html?v=b#top"),
-                         "http://localhost:8080/a/index.html?v=b")
+        self.assertEqual(chrome.page_source(self.cfg, "http://LOCALHOST:8080/a/index.html?v=b#top"),
+                         ("url", "http://localhost:8080/a/index.html?v=b"))
         for bad in ("http://evil.example\\@localhost/", "http://user@localhost:8080/", "http://localhost.evil.example/",
                     "https://localhost/", "http://localhost:8080/a b", "http://localhost:99999/", "http://localhost:0/"):
             with self.assertRaises(chrome.ToolError, msg=bad):
-                chrome.page_url(self.cfg, bad)
+                chrome.page_source(self.cfg, bad)
 
     def test_gp_chrome_measures_a_local_file_from_a_probe_in_the_cache(self):
         chrome = load_wrapper("gp-chrome")
@@ -667,11 +701,10 @@ class WrapperRulesTest(unittest.TestCase):
         seen = {}
 
         def run_chrome(cfg, extra, url, timeout=120):
-            seen["extra"] = extra
-            seen["probe"] = Path(urllib.parse.unquote(urllib.parse.urlsplit(url).path))
-            src = re.search(r'src="([^"]+)"', seen["probe"].read_text()).group(1)
-            seen["copy"] = Path(urllib.parse.unquote(urllib.parse.urlsplit(src).path))
-            seen["copy_text"] = seen["copy"].read_text()
+            seen["extra"], seen["url"] = extra, url
+            wrapper = http_get(url)[1]
+            seen["copy_url"] = urllib.parse.urljoin(url, re.search(r'src="([^"]+)"', wrapper).group(1))
+            seen["copy_text"] = http_get(seen["copy_url"])[1]
             return types.SimpleNamespace(stdout='<pre id="gp-measure">{"scrollWidth": 390, "innerWidth": 390, '
                                                 '"innerHeight": 844}</pre>', stderr="")
 
@@ -679,11 +712,10 @@ class WrapperRulesTest(unittest.TestCase):
         out = io.StringIO()
         with contextlib.redirect_stdout(out):
             chrome.cmd_measure(self.cfg, [str(page), "390x844"])
-        self.assertTrue(guard.under(seen["probe"], self.cfg["work"]))
-        self.assertEqual(seen["copy"].parent, page.resolve().parent)
+        self.assertTrue(seen["url"].startswith("http://127.0.0.1:"))
         self.assertTrue(seen["copy_text"].startswith("<p>x</p>"))
         self.assertNotIn("--allow-file-access-from-files", seen["extra"])
-        self.assertFalse(seen["probe"].exists() or seen["copy"].exists())
+        self.assertEqual(sorted(p.name for p in page.parent.iterdir()), ["index.html"])
         self.assertFalse(json.loads(out.getvalue())["overflows"])
         with self.assertRaises(chrome.ToolError):
             chrome.cmd_measure(self.cfg, ["http://localhost:8000/index.html", "390x844"])
@@ -711,11 +743,58 @@ class WrapperRulesTest(unittest.TestCase):
         chrome = load_wrapper("gp-chrome")
         page = Path(self.cfg["package"]) / "index.html"
         page.write_text("<p>x</p>")
-        self.assertTrue(chrome.page_url(self.cfg, str(page)).startswith("file://"))
-        self.assertEqual(chrome.page_url(self.cfg, "http://localhost:8080/"), "http://localhost:8080/")
+        self.assertEqual(chrome.page_source(self.cfg, str(page)), ("file", page.resolve()))
+        self.assertEqual(chrome.page_source(self.cfg, page.resolve().as_uri()), ("file", page.resolve()))
+        self.assertEqual(chrome.page_source(self.cfg, "http://localhost:8080/"), ("url", "http://localhost:8080/"))
         for bad in ("https://example.com", "http://192.168.1.2/", "/etc/hosts"):
             with self.assertRaises(chrome.ToolError):
-                chrome.page_url(self.cfg, bad)
+                chrome.page_source(self.cfg, bad)
+
+    def test_gp_chrome_serves_only_the_pages_folder(self):
+        chrome = load_wrapper("gp-chrome")
+        outside = Path(tempfile.mkdtemp(prefix="gp-secret-")) / "secret.txt"
+        outside.write_text("TOKEN-123\n")
+        site = Path(self.cfg["package"]) / "03-site"
+        site.mkdir()
+        (site / "index.html").write_text("<p>page</p>")
+        (site / "leak.txt").symlink_to(outside)
+        with chrome.served(site) as base:
+            self.assertEqual(http_get(base + "index.html"), (200, "<p>page</p>"))
+            self.assertEqual(http_get(base + "leak.txt")[0], 403)
+            self.assertNotIn("TOKEN-123", http_get(base + "../../../" + outside.name)[1])
+        with self.assertRaises(OSError):
+            http_get(base + "index.html")
+
+    @unittest.skipUnless(Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome").is_file()
+                         and shutil.which("ffmpeg"), "Google Chrome or ffmpeg is not installed")
+    def test_gp_chrome_does_not_show_a_framed_local_file(self):
+        chrome = load_wrapper("gp-chrome")
+        secret = Path(tempfile.mkdtemp(prefix="gp-secret-")) / "secret.html"
+        secret.write_text("<!doctype html><html><body style=\"margin:0;background:#ff0000\"></body></html>")
+        site = Path(self.cfg["package"]) / "03-site"
+        site.mkdir()
+        (site / "leak.html").symlink_to(secret)
+        frame = '<!doctype html><html><body style="margin:0;background:#ffffff"><iframe src="%s" ' \
+                'style="position:fixed;top:0;left:0;width:100%%;height:100%%;border:0"></iframe></body></html>'
+        for name, src in (("direct.html", secret.as_uri()), ("symlink.html", "leak.html")):
+            (site / name).write_text(frame % src)
+            shot = Path(self.cfg["work"]) / (name + ".png")
+            with contextlib.redirect_stdout(io.StringIO()):
+                chrome.cmd_screenshot(self.cfg, [str(site / name), str(shot), "390x844"])
+            pixel = subprocess.run(["ffmpeg", "-v", "error", "-i", str(shot), "-vf", "crop=1:1:195:422", "-f",
+                                    "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE, check=True).stdout
+            self.assertNotEqual(tuple(pixel[:3]), (255, 0, 0), name)
+
+    def test_gp_chrome_opens_only_local_pages_by_its_own_server(self):
+        chrome = load_wrapper("gp-chrome")
+        page = Path(self.cfg["package"]) / "index.html"
+        page.write_text("<p>x</p>")
+        seen = []
+        chrome.run_chrome = lambda cfg, extra, url, timeout=120: seen.append(url) or types.SimpleNamespace(
+            stdout="", stderr="")
+        with contextlib.redirect_stdout(io.StringIO()):
+            chrome.cmd_dom(self.cfg, [str(page)])
+        self.assertTrue(seen[0].startswith("http://127.0.0.1:") and seen[0].endswith("/index.html"), seen)
 
     def test_gp_xcodebuild_builds_only_for_the_simulator(self):
         xb = load_wrapper("gp-xcodebuild")

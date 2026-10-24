@@ -4,13 +4,15 @@
 It runs outside the sandbox (Chrome cannot start inside it), so it enforces:
   - headless only, on a fresh throwaway profile in the run's cache folder, so no
     sign-in, cookie, or extension of the Founder's ever loads;
-  - it opens only local pages: files in the Candidate Package or the cache
-    folder, or an http URL on localhost or 127.0.0.1 with no userinfo,
-    backslash, or whitespace; Chrome gets the URL rebuilt from the checked
-    parts, never the string it was given;
+  - it opens only local pages, and never by a file:// URL: a file in the
+    Candidate Package or the cache folder is served, with the rest of its
+    folder, by an http server on 127.0.0.1 that gp-chrome runs for that one
+    call and that refuses any path leaving the folder (symlinks followed);
+    an http page can neither frame, embed, nor read a local file. An http URL
+    the run gives must be on localhost or 127.0.0.1 with no userinfo,
+    backslash, or whitespace; Chrome gets it rebuilt from the checked parts;
   - files it writes land only in the Candidate Package or the cache folder;
-  - it never grants a page access to local files, so a page's own script
-    cannot read the Founder's files; it can still reach the network.
+  - a page can still reach the network.
 
 Commands:
   gp-chrome screenshot PAGE OUT.png WIDTHxHEIGHT [--scale N]
@@ -21,18 +23,22 @@ Commands:
 PAGE is a path or a file://, http://localhost:PORT, or http://127.0.0.1:PORT URL.
 """
 
+import contextlib
+import functools
 import html
+import http.server
 import json
 import re
 import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import urllib.parse
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
-from gp_tools import ToolError, load_config, require_inside  # noqa: E402
+from gp_tools import ToolError, inside, load_config, require_inside  # noqa: E402
 
 CHROME_CANDIDATES = [
     "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
@@ -48,9 +54,10 @@ def chrome_binary():
     raise ToolError("Google Chrome is not installed")
 
 
-def page_url(cfg, page):
-    """The URL Chrome opens: a local file's own file:// URL, or an http URL on
-    localhost rebuilt from its checked host, port, path, and query."""
+def page_source(cfg, page):
+    """A page Chrome may show: ("url", an http URL on localhost rebuilt from its
+    checked host, port, path, and query) or ("file", a local page file in the
+    package or the cache folder, which gp-chrome serves itself)."""
     parsed = urllib.parse.urlsplit(page)
     if parsed.scheme in ("http", "https"):
         if parsed.scheme != "http" or re.search(r"[\s\\@]", page):
@@ -63,7 +70,7 @@ def page_url(cfg, page):
         host = (parsed.hostname or "").lower()
         if host not in ("localhost", "127.0.0.1") or parsed.netloc.lower() != host + (":%d" % port if port else ""):
             raise ToolError("gp-chrome opens only local pages, not %s" % page)
-        return urllib.parse.urlunsplit(("http", parsed.netloc.lower(), parsed.path or "/", parsed.query, ""))
+        return "url", urllib.parse.urlunsplit(("http", parsed.netloc.lower(), parsed.path or "/", parsed.query, ""))
     if parsed.scheme == "file":
         path = urllib.parse.unquote(parsed.path)
     elif parsed.scheme == "":
@@ -73,7 +80,44 @@ def page_url(cfg, page):
     resolved = require_inside(cfg, path, "page")
     if not resolved.is_file():
         raise ToolError("%s does not exist" % resolved)
-    return resolved.as_uri()
+    return "file", resolved
+
+
+@contextlib.contextmanager
+def served(folder):
+    """An http server on 127.0.0.1 for one folder, for the length of one Chrome
+    call. It refuses a request whose path, symlinks followed, leaves the
+    folder, and an http page cannot load file:// content."""
+    folder = Path(folder).resolve()
+
+    class Handler(http.server.SimpleHTTPRequestHandler):
+        def send_head(self):
+            if not inside(Path(self.translate_path(self.path)).resolve(), folder):
+                self.send_error(403, "outside the page's folder")
+                return None
+            return super().send_head()
+
+        def log_message(self, *args):
+            pass
+
+    server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(Handler, directory=str(folder)))
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    try:
+        yield "http://127.0.0.1:%d/" % server.server_address[1]
+    finally:
+        server.shutdown()
+        server.server_close()
+
+
+@contextlib.contextmanager
+def opened(cfg, page):
+    """The URL Chrome opens for a page, for the length of one Chrome call."""
+    kind, value = page_source(cfg, page)
+    if kind == "url":
+        yield value
+        return
+    with served(value.parent) as base:
+        yield base + urllib.parse.quote(value.name)
 
 
 def run_chrome(cfg, extra, url, timeout=120):
@@ -101,33 +145,34 @@ def size_arg(text):
 
 
 def cmd_screenshot(cfg, args):
-    url = page_url(cfg, args[0])
     out = require_inside(cfg, args[1], "output")
     width, height = size_arg(args[2])
     scale = args[args.index("--scale") + 1] if "--scale" in args else "1"
     if scale not in ("1", "2", "3"):
         raise ToolError("--scale is 1, 2, or 3")
     out.parent.mkdir(parents=True, exist_ok=True)
-    proc = run_chrome(cfg, ["--window-size=%d,%d" % (width, height),
-                            "--force-device-scale-factor=%s" % scale,
-                            "--screenshot=%s" % out], url)
+    with opened(cfg, args[0]) as url:
+        proc = run_chrome(cfg, ["--window-size=%d,%d" % (width, height),
+                                "--force-device-scale-factor=%s" % scale,
+                                "--screenshot=%s" % out], url)
     if not out.is_file():
         raise ToolError("Chrome wrote no screenshot: %s" % proc.stderr.strip()[-400:])
     print(str(out))
 
 
 def cmd_pdf(cfg, args):
-    url = page_url(cfg, args[0])
     out = require_inside(cfg, args[1], "output")
     out.parent.mkdir(parents=True, exist_ok=True)
-    proc = run_chrome(cfg, ["--no-pdf-header-footer", "--print-to-pdf=%s" % out], url)
+    with opened(cfg, args[0]) as url:
+        proc = run_chrome(cfg, ["--no-pdf-header-footer", "--print-to-pdf=%s" % out], url)
     if not out.is_file():
         raise ToolError("Chrome wrote no PDF: %s" % proc.stderr.strip()[-400:])
     print(str(out))
 
 
 def cmd_dom(cfg, args):
-    proc = run_chrome(cfg, ["--dump-dom"], page_url(cfg, args[0]))
+    with opened(cfg, args[0]) as url:
+        proc = run_chrome(cfg, ["--dump-dom"], url)
     sys.stdout.write(proc.stdout)
 
 
@@ -136,8 +181,8 @@ def cmd_dom(cfg, args):
 # whose layout and media queries follow the iframe's size, not the window's.
 # The iframe holds a copy of the page written beside it (so its relative
 # files still load) with a script that reports the page's size to the
-# wrapper by postMessage. That needs no file access, so Chrome runs without
-# --allow-file-access-from-files and no page script can read a local file.
+# wrapper, also beside it, by postMessage; gp-chrome serves both from the
+# page's folder like any other page.
 REPORT_SCRIPT = """<script>
 window.addEventListener('load', function () {
   setTimeout(function () {
@@ -166,26 +211,28 @@ def with_report(text):
     return text + REPORT_SCRIPT if at == -1 else text[:at] + REPORT_SCRIPT + text[at:]
 
 
+def page_file(folder, prefix, text):
+    with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=str(folder), prefix=prefix, suffix=".html",
+                                     delete=False) as handle:
+        handle.write(text)
+    return Path(handle.name)
+
+
 def cmd_measure(cfg, args):
     width, height = size_arg(args[1])
-    url = page_url(cfg, args[0])
-    if not url.startswith("file://"):
+    kind, page = page_source(cfg, args[0])
+    if kind != "file":
         raise ToolError("measure reads a local page file in the package or the cache folder, not %s" % args[0])
-    page = Path(urllib.parse.unquote(urllib.parse.urlsplit(url).path))
-    folder = Path(tempfile.mkdtemp(prefix="measure-", dir=str(Path(cfg["work"]))))
-    with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=str(page.parent), prefix=".gp-measure-",
-                                     suffix=".html", delete=False) as handle:
-        handle.write(with_report(page.read_text(encoding="utf-8", errors="replace")))
-        copy = Path(handle.name)
-    wrapper = folder / "wrapper.html"
-    wrapper.write_text(WRAPPER_PAGE % {"src": html.escape(copy.as_uri()), "w": width, "h": height},
-                       encoding="utf-8")
+    copy = page_file(page.parent, ".gp-measure-", with_report(page.read_text(encoding="utf-8", errors="replace")))
+    wrapper = page_file(page.parent, ".gp-measure-wrap-", WRAPPER_PAGE % {
+        "src": html.escape(urllib.parse.quote(copy.name)), "w": width, "h": height})
     try:
-        proc = run_chrome(cfg, ["--window-size=%d,%d" % (max(width, 800), height + 100), "--dump-dom"],
-                          wrapper.as_uri())
+        with served(page.parent) as base:
+            proc = run_chrome(cfg, ["--window-size=%d,%d" % (max(width, 800), height + 100), "--dump-dom"],
+                              base + urllib.parse.quote(wrapper.name))
     finally:
         copy.unlink()
-        shutil.rmtree(str(folder), ignore_errors=True)
+        wrapper.unlink()
     reports = re.findall(r'<pre id="gp-measure">([^<]+)</pre>', proc.stdout)
     try:
         data = json.loads(html.unescape(reports[-1]))
