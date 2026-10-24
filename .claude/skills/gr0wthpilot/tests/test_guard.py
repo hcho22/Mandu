@@ -688,7 +688,7 @@ class WrapperRulesTest(unittest.TestCase):
     def test_gp_chrome_rebuilds_local_urls_and_refuses_tricks(self):
         chrome = load_wrapper("gp-chrome")
         self.assertEqual(chrome.page_source(self.cfg, "http://LOCALHOST:8080/a/index.html?v=b#top"),
-                         ("url", "http://localhost:8080/a/index.html?v=b"))
+                         ("url", "http://localhost:8080/a/index.html?v=b", None))
         for bad in ("http://evil.example\\@localhost/", "http://user@localhost:8080/", "http://localhost.evil.example/",
                     "https://localhost/", "http://localhost:8080/a b", "http://localhost:99999/", "http://localhost:0/"):
             with self.assertRaises(chrome.ToolError, msg=bad):
@@ -743,27 +743,42 @@ class WrapperRulesTest(unittest.TestCase):
         chrome = load_wrapper("gp-chrome")
         page = Path(self.cfg["package"]) / "index.html"
         page.write_text("<p>x</p>")
-        self.assertEqual(chrome.page_source(self.cfg, str(page)), ("file", page.resolve()))
-        self.assertEqual(chrome.page_source(self.cfg, page.resolve().as_uri()), ("file", page.resolve()))
-        self.assertEqual(chrome.page_source(self.cfg, "http://localhost:8080/"), ("url", "http://localhost:8080/"))
+        root = Path(self.cfg["package"]).resolve()
+        self.assertEqual(chrome.page_source(self.cfg, str(page)), ("file", page.resolve(), root))
+        self.assertEqual(chrome.page_source(self.cfg, page.resolve().as_uri()), ("file", page.resolve(), root))
+        self.assertEqual(chrome.page_source(self.cfg, "http://localhost:8080/"),
+                         ("url", "http://localhost:8080/", None))
         for bad in ("https://example.com", "http://192.168.1.2/", "/etc/hosts"):
             with self.assertRaises(chrome.ToolError):
                 chrome.page_source(self.cfg, bad)
 
-    def test_gp_chrome_serves_only_the_pages_folder(self):
+    def test_gp_chrome_serves_the_area_that_holds_the_page(self):
         chrome = load_wrapper("gp-chrome")
         outside = Path(tempfile.mkdtemp(prefix="gp-secret-")) / "secret.txt"
         outside.write_text("TOKEN-123\n")
-        site = Path(self.cfg["package"]) / "03-site"
-        site.mkdir()
-        (site / "index.html").write_text("<p>page</p>")
-        (site / "leak.txt").symlink_to(outside)
-        with chrome.served(site) as base:
-            self.assertEqual(http_get(base + "index.html"), (200, "<p>page</p>"))
-            self.assertEqual(http_get(base + "leak.txt")[0], 403)
-            self.assertNotIn("TOKEN-123", http_get(base + "../../../" + outside.name)[1])
+        pkg = Path(self.cfg["package"])
+        slide = pkg / "10-launch-set" / "carousel-1" / "slide-01.html"
+        slide.parent.mkdir(parents=True)
+        slide.write_text('<link rel="stylesheet" href="../shared.css"><p>slide</p>')
+        (pkg / "10-launch-set" / "shared.css").write_text("body { color: red }")
+        (pkg / "10-launch-set" / "leak.txt").symlink_to(outside)
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            with chrome.opened(self.cfg, str(slide)) as url:
+                self.assertEqual(http_get(url)[0], 200)
+                self.assertEqual(http_get(urllib.parse.urljoin(url, "../shared.css")), (200, "body { color: red }"))
+                self.assertEqual(http_get(urllib.parse.urljoin(url, "../leak.txt"))[0], 403)
+                self.assertEqual(http_get(urllib.parse.urljoin(url, "../missing.css"))[0], 404)
+        self.assertIn("leak.txt (HTTP 403)", err.getvalue())
+        self.assertIn("missing.css (HTTP 404)", err.getvalue())
         with self.assertRaises(OSError):
-            http_get(base + "index.html")
+            http_get(url)
+        (pkg / "old").mkdir()
+        (pkg / "old" / "x.css").write_text("old")
+        with contextlib.redirect_stderr(io.StringIO()):
+            with chrome.served(pkg, [str(pkg / "old")]) as base:
+                self.assertEqual(http_get(base + "old/x.css")[0], 403)
+                self.assertEqual(http_get(base + "10-launch-set/shared.css")[0], 200)
 
     @unittest.skipUnless(Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome").is_file()
                          and shutil.which("ffmpeg"), "Google Chrome or ffmpeg is not installed")

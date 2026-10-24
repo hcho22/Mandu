@@ -78,7 +78,8 @@ Three wrappers run outside the sandbox, because what they drive cannot run insid
   `gp-sim cleanup` lists the devices again after deleting and marks deleted exactly the run's devices that are gone, so the ledger never calls a device deleted that still exists.
   It installs only an app gp-xcodebuild built in the guard's build folder, because the simulator runs an app unsandboxed.
 - `gp-chrome` runs headless Chrome on a fresh throwaway profile (so none of the Founder's sign-ins load), opens only local pages, and writes only into the package or the cache folder.
-  It never opens a page by a `file://` URL: a page file in the package or the cache folder is served, with the rest of its folder, by an http server on `127.0.0.1` that `gp-chrome` starts for that one call and stops after, and that refuses any path leaving that folder, symlinks followed.
+  It never opens a page by a `file://` URL: a page file in the package or the cache folder is served, with the rest of that folder (so a carousel slide's `../carousel.css` loads), by an http server on `127.0.0.1` that `gp-chrome` starts for that one call and stops after, and that refuses any path leaving that folder or entering a protected package, symlinks followed.
+  A file the page asked for and did not get is printed as a warning, so a screenshot missing its styles or images does not pass unnoticed.
   An http page can neither frame, embed, nor read a local file, so a page cannot show or read the Founder's files (his `.env` files or the `gh` token among them) in a screenshot, a PDF, the DOM, or a measurement.
   An `http` URL the run gives must be on `localhost` or `127.0.0.1` with no userinfo, backslash, or whitespace, and is rebuilt from its checked parts before Chrome sees it.
 - `gp-xcodebuild` builds only from a copy of the Product's committed tree in the guard's build folder, `<Product>.guard/build/`, which no tool of the run can write.
@@ -110,7 +111,7 @@ These records the run could still alter, because a sandboxed command or the run 
 These gaps remain, and are accepted for a run the Founder starts and watches himself:
 
 - A page the run writes and then renders with `gp-chrome` could run its own JavaScript, and Chrome there reaches the network, so a page written to send data would send it.
-  What such a page can reach is the network and the files in its own folder, which `gp-chrome` serves; it cannot load or show any other local file, and the throwaway profile carries no account or cookie.
+  What such a page can reach is the network and the files in the Candidate Package or cache folder that holds it, which `gp-chrome` serves; it cannot load or show any other local file, and the throwaway profile carries no account or cookie.
   A page from a server the run started itself on `localhost` shows whatever that server serves.
   The run never writes such a page, and the guard refuses code files that send; but HTML is not scanned for scripts that send.
 - The guard reads the script a command runs, not the modules that script imports (a local `helpers.py` or `require('./lib')`).

@@ -5,10 +5,12 @@ It runs outside the sandbox (Chrome cannot start inside it), so it enforces:
   - headless only, on a fresh throwaway profile in the run's cache folder, so no
     sign-in, cookie, or extension of the Founder's ever loads;
   - it opens only local pages, and never by a file:// URL: a file in the
-    Candidate Package or the cache folder is served, with the rest of its
-    folder, by an http server on 127.0.0.1 that gp-chrome runs for that one
-    call and that refuses any path leaving the folder (symlinks followed);
-    an http page can neither frame, embed, nor read a local file. An http URL
+    Candidate Package or the cache folder is served, with the rest of that
+    folder (so `../` within it resolves), by an http server on 127.0.0.1 that
+    gp-chrome runs for that one call and that refuses any path leaving that
+    folder or entering a protected package (symlinks followed); an http page
+    can neither frame, embed, nor read a local file. A file the page asked for
+    and did not get is printed as a warning. An http URL
     the run gives must be on localhost or 127.0.0.1 with no userinfo,
     backslash, or whitespace; Chrome gets it rebuilt from the checked parts;
   - files it writes land only in the Candidate Package or the cache folder;
@@ -56,8 +58,9 @@ def chrome_binary():
 
 def page_source(cfg, page):
     """A page Chrome may show: ("url", an http URL on localhost rebuilt from its
-    checked host, port, path, and query) or ("file", a local page file in the
-    package or the cache folder, which gp-chrome serves itself)."""
+    checked host, port, path, and query, None) or ("file", a local page file,
+    the Candidate Package or cache folder that holds it), which gp-chrome
+    serves itself."""
     parsed = urllib.parse.urlsplit(page)
     if parsed.scheme in ("http", "https"):
         if parsed.scheme != "http" or re.search(r"[\s\\@]", page):
@@ -70,7 +73,8 @@ def page_source(cfg, page):
         host = (parsed.hostname or "").lower()
         if host not in ("localhost", "127.0.0.1") or parsed.netloc.lower() != host + (":%d" % port if port else ""):
             raise ToolError("gp-chrome opens only local pages, not %s" % page)
-        return "url", urllib.parse.urlunsplit(("http", parsed.netloc.lower(), parsed.path or "/", parsed.query, ""))
+        return "url", urllib.parse.urlunsplit(("http", parsed.netloc.lower(), parsed.path or "/", parsed.query,
+                                               "")), None
     if parsed.scheme == "file":
         path = urllib.parse.unquote(parsed.path)
     elif parsed.scheme == "":
@@ -80,44 +84,57 @@ def page_source(cfg, page):
     resolved = require_inside(cfg, path, "page")
     if not resolved.is_file():
         raise ToolError("%s does not exist" % resolved)
-    return "file", resolved
+    root = next(Path(cfg[name]).resolve() for name in ("work", "package")
+                if cfg.get(name) and inside(resolved, cfg[name]))
+    return "file", resolved, root
 
 
 @contextlib.contextmanager
-def served(folder):
-    """An http server on 127.0.0.1 for one folder, for the length of one Chrome
-    call. It refuses a request whose path, symlinks followed, leaves the
-    folder, and an http page cannot load file:// content."""
-    folder = Path(folder).resolve()
+def served(root, protected=()):
+    """An http server on 127.0.0.1 for one of the run's own folders (the
+    Candidate Package or the cache folder), for the length of one Chrome call.
+    It refuses a request whose path, symlinks followed, leaves that folder or
+    enters a protected package, and an http page cannot load file:// content.
+    Each file the page asked for and did not get is printed as a warning."""
+    root = Path(root).resolve()
+    failed = []
 
     class Handler(http.server.SimpleHTTPRequestHandler):
         def send_head(self):
-            if not inside(Path(self.translate_path(self.path)).resolve(), folder):
-                self.send_error(403, "outside the page's folder")
+            target = Path(self.translate_path(self.path)).resolve()
+            if not inside(target, root) or any(inside(target, p) for p in protected):
+                self.send_error(403, "outside the run's own folder")
                 return None
             return super().send_head()
+
+        def log_request(self, code="-", size="-"):
+            path = urllib.parse.unquote(urllib.parse.urlsplit(self.path).path)
+            if code in (403, 404) and path != "/favicon.ico":
+                failed.append("%s (HTTP %d)" % (path, code))
 
         def log_message(self, *args):
             pass
 
-    server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(Handler, directory=str(folder)))
+    server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(Handler, directory=str(root)))
     threading.Thread(target=server.serve_forever, daemon=True).start()
     try:
         yield "http://127.0.0.1:%d/" % server.server_address[1]
     finally:
         server.shutdown()
         server.server_close()
+        for request in failed:
+            print("gp-chrome: warning: the page asked for %s, which did not load" % request, file=sys.stderr)
 
 
 @contextlib.contextmanager
 def opened(cfg, page):
     """The URL Chrome opens for a page, for the length of one Chrome call."""
-    kind, value = page_source(cfg, page)
+    kind, value, root = page_source(cfg, page)
     if kind == "url":
         yield value
         return
-    with served(value.parent) as base:
-        yield base + urllib.parse.quote(value.name)
+    with served(root, cfg.get("protected") or ()) as base:
+        yield base + urllib.parse.quote(value.relative_to(root).as_posix())
 
 
 def run_chrome(cfg, extra, url, timeout=120):
@@ -181,8 +198,8 @@ def cmd_dom(cfg, args):
 # whose layout and media queries follow the iframe's size, not the window's.
 # The iframe holds a copy of the page written beside it (so its relative
 # files still load) with a script that reports the page's size to the
-# wrapper, also beside it, by postMessage; gp-chrome serves both from the
-# page's folder like any other page.
+# wrapper, also beside it, by postMessage; gp-chrome serves both like any
+# other page.
 REPORT_SCRIPT = """<script>
 window.addEventListener('load', function () {
   setTimeout(function () {
@@ -220,16 +237,16 @@ def page_file(folder, prefix, text):
 
 def cmd_measure(cfg, args):
     width, height = size_arg(args[1])
-    kind, page = page_source(cfg, args[0])
+    kind, page, root = page_source(cfg, args[0])
     if kind != "file":
         raise ToolError("measure reads a local page file in the package or the cache folder, not %s" % args[0])
     copy = page_file(page.parent, ".gp-measure-", with_report(page.read_text(encoding="utf-8", errors="replace")))
     wrapper = page_file(page.parent, ".gp-measure-wrap-", WRAPPER_PAGE % {
         "src": html.escape(urllib.parse.quote(copy.name)), "w": width, "h": height})
     try:
-        with served(page.parent) as base:
+        with served(root, cfg.get("protected") or ()) as base:
             proc = run_chrome(cfg, ["--window-size=%d,%d" % (max(width, 800), height + 100), "--dump-dom"],
-                              base + urllib.parse.quote(wrapper.name))
+                              base + urllib.parse.quote(wrapper.relative_to(root).as_posix()))
     finally:
         copy.unlink()
         wrapper.unlink()
