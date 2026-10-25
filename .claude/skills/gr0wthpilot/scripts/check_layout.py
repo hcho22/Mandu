@@ -16,10 +16,12 @@ path it names into the package, and verifies:
    drafts.py, posts.py, lint.py; each check names the function it mirrors):
    zero-padded Angle IDs; the exact platform names TikTok and YouTube Shorts;
    Formats naming a recording the filming plan knows; signal and kill cells
-   naming numbers gr0wthlab asks that platform's Studio for; the
-   pre-publication checklist's items, titles, and blocking scopes as
-   gr0wthlab reads them; and a creative-log.json its kill and change edits
-   can make; and the Test Kit meets the run's own floor: at least 15
+   naming numbers gr0wthlab asks the Studio of each calendar day's primary
+   platform that runs the Angle for (its own Platform's, when no fixed day
+   does); the pre-publication checklist's items, titles, and blocking scopes
+   as gr0wthlab reads them; and a creative-log.json its kill and change
+   edits can make, against the Angle bank's own header; and the Test Kit
+   meets the run's own floor: at least 15
    distinct Angles, hook-only A/B pairs, and a 14-day calendar;
 3. with --write-entry, writes `handoff/registry-entry.json`: RepToday's entry
    with the Product's name and the package's folder, ready for the reviewed
@@ -205,7 +207,8 @@ def check_calendar(text, problems):
             named = re.findall(r"\bP\d+\b", angle_cell)
             if len(named) != 1:
                 problems.append("cadence-14-day.md: flex day %s must name exactly one fallback Angle (P..)" % day)
-        days[day] = {"angle": m.group(1) if m else None, "leg": leg.groups() if leg else None}
+        days[day] = {"angle": m.group(1) if m else None, "leg": leg.groups() if leg else None,
+                     "platform": row[idx["platform"]]}
     for d in range(1, CALENDAR_DAYS):
         if str(d) not in days:
             problems.append("cadence-14-day.md: day %d is missing (days 1-13 must exist)" % d)
@@ -223,12 +226,10 @@ def metrics_named(text):
 
 def check_angles(text, rules, problems, warnings):
     """The Angle bank as gr0wthlab's kit.parse_angles reads it, and what its
-    filming plan (shots.py shot_list) and Weekly Read (results.py asks_for)
-    need of each row."""
-    columns = ("ID", "Angle", "pain", "Hook", "Format", "Platform", "signal", "Kill")
-    table = gc.find_table(text, columns)
+    filming plan (shots.py shot_list) needs of each row."""
+    table = gc.find_table(text, gc.ANGLE_COLUMNS)
     if not table:
-        problems.append("angles.md: no table with columns %s" % ", ".join(columns))
+        problems.append("angles.md: no table with columns %s" % ", ".join(gc.ANGLE_COLUMNS))
         return {}
     header, rows, idx = table
     if len(set(idx.values())) != len(idx):
@@ -263,20 +264,8 @@ def check_angles(text, rules, problems, warnings):
             problems.append("angles.md: %s Format names no recording type gr0wthlab's filming plan knows "
                             "(founder on camera, screen record, time-lapse, slow motion, high-frame-rate, demo, "
                             "pan, video), so it cannot plan the Angle's shots" % aid)
-        for column, label in (("signal", "signal"), ("Kill", "kill criterion")):
-            named = metrics_named(row[idx[column]])
-            asked = STUDIO_NUMBERS.get(platform)
-            if asked is None:
-                continue
-            missing = metric_words([n for n in named if n not in asked])
-            if not [n for n in named if n in asked]:
-                problems.append("angles.md: %s %s names no number gr0wthlab asks %s for (%s)%s"
-                                % (aid, label, platform, metric_words(asked),
-                                   "; it names only %s" % missing if missing else ""))
-            elif missing:
-                problems.append("angles.md: %s %s names %s, which gr0wthlab does not ask %s for"
-                                % (aid, label, missing, platform))
-        angles[aid] = {"hook": hook.strip('"'), "platform": platform}
+        angles[aid] = {"hook": hook.strip('"'), "platform": platform, "signal": row[idx["signal"]],
+                       "kill": row[idx["Kill"]]}
     width = max(2, min((len(aid) - 1 for aid in angles), default=2))
     unpadded = [aid for aid in angles if aid != "P%0*d" % (width, int(aid[1:]))]
     if unpadded:
@@ -345,6 +334,34 @@ def check_calendar_links(days, angles, pairs, problems):
                                 % (day, pid, info["angle"], pair["angle"]))
 
 
+def check_metrics(days, angles, problems):
+    """Each Angle's signal and kill criterion against the numbers gr0wthlab
+    asks for its posts (results.py asks_for): the numbers of the primary
+    platform of each fixed calendar day that runs it, or of its own Platform
+    when no fixed day does, where the flex edit (weekly_changes.py
+    compose_flex) would put it."""
+    runs = {}
+    for day, info in days.items():
+        if info["angle"] in angles:
+            runs.setdefault(info["angle"], {}).setdefault(info["platform"], []).append(day)
+    for aid, angle in angles.items():
+        for platform, on_days in (runs.get(aid) or {angle["platform"]: []}).items():
+            asked = STUDIO_NUMBERS.get(platform)
+            if asked is None:
+                continue
+            where = " (cadence-14-day.md day %s)" % ", ".join(on_days) if on_days else ""
+            for column, label in (("signal", "signal"), ("kill", "kill criterion")):
+                named = metrics_named(angle[column])
+                missing = metric_words([n for n in named if n not in asked])
+                if not [n for n in named if n in asked]:
+                    problems.append("angles.md: %s %s names no number gr0wthlab asks %s for (%s)%s%s"
+                                    % (aid, label, platform, metric_words(asked),
+                                       "; it names only %s" % missing if missing else "", where))
+                elif missing:
+                    problems.append("angles.md: %s %s names %s, which gr0wthlab does not ask %s for%s"
+                                    % (aid, label, missing, platform, where))
+
+
 def check_platforms(text, problems):
     found, inside = [], False
     for line in text.splitlines():
@@ -399,16 +416,22 @@ def check_checklist(text, problems, warnings):
     items, covered = checklist_items(text)
     if not items:
         problems.append("pre-publication-checklist.md: no '- [ ] **Title** ...' items")
-    lines = text.splitlines()
-    for index, line in enumerate(lines):
-        if index in covered:
+    starts = {number - 1 for number, _, _, _, _ in items}
+    after_item = False
+    for index, line in enumerate(text.splitlines()):
+        if index in starts:
+            after_item = True
             continue
-        if UNREAD_ITEM_RE.match(line):
+        if line.startswith("#"):
+            after_item = False
+        elif UNREAD_ITEM_RE.match(line):
             problems.append("pre-publication-checklist.md:%d: a checkbox gr0wthlab does not read as an item; an "
                             "item starts '- [ ] ' at column 0" % (index + 1))
-        elif index - 1 in covered and line.strip() and not line.startswith("#") and BLOCKING_LIKE_RE.search(line):
-            problems.append("pre-publication-checklist.md:%d: this line ends the item above it in gr0wthlab's "
-                            "reading, so its blocking scope is never read; indent it two spaces" % (index + 1))
+        elif after_item and index not in covered and BLOCKING_LIKE_RE.search(line):
+            problems.append("pre-publication-checklist.md:%d: this line is not part of the item above it in "
+                            "gr0wthlab's reading, which ends an item at its first blank or unindented line, so its "
+                            "blocking scope is never read; put it on a line indented two spaces right under the "
+                            "item" % (index + 1))
     for number, done, title, scope, full in items:
         where = "pre-publication-checklist.md:%d" % number
         if not re.search(r"\w", title):
@@ -608,6 +631,7 @@ def check(pkg, product, registry=None, write_entry=False):
     pairs = check_pairs(read(pkg, kit + "ab-pairs.md") or "", angles, problems) \
         if read(pkg, kit + "ab-pairs.md") is not None else {}
     check_calendar_links(days, angles, pairs, problems)
+    check_metrics(days, angles, problems)
     if read(pkg, kit + "platform-assignment.md") is not None:
         found = check_platforms(read(pkg, kit + "platform-assignment.md"), problems)
         if rules and isinstance(rules.get("caption_call_to_action"), dict):
@@ -618,7 +642,7 @@ def check(pkg, product, registry=None, write_entry=False):
     if read(pkg, kit + "read-the-results.md") is not None:
         check_read_results(read(pkg, kit + "read-the-results.md"), problems)
     if read(pkg, kit + "creative-log.json") is not None:
-        bank = gc.find_table(read(pkg, kit + "angles.md") or "", ("ID", "Hook"))
+        bank = gc.find_table(read(pkg, kit + "angles.md") or "", gc.ANGLE_COLUMNS)
         check_creative_log(read(pkg, kit + "creative-log.json"), angles, problems, bank[0] if bank else ())
     else:
         problems.append("05-social-pmf/creative-log.json is missing (gr0wthlab writes kills into it)")

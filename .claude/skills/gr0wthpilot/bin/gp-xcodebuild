@@ -19,9 +19,11 @@ build folder (`<Product>.guard/build/`), which no tool of the run can write:
     the run's cache folder;
   - a build setting names no path outside the build folder, and no `$(`,
     `${`, or `..`;
-  - every action (build, test, clean, analyze) names an iOS Simulator
-    -destination or -sdk iphonesimulator, since without one xcodebuild uses
-    the project's default SDK, a device's; a -destination must be an iOS
+  - every call but an information one (-list, -showBuildSettings, and the
+    like, with no action) names an iOS Simulator -destination or -sdk
+    iphonesimulator, a call with no action included, since xcodebuild then
+    builds, and without one it uses the project's default SDK, a device's;
+    a -destination must be an iOS
     Simulator one, an -sdk and an SDKROOT=value must be iphonesimulator, an
     -xcconfig (which overrides the command line) and every file it includes
     lie in the copy and set SDKROOT to nothing else, and the
@@ -277,11 +279,11 @@ def check_args(cfg, args):
     if testing and not has_destination:
         raise ToolError("tests run only on a simulator this run created: pass "
                         "-destination 'platform=iOS Simulator,id=<udid>' (gp-sim create)")
-    if any(a in ACTIONS for a in args) and not (has_destination or has_sdk):
+    info_only = any(a in INFO_FLAGS for a in args) and not any(a in ACTIONS for a in args)
+    if not info_only and not (has_destination or has_sdk):
         raise ToolError("every build targets the iOS simulator: pass -sdk iphonesimulator or "
                         "-destination 'generic/platform=iOS Simulator', or xcodebuild uses the project's "
-                        "default SDK, a device's")
-    info_only = any(a in INFO_FLAGS for a in args) and not any(a in ACTIONS for a in args)
+                        "default SDK, a device's (with no action, xcodebuild builds)")
     if not has_target and not (info_only and args and args[0] in ("-version", "-showsdks")):
         raise ToolError("name the copy's project or workspace with -project/-workspace "
                         "(see gp-xcodebuild source)")

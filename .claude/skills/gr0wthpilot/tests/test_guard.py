@@ -861,6 +861,10 @@ class WrapperRulesTest(unittest.TestCase):
         for action in ("build", "build-for-testing", "analyze", "clean"):
             with self.assertRaises(xb.ToolError, msg=action):
                 xb.check_args(self.cfg, base + [action])
+        for implicit in ([], ["-target", "App"], ["-alltargets"], ["-configuration", "Debug", "-quiet"]):
+            with self.assertRaises(xb.ToolError, msg=str(implicit)):
+                xb.check_args(self.cfg, base + implicit)
+            xb.check_args(self.cfg, base + implicit + ["-sdk", "iphonesimulator"])
         for sdk in ("iphonesimulator", "iphonesimulator26.0"):
             xb.check_args(self.cfg, base + ["-sdk", sdk, "build"])
         for bad in (["-sdk", "iphonesimulatorx"], ["-sdk", "iphoneos"], ["-sdk", "macosx"],
@@ -873,7 +877,8 @@ class WrapperRulesTest(unittest.TestCase):
         for good in (["-sdk", "iphonesimulator", "SDKROOT=iphonesimulator"],
                      ["-sdk", "iphonesimulator", "-xcconfig", str(copy / "Simulator.xcconfig")]):
             xb.check_args(self.cfg, base + good + ["build"])
-        xb.check_args(self.cfg, base + ["-list"])
+        for info in (["-list"], ["-showBuildSettings"], ["-showdestinations"], ["-showTestPlans", "-json"]):
+            xb.check_args(self.cfg, base + info)
         config = Path(self.cfg["state"]) / "guard-config.json"
         gc.write_json(config, self.cfg)
         envs = []
@@ -882,6 +887,7 @@ class WrapperRulesTest(unittest.TestCase):
             self.assertEqual(xb.main(base + ["-sdk", "iphonesimulator", "build"]), 0)
             with contextlib.redirect_stderr(io.StringIO()):
                 self.assertEqual(xb.main(base + ["-sdk", "iphoneos", "build"]), 1)
+                self.assertEqual(xb.main(base), 1)
         self.assertEqual(len(envs), 1)
         self.assertNotIn("XCODE_XCCONFIG_FILE", envs[0])
 

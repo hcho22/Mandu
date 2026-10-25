@@ -9,10 +9,12 @@ semantics of gr0wthlab's lint (src/gr0wthlab/lint.py, Rules.check_one and
 Rules.sponsorship), word and phrase rules matching after lint_allow_phrases
 are masked:
 
-- to every Hook in `05-social-pmf/angles.md` and `ab-pairs.md`, and to each
+- to every Hook in `05-social-pmf/angles.md` (the Angle bank, the first
+  table with its eight columns) and `ab-pairs.md`, in full, as gr0wthlab
+  lints a newly written bank Hook (weekly_changes.py check_row), and to each
   labeled copy field of the social copy (the Launch Set's Markdown and the
   week-1 drafts), every rule gr0wthlab's lint applies to a post:
-  hook_max_words (Hooks and `**Hook:**` fields only), hook_must_not_be_question,
+  hook_max_words (Hooks and Hook fields only), hook_must_not_be_question,
   banned_words_in_hook, banned_social_proof_in_hook,
   banned_characters_anywhere, no_emoji_in_hook, no_all_caps_words_in_hook
   with all_caps_allowlist, stock_phrases, capped_words with
@@ -20,26 +22,36 @@ are masked:
   invented_proof_quantities (and any percentage or multiplier, when
   invented_proof_terms is set), fake_scarcity, loss_framing, and [NEED:]
   markers; long_sentence_words and long_sentence_commas are warnings, as in
-  gr0wthlab, and skip alt text;
-- frozen_hooks_exempt_from as gr0wthlab honors it: a Hook that is one of the
-  kit's frozen Hooks word for word skips hook_max_words, and
-  banned_words_in_hook does not count inside a frozen Hook's own words, a
-  whole Hook or one of its sentences, wherever a field repeats them (every
-  frozen Hook of the kit, since a draft field may show any day's Hook);
+  gr0wthlab, and skip alt text; a visual action is a filming note, read for
+  banned_social_proof_in_hook only, as gr0wthlab reads a beat's visual
+  action; a labeled field with no copy fails, and one that says none is
+  skipped, as gr0wthlab skips it;
+- frozen_hooks_exempt_from as gr0wthlab honors it in a post Draft, to the
+  social copy's fields only: a Hook field that is one of the kit's frozen
+  Hooks word for word skips hook_max_words, and banned_words_in_hook does
+  not count inside a frozen Hook's own words, a whole Hook or one of its
+  sentences, wherever a field repeats them; the fields may repeat any of the
+  kit's frozen Hooks, since the lint does not read which day a field is for,
+  but every one of those Hooks passes in full in the bank or the package
+  fails there;
 - to each `**Message:**` or `**Subject:**` field (a message to a creator,
-  in the social copy or in `06-channels/`): every post rule above, plus
-  sponsorship_asks, which gr0wthlab reads in a message to a creator only;
+  in the social copy or in `06-channels/`): every post rule above, with no
+  frozen Hook exempt, as gr0wthlab's messages.py lints a message, plus
+  sponsorship_asks in the Message, which gr0wthlab reads in a message to a
+  creator only (Rules.sponsorship);
 - to any page a stranger reads (the site, the Launch Set's HTML, the video
   script, and the extras, whose sourced numbers the claim audit covers):
   banned_characters_anywhere, stock_phrases, fake_scarcity, loss_framing, and
   [NEED:] markers; a page's copy is its words and the attributes and JSON-LD
   a reader, search result, or share card shows.
 
-required_sections and required_disclosure are reported as not applicable,
-because gr0wthlab's lint applies neither to a post (lint.py NOT_FOR_POSTS);
-a rule type whose keys brand-rules.json lacks is reported as pending, as
-gr0wthlab reports it. gr0wthlab's own post-Draft lint, which also checks each
-platform's character and hashtag limits, stays the authority.
+required_sections, required_disclosure, and sponsorship_asks are reported as
+not applicable, because gr0wthlab's lint applies none of them to a post
+(lint.py NOT_FOR_POSTS); a rule type whose keys brand-rules.json lacks is
+reported as pending, as gr0wthlab reports it, and sponsorship asks as pending
+for messages to a creator when brand-rules.json has no sponsorship_asks
+(Rules.creator_pending). gr0wthlab's own post-Draft lint, which also checks
+each platform's character and hashtag limits, stays the authority.
 
 Usage: brand_lint.py PACKAGE [--json]
 """
@@ -69,10 +81,12 @@ REQUIRED = ("hook_max_words", "hook_must_not_be_question", "banned_words_in_hook
             "banned_characters_anywhere", "pain_source_url_must_start_with", "caption_call_to_action")
 TEST_PLATFORMS = ("TikTok", "YouTube Shorts")
 COPY_SKIP = {"BUILD-SPEC.md", "README.md"}
-# How gr0wthlab's lint applies each kind of key (lint.py NOT_FOR_POSTS, NEW_RULE_TYPES, LOSS_FRAMING).
+# How gr0wthlab's lint applies each kind of key (lint.py NOT_FOR_POSTS, NEW_RULE_TYPES, LOSS_FRAMING,
+# CREATOR_RULE_TYPES).
 NOT_FOR_POSTS = {
     "required_sections": "the layout of the dry-run creative briefs; a post Draft has its own format",
     "required_disclosure": "screens shown as simulated; the kit's posts are real-device recordings",
+    "sponsorship_asks": "asks a message to a creator may not make; a post is not read for them",
 }
 RULE_TYPES = {
     "stock phrases": ("stock_phrases",),
@@ -83,6 +97,7 @@ RULE_TYPES = {
     "allowed phrases": ("lint_allow_phrases",),
     "loss framing": ("loss_framing",),
 }
+CREATOR_RULE_TYPES = {"sponsorship asks": ("sponsorship_asks",)}
 
 
 def has_alnum(text):
@@ -252,7 +267,7 @@ def invented_proof(text, rules):
     return found
 
 
-def lint_copy(text, rules, hook=False, full=True, frozen=(), message=False):
+def lint_copy(text, rules, hook=False, full=True, frozen=(), message=False, note=False):
     """Return the blocking findings for one piece of copy, as gr0wthlab's
     Rules.check_one finds them. full=True applies every rule gr0wthlab's lint
     applies to a post; full=False only the rules that hold for any page a
@@ -260,9 +275,13 @@ def lint_copy(text, rules, hook=False, full=True, frozen=(), message=False):
     markers), since the claim audit covers a page's sourced numbers. frozen
     holds the frozen Hooks the copy may show, whose own words are exempt from
     the rules frozen_hooks_exempt_from names; message=True also reads a
-    message to a creator for sponsorship_asks (Rules.sponsorship)."""
+    message to a creator for sponsorship_asks (Rules.sponsorship); note=True
+    reads a filming note, such as a visual action, for social proof only."""
     found = []
     words_text = masked(plain(text), rules)
+    if note:
+        return ["social proof %r" % term for term in rules.get("banned_social_proof_in_hook") or []
+                if words_pattern(term).search(words_text)]
     exempt = exempt_rules(rules)
     frozen = tuple(h for h in frozen if h.strip()) if full else ()
     if frozen and "banned_words_in_hook" in exempt:
@@ -338,7 +357,9 @@ def sentence_warnings(text, rules, description=False):
 
 def statuses(rules):
     """How each key of brand-rules.json applies to a post, and each rule type
-    that waits for keys it lacks, as gr0wthlab's Rules.statuses reports them."""
+    that waits for keys it lacks, as gr0wthlab's Rules.statuses reports them,
+    then each rule type a message to a creator waits for, as
+    Rules.creator_pending reports it."""
     rows = []
     for key in rules:
         if key in ("comment", "notes"):
@@ -347,14 +368,17 @@ def statuses(rules):
             rows.append((key, "unknown", "gr0wthlab cannot check this rule yet, so it blocks every Draft"))
         elif key in NOT_FOR_POSTS:
             rows.append((key, "not applicable", NOT_FOR_POSTS[key]))
-        elif key == "sponsorship_asks":
-            rows.append((key, "applied", "to a message to a creator only; a post is not read for them"))
         else:
             rows.append((key, "applied", ""))
     for name, keys in RULE_TYPES.items():
         missing = [k for k in keys if k not in rules]
         if missing:
             rows.append((name, "pending", "brand-rules.json has no " + ", ".join(missing) + " yet"))
+    for name, keys in CREATOR_RULE_TYPES.items():
+        missing = [k for k in keys if k not in rules]
+        if missing:
+            rows.append((name, "pending", "brand-rules.json has no %s yet, so no message to a creator is read "
+                                          "for them" % ", ".join(missing)))
     return rows
 
 
@@ -365,7 +389,7 @@ def hooks(pkg):
     out = []
     angles = pkg / "05-social-pmf" / "angles.md"
     if angles.is_file():
-        table = gc.find_table(angles.read_text(encoding="utf-8"), ("ID", "Hook"))
+        table = gc.find_table(angles.read_text(encoding="utf-8"), gc.ANGLE_COLUMNS)
         if table:
             header, rows, idx = table
             for row in rows:
@@ -397,19 +421,26 @@ def files_for(pkg, globs):
     return seen
 
 
+# A known label, then optionally a number, "sequence", a "/ second name", and a
+# parenthetical, as in `**Hook (0.0-3s):**` or `**Hook / Shorts title:**`.
 COPY_FIELD_RE = re.compile(
-    r"^\s*(?:[-*]\s+)?\*\*(hook|caption|title|description|hashtags|alt text|on-screen text|post|"
-    r"bio|name|display name|thread|reply|text|message|subject)(?: \d+)?:\*\*\s*(.*)$", re.IGNORECASE)
+    r"^\s*(?:[-*]\s+)?\*\*(hook|caption|title|description|hashtags|alt text|on-screen text|spoken line|"
+    r"visual action|post|bio|name|display name|thread|reply|text|message|subject)(?: \d+)?(?: sequence)?"
+    r"(?: / [^*():]+)?(?: \([^)]*\))?:\*\*\s*(.*)$", re.IGNORECASE)
 MESSAGE_FIELDS = ("message", "subject")
+NOTE_FIELDS = ("visual action",)
 FIELD_END_RE = re.compile(r"^\s*(?:#|(?:[-*]\s+)?\*\*[^*]+:\*\*)")
+QUOTE_MARK_RE = re.compile(r"^\s*>\s?")
 
 
 def social_units(text):
     """Yield (line, copy, label) for each labeled copy field of a social Markdown file:
-    `**Caption:**`, `**Title:**`, `**Alt text:**`, and the like. A field runs to
-    the next blank line, label, or heading. Production notes outside those
+    `**Caption:**`, `**Title:**`, `**Alt text:**`, and the like. A field's copy
+    starts on its label's line, or on the next line that is not blank when the
+    label's line holds none, and runs to the next blank line, label, or
+    heading, without a quote's `>` marks. Production notes outside those
     fields are not post copy and are not linted, as gr0wthlab lints only the
-    fields a platform shows."""
+    fields a platform shows. A field gr0wthlab skips as none is skipped."""
     lines = text.splitlines()
     i = 0
     while i < len(lines):
@@ -419,11 +450,14 @@ def social_units(text):
             continue
         start, parts, label = i + 1, [m.group(2)], m.group(1).lower()
         i += 1
+        if not m.group(2).strip():
+            while i < len(lines) and not lines[i].strip():
+                i += 1
         while i < len(lines) and lines[i].strip() and not FIELD_END_RE.match(lines[i]):
             parts.append(lines[i])
             i += 1
-        copy = "\n".join(p for p in parts if p.strip())
-        if copy.strip():
+        copy = "\n".join(QUOTE_MARK_RE.sub("", p) for p in parts if p.strip())
+        if copy.strip().casefold() != "none":
             yield start, copy, label
 
 
@@ -445,11 +479,16 @@ def lint_files(pkg, rules, globs, full, frozen=(), only=None):
             if only is not None and label not in only:
                 continue
             where = gc.rel(pkg, path) + (":%d" % number if number else "")
+            if label and not unit.strip():
+                problems.append("%s: the %s field holds no copy the lint can read; write its copy after the "
+                                "label, or none" % (where, label))
+                continue
             excerpt = " ".join(unit.split())[:100]
-            findings = lint_copy(unit, rules, hook=label == "hook", full=full, frozen=frozen,
-                                 message=label in MESSAGE_FIELDS)
+            findings = lint_copy(unit, rules, hook=label == "hook", full=full,
+                                 frozen=() if label in MESSAGE_FIELDS else frozen, message=label == "message",
+                                 note=label in NOTE_FIELDS)
             problems += ["%s: %s: %s" % (where, finding, excerpt) for finding in findings]
-            if full:
+            if full and label not in NOTE_FIELDS:
                 warnings += ["%s: %s: %s" % (where, finding, excerpt)
                              for finding in sentence_warnings(unit, rules, description=label == "alt text")]
     return problems, warnings
@@ -471,9 +510,8 @@ def check(pkg, source_tags=None):
     warnings = []
     found = hooks(pkg)
     frozen = tuple(dict.fromkeys(hook for _, hook, is_frozen in found if is_frozen))
-    for where, hook, is_frozen in found:
-        problems += ["%s: %s: %s" % (where, f, hook)
-                     for f in lint_copy(hook, rules, hook=True, frozen=(hook,) if is_frozen else ())]
+    for where, hook, _ in found:
+        problems += ["%s: %s: %s" % (where, f, hook) for f in lint_copy(hook, rules, hook=True)]
         warnings += ["%s: %s: %s" % (where, f, hook) for f in sentence_warnings(hook, rules)]
     for globs, full, only in ((SOCIAL_GLOBS, True, None), (CREATOR_GLOBS, True, MESSAGE_FIELDS),
                               (PAGE_GLOBS, False, None)):

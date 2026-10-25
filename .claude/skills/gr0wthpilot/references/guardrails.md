@@ -89,7 +89,7 @@ Three wrappers run outside the sandbox, because what they drive cannot run insid
   The project, workspace, and `.xcconfig` must lie in that copy.
   Every call, `-list` and `-showBuildSettings` included, gets the build folder's own DerivedData, which holds the Swift packages a build fetches and compiles and the app `gp-sim` installs, so xcodebuild never reads or writes the Founder's DerivedData; only a result bundle may go to the cache folder.
   A build setting may name no path outside the build folder and no `$(`, `${`, or `..`.
-  Every build, test, clean, and analyze action names an iOS Simulator `-destination` or `-sdk iphonesimulator`, since without one xcodebuild uses the project's default SDK, a device's.
+  Every call except an information one (`-list`, `-showBuildSettings`, and the like, with no action) names an iOS Simulator `-destination` or `-sdk iphonesimulator`, a call with no action included, since xcodebuild then builds, and without one it uses the project's default SDK, a device's.
   A `-destination` must be an iOS Simulator one, and an `-sdk` and an `SDKROOT=` setting must be `iphonesimulator`; an `-xcconfig`, which overrides the command line, and every file it includes must lie in the copy and set `SDKROOT` to nothing else, and the wrapper clears `XCODE_XCCONFIG_FILE`.
   Tests run only on a simulator in the Product's ledger (named by `id=` or `name=`, so xcodebuild never boots one of the Founder's own), and the wrapper refuses archive, export, signing with a team, device registration, and App Store Connect.
 

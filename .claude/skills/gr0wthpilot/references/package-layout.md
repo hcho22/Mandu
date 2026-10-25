@@ -67,7 +67,8 @@ A table with the columns ID, Angle, pain, Hook, Format, Platform, signal, Kill, 
 - The pain cell holds the pain's source URL (https).
 - Platform is exactly `TikTok` or `YouTube Shorts`, because gr0wthlab's flex edit copies it into the calendar as written (`weekly_changes.py` `compose_flex`).
 - Format names a recording gr0wthlab's filming plan knows: founder on camera, screen record, time-lapse, slow motion, high-frame-rate, demo, pan, or video, optionally after a length like `15-20s` (`shots.py` `CAPTURES`); one that names none fails, as gr0wthlab could not plan its shots.
-- The signal and Kill cells each name a number gr0wthlab asks the Angle's platform for, in the words `results.py` `TERMS` reads, and no number that platform's Studio does not give: on TikTok watched-full, watch time, saves, shares, likes, profile visits, comments; on YouTube Shorts viewed versus swiped (or "viewed rate"), % viewed, shares, likes, comments (`results.py` `LABELS`, `asks_for`). Saves on a YouTube Shorts Angle fail.
+- The signal and Kill cells each name a number gr0wthlab asks for the Angle's posts, in the words `results.py` `TERMS` reads, and no number that platform's Studio does not give: on TikTok watched-full, watch time, saves, shares, likes, profile visits, comments; on YouTube Shorts viewed versus swiped (or "viewed rate"), % viewed, shares, likes, comments (`results.py` `LABELS`).
+  The platform is the primary platform of each fixed calendar day that runs the Angle, as `results.py` `asks_for` reads it, or the Angle's own Platform when no fixed day runs it, where the flex edit would put it; saves fail on an Angle a YouTube Shorts day runs.
 
 ### 05-social-pmf/ab-pairs.md
 
@@ -106,7 +107,7 @@ It must hold the floor line, for example:
 Pretty-printed JSON, one key per line: an object with a `comment` and an `angles` list, one record per Angle, and only these keys: angle_id, hook, platform, hypothesis, format, preregistered_success_signal, kill_criterion, pain_rank, pain_state, verbatim_quote, pain_source_url, ab_pair, results, status.
 The check also accepts a bare list of records or an object with no `comment`, as gr0wthlab does (`weekly_changes.py` `log_records`).
 `angle_id` is the Angle's ID alone or followed by a hyphen (`"P01"` or `"P01-waiting"`, never `"P01_waiting"`), on a line of its own, and the record's `status` line follows it within the same record: the check makes gr0wthlab's kill edit of every record (`compose_kill`) and fails a record whose edit would change anything but its status.
-It also makes gr0wthlab's edit that adds a changed Angle's record after the last one (`compose_record`), so the last record's `}` line must be followed by the list's `]` line, with records indented as the file indents them; `hypothesis` needs a Hypothesis column in angles.md, the cell a new record takes it from.
+It also makes gr0wthlab's edit that adds a changed Angle's record after the last one (`compose_record`), so the last record's `}` line must be followed by the list's `]` line, with records indented as the file indents them; `hypothesis` needs a Hypothesis column in the Angle bank's table (the first with the eight columns above), the cell a new record takes it from.
 Every Angle on the same platform uses the same platform string (`tiktok`, `youtube_shorts`; the check compares the strings across Angles but not their values); `status` starts `draft` and `results` is `null`.
 
 ### 09-extras/marketing-agent/brand-rules.json
@@ -122,7 +123,7 @@ Derive the lists from the brand guidelines' voice rules and the category's forbi
 
 Items at column 0, `- [ ] **Title** what to do (blocking: scope)`, continuation lines indented two spaces; the check reads them as `kit.py` `parse_checklist` does.
 An item's title is its **bold** text, else its first sentence; its scope is the last `(blocking: ...)` in the item, continuation lines included.
-The check fails a checklist with no column-0 items, an item with no title, a blocking scope gr0wthlab cannot read (`(Blocking: ...)`, an unclosed or empty one), more than one scope in an item, a blocking scope on an unindented line after an item (which ends the item), and a checkbox that is not at column 0.
+The check fails a checklist with no column-0 items, an item with no title, a blocking scope gr0wthlab cannot read (`(Blocking: ...)`, an unclosed or empty one), more than one scope in an item, a blocking scope on a line after an item that is not part of it (an item ends at its first blank or unindented line), and a checkbox that is not at column 0, an indented one that gr0wthlab merges into the item above included.
 An open item whose scope starts "everything public" or "social" blocks every gr0wthlab post Draft until the Founder closes it, unless its title names `the "<claim>" claim`, which narrows it to posts carrying the claim (`drafts.py` `checklist_status`); a claim named outside the title fails, and an open social item with no claim is warned; use that scope only for what truly must come first, such as the Waitlist going live.
 
 ### 01-research/competitor-*.md
@@ -146,14 +147,20 @@ In `05-social-pmf/week-1-drafts.md` and the Launch Set's Markdown, put every pie
 **Hashtags:** ...
 **Alt text:** ...
 **On-screen text:** ...
+**Spoken line:** ...
+**Visual action:** ...
 **Bio:** ...
 ```
 
-A field runs to the next blank line, label, or heading; production notes outside fields are not linted.
-A `**Hook:**` field also gets `hook_max_words`; `long_sentence_words` and `long_sentence_commas` are warnings, as in gr0wthlab, and skip alt text.
-The kit's frozen Hooks are exempt as `frozen_hooks_exempt_from` names: a Hook that is a frozen Hook word for word skips `hook_max_words`, and `banned_words_in_hook` does not count inside a frozen Hook's own words wherever a field repeats them.
-A message to a creator, in a `**Message:**` or `**Subject:**` field here or in `06-channels/`, also gets `sponsorship_asks`, which gr0wthlab reads only in a creator message (`Rules.sponsorship`).
-`required_sections` and `required_disclosure` apply to no post in gr0wthlab (`lint.py` `NOT_FOR_POSTS`), so the lint reports them as not applicable.
+A label may carry a number, `sequence`, a `/ second name`, and a parenthetical, as in `**Hook (0.0-3s):**`, `**Hook / Shorts title:**`, or `**On-screen text sequence:**`; the field is the first name.
+A field's copy starts on its label's line, or on the next line that is not blank when the label's line holds none, and runs to the next blank line, label, or heading; a quote's `>` marks are not copy, and production notes outside fields are not linted.
+A labeled field with no copy fails; write `none` for a field with none, which the lint skips as gr0wthlab skips it.
+A Hook field also gets `hook_max_words`; `long_sentence_words` and `long_sentence_commas` are warnings, as in gr0wthlab, and skip alt text.
+A visual action is a filming note, read only for `banned_social_proof_in_hook`, as gr0wthlab reads a beat's visual action.
+Every Hook in angles.md and ab-pairs.md gets every rule in full, as gr0wthlab lints a newly written bank Hook (`weekly_changes.py` `check_row`), so `frozen_hooks_exempt_from` never exempts the kit's own Hooks.
+In the fields above, the exemption works as in a gr0wthlab post Draft: a Hook field that is a frozen Hook word for word skips `hook_max_words`, and `banned_words_in_hook` does not count inside a frozen Hook's own words wherever a field repeats them.
+A message to a creator, in a `**Message:**` or `**Subject:**` field here or in `06-channels/`, gets every post rule with no frozen Hook exempt, as gr0wthlab lints a message, and its Message also gets `sponsorship_asks`, which gr0wthlab reads only in a creator message (`Rules.sponsorship`).
+`required_sections`, `required_disclosure`, and `sponsorship_asks` apply to no post in gr0wthlab (`lint.py` `NOT_FOR_POSTS`), so the lint reports them as not applicable, and reports sponsorship asks as pending for messages to a creator while `sponsorship_asks` is missing (`Rules.creator_pending`).
 
 ## 10-launch-set/manifest.json
 
