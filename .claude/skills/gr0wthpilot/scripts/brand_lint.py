@@ -34,11 +34,10 @@ are masked:
   kit's frozen Hooks, since the lint does not read which day a field is for,
   but every one of those Hooks passes in full in the bank or the package
   fails there;
-- to each `**Message:**` or `**Subject:**` field (a message to a creator,
-  in the social copy or in `06-channels/`): every post rule above, with no
-  frozen Hook exempt, as gr0wthlab's messages.py lints a message, plus
-  sponsorship_asks in the Message, which gr0wthlab reads in a message to a
-  creator only (Rules.sponsorship);
+- to each `**Message:**` field (a message to a creator, in the social copy
+  or in `06-channels/`): every post rule above, with no frozen Hook exempt,
+  plus sponsorship_asks, which gr0wthlab reads in a message to a creator
+  only, as gr0wthlab's messages.py lints a message's body (Rules.sponsorship);
 - to any page a stranger reads (the site, the Launch Set's HTML, the video
   script, and the extras, whose sourced numbers the claim audit covers):
   banned_characters_anywhere, stock_phrases, fake_scarcity, loss_framing, and
@@ -425,11 +424,11 @@ def files_for(pkg, globs):
 # parenthetical, as in `**Hook (0.0-3s):**` or `**Hook / Shorts title:**`.
 COPY_FIELD_RE = re.compile(
     r"^\s*(?:[-*]\s+)?\*\*(hook|caption|title|description|hashtags|alt text|on-screen text|spoken line|"
-    r"visual action|post|bio|name|display name|thread|reply|text|message|subject)(?: \d+)?(?: sequence)?"
+    r"visual action|post|bio|name|display name|thread|reply|text|message)(?: \d+)?(?: sequence)?"
     r"(?: / [^*():]+)?(?: \([^)]*\))?:\*\*\s*(.*)$", re.IGNORECASE)
-MESSAGE_FIELDS = ("message", "subject")
+MESSAGE_FIELDS = ("message",)
 NOTE_FIELDS = ("visual action",)
-FIELD_END_RE = re.compile(r"^\s*(?:#|(?:[-*]\s+)?\*\*[^*]+:\*\*)")
+FIELD_END_RE = re.compile(r"^\s*(?:#{1,6}(?:\s|$)|(?:[-*]\s+)?\*\*[^*]+:\*\*)")
 QUOTE_MARK_RE = re.compile(r"^\s*>\s?")
 
 
@@ -438,7 +437,8 @@ def social_units(text):
     `**Caption:**`, `**Title:**`, `**Alt text:**`, and the like. A field's copy
     starts on its label's line, or on the next line that is not blank when the
     label's line holds none, and runs to the next blank line, label, or
-    heading, without a quote's `>` marks. Production notes outside those
+    Markdown heading (`#` then a space; a line of hashtags is copy), without
+    a quote's `>` marks. Production notes outside those
     fields are not post copy and are not linted, as gr0wthlab lints only the
     fields a platform shows. A field gr0wthlab skips as none is skipped."""
     lines = text.splitlines()
@@ -485,7 +485,7 @@ def lint_files(pkg, rules, globs, full, frozen=(), only=None):
                 continue
             excerpt = " ".join(unit.split())[:100]
             findings = lint_copy(unit, rules, hook=label == "hook", full=full,
-                                 frozen=() if label in MESSAGE_FIELDS else frozen, message=label == "message",
+                                 frozen=() if label in MESSAGE_FIELDS else frozen, message=label in MESSAGE_FIELDS,
                                  note=label in NOTE_FIELDS)
             problems += ["%s: %s: %s" % (where, finding, excerpt) for finding in findings]
             if full and label not in NOTE_FIELDS:

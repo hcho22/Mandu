@@ -68,7 +68,8 @@ A table with the columns ID, Angle, pain, Hook, Format, Platform, signal, Kill, 
 - Platform is exactly `TikTok` or `YouTube Shorts`, because gr0wthlab's flex edit copies it into the calendar as written (`weekly_changes.py` `compose_flex`).
 - Format names a recording gr0wthlab's filming plan knows: founder on camera, screen record, time-lapse, slow motion, high-frame-rate, demo, pan, or video, optionally after a length like `15-20s` (`shots.py` `CAPTURES`); one that names none fails, as gr0wthlab could not plan its shots.
 - The signal and Kill cells each name a number gr0wthlab asks for the Angle's posts, in the words `results.py` `TERMS` reads, and no number that platform's Studio does not give: on TikTok watched-full, watch time, saves, shares, likes, profile visits, comments; on YouTube Shorts viewed versus swiped (or "viewed rate"), % viewed, shares, likes, comments (`results.py` `LABELS`).
-  The platforms are the primary platform of each fixed calendar day that runs the Angle, as `results.py` `asks_for` reads it, and the Angle's own Platform when no fixed day runs it or when the flex edit (`weekly_changes.py` `compose_flex`) can put it there: as the flex row's named fallback, or, while the calendar has a flex day, as an Angle that runs on a day the day-7 Weekly Read covers (days 1 to 5), which can earn the slot; saves fail on an Angle a YouTube Shorts day runs.
+  The platforms are those gr0wthlab's Weekly Reads ask about the Angle (`results.py` `asks_for`), which cover calendar days 1 to 13 (`exchange.py` `READ_DAYS`): the primary platform of each fixed day in that range that runs the Angle, and, when the flex day is in that range, the Angle's own Platform if the flex edit (`weekly_changes.py` `compose_flex`) can put it there, as the flex row's named fallback or as an Angle a day 1 to 5 runs, which can earn the slot; saves fail on an Angle a YouTube Shorts day runs.
+  An Angle no read asks about, such as one only a day-14 slot runs, is not checked.
 
 ### 05-social-pmf/ab-pairs.md
 
@@ -153,13 +154,13 @@ In `05-social-pmf/week-1-drafts.md` and the Launch Set's Markdown, put every pie
 ```
 
 A label may carry a number, `sequence`, a `/ second name`, and a parenthetical, as in `**Hook (0.0-3s):**`, `**Hook / Shorts title:**`, or `**On-screen text sequence:**`; the field is the first name.
-A field's copy starts on its label's line, or on the next line that is not blank when the label's line holds none, and runs to the next blank line, label, or heading; a quote's `>` marks are not copy, and production notes outside fields are not linted.
+A field's copy starts on its label's line, or on the next line that is not blank when the label's line holds none, and runs to the next blank line, label, or Markdown heading (`#` then a space; a line of hashtags is copy); a quote's `>` marks are not copy, and production notes outside fields are not linted.
 A labeled field with no copy fails; write `none` for a field with none, which the lint skips as gr0wthlab skips it.
 A Hook field also gets `hook_max_words`; `long_sentence_words` and `long_sentence_commas` are warnings, as in gr0wthlab, and skip alt text.
 A visual action is a filming note, read only for `banned_social_proof_in_hook`, as gr0wthlab reads a beat's visual action.
 Every Hook in angles.md and ab-pairs.md gets every rule in full, as gr0wthlab lints a newly written bank Hook (`weekly_changes.py` `check_row`), so `frozen_hooks_exempt_from` never exempts the kit's own Hooks.
 In the fields above, the exemption works as in a gr0wthlab post Draft: a Hook field that is a frozen Hook word for word skips `hook_max_words`, and `banned_words_in_hook` does not count inside a frozen Hook's own words wherever a field repeats them.
-A message to a creator, in a `**Message:**` or `**Subject:**` field here or in `06-channels/`, gets every post rule with no frozen Hook exempt, as gr0wthlab lints a message, and its Message also gets `sponsorship_asks`, which gr0wthlab reads only in a creator message (`Rules.sponsorship`).
+A message to a creator, in a `**Message:**` field here or in `06-channels/`, gets every post rule with no frozen Hook exempt, plus `sponsorship_asks`, which gr0wthlab reads only in a creator message (`Rules.sponsorship`), as gr0wthlab lints a message's body.
 `required_sections`, `required_disclosure`, and `sponsorship_asks` apply to no post in gr0wthlab (`lint.py` `NOT_FOR_POSTS`), so the lint reports them as not applicable, and reports sponsorship asks as pending for messages to a creator while `sponsorship_asks` is missing (`Rules.creator_pending`).
 
 ## 10-launch-set/manifest.json

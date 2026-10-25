@@ -16,13 +16,13 @@ path it names into the package, and verifies:
    drafts.py, posts.py, lint.py; each check names the function it mirrors):
    zero-padded Angle IDs; the exact platform names TikTok and YouTube Shorts;
    Formats naming a recording the filming plan knows; signal and kill cells
-   naming numbers gr0wthlab asks the Studio of each calendar day's primary
-   platform that runs the Angle for, and its own Platform's when no fixed
-   day runs it or the flex slot can put it there; the pre-publication checklist's items, titles, and blocking scopes
-   as gr0wthlab reads them; and a creative-log.json its kill and change
-   edits can make, against the Angle bank's own header; and the Test Kit
-   meets the run's own floor: at least 15
-   distinct Angles, hook-only A/B pairs, and a 14-day calendar;
+   naming numbers gr0wthlab's Weekly Reads ask about the Angle: the Studio
+   numbers of each platform a read day runs it on, the flex day included
+   when a read covers it; the pre-publication checklist's items, titles,
+   and blocking scopes as gr0wthlab reads them; and a creative-log.json its
+   kill and change edits can make, against the Angle bank's own header; and
+   the Test Kit meets the run's own floor: at least 15 distinct Angles,
+   hook-only A/B pairs, and a 14-day calendar;
 3. with --write-entry, writes `handoff/registry-entry.json`: RepToday's entry
    with the Product's name and the package's folder, ready for the reviewed
    gr0wthlab change at Handoff.
@@ -61,9 +61,11 @@ PAIR_LEG_RE = re.compile(r"\b(AB-\d+) leg ([AB])\b")
 # CAPTURES).
 FORMAT_KINDS = re.compile(r"\bfounder[- ]on[- ]camera\b|\bscreen[- ]record(?:ing)?s?\b|\btime-?lapse\b|"
                           r"\bslow[- ]motion\b|\bhigh-frame-rate\b|\bdemo\b|\bpan\b|\bvideo\b", re.I)
-# The calendar days the day-7 Weekly Read covers (exchange.py READ_DAYS): only
-# an Angle one of them runs can earn the flex slot (weekly_read.py).
-EARNING_DAYS = 5
+# Each Weekly Read's day and the last calendar day it covers (gr0wthlab
+# exchange.py READ_DAYS at 6776dd0): results.py asks_for asks about no later
+# day, and only an Angle a day of the first read runs can earn the flex slot
+# (weekly_read.py).
+READ_DAYS = {7: 5, 14: 13}
 # The numbers gr0wthlab asks each platform's Studio for, and the words a
 # signal or kill criterion uses for each (results.py LABELS and TERMS).
 STUDIO_NUMBERS = {
@@ -335,23 +337,25 @@ def check_calendar_links(days, angles, pairs, problems):
 
 
 def check_metrics(days, angles, problems):
-    """Each Angle's signal and kill criterion against the numbers gr0wthlab
-    asks for its posts (results.py asks_for): the numbers of the primary
-    platform of each fixed calendar day that runs it, and of its own Platform
-    when no fixed day runs it or when the flex edit (weekly_changes.py
-    compose_flex) can put it there: as the flex row's named fallback, or as
-    the Angle that earned the slot, which only an Angle a day of the day-7
-    Weekly Read runs can be (weekly_read.py)."""
-    flex = [info["fallback"] for info in days.values() if info["angle"] is None]
+    """Each Angle's signal and kill criterion against the numbers gr0wthlab's
+    Weekly Reads ask about it (results.py asks_for), and no others: the
+    Studio numbers of the primary platform of each fixed calendar day a read
+    covers that runs it, and, when a read covers the flex day, of its own
+    Platform, where the flex edit (weekly_changes.py compose_flex) puts the
+    flex row's named fallback or the Angle that earned the slot, which only
+    an Angle a day of the first read runs can be. An Angle no read asks
+    about is not checked."""
+    last, earning = max(READ_DAYS.values()), READ_DAYS[min(READ_DAYS)]
+    flex = [info["fallback"] for day, info in days.items() if info["angle"] is None and int(day) <= last]
     runs, own = {}, set(flex)
     for day, info in days.items():
-        if info["angle"] in angles:
+        if info["angle"] in angles and int(day) <= last:
             runs.setdefault(info["angle"], {}).setdefault(info["platform"], []).append(day)
-            if flex and int(day) <= EARNING_DAYS:
+            if flex and int(day) <= earning:
                 own.add(info["angle"])
     for aid, angle in angles.items():
         platforms = dict(runs.get(aid, {}))
-        if aid in own or not platforms:
+        if aid in own:
             platforms.setdefault(angle["platform"], [])
         for platform, on_days in platforms.items():
             asked = STUDIO_NUMBERS.get(platform)

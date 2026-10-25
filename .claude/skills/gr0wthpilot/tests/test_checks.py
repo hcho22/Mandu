@@ -543,8 +543,7 @@ class BrandLintTest(unittest.TestCase):
             handle.write("# Creators\n\n**Subject:** %s\n\n**Message:** Our first post opens on %s\n" % (hook, hook))
         problems = [p for p in brand_lint.check(pkg)["problems"] if not p.startswith("angles.md P01: ")]
         self.assertEqual(sorted(p.split(": ")[0] for p in problems),
-                         ["05-social-pmf/week-1-drafts.md:7", "06-channels/creator-shortlist.md:3",
-                          "06-channels/creator-shortlist.md:5"])
+                         ["05-social-pmf/week-1-drafts.md:7", "06-channels/creator-shortlist.md:5"])
         self.assertTrue(all(p.split(": ")[1] == "banned word 'revolutionary'" for p in problems), problems)
 
     def test_long_sentences_warn_and_skip_alt_text(self):
@@ -627,6 +626,18 @@ class BrandLintTest(unittest.TestCase):
                                  (15, "social proof 'reviews'"), (15, "social proof 'stars'"),
                                  (17, "scarcity or urgency 'only today'")])
         self.assertTrue(all(p.startswith("05-social-pmf/week-1-drafts.md:") for p in problems))
+
+    def test_a_line_of_hashtags_is_copy_not_a_heading(self):
+        pkg = fixtures.package()
+        (pkg / "05-social-pmf/week-1-drafts.md").write_text(
+            "# Week 1\n\n## Day 1\n\n"
+            "**Hashtags:**\n#filmcamera #revolutionary\n\n"
+            "**Caption:** Shoot now. See it tomorrow.\n#streak #revolutionaryroll\n"
+            "## Day 2 revolutionary\n\n"
+            "**Caption:** Shoot now.\n")
+        self.assertEqual(sorted(p.split(": ")[:2] for p in brand_lint.check(pkg)["problems"]),
+                         [["05-social-pmf/week-1-drafts.md:5", "banned word 'revolutionary'"],
+                          ["05-social-pmf/week-1-drafts.md:8", "banned word 'revolutionary'"]])
 
 
 class LayoutTest(unittest.TestCase):
@@ -808,17 +819,18 @@ class GrowthlabLayoutTest(unittest.TestCase):
         text = re.sub(r"(\| P04 \|.*)viewed-vs-swiped rank in the top half \| retire if bottom third viewed-vs-swiped",
                       r"\1saves rank in the top half | retire if bottom third on shares", text)
         path.write_text(text)
-        edit(pkg / "05-social-pmf/cadence-14-day.md", "| 4 | Asset 4 | P04 | YouTube Shorts |",
-             "| 4 | Asset 4 | P05 | YouTube Shorts |")
+        cadence = pkg / "05-social-pmf/cadence-14-day.md"
+        edit(cadence, "| 4 | Asset 4 | P04 | YouTube Shorts |", "| 4 | Asset 4 | P05 | YouTube Shorts |")
+        p05 = ("angles.md: P05 signal names saves, which gr0wthlab does not ask YouTube Shorts for "
+               "(cadence-14-day.md day 4)")
+        self.assertEqual(self.check(pkg)["problems"], [p05])
+        edit(cadence, "| 14 | Asset 14 | Flex: double down on the leader, else P05 | YouTube Shorts |",
+             "| 14 | Asset 14 | P04 | YouTube Shorts |")
+        self.assertEqual(self.check(pkg)["problems"], [p05])
+        edit(cadence, "| 13 | Asset 13 | P03 | TikTok |", "| 13 | Asset 13 | P04 | YouTube Shorts |")
         self.assertEqual(self.check(pkg)["problems"], [
             "angles.md: P04 signal names no number gr0wthlab asks YouTube Shorts for (viewed-vs-swiped, % viewed, "
-            "shares, likes, comment); it names only saves",
-            "angles.md: P05 signal names saves, which gr0wthlab does not ask YouTube Shorts for "
-            "(cadence-14-day.md day 4)"])
-        edit(pkg / "05-social-pmf/cadence-14-day.md", "| 13 | Asset 13 | P03 | TikTok |", "| 13 | Asset 13 | P04 | TikTok |")
-        self.assertEqual(self.check(pkg)["problems"], [
-            "angles.md: P05 signal names saves, which gr0wthlab does not ask YouTube Shorts for "
-            "(cadence-14-day.md day 4)"])
+            "shares, likes, comment); it names only saves (cadence-14-day.md day 13)", p05])
 
     def test_signal_and_kill_are_read_where_the_flex_slot_puts_an_angle(self):
         pkg = fixtures.package()
@@ -834,17 +846,21 @@ class GrowthlabLayoutTest(unittest.TestCase):
                             found)
             return sorted(tuple(p.split(" ")[1:3]) for p in found)
 
-        self.assertEqual(flagged(), [("P03", "kill"), ("P03", "signal"), ("P05", "kill"), ("P05", "signal")])
-        edit(pkg / "05-social-pmf/cadence-14-day.md",
-             "| 14 | Asset 14 | Flex: double down on the leader, else P05 | YouTube Shorts | note |\n", "")
         self.assertEqual(flagged(), [])
+        cadence = pkg / "05-social-pmf/cadence-14-day.md"
+        edit(cadence, "| 13 | Asset 13 | P03 | TikTok | note |",
+             "| 13 | Asset 13 | Flex: double down on the leader, else P05 | YouTube Shorts | note |")
+        edit(cadence, "| 14 | Asset 14 | Flex: double down on the leader, else P05 | YouTube Shorts | note |\n", "")
+        self.assertEqual(flagged(), [("P03", "kill"), ("P03", "signal"), ("P05", "kill"), ("P05", "signal")])
 
     def test_the_documented_angle_row_passes(self):
         doc = (fixtures.SCRIPTS.parent / "references" / "package-layout.md").read_text()
         example = next(block for block in doc.split("```") if "| ID | Angle |" in block)
         problems = []
         angles = check_layout.check_angles(example, fixtures.BRAND_RULES, problems, [])
-        check_layout.check_metrics({}, angles, problems)
+        days = check_layout.check_calendar("| Day | Asset | Angle | Primary platform |\n|---|---|---|---|\n"
+                                           "| 1 | Asset 1 | P01 | TikTok |\n", [])
+        check_layout.check_metrics(days, angles, problems)
         self.assertEqual(list(angles), ["P01"])
         self.assertEqual(problems, ["angles.md: 1 Angles; a Test Kit needs at least 15 distinct Angles"])
 
