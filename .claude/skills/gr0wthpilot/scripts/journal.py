@@ -5,8 +5,11 @@ by a session limit resumes from its last passed gate instead of restarting.
 The journal is `run-journal.json` in the Candidate Package. The launcher
 creates it; this script is the only thing that records a gate, and it records
 one only after that gate's mechanical checks pass and every earlier gate has
-passed. A phase's critic gate also needs the critic's report, written after
-each of the phase's work gates was first recorded, to end with `Verdict: PASS`.
+passed. A phase's critic gate also needs the critic's report to end with
+`Verdict: PASS` and to be newer than the latest pass of each of the phase's
+work gates, its first pass or a later re-pass, so a fix re-gated after the
+critic ran sends the critic round again. The `package` gate re-checks every
+earlier phase's critic that way, and `complete` re-checks all five.
 
 Usage:
   journal.py status [PACKAGE]
@@ -176,6 +179,7 @@ def g_package(pkg, cfg):
     problems = need_files(pkg, ["README.md", "self-grade.md", "launch-checklist.md", "handoff/README.md",
                                 "recap.html", "decisions-log.md", "sources.md"])
     problems += all_checks(pkg, cfg)
+    problems += stale_critics(pkg, [ph for ph in PHASES if ph != "5"])
     try:
         ledger = gc.read_json(Path(cfg["simulators"]))
         left = [d["name"] for d in ledger.get("devices", []) if not d.get("deleted_at")]
@@ -192,6 +196,18 @@ def last_verdict(path):
     return verdicts[-1].upper() if verdicts else None
 
 
+WORK_GATES = {}
+for _gid, _phase, _ in GATES:
+    if not _gid.startswith("critic-"):
+        WORK_GATES.setdefault(_phase, []).append(_gid)
+PHASES = [gid.split("-", 1)[1] for gid in GATE_IDS if gid.startswith("critic-")]
+
+
+def last_passed(entry):
+    """When a recorded gate last passed: its first pass, or its latest re-pass."""
+    return gc.parse_iso_z(entry.get("repassed_at") or entry["passed_at"])
+
+
 def critic(phase):
     def gate(pkg, cfg):
         report = pkg / "08-redteam" / ("critic-phase-%s.md" % phase)
@@ -202,14 +218,24 @@ def critic(phase):
             problems.append("the phase %s critic's last verdict is not PASS; do what it sent back, then run it again"
                             % phase)
         journal = gc.load_journal(pkg) or {}
-        work_gates = [g for g in journal.get("gates", []) if g["id"] in
-                      [gid for gid, ph, _ in GATES if ph == phase and not gid.startswith("critic")]]
+        work_gates = [g for g in journal.get("gates", []) if g["id"] in WORK_GATES.get(phase, [])]
         if work_gates:
-            last = max(gc.parse_iso_z(g["passed_at"]) for g in work_gates)
-            if report.stat().st_mtime < last.timestamp():
-                problems.append("the critic report is older than the phase's last work gate; run the critic again")
+            latest = max(work_gates, key=last_passed)
+            if report.stat().st_mtime < last_passed(latest).timestamp():
+                problems.append("the phase %s critic report is older than the last pass of gate %s; run the critic "
+                                "again" % (phase, latest["id"]))
         return problems
     return gate
+
+
+def stale_critics(pkg, phases):
+    """Problems of each recorded critic gate of these phases, checked again."""
+    passed = {g["id"] for g in (gc.load_journal(pkg) or {}).get("gates", [])}
+    problems = []
+    for phase in phases:
+        if "critic-" + phase in passed:
+            problems += ["critic-%s: %s" % (phase, p) for p in critic(phase)(pkg, {})]
+    return problems
 
 
 CHECKS = {
@@ -292,6 +318,14 @@ def main(argv=None):
                 print("FAIL: gate %s passed earlier, but its checks fail now (%d problem(s)); fix them"
                       % (args.gate, len(problems)))
                 return 1
+            phase = next(ph for gid, ph, _ in GATES if gid == args.gate)
+            if args.gate in WORK_GATES.get(phase, []):
+                entry = [g for g in journal["gates"] if g["id"] == args.gate][-1]
+                entry["repassed_at"] = now
+                save(pkg, journal)
+                if "critic-" + phase in passed:
+                    print("NOTE: the phase %s critic passed before this re-pass; run it again, then pass critic-%s"
+                          % (phase, phase))
             print("PASS: gate %s passed earlier and its checks still pass" % args.gate)
             return 0
         if not nxt or nxt[0] != args.gate:
@@ -323,6 +357,12 @@ def main(argv=None):
         nxt = next_gate(journal)
         if nxt:
             print("FAIL the run is not done; the next gate is %s" % nxt[0])
+            return 1
+        problems = stale_critics(pkg, PHASES)
+        if problems:
+            for problem in problems:
+                print("FAIL " + problem)
+            print("FAIL: a critic must run again before the run is complete")
             return 1
         journal["status"] = "complete"
         journal["completed_at"] = now

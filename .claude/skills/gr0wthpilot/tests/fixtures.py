@@ -63,9 +63,11 @@ def angles_md():
     rows = []
     for i in range(1, 16):
         platform = "TikTok" if i % 2 else "YouTube Shorts"
+        metric = "watched-full" if i % 2 else "viewed-vs-swiped"
         rows.append('| P%02d | Angle %d | Waiting for film to develop is the point, per %s | "Hook number %d '
-                    'for the camera" | 20s screen record of the app | %s | watched-full rank in the top half | '
-                    'retire if bottom third after two reads |' % (i, i, URLS["pain"][i - 1], i, platform))
+                    'for the camera" | 20s screen record of the app | %s | %s rank in the top half | '
+                    'retire if bottom third %s after two reads |' % (i, i, URLS["pain"][i - 1], i, platform, metric,
+                                                                      metric))
     return "# Angle bank\n\n" + ANGLE_HEADER + "\n".join(rows) + "\n"
 
 

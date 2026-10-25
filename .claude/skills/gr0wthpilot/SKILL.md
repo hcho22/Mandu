@@ -233,7 +233,7 @@ Phase skills: copy-editing.
 Run the red team over the whole package; it attacks, fix lanes rewrite what broke, and `08-redteam/dossier.md` records every finding, its disposition, the material changes with before and after, and the surviving objections, strongest first.
 At least one thing must change materially; if nothing changed, the red team performed rather than ran.
 Re-run the skeptics on any claim the fixes touched, re-shoot screenshots and re-gate the video if their content changed, and do the copy-editing sweep.
-`journal.py pass <gate>` on a gate passed earlier runs its checks again and fails while they fail, so re-gate `site`, `launch-set`, and `video` after fixes that touch them.
+`journal.py pass <gate>` on a gate passed earlier runs its checks again and fails while they fail, so re-gate `site`, `launch-set`, and `video` after fixes that touch them; a re-pass makes that phase's critic gate fail until its critic runs again, and the `package` gate checks every earlier critic, so re-run `critic.js` for each phase you re-gated and pass its critic gate again.
 The `site` gate refuses a screenshot or measurement older than its page or any file the page loads, and the `video` gate refuses frames, a strip, or an ffprobe report older than the video, so re-shoot and re-run `check_video.py prepare` after any change to what they show.
 Write `08-redteam/pre-publication-checklist.md`: every act the Founder must do or confirm before anything goes public, in gr0wthlab's checklist format.
 Gates `red-team`, `critic-4`.

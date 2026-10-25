@@ -498,11 +498,146 @@ class BrandLintTest(unittest.TestCase):
             "TikTok": "immerse.app/tiktok", "YouTube Shorts": "immerse.app/youtube"}})
         self.assertEqual(brand_lint.validate_rules(good), [])
 
+    def test_frozen_hooks_are_exempt_as_gr0wthlab_exempts_them(self):
+        long_hook = "Hook number 1 for the camera that waits a whole night to show the revolutionary roll"
+        for name, old, where in (("angles.md", '"Hook number 1 for the camera"', "angles.md P01: "),
+                                 ("ab-pairs.md", '"Shoot now, see it later"', "ab-pairs.md:6: ")):
+            pkg = fixtures.package()
+            edit(pkg / "05-social-pmf" / name, old, '"%s"' % long_hook)
+            problems = brand_lint.check(pkg)["problems"]
+            self.assertEqual(sorted(p.split(": ")[1] for p in problems),
+                             ["banned word 'revolutionary'", "the Hook has 16 words; at most 12"], name)
+            self.assertTrue(all(p.startswith(where) for p in problems), problems)
+
+    def test_a_draft_field_repeating_a_frozen_hook_is_exempt(self):
+        long_hook = "Hook number 1 for the camera that waits a whole night to show the revolutionary roll"
+        pkg = fixtures.package()
+        edit(pkg / "05-social-pmf/angles.md", '"Hook number 1 for the camera"', '"%s"' % long_hook)
+        edit(pkg / "05-social-pmf/week-1-drafts.md", "**Caption:** Shoot now. See it tomorrow.",
+             "**Hook:** %s\n\n**Caption:** %s\nShoot it now." % (long_hook, long_hook))
+        problems = brand_lint.check(pkg)["problems"]
+        self.assertEqual(len(problems), 2)
+        self.assertTrue(all(p.startswith("angles.md P01: ") for p in problems), problems)
+        edit(pkg / "05-social-pmf/week-1-drafts.md", "Shoot it now.", "A revolutionary roll.")
+        drafts = [p for p in brand_lint.check(pkg)["problems"] if not p.startswith("angles.md P01: ")]
+        self.assertEqual(len(drafts), 1)
+        self.assertTrue(drafts[0].startswith("05-social-pmf/week-1-drafts.md:7: banned word 'revolutionary': "))
+        rules = dict(fixtures.BRAND_RULES, frozen_hooks_exempt_from=["hook_max_words"])
+        found = brand_lint.lint_copy(long_hook, rules, hook=True, frozen=(long_hook,))
+        self.assertEqual(found, ["banned word 'revolutionary'"])
+        rules = dict(fixtures.BRAND_RULES)
+        del rules["frozen_hooks_exempt_from"]
+        self.assertEqual(len(brand_lint.lint_copy(long_hook, rules, hook=True, frozen=(long_hook,))), 2)
+        self.assertTrue(has(brand_lint.lint_copy(long_hook + " now", fixtures.BRAND_RULES, hook=True,
+                                                 frozen=(long_hook,)), r"the Hook has 17 words"))
+        self.assertEqual(brand_lint.lint_copy("Shoot now?", fixtures.BRAND_RULES, frozen=("Shoot now?",)),
+                         ["asks a question"])
+
+    def test_a_creator_message_gets_no_frozen_hook_exemption(self):
+        hook = "Hook number 1 for the revolutionary camera"
+        pkg = fixtures.package()
+        edit(pkg / "05-social-pmf/angles.md", '"Hook number 1 for the camera"', '"%s"' % hook)
+        edit(pkg / "05-social-pmf/week-1-drafts.md", "**Caption:** Shoot now. See it tomorrow.",
+             "**Caption:** %s\n\n**Message:** Our first post opens on %s" % (hook, hook))
+        with open(str(pkg / "06-channels/creator-shortlist.md"), "a") as handle:
+            handle.write("# Creators\n\n**Subject:** %s\n\n**Message:** Our first post opens on %s\n" % (hook, hook))
+        problems = [p for p in brand_lint.check(pkg)["problems"] if not p.startswith("angles.md P01: ")]
+        self.assertEqual(sorted(p.split(": ")[0] for p in problems),
+                         ["05-social-pmf/week-1-drafts.md:7", "06-channels/creator-shortlist.md:5"])
+        self.assertTrue(all(p.split(": ")[1] == "banned word 'revolutionary'" for p in problems), problems)
+
+    def test_long_sentences_warn_and_skip_alt_text(self):
+        rules = dict(fixtures.BRAND_RULES, long_sentence_words=6, long_sentence_commas=1)
+        pkg = fixtures.package()
+        (pkg / brand_lint.RULES_PATH).write_text(json.dumps(rules))
+        edit(pkg / "05-social-pmf/week-1-drafts.md", "**Caption:** Shoot now. See it tomorrow.",
+             "**Caption:** Shoot a roll, wait a night, and see every frame tomorrow.")
+        edit(pkg / "05-social-pmf/week-1-drafts.md", "**Alt text:** A phone screen showing a film counter.",
+             "**Alt text:** A phone screen showing a film counter, a roll, and a clock.")
+        result = brand_lint.check(pkg)
+        self.assertEqual(result["problems"], [])
+        drafts = [w for w in result["warnings"] if w.startswith("05-social-pmf/week-1-drafts.md")]
+        self.assertEqual([w.split(": ", 1)[1].rsplit(": ", 1)[0] for w in drafts],
+                         ["long_sentence_words: 11 words, over 6", "long_sentence_commas: 2 commas, over 1"])
+        self.assertTrue(all(w.startswith("05-social-pmf/week-1-drafts.md:5:") for w in drafts))
+        self.assertIn("ab-pairs.md:11: long_sentence_words: 7 words, over 6: A roll of film on your phone",
+                      result["warnings"])
+
+    def test_sponsorship_asks_are_read_in_creator_messages_only(self):
+        rules = dict(fixtures.BRAND_RULES, sponsorship_asks=["rate card", "sponsored post"])
+        pkg = fixtures.package()
+        (pkg / brand_lint.RULES_PATH).write_text(json.dumps(rules))
+        with open(str(pkg / "06-channels/creator-shortlist.md"), "a") as handle:
+            handle.write("# Creators\n\nVetted: one film blog.\n\n**Subject:** Early access to Testprod, no "
+                         "sponsored post\n\n"
+                         "**Message:** Early access is yours. Send your rate card for a sponsored post.\n")
+        edit(pkg / "05-social-pmf/week-1-drafts.md", "**Caption:** Shoot now. See it tomorrow.",
+             "**Caption:** Not a sponsored post. Shoot now.")
+        problems = brand_lint.check(pkg)["problems"]
+        self.assertEqual(sorted(p.split(": ")[1] for p in problems),
+                         ["sponsorship ask 'rate card'", "sponsorship ask 'sponsored post'"])
+        self.assertTrue(all(p.startswith("06-channels/creator-shortlist.md:7:") for p in problems))
+
+    def test_rules_gr0wthlab_applies_and_does_not(self):
+        rules = dict(fixtures.BRAND_RULES, required_sections=["Hook"], required_disclosure="Screens are real.",
+                     sponsorship_asks=["rate card"])
+        rows = {rule: status for rule, status, _ in brand_lint.statuses(rules)}
+        self.assertEqual(rows["required_sections"], "not applicable")
+        self.assertEqual(rows["required_disclosure"], "not applicable")
+        self.assertEqual(rows["sponsorship_asks"], "not applicable")
+        self.assertNotIn("sponsorship asks", rows)
+        self.assertEqual(rows["long sentences (warning)"], "pending")
+        rows = {rule: status for rule, status, _ in brand_lint.statuses(fixtures.BRAND_RULES)}
+        self.assertEqual(rows["sponsorship asks"], "pending")
+        self.assertNotIn("sponsorship_asks", rows)
+        self.assertEqual(brand_lint.validate_rules(rules), [])
+        no_proof = dict(fixtures.BRAND_RULES)
+        del no_proof["invented_proof_terms"]
+        self.assertEqual(brand_lint.lint_copy("Develops 3x faster, 50% of rolls", no_proof), [])
+        self.assertEqual(len(brand_lint.lint_copy("Develops 3x faster, 50% of rolls", fixtures.BRAND_RULES)), 2)
+
     def test_notes_outside_copy_fields_are_not_linted(self):
         pkg = fixtures.package()
         with open(str(pkg / "05-social-pmf/week-1-drafts.md"), "a") as handle:
             handle.write("\nFilming note: never say revolutionary, 10k users, or use \u2014 dashes.\n")
         self.assertEqual(brand_lint.check(pkg)["problems"], [])
+
+    def test_every_post_field_is_read_as_gr0wthlab_reads_it(self):
+        pkg = fixtures.package()
+        (pkg / "05-social-pmf/week-1-drafts.md").write_text(
+            "# Week 1\n\n## Day 2 - P02 / AB-2 leg A\n\n"
+            "**Hook (0.0-3s, on screen):**\n\n> Rated 4.9 stars by film lovers.\n\n"
+            "**Hook / Shorts title:** A revolutionary roll\n\n"
+            "**On-screen text sequence:** Shoot now, then say goodbye to waiting.\n\n"
+            "**Spoken line:** Loved by 10k photographers.\n\n"
+            "**Visual action:** The App Store page shows 4.9 stars and 10k reviews.\n\n"
+            "**Caption:**\n\n> Shoot now.\n> Only today: a roll.\n\n"
+            "**Spoken line:** none\n\n"
+            "**Alt text:**\n\n"
+            "**Caption:** Shoot now. See it tomorrow.\n")
+        problems = brand_lint.check(pkg)["problems"]
+        empty = [p for p in problems if "holds no copy" in p]
+        self.assertEqual(len(empty), 1)
+        self.assertTrue(empty[0].startswith("05-social-pmf/week-1-drafts.md:24: the alt text field holds no copy"))
+        found = sorted((int(p.split(": ")[0].rsplit(":", 1)[1]), p.split(": ")[1]) for p in problems
+                       if p not in empty)
+        self.assertEqual(found, [(5, "social proof 'stars'"), (9, "banned word 'revolutionary'"),
+                                 (11, "stock phrase 'say goodbye to'"), (13, "unsourced proof '10k photographers'"),
+                                 (15, "social proof 'reviews'"), (15, "social proof 'stars'"),
+                                 (17, "scarcity or urgency 'only today'")])
+        self.assertTrue(all(p.startswith("05-social-pmf/week-1-drafts.md:") for p in problems))
+
+    def test_a_line_of_hashtags_is_copy_not_a_heading(self):
+        pkg = fixtures.package()
+        (pkg / "05-social-pmf/week-1-drafts.md").write_text(
+            "# Week 1\n\n## Day 1\n\n"
+            "**Hashtags:**\n#filmcamera #revolutionary\n\n"
+            "**Caption:** Shoot now. See it tomorrow.\n#streak #revolutionaryroll\n"
+            "## Day 2 revolutionary\n\n"
+            "**Caption:** Shoot now.\n")
+        self.assertEqual(sorted(p.split(": ")[:2] for p in brand_lint.check(pkg)["problems"]),
+                         [["05-social-pmf/week-1-drafts.md:5", "banned word 'revolutionary'"],
+                          ["05-social-pmf/week-1-drafts.md:8", "banned word 'revolutionary'"]])
 
 
 class LayoutTest(unittest.TestCase):
@@ -562,7 +697,7 @@ class LayoutTest(unittest.TestCase):
         pkg = fixtures.package()
         path = pkg / "05-social-pmf/angles.md"
         edit(path, "per %s |" % fixtures.URLS["pain"][0], "per a forum |")
-        edit(path, "| YouTube Shorts | watched", "| Instagram | watched")
+        edit(path, "| YouTube Shorts | viewed", "| Instagram | viewed")
         problems = self.check(pkg)["problems"]
         self.assertTrue(has(problems, r"P01 pain cell has no source URL"))
         self.assertTrue(has(problems, r"Platform 'Instagram'"))
@@ -617,6 +752,204 @@ class LayoutTest(unittest.TestCase):
         self.assertTrue(has(problems, r"P01 needs exactly one record, has 0"))
         self.assertTrue(has(problems, r"keys gr0wthlab does not accept: mood"))
         self.assertTrue(has(problems, r"pretty-printed"))
+
+
+class GrowthlabLayoutTest(unittest.TestCase):
+    """The layout rules gr0wthlab's own reader depends on (kit.py, results.py,
+    shots.py, weekly_changes.py, drafts.py, posts.py)."""
+
+    def check(self, pkg):
+        return check_layout.check(pkg, fixtures.PRODUCT, registry=REGISTRY)
+
+    def test_angle_ids_are_zero_padded_to_one_width(self):
+        pkg = fixtures.package()
+        path = pkg / "05-social-pmf/angles.md"
+        edit(path, "| P07 |", "| P7 |")
+        edit(path, "| P15 |", "| P1a |")
+        problems = self.check(pkg)["problems"]
+        self.assertTrue(has(problems, r"zero-padded .*: P7$"))
+        self.assertTrue(has(problems, r"ID 'P1a' is not P and digits, so gr0wthlab skips its row"))
+        pkg = fixtures.package()
+        path = pkg / "05-social-pmf/angles.md"
+        text = re.sub(r"\| P(\d\d) \|", r"| P0\1 |", path.read_text())
+        path.write_text(text)
+        for name in ("ab-pairs.md", "cadence-14-day.md", "creative-log.json"):
+            target = pkg / "05-social-pmf" / name
+            target.write_text(re.sub(r"\bP(\d\d)\b", r"P0\1", target.read_text()))
+        self.assertFalse(has(self.check(pkg)["problems"], r"zero-padded"))
+
+    def test_platform_names_are_exact(self):
+        pkg = fixtures.package()
+        edit(pkg / "05-social-pmf/angles.md", "| YouTube Shorts | viewed", "| YouTube | viewed")
+        edit(pkg / "05-social-pmf/cadence-14-day.md", "| 3 | Asset 3 | P03 | TikTok |", "| 3 | Asset 3 | P03 | tiktok |")
+        problems = self.check(pkg)["problems"]
+        self.assertTrue(has(problems, r"P02 Platform 'YouTube' is not exactly TikTok or YouTube Shorts"))
+        self.assertTrue(has(problems, r"day 3 primary platform 'tiktok' is not exactly"))
+
+    def test_format_must_name_a_recording_gr0wthlab_plans(self):
+        pkg = fixtures.package()
+        edit(pkg / "05-social-pmf/angles.md", "20s screen record of the app", "20s clip of the app")
+        result = self.check(pkg)
+        self.assertTrue(has(result["problems"], r"P01 Format names no recording type"))
+        self.assertFalse(has(result["warnings"], r"Format"))
+
+    def test_signal_and_kill_name_numbers_the_platform_gives(self):
+        pkg = fixtures.package()
+        path = pkg / "05-social-pmf/angles.md"
+        edit(path, "viewed-vs-swiped rank in the top half", "saves rank in the top half")
+        edit(path, "retire if bottom third watched-full after two reads", "retire if views stay low")
+        problems = self.check(pkg)["problems"]
+        self.assertTrue(has(problems, r"P02 signal names no number gr0wthlab asks YouTube Shorts for .*only saves"))
+        self.assertTrue(has(problems, r"P01 kill criterion names no number gr0wthlab asks TikTok for"))
+        pkg = fixtures.package()
+        edit(pkg / "05-social-pmf/angles.md", "viewed-vs-swiped rank in the top half",
+             "viewed-vs-swiped rank and saves in the top half")
+        self.assertTrue(has(self.check(pkg)["problems"], r"P02 signal names saves, which gr0wthlab does not ask "
+                                                          r"YouTube Shorts for"))
+        pkg = fixtures.package()
+        edit(pkg / "05-social-pmf/angles.md", "watched-full rank in the top half",
+             "average watch time and profile visits in the top half")
+        self.assertEqual(self.check(pkg)["problems"], [])
+
+    def test_signal_and_kill_are_read_on_the_calendar_days_platform(self):
+        pkg = fixtures.package()
+        path = pkg / "05-social-pmf/angles.md"
+        text = re.sub(r"(\| P05 \|.*)watched-full rank in the top half \| retire if bottom third watched-full",
+                      r"\1saves and shares rank in the top half | retire if bottom third on shares", path.read_text())
+        text = re.sub(r"(\| P04 \|.*)viewed-vs-swiped rank in the top half \| retire if bottom third viewed-vs-swiped",
+                      r"\1saves rank in the top half | retire if bottom third on shares", text)
+        path.write_text(text)
+        cadence = pkg / "05-social-pmf/cadence-14-day.md"
+        edit(cadence, "| 4 | Asset 4 | P04 | YouTube Shorts |", "| 4 | Asset 4 | P05 | YouTube Shorts |")
+        p05 = ("angles.md: P05 signal names saves, which gr0wthlab does not ask YouTube Shorts for "
+               "(cadence-14-day.md day 4)")
+        self.assertEqual(self.check(pkg)["problems"], [p05])
+        edit(cadence, "| 14 | Asset 14 | Flex: double down on the leader, else P05 | YouTube Shorts |",
+             "| 14 | Asset 14 | P04 | YouTube Shorts |")
+        self.assertEqual(self.check(pkg)["problems"], [p05])
+        edit(cadence, "| 13 | Asset 13 | P03 | TikTok |", "| 13 | Asset 13 | P04 | YouTube Shorts |")
+        self.assertEqual(self.check(pkg)["problems"], [
+            "angles.md: P04 signal names no number gr0wthlab asks YouTube Shorts for (viewed-vs-swiped, % viewed, "
+            "shares, likes, comment); it names only saves (cadence-14-day.md day 13)", p05])
+
+    def test_signal_and_kill_are_read_where_the_flex_slot_puts_an_angle(self):
+        pkg = fixtures.package()
+        path = pkg / "05-social-pmf/angles.md"
+        text = path.read_text()
+        for aid in ("P03", "P05", "P07"):
+            text = re.sub(r"(\| %s \|.*)\| TikTok \|" % aid, r"\1| YouTube Shorts |", text)
+        path.write_text(text)
+
+        def flagged():
+            found = [p for p in self.check(pkg)["problems"] if p.startswith("angles.md")]
+            self.assertTrue(all(" asks YouTube Shorts for " in p and p.endswith("only watched-full") for p in found),
+                            found)
+            return sorted(tuple(p.split(" ")[1:3]) for p in found)
+
+        self.assertEqual(flagged(), [])
+        cadence = pkg / "05-social-pmf/cadence-14-day.md"
+        edit(cadence, "| 13 | Asset 13 | P03 | TikTok | note |",
+             "| 13 | Asset 13 | Flex: double down on the leader, else P05 | YouTube Shorts | note |")
+        edit(cadence, "| 14 | Asset 14 | Flex: double down on the leader, else P05 | YouTube Shorts | note |\n", "")
+        self.assertEqual(flagged(), [("P03", "kill"), ("P03", "signal"), ("P05", "kill"), ("P05", "signal")])
+
+    def test_the_documented_angle_row_passes(self):
+        doc = (fixtures.SCRIPTS.parent / "references" / "package-layout.md").read_text()
+        example = next(block for block in doc.split("```") if "| ID | Angle |" in block)
+        problems = []
+        angles = check_layout.check_angles(example, fixtures.BRAND_RULES, problems, [])
+        days = check_layout.check_calendar("| Day | Asset | Angle | Primary platform |\n|---|---|---|---|\n"
+                                           "| 1 | Asset 1 | P01 | TikTok |\n", [])
+        check_layout.check_metrics(days, angles, problems)
+        self.assertEqual(list(angles), ["P01"])
+        self.assertEqual(problems, ["angles.md: 1 Angles; a Test Kit needs at least 15 distinct Angles"])
+
+    def test_checklist_titles_and_scopes_as_gr0wthlab_reads_them(self):
+        pkg = fixtures.package()
+        path = pkg / "08-redteam/pre-publication-checklist.md"
+        path.write_text("# Pre-publication checklist\n\nItems marked (blocking: X) block only that asset.\n\n"
+                        "- [ ] Measure latency on the oldest phone. It backs the claim. (blocking: site)\n"
+                        "- [ ] **Benchmark record** for the \"under 100 milliseconds\" claim (blocking: social)\n"
+                        "- [ ] **Waitlist live** (Blocking: social)\n"
+                        "- [ ] **Two scopes** (blocking: site) and (blocking: social)\n"
+                        "- [ ] **Trademark search**\n"
+                        "(blocking: naming)\n"
+                        "  - [ ] **Nested** item (blocking: social)\n"
+                        "* [ ] **Starred** item\n"
+                        "- [ ] **Empty scope** (blocking: )\n")
+        result = self.check(pkg)
+        problems = [p for p in result["problems"] if p.startswith("pre-publication")]
+        self.assertTrue(has(problems, r":6: the item names its claim outside its title"))
+        self.assertTrue(has(problems, r":7: a blocking scope gr0wthlab cannot read"))
+        self.assertTrue(has(problems, r":8: more than one blocking scope"))
+        self.assertTrue(has(problems, r":10: this line is not part of the item above it"))
+        self.assertTrue(has(problems, r":12: a checkbox gr0wthlab does not read as an item"))
+        self.assertTrue(has(problems, r":13: '\(blocking: \)' names no scope"))
+        self.assertFalse(has(problems, r":[35]:"))
+        self.assertFalse(has(result["warnings"], r"bold title"))
+        path.write_text("# Checklist\n\n- [ ] **Waitlist live** before any post\n  (blocking: everything public)\n"
+                        "- [ ] **Benchmark record for the \"under 100 milliseconds\" claim** (blocking: social)\n"
+                        "- [ ] Measure latency first. Then decide.\n")
+        result = self.check(pkg)
+        self.assertFalse(has(result["problems"], r"^pre-publication"))
+        self.assertEqual(len([w for w in result["warnings"] if ":3: open item blocks every" in w]), 1)
+        self.assertFalse(has(result["warnings"], r":5:"))
+
+    def test_checklist_lines_gr0wthlab_merges_or_drops_are_caught(self):
+        pkg = fixtures.package()
+        path = pkg / "08-redteam/pre-publication-checklist.md"
+        path.write_text("# Checklist\n\n- [x] **Site live** done\n  - [ ] **Verify waitlist** (blocking: social)\n"
+                        "- [ ] **Waitlist copy** reviewed\nnot indented, so the item ended\n  (blocking: social)\n"
+                        "- [ ] **Trademark search**\n\n  (blocking: naming)\n\n"
+                        "- [ ] **Benchmark record** on two phones\n  measured in real time\n"
+                        "  - [ ] **Nested deeper** (blocking: social)\n\n## Notes\n\n"
+                        "Lines marked (blocking: social) block posts.\n")
+        problems = [p for p in self.check(pkg)["problems"] if p.startswith("pre-publication")]
+        self.assertEqual(len(problems), 4, problems)
+        self.assertTrue(has(problems, r":4: a checkbox gr0wthlab does not read as an item \(an indented one is "
+                                      r"read as part of the item above, its blocking scope included\)"))
+        self.assertTrue(has(problems, r":7: this line is not part of the item above it"))
+        self.assertTrue(has(problems, r":10: this line is not part of the item above it"))
+        self.assertTrue(has(problems, r":14: a checkbox gr0wthlab does not read as an item"))
+
+    def test_the_angle_bank_is_the_table_with_its_eight_columns(self):
+        pkg = fixtures.package()
+        path = pkg / "05-social-pmf/angles.md"
+        path.write_text(path.read_text().replace(
+            "# Angle bank\n\n", "# Angle bank\n\n| ID | Hook | Hypothesis |\n|---|---|---|\n"
+                                "| P01 | \"Hook number 1 for the camera\" | waiting sells |\n\n", 1))
+        log = pkg / "05-social-pmf/creative-log.json"
+        data = json.loads(log.read_text())
+        data["angles"][0]["hypothesis"] = "waiting sells"
+        log.write_text(json.dumps(data, indent=2) + "\n")
+        self.assertTrue(has(self.check(pkg)["problems"], r"P01-angle holds hypothesis, but angles.md has no "
+                                                         r"Hypothesis column"))
+        path.write_text(re.sub(r'(\| P01 \| Angle 1 \|.*)"Hook number 1 for the camera"',
+                               r'\1"Hook number 1 for the revolutionary camera"', path.read_text()))
+        self.assertEqual([p.split(": ")[:2] for p in brand_lint.check(pkg)["problems"]],
+                         [["angles.md P01", "banned word 'revolutionary'"]])
+
+    def test_creative_log_shape_is_one_gr0wthlab_edits(self):
+        pkg = fixtures.package()
+        path = pkg / "05-social-pmf/creative-log.json"
+        records = json.loads(path.read_text())["angles"]
+        path.write_text(json.dumps(records, indent=2) + "\n")
+        self.assertEqual(self.check(pkg)["problems"], [])
+        path.write_text(json.dumps({"angles": records}, indent=4) + "\n")
+        self.assertEqual(self.check(pkg)["problems"], [])
+        text = json.dumps({"angles": records}, indent=2).replace('"results": null\n    }\n  ]', '"results": null}\n  ]')
+        path.write_text(text + "\n")
+        self.assertTrue(has(self.check(pkg)["problems"], r"last record's '}' line followed by the list's ']' line"))
+        records[0]["hypothesis"] = "waiting sells"
+        records[1]["platform"] = None
+        path.write_text(json.dumps({"angles": records}, indent=2) + "\n")
+        problems = self.check(pkg)["problems"]
+        self.assertTrue(has(problems, r"P01-angle holds hypothesis, but angles.md has no Hypothesis column"))
+        self.assertTrue(has(problems, r"Angles on YouTube Shorts must all use one platform string"))
+        records[1]["platform"] = "youtube_shorts"
+        del records[0]["hypothesis"]
+        path.write_text(json.dumps({"angles": records}, indent=2) + "\n")
+        self.assertEqual(self.check(pkg)["problems"], [])
 
 
 class ScreenshotTest(unittest.TestCase):
@@ -959,6 +1292,43 @@ class JournalTest(unittest.TestCase):
         self.assertEqual(self.run_gate(pkg, "critic-1"), 1)
         os.utime(str(report), None)
         self.assertEqual(self.run_gate(pkg, "critic-1"), 0)
+
+    def test_a_fix_re_gated_after_the_critic_sends_the_critic_again(self):
+        pkg = fixtures.package()
+        for gate in journal.GATE_IDS[:journal.GATE_IDS.index("critic-1") + 1]:
+            if gate.startswith("critic-"):
+                os.utime(str(pkg / "08-redteam" / ("critic-phase-%s.md" % gate[-1])), None)
+            self.assertEqual(self.run_gate(pkg, gate), 0, gate)
+        path = pkg / "run-journal.json"
+        data = json.loads(path.read_text())
+        for entry in data["gates"]:
+            entry["passed_at"] = "2026-01-01T00:00:00Z"
+        path.write_text(json.dumps(data))
+        report = pkg / "08-redteam/critic-phase-1.md"
+        os.utime(str(report), (time.time() - 600,) * 2)
+        self.assertEqual(self.run_gate(pkg, "critic-1"), 0)
+        self.assertEqual(journal.stale_critics(pkg, ["1"]), [])
+        self.assertEqual(self.run_gate(pkg, "claims-1"), 0)
+        self.assertTrue([g for g in json.loads(path.read_text())["gates"] if g["id"] == "claims-1"][0]["repassed_at"])
+        self.assertEqual(self.run_gate(pkg, "critic-1"), 1)
+        self.assertTrue(has(journal.stale_critics(pkg, ["1"]), r"critic-1: .*last pass of gate claims-1"))
+        os.utime(str(report), None)
+        self.assertEqual(self.run_gate(pkg, "critic-1"), 0)
+        self.assertEqual(journal.stale_critics(pkg, ["1"]), [])
+
+    def test_package_and_complete_recheck_every_critic(self):
+        pkg = fixtures.package()
+        for gate in journal.GATE_IDS:
+            if gate.startswith("critic-"):
+                os.utime(str(pkg / "08-redteam" / ("critic-phase-%s.md" % gate[-1])), None)
+            self.assertEqual(self.run_gate(pkg, gate), 0, gate)
+        report = pkg / "08-redteam/critic-phase-2.md"
+        os.utime(str(report), (1, 1))
+        self.assertTrue(has(journal.g_package(pkg, {"product": fixtures.PRODUCT, "simulators": "/nonexistent"}),
+                            r"critic-2: "))
+        self.assertEqual(quiet(journal.main, ["complete", str(pkg)]), 1)
+        os.utime(str(report), None)
+        self.assertEqual(quiet(journal.main, ["complete", str(pkg)]), 0)
 
     def test_red_team_must_change_something(self):
         pkg = fixtures.package()

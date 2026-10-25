@@ -122,6 +122,8 @@ def rel(pkg: Path, path: Path) -> str:
 # Markdown tables, parsed the way gr0wthlab's kit.py parses them.
 
 SEPARATOR_RE = re.compile(r"\|?(\s*:?-+:?\s*\|)+\s*:?-*:?\s*\|?")
+# The Angle bank is the first table in angles.md holding all of these (kit.py parse_angles).
+ANGLE_COLUMNS = ("ID", "Angle", "pain", "Hook", "Format", "Platform", "signal", "Kill")
 
 
 def split_cells(line: str):

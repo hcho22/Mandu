@@ -91,6 +91,9 @@ def product_repo():
     (repo / "App.xcodeproj").mkdir()
     (repo / "App.xcodeproj" / "project.pbxproj").write_text("// the Founder's project\n")
     (repo / "Config.xcconfig").write_text("SWIFT_VERSION = 5.0\n")
+    (repo / "Simulator.xcconfig").write_text('#include? "Config.xcconfig"\nSDKROOT = iphonesimulator // ok\n')
+    (repo / "Device.xcconfig").write_text('#include "Config.xcconfig"\nSDKROOT[sdk=*] = iphoneos\n')
+    (repo / "Outside.xcconfig").write_text('#include "../../elsewhere.xcconfig"\n')
     git = ["git", "-C", str(repo), "-c", "user.name=t", "-c", "user.email=t@example.org", "-c", "commit.gpgsign=false"]
     for args in (["init", "-q"], ["add", "-A"], ["commit", "-q", "-m", "project"]):
         subprocess.run(git + args, check=True)
@@ -851,6 +854,43 @@ class WrapperRulesTest(unittest.TestCase):
         with self.assertRaises(xb.ToolError):
             xb.check_args(self.cfg, ["-project", "/Users/someone/Developer/App/App.xcodeproj", "build"])
 
+    def test_gp_xcodebuild_confines_every_build_to_the_simulator_sdk(self):
+        xb = load_wrapper("gp-xcodebuild")
+        copy = exported_copy(xb, self.cfg)
+        base = ["-project", str(copy / "App.xcodeproj"), "-scheme", "App"]
+        for action in ("build", "build-for-testing", "analyze", "clean"):
+            with self.assertRaises(xb.ToolError, msg=action):
+                xb.check_args(self.cfg, base + [action])
+        for implicit in ([], ["-target", "App"], ["-alltargets"], ["-configuration", "Debug", "-quiet"]):
+            with self.assertRaises(xb.ToolError, msg=str(implicit)):
+                xb.check_args(self.cfg, base + implicit)
+            xb.check_args(self.cfg, base + implicit + ["-sdk", "iphonesimulator"])
+        for sdk in ("iphonesimulator", "iphonesimulator26.0"):
+            xb.check_args(self.cfg, base + ["-sdk", sdk, "build"])
+        for bad in (["-sdk", "iphonesimulatorx"], ["-sdk", "iphoneos"], ["-sdk", "macosx"],
+                    ["-sdk", "iphonesimulator", "SDKROOT=iphoneos"],
+                    ["-destination", "generic/platform=iOS Simulator", "SDKROOT=macosx"],
+                    ["-sdk", "iphonesimulator", "-xcconfig", str(copy / "Device.xcconfig")],
+                    ["-sdk", "iphonesimulator", "-xcconfig", str(copy / "Outside.xcconfig")]):
+            with self.assertRaises(xb.ToolError, msg=str(bad)):
+                xb.check_args(self.cfg, base + bad + ["build"])
+        for good in (["-sdk", "iphonesimulator", "SDKROOT=iphonesimulator"],
+                     ["-sdk", "iphonesimulator", "-xcconfig", str(copy / "Simulator.xcconfig")]):
+            xb.check_args(self.cfg, base + good + ["build"])
+        for info in (["-showBuildSettings"], ["-showdestinations"], ["-showTestPlans", "-json"]):
+            xb.check_args(self.cfg, base + info)
+        config = Path(self.cfg["state"]) / "guard-config.json"
+        gc.write_json(config, self.cfg)
+        envs = []
+        with mock.patch.dict(os.environ, {"GR0WTHPILOT_CONFIG": str(config), "XCODE_XCCONFIG_FILE": "/tmp/x.xcconfig"}), \
+                mock.patch.object(xb.subprocess, "call", lambda argv, env=None: envs.append(env) or 0):
+            self.assertEqual(xb.main(base + ["-sdk", "iphonesimulator", "build"]), 0)
+            with contextlib.redirect_stderr(io.StringIO()):
+                self.assertEqual(xb.main(base + ["-sdk", "iphoneos", "build"]), 1)
+                self.assertEqual(xb.main(base), 1)
+        self.assertEqual(len(envs), 1)
+        self.assertNotIn("XCODE_XCCONFIG_FILE", envs[0])
+
     def test_gp_xcodebuild_tests_only_on_a_run_simulator(self):
         xb = load_wrapper("gp-xcodebuild")
         src = exported_copy(xb, self.cfg) / "App.xcodeproj"
@@ -896,13 +936,20 @@ class WrapperRulesTest(unittest.TestCase):
         gc.write_json(config, self.cfg)
         calls = []
         with mock.patch.dict(os.environ, {"GR0WTHPILOT_CONFIG": str(config)}), \
-                mock.patch.object(xb.subprocess, "call", lambda argv: calls.append(argv) or 0):
+                mock.patch.object(xb.subprocess, "call", lambda argv, env=None: calls.append(argv) or 0):
             self.assertEqual(xb.main(base + ["build"]), 0)
-            self.assertEqual(xb.main(["-project", str(project), "-list"]), 0)
-            self.assertEqual(xb.main(["-project", str(project), "-showBuildSettings"]), 0)
+            self.assertEqual(xb.main(["-project", str(project), "-scheme", "App", "-showBuildSettings"]), 0)
             with contextlib.redirect_stderr(io.StringIO()):
                 self.assertEqual(xb.main(["-project", str(project), "-resolvePackageDependencies"]), 1)
-        self.assertEqual(len(calls), 3)
+            # xcodebuild cannot run -list with a -derivedDataPath, so it is refused.
+            for listing in (["-project", str(project), "-list"], ["-project", str(project), "-scheme", "App", "-list"]):
+                err = io.StringIO()
+                with contextlib.redirect_stderr(err):
+                    self.assertEqual(xb.main(listing), 1)
+                self.assertEqual(len(err.getvalue().splitlines()), 1, err.getvalue())
+                self.assertIn("-list is not supported", err.getvalue())
+                self.assertIn("references/app-screens.md", err.getvalue())
+        self.assertEqual(len(calls), 2)
         for call in calls:
             self.assertEqual(call[call.index("-derivedDataPath") + 1], str(build / "DerivedData"))
 
