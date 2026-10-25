@@ -46,10 +46,10 @@ One path differs from RepToday's: the launch checklist is `launch-checklist.md` 
 
 ## Files gr0wthlab parses with code
 
-These rules come from gr0wthlab's parsers (`src/gr0wthlab/kit.py`, `results.py`, `weekly_changes.py`, `lint.py`, `shots.py` at `6776dd0`).
+These rules come from gr0wthlab's readers (`src/gr0wthlab/kit.py`, `results.py`, `exchange.py`, `weekly_changes.py`, `drafts.py`, `posts.py`, `lint.py`, `shots.py` at `6776dd0`).
 `check_layout.py` and `brand_lint.py` fail a package that breaks a rule here unless the rule is tagged or says what the check does instead.
 Each check mirrors the gr0wthlab function named beside it; where gr0wthlab accepts a variant, the check accepts it too.
-"(warned)" means `check_layout.py` only prints a warning, which no gate fails on; "(not checked)" means neither script tests it, so it holds only if the run writes it so.
+"Warned" means a script only prints a warning, which no gate fails on; "(not checked)" means neither script tests it, so it holds only if the run writes it so.
 A table is found by its header: a header cell matches a wanted column when it equals it, starts with it, or contains it, case-insensitively, so keep headers unambiguous.
 
 ### 05-social-pmf/angles.md
@@ -67,7 +67,7 @@ A table with the columns ID, Angle, pain, Hook, Format, Platform, signal, Kill, 
 - The pain cell holds the pain's source URL (https).
 - Platform is exactly `TikTok` or `YouTube Shorts`, because gr0wthlab's flex edit copies it into the calendar as written (`weekly_changes.py` `compose_flex`).
 - Format names a recording gr0wthlab's filming plan knows: founder on camera, screen record, time-lapse, slow motion, high-frame-rate, demo, pan, or video, optionally after a length like `15-20s` (`shots.py` `CAPTURES`); one that names none fails, as gr0wthlab could not plan its shots.
-- The signal and Kill cells each name a number gr0wthlab asks for the Angle's posts, in the words `results.py` `TERMS` reads, and no number that platform's Studio does not give: on TikTok watched-full, watch time, saves, shares, likes, profile visits, comments; on YouTube Shorts viewed versus swiped (or "viewed rate"), % viewed, shares, likes, comments (`results.py` `LABELS`).
+- The signal and Kill cells each name a number gr0wthlab asks for the Angle's posts, in the words `results.py` `TERMS` reads, and no number that platform's Studio does not give: on TikTok watched-full, watch time, saves, shares, likes, profile visits, comments; on YouTube Shorts viewed vs swiped (or "viewed rate"), % viewed, shares, likes, comments (`results.py` `LABELS`).
   The platforms are those gr0wthlab's Weekly Reads ask about the Angle (`results.py` `asks_for`), which cover calendar days 1 to 13 (`exchange.py` `READ_DAYS`): the primary platform of each fixed day in that range that runs the Angle, and, when the flex day is in that range, the Angle's own Platform if the flex edit (`weekly_changes.py` `compose_flex`) can put it there, as the flex row's named fallback or as an Angle a day 1 to 5 runs, which can earn the slot; saves fail on an Angle a YouTube Shorts day runs.
   An Angle no read asks about, such as one only a day-14 slot runs, is not checked.
 

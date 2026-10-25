@@ -24,11 +24,11 @@ build folder (`<Product>.guard/build/`), which no tool of the run can write:
     with no action) names an iOS Simulator -destination or -sdk
     iphonesimulator, a call with no action included, since xcodebuild then
     builds, and without one it uses the project's default SDK, a device's;
-    a -destination must be an iOS
-    Simulator one, an -sdk and an SDKROOT=value must be iphonesimulator, an
-    -xcconfig (which overrides the command line) and every file it includes
-    lie in the copy and set SDKROOT to nothing else, and the
-    XCODE_XCCONFIG_FILE environment variable is cleared;
+    a -destination must be an iOS Simulator one, an -sdk and an
+    SDKROOT=value must be iphonesimulator, an -xcconfig (which overrides the
+    command line) and every file it includes lie in the copy and set SDKROOT
+    to nothing else, and the XCODE_XCCONFIG_FILE environment variable is
+    cleared;
   - tests need a -destination naming, by id= or name=, a simulator in the
     Product's ledger (one gp-sim created for any run of this Product), so
     xcodebuild never boots one of the Founder's own;
