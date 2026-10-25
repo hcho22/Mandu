@@ -59,7 +59,7 @@ A table with the columns ID, Angle, pain, Hook, Format, Platform, signal, Kill, 
 ```
 | ID | Angle | Sourced pain | Hook | Format | Platform | Pre-registered success signal | Kill criterion |
 |---|---|---|---|---|---|---|---|
-| P01 | Waiting is the point | "I miss not knowing how the photos came out" (https://www.reddit.com/r/...) | "Shoot now. See it tomorrow." | 15-20s screen record of a real roll developing | TikTok | watched-full rank in the top half of the bank once 10 posts shipped | bottom third on two reads |
+| P01 | Waiting is the point | "I miss not knowing how the photos came out" (https://www.reddit.com/r/...) | "Shoot now. See it tomorrow." | 15-20s screen record of a real roll developing | TikTok | watched-full rank in the top half of the bank once 10 posts shipped | bottom third on watched-full on two reads |
 ```
 
 - IDs are `P` and a number zero-padded to one width of at least two digits (`P01`), as gr0wthlab numbers a new Angle (`weekly_changes.py` `next_number`); at least 15 Angles. A row whose ID looks like one but is not `P` and digits (`P1a`, `p01`) fails, because gr0wthlab skips it (`kit.py` `parse_angles`).
@@ -68,7 +68,7 @@ A table with the columns ID, Angle, pain, Hook, Format, Platform, signal, Kill, 
 - Platform is exactly `TikTok` or `YouTube Shorts`, because gr0wthlab's flex edit copies it into the calendar as written (`weekly_changes.py` `compose_flex`).
 - Format names a recording gr0wthlab's filming plan knows: founder on camera, screen record, time-lapse, slow motion, high-frame-rate, demo, pan, or video, optionally after a length like `15-20s` (`shots.py` `CAPTURES`); one that names none fails, as gr0wthlab could not plan its shots.
 - The signal and Kill cells each name a number gr0wthlab asks for the Angle's posts, in the words `results.py` `TERMS` reads, and no number that platform's Studio does not give: on TikTok watched-full, watch time, saves, shares, likes, profile visits, comments; on YouTube Shorts viewed versus swiped (or "viewed rate"), % viewed, shares, likes, comments (`results.py` `LABELS`).
-  The platform is the primary platform of each fixed calendar day that runs the Angle, as `results.py` `asks_for` reads it, or the Angle's own Platform when no fixed day runs it, where the flex edit would put it; saves fail on an Angle a YouTube Shorts day runs.
+  The platforms are the primary platform of each fixed calendar day that runs the Angle, as `results.py` `asks_for` reads it, and the Angle's own Platform when no fixed day runs it or when the flex edit (`weekly_changes.py` `compose_flex`) can put it there: as the flex row's named fallback, or, while the calendar has a flex day, as an Angle that runs on a day the day-7 Weekly Read covers (days 1 to 5), which can earn the slot; saves fail on an Angle a YouTube Shorts day runs.
 
 ### 05-social-pmf/ab-pairs.md
 
@@ -123,7 +123,7 @@ Derive the lists from the brand guidelines' voice rules and the category's forbi
 
 Items at column 0, `- [ ] **Title** what to do (blocking: scope)`, continuation lines indented two spaces; the check reads them as `kit.py` `parse_checklist` does.
 An item's title is its **bold** text, else its first sentence; its scope is the last `(blocking: ...)` in the item, continuation lines included.
-The check fails a checklist with no column-0 items, an item with no title, a blocking scope gr0wthlab cannot read (`(Blocking: ...)`, an unclosed or empty one), more than one scope in an item, a blocking scope on a line after an item that is not part of it (an item ends at its first blank or unindented line), and a checkbox that is not at column 0, an indented one that gr0wthlab merges into the item above included.
+The check fails a checklist with no column-0 items, an item with no title, a blocking scope gr0wthlab cannot read (`(Blocking: ...)`, an unclosed or empty one), more than one scope in an item, a blocking scope on a line after an item that is not part of it (an item ends at its first blank or unindented line), and a checkbox that is not at column 0, including an indented one anywhere in an item, which gr0wthlab merges into the item above with its blocking scope.
 An open item whose scope starts "everything public" or "social" blocks every gr0wthlab post Draft until the Founder closes it, unless its title names `the "<claim>" claim`, which narrows it to posts carrying the claim (`drafts.py` `checklist_status`); a claim named outside the title fails, and an open social item with no claim is warned; use that scope only for what truly must come first, such as the Waitlist going live.
 
 ### 01-research/competitor-*.md

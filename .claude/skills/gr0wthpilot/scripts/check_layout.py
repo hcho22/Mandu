@@ -17,8 +17,8 @@ path it names into the package, and verifies:
    zero-padded Angle IDs; the exact platform names TikTok and YouTube Shorts;
    Formats naming a recording the filming plan knows; signal and kill cells
    naming numbers gr0wthlab asks the Studio of each calendar day's primary
-   platform that runs the Angle for (its own Platform's, when no fixed day
-   does); the pre-publication checklist's items, titles, and blocking scopes
+   platform that runs the Angle for, and its own Platform's when no fixed
+   day runs it or the flex slot can put it there; the pre-publication checklist's items, titles, and blocking scopes
    as gr0wthlab reads them; and a creative-log.json its kill and change
    edits can make, against the Angle bank's own header; and the Test Kit
    meets the run's own floor: at least 15
@@ -58,10 +58,12 @@ LEG_RE = re.compile(r"^- Leg ([AB]) hook: (.*)$")
 QUOTED_RE = re.compile(r"\"([^\"]+)\"")
 PAIR_LEG_RE = re.compile(r"\b(AB-\d+) leg ([AB])\b")
 # The recording types gr0wthlab's filming plan reads from a Format (shots.py
-# CAPTURES), after the optional length it strips first (shots.py LENGTH).
+# CAPTURES).
 FORMAT_KINDS = re.compile(r"\bfounder[- ]on[- ]camera\b|\bscreen[- ]record(?:ing)?s?\b|\btime-?lapse\b|"
                           r"\bslow[- ]motion\b|\bhigh-frame-rate\b|\bdemo\b|\bpan\b|\bvideo\b", re.I)
-FORMAT_LENGTH = re.compile(r"\s*(\d+)(?:\s*-\s*(\d+))?\s*s\b[\s:,]*")
+# The calendar days the day-7 Weekly Read covers (exchange.py READ_DAYS): only
+# an Angle one of them runs can earn the flex slot (weekly_read.py).
+EARNING_DAYS = 5
 # The numbers gr0wthlab asks each platform's Studio for, and the words a
 # signal or kill criterion uses for each (results.py LABELS and TERMS).
 STUDIO_NUMBERS = {
@@ -202,13 +204,13 @@ def check_calendar(text, problems):
                             % (day, row[idx["platform"]]))
         m = re.match(r"(P\d+)\b", angle_cell)
         leg = PAIR_LEG_RE.search(angle_cell)
+        named = sorted(set(re.findall(r"\bP\d+\b", angle_cell)))
         if not m:
             flex.append(day)
-            named = re.findall(r"\bP\d+\b", angle_cell)
             if len(named) != 1:
                 problems.append("cadence-14-day.md: flex day %s must name exactly one fallback Angle (P..)" % day)
         days[day] = {"angle": m.group(1) if m else None, "leg": leg.groups() if leg else None,
-                     "platform": row[idx["platform"]]}
+                     "platform": row[idx["platform"]], "fallback": named[0] if not m and len(named) == 1 else None}
     for d in range(1, CALENDAR_DAYS):
         if str(d) not in days:
             problems.append("cadence-14-day.md: day %d is missing (days 1-13 must exist)" % d)
@@ -258,9 +260,7 @@ def check_angles(text, rules, problems, warnings):
         if platform not in PLATFORMS:
             problems.append("angles.md: %s Platform %r is not exactly TikTok or YouTube Shorts (gr0wthlab's flex "
                             "edit copies it into the calendar as written)" % (aid, platform))
-        fmt = row[idx["Format"]]
-        length = FORMAT_LENGTH.match(fmt)
-        if not FORMAT_KINDS.search(fmt[length.end():] if length else fmt):
+        if not FORMAT_KINDS.search(row[idx["Format"]]):
             problems.append("angles.md: %s Format names no recording type gr0wthlab's filming plan knows "
                             "(founder on camera, screen record, time-lapse, slow motion, high-frame-rate, demo, "
                             "pan, video), so it cannot plan the Angle's shots" % aid)
@@ -337,15 +337,23 @@ def check_calendar_links(days, angles, pairs, problems):
 def check_metrics(days, angles, problems):
     """Each Angle's signal and kill criterion against the numbers gr0wthlab
     asks for its posts (results.py asks_for): the numbers of the primary
-    platform of each fixed calendar day that runs it, or of its own Platform
-    when no fixed day does, where the flex edit (weekly_changes.py
-    compose_flex) would put it."""
-    runs = {}
+    platform of each fixed calendar day that runs it, and of its own Platform
+    when no fixed day runs it or when the flex edit (weekly_changes.py
+    compose_flex) can put it there: as the flex row's named fallback, or as
+    the Angle that earned the slot, which only an Angle a day of the day-7
+    Weekly Read runs can be (weekly_read.py)."""
+    flex = [info["fallback"] for info in days.values() if info["angle"] is None]
+    runs, own = {}, set(flex)
     for day, info in days.items():
         if info["angle"] in angles:
             runs.setdefault(info["angle"], {}).setdefault(info["platform"], []).append(day)
+            if flex and int(day) <= EARNING_DAYS:
+                own.add(info["angle"])
     for aid, angle in angles.items():
-        for platform, on_days in (runs.get(aid) or {angle["platform"]: []}).items():
+        platforms = dict(runs.get(aid, {}))
+        if aid in own or not platforms:
+            platforms.setdefault(angle["platform"], [])
+        for platform, on_days in platforms.items():
             asked = STUDIO_NUMBERS.get(platform)
             if asked is None:
                 continue
@@ -425,8 +433,9 @@ def check_checklist(text, problems, warnings):
         if line.startswith("#"):
             after_item = False
         elif UNREAD_ITEM_RE.match(line):
-            problems.append("pre-publication-checklist.md:%d: a checkbox gr0wthlab does not read as an item; an "
-                            "item starts '- [ ] ' at column 0" % (index + 1))
+            problems.append("pre-publication-checklist.md:%d: a checkbox gr0wthlab does not read as an item (an "
+                            "indented one is read as part of the item above, its blocking scope included); an item "
+                            "starts '- [ ] ' at column 0" % (index + 1))
         elif after_item and index not in covered and BLOCKING_LIKE_RE.search(line):
             problems.append("pre-publication-checklist.md:%d: this line is not part of the item above it in "
                             "gr0wthlab's reading, which ends an item at its first blank or unindented line, so its "

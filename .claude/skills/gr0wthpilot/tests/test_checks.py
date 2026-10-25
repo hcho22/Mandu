@@ -820,6 +820,34 @@ class GrowthlabLayoutTest(unittest.TestCase):
             "angles.md: P05 signal names saves, which gr0wthlab does not ask YouTube Shorts for "
             "(cadence-14-day.md day 4)"])
 
+    def test_signal_and_kill_are_read_where_the_flex_slot_puts_an_angle(self):
+        pkg = fixtures.package()
+        path = pkg / "05-social-pmf/angles.md"
+        text = path.read_text()
+        for aid in ("P03", "P05", "P07"):
+            text = re.sub(r"(\| %s \|.*)\| TikTok \|" % aid, r"\1| YouTube Shorts |", text)
+        path.write_text(text)
+
+        def flagged():
+            found = [p for p in self.check(pkg)["problems"] if p.startswith("angles.md")]
+            self.assertTrue(all(" asks YouTube Shorts for " in p and p.endswith("only watched-full") for p in found),
+                            found)
+            return sorted(tuple(p.split(" ")[1:3]) for p in found)
+
+        self.assertEqual(flagged(), [("P03", "kill"), ("P03", "signal"), ("P05", "kill"), ("P05", "signal")])
+        edit(pkg / "05-social-pmf/cadence-14-day.md",
+             "| 14 | Asset 14 | Flex: double down on the leader, else P05 | YouTube Shorts | note |\n", "")
+        self.assertEqual(flagged(), [])
+
+    def test_the_documented_angle_row_passes(self):
+        doc = (fixtures.SCRIPTS.parent / "references" / "package-layout.md").read_text()
+        example = next(block for block in doc.split("```") if "| ID | Angle |" in block)
+        problems = []
+        angles = check_layout.check_angles(example, fixtures.BRAND_RULES, problems, [])
+        check_layout.check_metrics({}, angles, problems)
+        self.assertEqual(list(angles), ["P01"])
+        self.assertEqual(problems, ["angles.md: 1 Angles; a Test Kit needs at least 15 distinct Angles"])
+
     def test_checklist_titles_and_scopes_as_gr0wthlab_reads_them(self):
         pkg = fixtures.package()
         path = pkg / "08-redteam/pre-publication-checklist.md"
@@ -856,13 +884,17 @@ class GrowthlabLayoutTest(unittest.TestCase):
         path = pkg / "08-redteam/pre-publication-checklist.md"
         path.write_text("# Checklist\n\n- [x] **Site live** done\n  - [ ] **Verify waitlist** (blocking: social)\n"
                         "- [ ] **Waitlist copy** reviewed\nnot indented, so the item ended\n  (blocking: social)\n"
-                        "- [ ] **Trademark search**\n\n  (blocking: naming)\n\n## Notes\n\n"
+                        "- [ ] **Trademark search**\n\n  (blocking: naming)\n\n"
+                        "- [ ] **Benchmark record** on two phones\n  measured in real time\n"
+                        "  - [ ] **Nested deeper** (blocking: social)\n\n## Notes\n\n"
                         "Lines marked (blocking: social) block posts.\n")
         problems = [p for p in self.check(pkg)["problems"] if p.startswith("pre-publication")]
-        self.assertEqual(len(problems), 3, problems)
-        self.assertTrue(has(problems, r":4: a checkbox gr0wthlab does not read as an item"))
+        self.assertEqual(len(problems), 4, problems)
+        self.assertTrue(has(problems, r":4: a checkbox gr0wthlab does not read as an item \(an indented one is "
+                                      r"read as part of the item above, its blocking scope included\)"))
         self.assertTrue(has(problems, r":7: this line is not part of the item above it"))
         self.assertTrue(has(problems, r":10: this line is not part of the item above it"))
+        self.assertTrue(has(problems, r":14: a checkbox gr0wthlab does not read as an item"))
 
     def test_the_angle_bank_is_the_table_with_its_eight_columns(self):
         pkg = fixtures.package()
