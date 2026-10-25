@@ -13,14 +13,15 @@ build folder (`<Product>.guard/build/`), which no tool of the run can write:
     included;
   - the project, workspace, and .xcconfig lie in that verified copy; a test
     plan is named, not given as a path;
-  - every call, -list and -showBuildSettings included, gets the build
-    folder's own DerivedData, which holds the package sources a build fetches
-    and compiles and the app gp-sim installs; only a result bundle may go to
-    the run's cache folder;
+  - every call, -showBuildSettings included, gets the build folder's own
+    DerivedData, which holds the package sources a build fetches and
+    compiles and the app gp-sim installs; only a result bundle may go to the
+    run's cache folder; -list is refused, since xcodebuild cannot run it with
+    a DerivedData path;
   - a build setting names no path outside the build folder, and no `$(`,
     `${`, or `..`;
-  - every call but an information one (-list, -showBuildSettings, and the
-    like, with no action) names an iOS Simulator -destination or -sdk
+  - every call but an information one (-showBuildSettings and the like,
+    with no action) names an iOS Simulator -destination or -sdk
     iphonesimulator, a call with no action included, since xcodebuild then
     builds, and without one it uses the project's default SDK, a device's;
     a -destination must be an iOS
@@ -60,8 +61,9 @@ from gp_tools import ToolError, inside, load_config, require_inside  # noqa: E40
 ACTIONS = {"build", "build-for-testing", "test", "test-without-building", "clean", "analyze"}
 # Actions that boot a simulator to run on.
 TEST_ACTIONS = {"test", "test-without-building"}
-# -resolvePackageDependencies is not among them: it only downloads.
-INFO_FLAGS = {"-list", "-showBuildSettings", "-version", "-showsdks", "-showdestinations", "-showTestPlans"}
+# -resolvePackageDependencies is not among them: it only downloads. Nor is
+# -list: xcodebuild refuses it with a -derivedDataPath, which every call gets.
+INFO_FLAGS = {"-showBuildSettings", "-version", "-showsdks", "-showdestinations", "-showTestPlans"}
 FLAGS = INFO_FLAGS | {"-json", "-quiet", "-verbose", "-hideShellScriptEnvironment", "-parallelizeTargets",
                       "-alltargets", "-retry-tests-on-failure", "-showBuildTimingSummary",
                       "-disableAutomaticPackageResolution", "-onlyUsePackageVersionsFromResolvedFile",
@@ -229,6 +231,8 @@ def check_args(cfg, args):
     """Check xcodebuild's arguments and verify every source copy they name."""
     copies, xcconfigs, has_target, has_destination, has_sdk = set(), [], False, False, False
     testing = any(a in TEST_ACTIONS for a in args)
+    if "-list" in args:
+        raise ToolError("-list is not supported; use the build recipe in references/app-screens.md instead")
     i = 0
     while i < len(args):
         a = args[i]
@@ -321,8 +325,8 @@ def main(argv):
             cmd_source(cfg, argv[1:])
             return 0
         check_args(cfg, argv)
-        # Every call, -list and -showBuildSettings included, so xcodebuild
-        # never reads or writes the Founder's own DerivedData.
+        # Every call, -showBuildSettings included, so xcodebuild never reads
+        # or writes the Founder's own DerivedData.
         args = list(argv) + ["-derivedDataPath", str(Path(cfg["build"]) / "DerivedData")]
         # XCODE_XCCONFIG_FILE would override every setting, -sdk included.
         env = {k: v for k, v in os.environ.items() if k != "XCODE_XCCONFIG_FILE"}
