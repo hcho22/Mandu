@@ -1,12 +1,12 @@
 # Career & Work
 
-Solo and independent, pursuing income by end of 2026 through a revenue product (Rep Today, or the Purvia starter kit) or a full-time AI role. No revenue yet; the projects below are portfolio work, with Rep Today (B2C) and Purvia Phase 2 (B2B) as the two product bets.
+Solo and independent, pursuing income by end of 2026 through a revenue product (Rep Today) or a full-time AI role. No revenue yet; the projects below are portfolio work, with Rep Today (B2C) as the product bet. Purvia stopped being an income bet on 2026-10-26 (hcho's call: "portfolio piece").
 
 ## Current focus
 
 **Reordered 2026-08-02.** Shipping **Rep Today** to the App Store and testing whether it has PMF. It is the primary near-term income bet because it is a finished app that can be in front of real users in weeks, and its PMF question is answerable this quarter against pre-registered kill criteria. Two mandatory builds stand between it and launch: account deletion (App Store Guideline 5.1.1(v)) and funnel instrumentation.
 
-**Purvia** (formerly Agentic RAG) is ranked second and stays a live income bet, not portfolio-only: a paid permission-aware RAG starter kit, build-in-public, validation-first. It is also the strongest portfolio piece and the most likely asset to land an AI role, so it carries the job-search story even while its revenue path waits on a buyer who has not been reachable. Its cheap standing obligation is keeping the eval receipts alive; the nightly series stopped 2026-07-16.
+**Purvia** (formerly Agentic RAG) is ranked third and, by hcho's call on 2026-10-26, is a portfolio piece, not an income bet: the paid starter kit and the 10 buyer interviews are off the board. It is the strongest portfolio piece and the most likely asset to land an AI role, so it carries the job-search story. Its standing obligation is keeping the eval receipts alive; the scheduled evals run monthly, the next on 2026-11-01.
 
 The job search runs as a parallel income hedge (see `projects/job-search/`) across three lanes: software quality and systems validation; AI quality and evaluation; and AI product, integration, and technical delivery.
 

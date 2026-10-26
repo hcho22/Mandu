@@ -5,10 +5,11 @@ It never publishes, sends, or spends, and it cannot write to Mandu or to any pro
 Version 1 serves Rep Today's pre-launch marketing; Immerse joins as listen-only after Rep Today's first 14-day window has run cleanly.
 
 **Repo:** https://github.com/hcho22/gr0wthlab (`main`, created 2026-10-08).
-Visibility: private until about 18:50 UTC on 2026-10-12, then public; private on 2026-10-13 by hcho's call, "gr0wthlab records - private repo"; **public again since 2026-10-14 while v1 is built**, and to be made private before the first real run, which gr0wthlab is to refuse while the repo is public.
-`main` has no branch protection.
-**Development checkout (code and PRs):** `/Users/hcho/Developer/FM_Private/firstmate-private/projects/gr0wthlab` (verified 2026-10-15 at `b757595`, clean, in sync with GitHub); firstmate builds it, and it holds none of hcho's records.
-**Production clone (hcho's records):** `~/gr0wthlab`, where the weekly run, the sitting page, and `ledger/` live; it does not exist yet (checked 2026-10-15).
+Visibility: private until about 18:50 UTC on 2026-10-12, then public; private on 2026-10-13 by hcho's call, "gr0wthlab records - private repo"; public again on 2026-10-14 while v1 was built; private from 2026-10-16, made so on his "gr0wthlab - go live" before the first real run, as he required (a real run refuses to start while the repo is public); public again as found on 2026-10-26, changed after the 2026-10-23 morning review by an action no record names, with the 2026-10-16 and 2026-10-19 records on `main`; **private again since about 10:41 PT on 2026-10-26, made so by hcho** (GitHub API `updated_at` 17:41:11 UTC).
+`main` has no branch protection, which GitHub's free plan does not offer on a private repo.
+**Development checkout (code and PRs):** `/Users/hcho/Developer/FM_Private/firstmate-private/projects/gr0wthlab` (verified 2026-10-26 at `6776dd0`, clean, in sync with GitHub); firstmate builds it, and it holds none of hcho's records.
+**Production clone (hcho's records):** `~/gr0wthlab`, where the weekly run, the sitting page, and `ledger/` live; cloned 2026-10-16, and the weekly LaunchAgent (Sundays 16:00) installed 2026-10-21.
+Its first scheduled start, 2026-10-25 16:00, refused to run because the repo was public, so the clone is still at `df34b86` (2026-10-19) until the next run syncs `main`.
 
 **Strategic role: tracked as of 2026-10-12 at hcho's request, not ranked.**
 It is tooling in service of Rep Today's launch (priority #1), not a product bet of its own, so it has no place in the Rep Today, Immerse, Purvia order unless hcho gives it one.
@@ -19,25 +20,29 @@ Logged in `decisions/log.md`.
 
 ## Status
 
-_Last verified: 2026-10-15._
+_Last verified: 2026-10-26._
 
-- **All 26 PRs so far merged in eight days (#1 to #26, 2026-10-08 to 2026-10-15), and #27 is open.**
-  `main` is at `b757595` (#26, 2026-10-15), and the last eight runs on `main` all passed.
-  Since 2026-10-12: the sitting page with hcho's records in `ledger/founder/` (#18), a refusal to run while the repo is public (#21), Instructions changed only through each workflow's example set (#23), the Weekly Read from numbers hcho types (#25, exchange version 8), and a Hook the code does not support sent to hcho as a package-change proposal (#26).
-- **PRD progress: 64 of 99 acceptance boxes checked across 18 stories (44 on 2026-10-12).**
-  Complete: US-ME01, 02, 04, 06, 07, 12, 15, 16.
+- **All 34 PRs so far merged (#1 to #34, 2026-10-08 to 2026-10-23); none open.**
+  `main` is at `6776dd0` (#34, 2026-10-23), and all 14 CI runs since 2026-10-16 passed.
+  Since 2026-10-15: an approved Weekly Read kill reaches the package as its own proposal (#29), cross-file contradictions in the package review (#30), frozen Hooks exempt from two Hook rules when `brand-rules.json` says so (#31), the live Waitlist view and window 1's dates (#32), the Waitlist line that ends every post caption (#33), and no skill installed on the Mac reaching a weekly session (#34).
+- **PRD progress: 73 of 99 acceptance boxes checked across 18 stories (64 on 2026-10-15, 44 on 2026-10-12).**
+  Complete: US-ME01, 02, 04, 05, 06, 07, 12, 15, 16.
   Partly done: US-ME08, 09, 11, 14, 17.
-  Not started: the scheduling-service spike and loading (US-ME03, US-ME10, parked by hcho's manual-posting choice), the Waitlist itself (US-ME05), listening (US-ME13), and Immerse listening (US-ME18, parked).
-- **Nothing has been published, sent, or scheduled, and no real weekly run has happened.**
-  No production clone or schedule is installed, and `config/run.json` has no Waitlist date, first sitting, or posting slot.
-  Runs so far were tests in throwaway copies.
-- **The repo is public while v1 is built, and a real run refuses to start until it is private** ([PR #21](https://github.com/hcho22/gr0wthlab/pull/21)).
-  Each production run commits `workspace/` and `ledger/` to `main`: unposted drafts, Review Queue items, hcho's decisions with their reasons, his typed results, counts, and run reports, so the repo must be private before the first one.
-  firstmate holds `gr0wthlab-private-before-first-run` for that moment.
-  A pattern scan of the full history for API keys and private keys found none on 2026-10-12; that is a pattern search, not a dedicated secret scanner.
-- **CI was blocked by a GitHub billing limit while the repo was private on 2026-10-12; public repos use free runners, so it runs again.**
-  Going private before the first run brings the metered minutes back, including one macOS job.
-- **Size on `main` (static counts, 2026-10-15):** 106 Python files, about 30,400 lines outside tests, and 1,480 test functions in 53 test files.
+  Not started: the scheduling-service spike and loading (US-ME03, US-ME10, parked by hcho's manual-posting choice), listening (US-ME13), and Immerse listening (US-ME18, parked).
+- **In operation since 2026-10-16, with nothing published yet.**
+  Two on-demand runs (`20261016T181554Z-on-demand-307c`, `20261019T133323Z-on-demand-c2e0`) and one sitting (2026-10-18, 15 decisions).
+  The first scheduled run, due Sunday 2026-10-25 at 16:00, fired on time and refused to start because the repo was public; a refused start earns no retry, so the week's run waits for hcho to start one on demand now that the repo is private again (10-26), and there was no sitting on 2026-10-25.
+  `config/run.json` on `main` has `waitlist.live_since` 2026-10-21, window 1's first sitting 2026-10-25, and a 10:00 slot, so day 1 is Monday 2026-10-26; the production clone picks these up when a run syncs `main`.
+  No post item has been queued yet, so nothing was ready for day 1; a run from 2026-10-26 on prepares days from the next day only, so day 1 can no longer be prepared under these dates.
+  No footage exists, and no outreach record shows a message sent.
+- **Each production run commits `workspace/` and `ledger/` to `main`, so the repo must be private**: unposted drafts, Review Queue items, hcho's decisions with their reasons, his typed results, counts, and run reports.
+  It was public from about 10-23 until hcho made it private on 2026-10-26, and GitHub's traffic shows outside clones on 2026-10-23 and 10-24 that cannot be recalled.
+  A pattern scan of the full history for API keys and private keys found none on 2026-10-12, and a scan on 2026-10-26 of the 2026-10-16 and 2026-10-19 records commits found none either; that is a pattern search, not a dedicated secret scanner.
+- **CI minutes are metered only while the repo is private, including a macOS job of about 17 minutes per run.**
+  A GitHub billing limit blocked CI while the repo was private on 2026-10-12; usage since 2026-10-16 was not checked.
+- **Size on `main` (static counts, 2026-10-26):** 108 Python files, about 32,100 lines outside tests, and 1,546 test functions in 54 test files.
+- **Immerse is still `listening-only` in the registry, with no package.**
+  A Gr0wthPilot Candidate Package for Immerse sits untracked in `projects/Immerse/gtm/` since 2026-10-25; nothing reads it until hcho says "Immerse - hand to gr0wthlab" and firstmate adds it to the registry through a reviewed change.
 
 ## How it connects to Mandu
 
@@ -58,20 +63,28 @@ _Last verified: 2026-10-15._
   He also answered that the trademark line stays open.
   The exact edits are in firstmate's `data/gr0wthlab/gr0wthlab-mandu-package-fixes/report.md`.
   He gave these answers to firstmate before the sitting page existed, so they are not gr0wthlab records and the reader does not apply them; applying them is a direct edit he can ask for.
+  Both are still unapplied on 2026-10-26, and his 2026-10-21 choice to exempt the frozen Hooks from the Hook rules, over rewriting them, likely makes both moot; he has not said so.
+- **Choices hcho gives firstmate outside the sitting page reach the package as direct edits, not through the reader.**
+  Since 2026-10-21: window 1 text only with a 10:00 slot (Mandu `3bf4acc`), and the frozen-Hook exemption and the caption's Waitlist line (Mandu `4db78ff`, with gr0wthlab PRs #31 and #33).
 
 ## Gates before anything public
 
-1. **The Rep Today Waitlist must be live.** It is the last open Gate 0 item, and `waitlist.live_since` is unset; every post item says nothing can be published until it is.
-2. **hcho sets the first sitting and the posting slot** for the first 14-day window; both are unset.
-3. **The trademark line in the package is still open** by hcho's answer on 2026-10-10, which blocks post drafts for all seven days of the first batch.
-4. **A production clone and the Sunday 16:00 schedule** have to be installed (`docs/operations.md`).
+1. **The Rep Today Waitlist must be live.** Done: live on reptoday.app since 2026-10-21 (RepToday PRs #203 to #214), and `waitlist.live_since` is 2026-10-21 on `main` (#32).
+2. **hcho sets the first sitting and the posting slot.** Done 2026-10-21: first sitting Sunday 2026-10-25, slot 10:00, so day 1 is Monday 2026-10-26 (#32).
+3. **The trademark line in the package.** Closed: pre-publication checklist line 9 is checked since the approved `20261016-name-status-update` was applied (Mandu `0de57af`).
+4. **A production clone and the Sunday 16:00 schedule.** Done: clone 2026-10-16, LaunchAgent 2026-10-21.
+   But a run starts only while the repo is private: the first scheduled start, 2026-10-25, refused because it is public again.
 5. **Posting is manual.** hcho chose manual posting on 2026-10-11, so no scheduling-service integration is being built.
+6. **Footage.** Open: no window-1 footage exists in `/Users/hcho/Mandu/projects/RepToday/window-1/`; every window-1 shot is now a phone screen recording, and filming is hcho's.
 
-## Decisions waiting on hcho (from firstmate's backlog, 2026-10-15)
+## Decisions waiting on hcho (2026-10-26)
 
-- When to build the path for hcho to supply threads and reviews for listening; until then listening produces nothing (his "later for now", 2026-10-13).
-- Whether to schedule three follow-ups nobody asked for: a lock so a boundary check and a weekly run cannot overlap, a hardening of the boundary probe, and not starting a session while the agent's changed Instructions could not be put back.
-- Settled since 2026-10-12: the rule against keeping a stranger's words (middle choice, built in #19), the A/B pair video (decided 2026-10-13), and how an approved Weekly Read kill reaches the package ("angle kill - two approvals", 2026-10-15).
+- First (the repo is private again since 10-26): start the week's run on demand (`~/gr0wthlab/src/bin/gr0wthlab run`) and hold the sitting; and whether window 1 keeps its dates, with day 1 skipped, or moves `first_sitting` through a reviewed change.
+- On the sitting page: five open Review Queue items (two creator messages carried over from 2026-10-18, a new GMB Fitness message, the proposal to remove GMB Fitness from creator outreach, and the 2026-10-19 notice), and a choice for the approved but choice-less `20261016-p11-kill-read-conflict` and `20261016-prelaunch-paid-spend-conflict`.
+- From firstmate's backlog: when to build the path for hcho to supply threads and reviews for listening; until then listening produces nothing (his "later for now", 2026-10-13).
+- From firstmate's backlog: whether to schedule three follow-ups nobody asked for: a lock so a boundary check and a weekly run cannot overlap, a hardening of the boundary probe, and not starting a session while the agent's changed Instructions could not be put back.
+- From firstmate's backlog (2026-10-24): when to schedule `gr0wthlab-replacement-package`, needed only before a second Handoff of a re-run package.
+- Settled since 2026-10-15: going live (2026-10-16), the Waitlist build (approved 2026-10-19, live 2026-10-21), text-only filming and the 10:00 slot, the frozen-Hook exemption (2026-10-21), the caption's Waitlist line ("cta - B", 2026-10-22), the marketingskills companions and #34 ("1a, 2a, 3a", 2026-10-23), and creator disclosure told in person ("a", 2026-10-23).
 
 ## Key files (in the repo)
 

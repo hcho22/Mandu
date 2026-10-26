@@ -91,9 +91,10 @@ Completed and archived: `archives/HabitLoop/`, `archives/F2F/`.
 
 `projects/Immerse/` (repo `hcho22/Immerse`, a nostalgic film-camera iOS app; native v1 implementation started 2026-10-02, not yet device-validated) is tracked daily as of 2026-09-29 at hcho's request and is ranked #2, immediately after Rep Today (Purvia is now #3; see `context/current-priorities.md` and `decisions/log.md`).
 Its local checkout is `/Users/hcho/Developer/FM_Private/firstmate-private/projects/Immerse`.
+`projects/Immerse/gtm/` holds an unfinished Gr0wthPilot Candidate Package (run of 2026-10-25, gates through `critic-1`); nothing reads it until hcho says its Handoff line, and none of its proposals are adopted.
 Include it in project reviews.
 
-`projects/gr0wthlab/` (repo `hcho22/gr0wthlab`, public again since 2026-10-14 while v1 is built (private 2026-10-13), and to be made private before the first real run; the "Marketing Engineer", a weekly agent that turns the go-to-market package in `projects/RepToday/gtm/` into drafts, evidence, and a Review Queue for hcho, and never publishes, sends, or spends) is tracked as of 2026-10-12 at hcho's request.
+`projects/gr0wthlab/` (repo `hcho22/gr0wthlab`, private since 2026-10-16 except for a public spell found on 2026-10-26 (about 10-23 to 10-26), which made the 10-25 scheduled run refuse to start; a real run refuses to start whenever the repo is public; the "Marketing Engineer", a weekly agent that turns the go-to-market package in `projects/RepToday/gtm/` into drafts, evidence, and a Review Queue for hcho, and never publishes, sends, or spends) is tracked as of 2026-10-12 at hcho's request.
 It is tooling in service of Rep Today's launch and is not ranked.
 firstmate's development checkout, for code and PRs in a review, is `/Users/hcho/Developer/FM_Private/firstmate-private/projects/gr0wthlab`; it holds none of hcho's records.
 Include it in project reviews.

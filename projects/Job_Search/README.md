@@ -2,10 +2,12 @@
 
 **One-liner:** hcho's active search across software quality/systems validation, AI quality/evaluation, and AI product/integration/technical delivery, run as the parallel income hedge alongside the product bets.
 
-**Status:** Active
+**Status:** Active.
+As of 2026-10-26, six applications have gone out since 2026-10-14: 3 in each of the weeks of 10-12 and 10-19, against 5 a week, and none yet in the week of 10-26.
+No reply is recorded, the latest scan is 2026-10-19, and the same 61 Master profile numbers still need re-reading before most new packets; see `log/2026-10-26.md`.
 
 **Key dates:**
-- Target: income by end of 2026 (a role here, or app revenue via Agentic RAG).
+- Target: income by end of 2026 (a role here, or app revenue via Rep Today or Purvia).
 
 ## Strategy (updated 2026-09-22)
 
