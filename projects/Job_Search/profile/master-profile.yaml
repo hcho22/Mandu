@@ -15,7 +15,7 @@
 # After editing, run: python3 render_profile.py
 
 schema_version: 1
-as_of: 2026-10-20
+as_of: 2026-10-27
 
 person:
   name: Hyung Cho
@@ -447,7 +447,7 @@ claims:
   - id: reptoday-native-ios-app
     period: independent
     project: reptoday
-    text: "Built Rep Today, a native iOS workout app in Swift and SwiftUI using Observation, MVVM, protocol-based dependency injection, and Core Data synced through CloudKit, across 196 merged pull requests."
+    text: "Built Rep Today, a native iOS workout app in Swift and SwiftUI using Observation, MVVM, protocol-based dependency injection, and Core Data synced through CloudKit, across 214 merged pull requests."
     dates: {start: 2026-06, end: present}
     scale: project
     evidence:
@@ -458,17 +458,17 @@ claims:
         - "https://github.com/hcho22/RepToday/blob/de0355d99302fe31ff24de11e0f480e853d16498/ios/RepToday/RepToday/Persistence/PersistenceController.swift#L45-L70"
         - "https://github.com/hcho22/RepToday/pull/198"
     numbers:
-      - value: "196"
-        what: "merged pull requests, 2026-06-25 to 2026-10-06"
-        as_of: 2026-10-08
-        source: "gh pr list -R hcho22/RepToday --state all, counted by state"
-      - value: "31,276"
-        what: "lines of app Swift in 127 files"
-        as_of: 2026-10-08
-        source: "find ios/RepToday/RepToday -name '*.swift' | xargs cat | wc -l at de0355d"
+      - value: "214"
+        what: "merged pull requests, 2026-06-25 to 2026-10-27 (196 to 2026-10-06)"
+        as_of: 2026-10-27
+        source: "gh pr list -R hcho22/RepToday --state all, counted by state (214 merged, 2 closed)"
+      - value: "31,338"
+        what: "lines of app Swift in 127 files at 15cd878 (31,276 at de0355d)"
+        as_of: 2026-10-27
+        source: "git ls-tree ios/RepToday/RepToday *.swift at 15cd878, contents counted with wc -l"
     skills: [Swift, SwiftUI, Observation framework, MVVM, Dependency injection, Core Data, CloudKit, XcodeGen, AI coding agents]
     lanes: [ai-product]
-    caveats: "Not on the App Store and no TestFlight upload on record (PR #64 was prep only). AI coding agents wrote the code under hcho's direction. The repo began 2026-03-31 as a FitSnack scaffold; the current codebase dates from 2026-06-25."
+    caveats: "Not on the App Store. TestFlight build 1.0.0 (4), archived from c7d78f9 (PR #201), has been available to internal testers since hcho confirmed it on 2026-10-15; no external testers (projects/RepToday/README.md). AI coding agents wrote the code under hcho's direction. The repo began 2026-03-31 as a FitSnack scaffold; the current codebase dates from 2026-06-25."
 
   - id: reptoday-deterministic-engine
     period: independent
@@ -498,27 +498,27 @@ claims:
   - id: reptoday-unit-suite-growth
     period: independent
     project: reptoday
-    text: "Grew the XCTest unit suite from 829 tests on 2026-07-31 to 1,687 on 2026-10-06; CI runs 1,665 of them on both iOS 18 and iOS 26 with 0 failures, and the other 22 build-flag-gated Coach tests run in a separate job."
+    text: "Grew the XCTest unit suite from 829 tests on 2026-07-31 to 1,700 on 2026-10-22; CI runs 1,678 of them on both iOS 18 and iOS 26 with 0 failures, and the other 22 build-flag-gated Coach tests run in a separate job."
     dates: {start: 2026-06, end: present}
     scale: project
     evidence:
       kind: linked
       refs:
-        - "https://github.com/hcho22/RepToday/actions/runs/37462462742"
-        - "https://github.com/hcho22/RepToday/blob/de0355d99302fe31ff24de11e0f480e853d16498/docs/test-coverage.md"
+        - "https://github.com/hcho22/RepToday/actions/runs/39796068956"
+        - "https://github.com/hcho22/RepToday/blob/f274ad04c3ec4a2d5e6a1b99073f408a2226f033/docs/test-coverage.md"
     numbers:
-      - value: "829 to 1,687"
-        what: "XCTest methods, 2026-07-31 (c2f9024) to 2026-10-06 (de0355d)"
-        as_of: 2026-10-08
+      - value: "829 to 1,700"
+        what: "XCTest methods, 2026-07-31 (c2f9024) to 2026-10-22 (f274ad0); 1,687 at de0355d on 2026-10-06"
+        as_of: 2026-10-27
         source: "git grep -hE 'func test[A-Za-z0-9_]*\\(\\)' on RepTodayTests at each commit"
-      - value: "1,665"
-        what: "tests executed per iOS lane on the latest main run, 1 skipped, 0 failures"
-        as_of: 2026-10-08
-        source: "'Executed 1665 tests' in both iOS job logs of Actions run 37462462742"
-      - value: "49,943 vs 31,276"
-        what: "lines of test Swift vs app Swift"
-        as_of: 2026-10-08
-        source: "wc -l over RepTodayTests and RepTodayUITests vs RepToday at de0355d"
+      - value: "1,678"
+        what: "tests executed per iOS lane on main run 39796068956 (f274ad0, 2026-10-22), 1 skipped on iOS 18 and 2 on iOS 26, 0 failures"
+        as_of: 2026-10-27
+        source: "'Executed 1678 tests' in both iOS job logs of Actions run 39796068956"
+      - value: "50,703 vs 31,338"
+        what: "lines of test Swift vs app Swift at f274ad0"
+        as_of: 2026-10-27
+        source: "wc -l over RepTodayTests and RepTodayUITests vs RepToday at f274ad0"
     skills: [XCTest, Test automation, Swift]
     lanes: [quality]
     caveats: "All runs are on Simulators."
@@ -560,8 +560,8 @@ claims:
     numbers:
       - value: "45 minutes"
         what: "CI job limit exceeded on PR #190's first run"
-        as_of: 2026-10-08
-        source: "check-run 111259115002 annotations"
+        as_of: 2026-10-27
+        source: "check-run 111259115002 annotation 'The job has exceeded the maximum execution time of 45m0s'"
     skills: [GitHub Actions, XCTest, SwiftUI, Failure analysis, Flaky test diagnosis, Regression testing]
     lanes: [quality]
     caveats: "The iOS 26 failure was found on a local Simulator, not by CI. AI agents wrote the diagnoses and fixes under hcho's direction. Simulator-only."
@@ -670,14 +670,14 @@ claims:
         - "https://github.com/hcho22/RepToday/pull/153"
         - "https://github.com/hcho22/RepToday/pull/169"
     numbers:
-      - value: "253"
-        what: "Coach XCTest methods across 21 files"
-        as_of: 2026-10-08
-        source: "grep -cE 'func test' RepTodayTests/Coach*.swift at de0355d"
-      - value: "462"
-        what: "proxy Vitest tests passing on the latest main run"
-        as_of: 2026-10-08
-        source: "Coach job log, Actions run 37462462742"
+      - value: "257"
+        what: "Coach XCTest methods across 22 files at f274ad0, 2026-10-22 (253 across 21 at de0355d)"
+        as_of: 2026-10-27
+        source: "grep -cE 'func test' RepTodayTests/Coach*.swift at f274ad0"
+      - value: "477"
+        what: "proxy Vitest tests passing on main run 39796068956 (f274ad0, 2026-10-22); 462 on run 37462462742"
+        as_of: 2026-10-27
+        source: "'Tests 477 passed (477)' in the Coach diagnostics job log of Actions run 39796068956"
     skills: [OpenAI API, LLM integration, Cloudflare Workers, JavaScript, App Attest, StoreKit 2, Vitest, Privacy engineering]
     lanes: [ai-product]
     caveats: "The proxy was deployed 2026-09-28 (operator-confirmed); later prompt changes (#186, #193) are not recorded as deployed. No Coach reply on a real device or TestFlight is on record. CI uses offline test doubles."
@@ -706,7 +706,7 @@ claims:
   - id: reptoday-agent-directed-delivery
     period: independent
     project: reptoday
-    text: "Ran development as 196 agent-authored pull requests over about 15 weeks, 180 of them with a written risk assessment, with later ones separating scenarios validated live in the app from those covered only by tests."
+    text: "Ran development as 214 agent-authored pull requests over about 18 weeks, 195 of them with a written risk assessment, with later ones separating scenarios validated live in the app from those covered only by tests."
     dates: {start: 2026-06, end: present}
     scale: project
     evidence:
@@ -714,16 +714,16 @@ claims:
       refs:
         - "https://github.com/hcho22/RepToday/pull/187"
         - "https://github.com/hcho22/RepToday/pull/191"
-        - "https://github.com/hcho22/RepToday/tree/de0355d99302fe31ff24de11e0f480e853d16498/docs/adr"
+        - "https://github.com/hcho22/RepToday/tree/15cd8784bd0ef5fe2a27fa54568c4e7c32914154/docs/adr"
     numbers:
-      - value: "180 of 196"
-        what: "merged PRs with a 'Risk Assessment' section (21 also have a live-validation table)"
-        as_of: 2026-10-08
+      - value: "195 of 214"
+        what: "merged PRs with a 'Risk Assessment' section, 2026-06-25 to 2026-10-27 (180 of 196 to 2026-10-06)"
+        as_of: 2026-10-27
         source: "gh pr list --state merged --json body, filtered for 'Risk Assessment'"
-      - value: "8"
+      - value: "9"
         what: "architecture decision records in docs/adr"
-        as_of: 2026-10-08
-        source: "ls docs/adr at de0355d"
+        as_of: 2026-10-27
+        source: "git ls-tree docs/adr at 15cd878"
     skills: [AI coding agents, Code review, Architecture decision records, Technical writing]
     lanes: [quality, ai-product]
     caveats: "AI agents wrote the PR bodies and validations; hcho directed and approved them."
@@ -745,14 +745,14 @@ claims:
         - "https://github.com/hcho22/Purvia/blob/f28be38116313891924d9230d060e03745eea8ee/backend/metadata.py#L135-L144"
         - "https://github.com/hcho22/Purvia/blob/f28be38116313891924d9230d060e03745eea8ee/frontend/package.json"
     numbers:
-      - value: "110"
-        what: "merged PRs, excluding automated eval-receipt PRs (2026-04-20 to 2026-09-16)"
-        as_of: 2026-10-08
+      - value: "114"
+        what: "merged PRs, excluding automated eval-receipt PRs (2026-04-20 to 2026-10-16; 110 through 2026-09-16)"
+        as_of: 2026-10-27
         source: "gh pr list -R hcho22/Purvia --state merged, excluding 'chore(evals)' titles"
-      - value: "14,260 / 6,766"
-        what: "lines of non-test backend Python / frontend TypeScript"
-        as_of: 2026-10-08
-        source: "git ls-files | xargs wc -l at f28be38"
+      - value: "14,459 / 6,782"
+        what: "lines of non-test backend Python / frontend TypeScript at 9f57976"
+        as_of: 2026-10-27
+        source: "git ls-tree at 9f57976: backend *.py excluding test_*.py, tests/ folders, and conftest.py; frontend *.ts and *.tsx excluding .test, .spec, and .d.ts files (this method gives 14,360 / 6,782 at f28be38, where an unrecorded method gave 14,260 / 6,766 on 2026-10-08)"
     skills: [Python, FastAPI, OpenAI API, Pydantic, Supabase, PostgreSQL, React, TypeScript, Vite, Tailwind CSS, Server-Sent Events, LangSmith, RAG, AI coding agents]
     lanes: [ai-product]
     caveats: "Built solo with AI coding agents. No external users. Citations are prompt-instructed filename mentions plus UI badges, with no automated citation check. Logging is plain key=value text, not JSON. No frontend tests."
@@ -771,10 +771,10 @@ claims:
         - "https://github.com/hcho22/Purvia/blob/f28be38116313891924d9230d060e03745eea8ee/docs/adr/0002-workspace-tenant-isolation.md"
         - "https://github.com/hcho22/Purvia/pull/17"
     numbers:
-      - value: "48"
-        what: "SQL migrations defining the schema, retrieval functions, and row-level security policies"
-        as_of: 2026-10-08
-        source: "git ls-files 'supabase/migrations/*.sql' | wc -l at f28be38"
+      - value: "49"
+        what: "SQL migrations defining the schema, retrieval functions, and row-level security policies (48 at f28be38)"
+        as_of: 2026-10-27
+        source: "git ls-tree supabase/migrations at 9f57976, *.sql files"
     skills: [PostgreSQL, pgvector, Row-level security, Supabase, SQL, Access control, RAG]
     lanes: [ai-product, quality]
     caveats: "Grants are read-only and groups are flat (documented v0 limits)."
@@ -837,18 +837,18 @@ claims:
     evidence:
       kind: linked
       refs:
-        - "https://github.com/hcho22/Purvia/blob/f28be38116313891924d9230d060e03745eea8ee/evals/retrieval/retrieval_gold.yaml"
-        - "https://github.com/hcho22/Purvia/blob/f28be38116313891924d9230d060e03745eea8ee/evals/retrieval/runner.py"
-        - "https://github.com/hcho22/Purvia/blob/f28be38116313891924d9230d060e03745eea8ee/docs/nightly/2026-10-07.md"
+        - "https://github.com/hcho22/Purvia/blob/9f57976b048ba42c70e18587d90ef0e85843c84a/evals/retrieval/retrieval_gold.yaml"
+        - "https://github.com/hcho22/Purvia/blob/9f57976b048ba42c70e18587d90ef0e85843c84a/evals/retrieval/runner.py"
+        - "https://github.com/hcho22/Purvia/blob/9f57976b048ba42c70e18587d90ef0e85843c84a/docs/nightly/2026-10-14.md"
         - "https://github.com/hcho22/Purvia/pull/14#issuecomment-4454219095"
     numbers:
       - value: "0.950 / 0.858 / 0.872"
-        what: "hybrid search recall@5 / MRR / nDCG@5 (keyword 0.917 / 0.834 / 0.830; vector 0.875 / 0.813 / 0.811)"
-        as_of: 2026-10-08
-        source: "docs/nightly/2026-10-07.md headline table at f28be38"
+        what: "hybrid search recall@5 / MRR / nDCG@5 (keyword 0.917 / 0.834 / 0.830; vector 0.875 / 0.813 / 0.811), unchanged from 2026-10-07 to the latest published run on 2026-10-14"
+        as_of: 2026-10-27
+        source: "docs/nightly/2026-10-14.md headline table at 9f57976"
       - value: "-0.510"
         what: "recall@5 drop flagged by the PR comment on a deliberately broken PR that cut chunk size from 500 to 100 tokens"
-        as_of: 2026-10-08
+        as_of: 2026-10-27
         source: "bot comment on closed PR #14; docs/evals.md section 4"
     skills: [LLM evaluation, Retrieval metrics, Hybrid retrieval, Python, GitHub Actions, RAG]
     lanes: [ai-eval]
@@ -920,12 +920,12 @@ claims:
     numbers:
       - value: "4"
         what: "tools in the main loop (search_documents, sql_search, web_search, spawn_document_agent), plus 2 in the sub-agent (read_document_chunk, finalize)"
-        as_of: 2026-10-08
-        source: "tool dispatch in backend/main.py L1518-L1620 and tool schemas in backend/subagent.py at 56df8f3"
+        as_of: 2026-10-27
+        source: "tool dispatch in backend/main.py L1518-L1620 and tool schemas in backend/subagent.py at 56df8f3; both files unchanged at 9f57976"
       - value: "5"
         what: "maximum tool iterations per chat turn before the loop stops with an error event"
-        as_of: 2026-10-08
-        source: "MAX_TOOL_ITERATIONS in backend/main.py L346 at 56df8f3"
+        as_of: 2026-10-27
+        source: "MAX_TOOL_ITERATIONS in backend/main.py L346 at 56df8f3; unchanged at 9f57976"
     skills: [Python, OpenAI API, Tool calling, Agent loops, Context engineering, Text-to-SQL, RAG, AI coding agents]
     lanes: [ai-product]
     caveats: "Built in May 2026 (Modules 7 to 9); the later support-bot path deliberately uses fixed control flow instead. Text-to-SQL and web search are optional tools enabled by configuration. No external users."
@@ -945,12 +945,12 @@ claims:
         - "https://github.com/hcho22/Purvia/pull/156"
     numbers:
       - value: "4 of 4"
-        what: "no-access replays where the customer saw the identical generic deferral, with no hint that restricted content exists"
-        as_of: 2026-10-08
-        source: "docs/escalation-weekly/2026-10-04.md at f28be38"
+        what: "no-access replays where the customer saw the identical generic deferral, with no hint that restricted content exists (2026-10-04 and 2026-10-11 runs)"
+        as_of: 2026-10-27
+        source: "docs/escalation-weekly/2026-10-11.md P1a/P1b verdict at 9f57976, the latest scheduled run"
     skills: [Python, FastAPI, OpenAI API, LLM-as-judge, Pydantic, Server-Sent Events, PostgreSQL]
     lanes: [ai-product, ai-eval]
-    caveats: "The weekly escalation eval shows the gates still let 2 of 11 should-escalate questions auto-resolve. Never used with real customers."
+    caveats: "The scheduled escalation eval reported 2 to 3 of 11 should-escalate questions auto-resolving from 2026-09-20 to 2026-10-11; the cause was the offline judge, not these gates (see purvia-e7-offline-judge-root-cause: 0 false resolves in 55 end-to-end runs with only the live gates). Never used with real customers."
 
   - id: purvia-e7-escalation-eval
     period: independent
@@ -1122,18 +1122,18 @@ claims:
     evidence:
       kind: linked
       refs:
-        - "https://github.com/hcho22/Purvia/blob/f28be38116313891924d9230d060e03745eea8ee/backend/run_offline_tests.py"
-        - "https://github.com/hcho22/Purvia/blob/f28be38116313891924d9230d060e03745eea8ee/.github/workflows/backend-unit-tests.yml"
-        - "https://github.com/hcho22/Purvia/actions/runs/37601792725"
+        - "https://github.com/hcho22/Purvia/blob/9f57976b048ba42c70e18587d90ef0e85843c84a/backend/run_offline_tests.py"
+        - "https://github.com/hcho22/Purvia/blob/9f57976b048ba42c70e18587d90ef0e85843c84a/.github/workflows/backend-unit-tests.yml"
+        - "https://github.com/hcho22/Purvia/actions/runs/38909142697"
     numbers:
-      - value: "304"
-        what: "test functions (195 backend, 109 eval)"
-        as_of: 2026-10-08
-        source: "grep -cE 'def test_' over backend and eval test modules at f28be38"
+      - value: "314"
+        what: "test functions (205 backend, 109 eval)"
+        as_of: 2026-10-27
+        source: "grep -cE 'def test_' over backend and eval test modules at 9f57976 (the same method gives 195 and 109 at f28be38)"
       - value: "39 of 39"
-        what: "offline backend test modules passing in CI on 2026-10-07"
-        as_of: 2026-10-08
-        source: "log of Actions run 37601792725"
+        what: "offline backend test modules passing in CI on 2026-10-16"
+        as_of: 2026-10-27
+        source: "'PASS: all 39 offline backend test modules passed' in the log of Actions run 38909142697 (PR #185, merged as 9f57976)"
     skills: [Python, Test automation, GitHub Actions, CI/CD, Supabase, Docker]
     lanes: [quality]
     caveats: "Not a required check. No frontend tests."
@@ -1305,20 +1305,20 @@ claims:
   - id: immerse-traceability-release-guards
     period: independent
     project: immerse
-    text: "Added CI scripts that fail the build if the task tracker and the requirement evidence map disagree (136 requirements, 74 acceptance clauses, 9 invariants) or if the debug-only testing unlock appears in the release build."
+    text: "Added CI scripts that fail the build if the task tracker and the requirement evidence map disagree (154 requirements, 74 acceptance clauses, 9 invariants) or if the debug-only testing unlock appears in the release build."
     dates: {start: 2026-10, end: present}
     scale: project
     evidence:
       kind: linked
       refs:
-        - "https://github.com/hcho22/Immerse/blob/eca535448cb9a335bf5ad11e1637a97b94676ca3/Scripts/verify-requirement-map.sh"
-        - "https://github.com/hcho22/Immerse/blob/eca535448cb9a335bf5ad11e1637a97b94676ca3/Scripts/verify-release-excludes-testing-unlock.sh"
-        - "https://github.com/hcho22/Immerse/actions/runs/37836596737"
+        - "https://github.com/hcho22/Immerse/blob/d6cbb2428ddbb739936da2c4166a3eb3598eb14d/Scripts/verify-requirement-map.sh"
+        - "https://github.com/hcho22/Immerse/blob/d6cbb2428ddbb739936da2c4166a3eb3598eb14d/Scripts/verify-release-excludes-testing-unlock.sh"
+        - "https://github.com/hcho22/Immerse/actions/runs/40510930064"
     numbers:
-      - value: "136 / 74 / 9"
-        what: "requirements / acceptance clauses / invariants checked for traceability"
-        as_of: 2026-10-08
-        source: "'Traceability:' line in the log of Actions run 37836596737"
+      - value: "154 / 74 / 9"
+        what: "requirements (intake IDs) / acceptance clauses / invariants checked for traceability on main at d6cbb24, 2026-10-27 (136 / 74 / 9 on 2026-10-08)"
+        as_of: 2026-10-27
+        source: "'Traceability:' line in the log of Actions run 40510930064; the same run logs the testing unlock as absent from the release bundle"
     skills: [Requirements traceability, Shell scripting, GitHub Actions, xcodebuild]
     lanes: [quality]
     caveats: "Checks coverage of requirements, not product acceptance. No implementation task in the tracker is checked off yet."

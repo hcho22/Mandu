@@ -2,7 +2,7 @@
 
 _Generated from `master-profile.yaml` by `render_profile.py`. Do not edit by hand; change the YAML and re-run the script._
 
-**Profile as of:** 2026-10-20
+**Profile as of:** 2026-10-27
 
 Each cell is the total time covered by Claims at that Evidence scale, with overlaps counted once.
 Project-scale time never counts as employer tenure.

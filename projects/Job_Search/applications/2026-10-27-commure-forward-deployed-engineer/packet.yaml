@@ -1,0 +1,126 @@
+# Application packet source. Every line cites Master profile Claims; build_packet.py checks it.
+# Build: python3 ../build_packet.py .     Check only: python3 ../build_packet.py . --check
+
+role:
+  company: Commure
+  title: Forward Deployed Engineer
+  url: https://jobs.ashbyhq.com/commure/faeeff7f-b1f9-4db2-93ff-99da570f85b0
+  location: Remote (Mountain View primary; Los Angeles among the listed locations); travel up to 20% to client sites and the Mountain View office
+  compensation: Estimated base $130K-$190K plus equity
+  fit: '4 (required lines met: engineering degree, "1+ years of professional experience in software engineering or a similar role" by 2.0 paid C# years plus the validation decade, full-stack Python/JavaScript/React/SQL and 0-1 products at project scale; client-facing work and healthcare domain are not in evidence; carried at Fit 4 in scans 2026-10-13 to 2026-10-27)'
+
+status: submitted      # draft | approved | submitted | withdrawn
+submitted_on: 2026-10-27
+
+headline: "Forward Deployed Engineer | Full-Stack AI Applications, Integrations, and Problem Solving"
+
+summary:
+  - text: "Builds full-stack AI applications from zero to one: a multi-user RAG app on FastAPI, React, TypeScript, and Supabase with access control enforced in SQL, a support bot that hands off to a human queue, and a native iOS app with an OpenAI-backed coach."
+    claims: [purvia-multi-user-rag-app, purvia-acl-in-retrieval-predicate, purvia-deflection-and-human-handoff, reptoday-native-ios-app, reptoday-premium-coach-llm]
+  - text: "Brings 10 years of validation engineering at Zebra Technologies: root-cause analysis across hardware, firmware, and software, and written test plans, procedures, and final reports for 6 shipped products."
+    claims: [zebra-validation-ownership, zebra-failure-analysis]
+
+experience:
+  - period: independent
+    bullets:
+      - label: Purvia
+        text: "Built a multi-user RAG app with a FastAPI backend on the raw OpenAI SDK, Supabase auth and storage, multi-format document ingestion, streamed responses, and a React and TypeScript UI, across 114 merged pull requests."
+        claims: [purvia-multi-user-rag-app]
+      - label: Purvia
+        text: "Built access control into the Postgres vector and keyword retrieval functions so every search runs as the signed-in user, backed by row-level security across 49 SQL migrations."
+        claims: [purvia-acl-in-retrieval-predicate]
+      - label: Purvia
+        text: "Built a support-bot pipeline whose LLM judges fail closed, so any draft that misses a gate escalates to a human operator queue, served through an embeddable widget with rate limits."
+        claims: [purvia-deflection-and-human-handoff]
+      - label: Purvia
+        text: "Built a framework-free tool-calling agent loop on the OpenAI API with 4 tools, including web search and text-to-SQL."
+        claims: [purvia-tool-calling-agent-loop]
+      - label: Purvia
+        text: "Traced a failing evaluation gate to its own LLM judge rather than the product, then compared five judge designs on replayed drafts and cut wrong verdicts from 38 of 280 to 0 of 300."
+        claims: [purvia-e7-offline-judge-root-cause]
+      - label: Rep Today
+        text: "Built a native iOS workout app in Swift and SwiftUI with Core Data synced through CloudKit, across 214 merged pull requests; it is in internal TestFlight testing."
+        claims: [reptoday-native-ios-app]
+      - label: Rep Today
+        text: "Integrated OpenAI through a Cloudflare Worker proxy with App Attest and subscription checks on the server, plus StoreKit 2, Sign in with Apple, Apple Health, and CloudKit on the device."
+        claims: [reptoday-premium-coach-llm, reptoday-apple-platform-integrations]
+      - label: Rep Today
+        text: "Directed development as 214 agent-authored pull requests, 195 with a written risk assessment; later ones separate scenarios validated live in the app from those covered only by tests."
+        claims: [reptoday-agent-directed-delivery]
+      - label: CreativeBridge
+        text: "Migrated the backend from Supabase to Convex with Clerk Google and Apple sign-in and a temporary dual-write, then removed the Supabase paths from the core services."
+        claims: [creativebridge-supabase-to-convex-migration]
+
+  - period: omdena
+    bullets:
+      - text: "Led a DeepLabV3+ cancer-cell segmentation pipeline for histopathology images through training and deployment."
+        claims: [omdena-histopathology-segmentation]
+      - text: "Worked across time zones with engineers and domain experts, containerizing models in Docker."
+        claims: [omdena-docker-collaboration]
+
+  - period: career-break
+
+  - period: zebra
+    bullets:
+      - text: "Led validation testing for 6 shipped hardware products, writing test plans, procedures, acceptance criteria, and final reports."
+        claims: [zebra-validation-ownership]
+      - text: "Isolated root causes of failures across hardware, firmware, software, and test infrastructure, and proved each fix."
+        claims: [zebra-failure-analysis]
+      - text: "Built C# validation tooling that replaced manual test workflows and cut regression test cycles by about 30%."
+        claims: [zebra-csharp-automation]
+
+skills:
+  - label: Full stack
+    items: [Python, FastAPI, JavaScript, TypeScript, React, SQL, PostgreSQL, Supabase]
+  - label: AI and integrations
+    items: [OpenAI API, Tool calling, RAG, LLM integration, Cloudflare Workers, StoreKit 2, HealthKit]
+  - label: Delivery and quality
+    items: [Failure analysis, Test planning, Technical writing, GitHub Actions, Docker, AI coding agents]
+
+education:
+  - text: "B.S., Electrical Engineering, California Polytechnic State University, San Luis Obispo"
+    claims: [degree-bs-ee]
+  - text: "FourthBrain ML Engineering bootcamp (2022); DeepLearning.AI deep learning and generative AI courses"
+    claims: [fourthbrain-mle-bootcamp, coursework-deeplearning-ai-early, coursework-deeplearning-ai-later]
+
+answers: []            # the form has no free-text questions (read 2026-10-27)
+
+cover_letter:          # asked for by hcho on 2026-10-27; the form has no cover letter field
+  limit_words: 350
+  greeting: "Dear Commure hiring team,"
+  paragraphs:
+    - text: "Your Forward Deployed Engineer posting asks for someone who builds new products, works through problems during deployment, and keeps the documentation current. I spent ten years doing the last two as a validation engineer at Zebra Technologies. I wrote the test plans, procedures, and final reports for 6 shipped hardware products, and I isolated failures across hardware, firmware, software, and test infrastructure, then proved each fix."
+      claims: [zebra-validation-ownership, zebra-failure-analysis]
+    - text: "Now I build the products myself. Purvia, my open-source support-bot app, has a FastAPI backend, a React and TypeScript front end, and Supabase for sign-in and storage. Access control lives inside the Postgres retrieval functions, so every search runs as the signed-in user and returns only what that user may see. Each bot draft has to pass LLM judges that fail closed, and anything that misses a gate goes to a human operator queue. Your patient and revenue agents face the same handoff problem."
+      claims: [purvia-multi-user-rag-app, purvia-acl-in-retrieval-predicate, purvia-deflection-and-human-handoff]
+    - text: "The problem I learned the most from was an eval that failed four runs in a row. Run end to end with only the live gates, the pipeline made 0 false resolves in 55 runs, so the product was fine. The offline judge was grading whether a draft was true instead of whether it answered the question. I compared five judge designs on replayed drafts and cut wrong verdicts from 38 of 280 to 0 of 300."
+      claims: [purvia-e7-offline-judge-root-cause]
+    - text: "I have also wired outside services into my apps. Rep Today, my iOS workout app, reaches OpenAI through a Cloudflare Worker proxy that checks App Attest and the subscription on the server. I moved CreativeBridge's backend from Supabase to Convex using a temporary dual-write."
+      claims: [reptoday-premium-coach-llm, creativebridge-supabase-to-convex-migration]
+    - text: "Healthcare and client-facing work would be new to me, and I'd rather say so up front. AI coding agents write most of my project code under my direction, and 195 of Rep Today's 214 merged pull requests carry a written risk assessment. I live in Los Angeles, and I'd like to hear how your first deployments run."
+      claims: [reptoday-agent-directed-delivery]
+  closing: "Sincerely,"
+
+gaps:
+  - gap: "\"Eagerness to collaborate and ability to engage confidently with clients\": no client-facing or customer-support work is in the profile; Zebra work was internal, and Omdena collaboration was with volunteer teams and domain experts."
+    how_to_own_it: "Say you have not held a client-facing role. If Zebra validation involved working with customers, field teams, or suppliers, that is worth an attested Claim before you submit; otherwise lead with explaining root causes and writing reports engineers acted on."
+  - gap: "Healthcare: the only health-related work is the volunteer Omdena histopathology segmentation project; EHR integrations, HIPAA, and revenue-cycle workflows are new."
+    how_to_own_it: "Say the domain is new and you would learn it on the client side first. The support bot's human-handoff design and the access control enforced in SQL are the closest patterns to patient-data and workflow automation."
+  - gap: "\"1+ years of professional experience in software engineering or a similar role\": paid software time is 2.0 years of internal C# test tooling (2016-08 to 2018-07), not product engineering."
+    how_to_own_it: "State the 2 paid years plainly, add the validation decade as the similar role, and point to the public repos for current full-stack work."
+  - gap: "React is about 0.3 years of project work and JavaScript is project-scale; Python is the main language."
+    how_to_own_it: "Lead with the FastAPI backend and the SQL access control; say the React UI was built for Purvia and you are stronger on the backend."
+  - gap: "No project has carried real users or production traffic, and Purvia's backend has no live deployment right now (the Supabase project is paused), so a demo link may not load."
+    how_to_own_it: "Offer to walk through the code, tests, and CI runs instead, and say plainly that the apps are pre-release."
+  - gap: "Purvia is public: its escalation eval breached its ceiling in four scheduled runs before the cause was found; the first scheduled run on the fix is 2026-11-01."
+    how_to_own_it: "Tell it as the root-cause story in the resume: the judge was wrong, not the product. Check the 11-01 result before an interview."
+  - gap: "AI coding agents wrote most of the project code under your direction and review."
+    how_to_own_it: "Say it first, then show the review discipline: written risk assessments on 195 of 214 pull requests."
+  - gap: "No paid work since 2018: a career break with ML retraining, volunteer Omdena work, then solo unpaid products since 2025."
+    how_to_own_it: "Name the sequence briefly and move to what the recent projects show."
+  - gap: "The posting has been up since 2026-06-26, so it may be a standing opening; travel is up to 20%, including trips to the Mountain View office."
+    how_to_own_it: "Answer the travel question honestly on the form, and ask the recruiter whether the role is actively hiring and where the Los Angeles option sits."
+  - gap: "The form has no cover letter field."
+    how_to_own_it: "After you submit, send Hyung_Cho_Cover_Letter.pdf to the recruiter or the engineering hiring manager by LinkedIn message or email, with one line naming the role."
+  - gap: "The Omdena Claims have open questions in the profile: the months each project ran, whether you were the formal task lead on the histopathology project, its framework, and where it was deployed."
+    how_to_own_it: "Answer them before an interview so the dates and the word led hold up; all Omdena work was unpaid volunteer work."

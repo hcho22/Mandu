@@ -1,0 +1,115 @@
+# Application packet source. Every line cites Master profile Claims; build_packet.py checks it.
+# Build: python3 ../build_packet.py .     Check only: python3 ../build_packet.py . --check
+
+role:
+  company: Cohere
+  title: Software Engineer, Integrations
+  url: https://jobs.ashbyhq.com/cohere/96c74af4-b3d7-4960-a666-212ce4debac8
+  location: Remote (Europe listed first; United States, New York, London, Toronto, Montreal also listed); at least 4 hours of overlap with Eastern time
+  compensation: $180K-$225K base in California, New York, and Washington; $150K-$190K in other US states; equity
+  fit: '4 (agent-eval background, evals that flag regressions, prompt work, and accountable AI-assisted delivery are in evidence at project scale; "shipped production code ... integrations against external APIs" is partial: 2.0 paid years of internal C# tooling plus project-scale OpenAI, Anthropic, Replicate, StoreKit, and Supabase integrations; tool-description tuning is not in evidence; carried at Fit 4 in scans 2026-10-05 to 2026-10-27)'
+
+status: submitted      # draft | approved | submitted | withdrawn
+submitted_on: 2026-10-27
+
+headline: "Software Engineer | Agentic Integrations, LLM Evals, and Test Automation"
+
+summary:
+  - text: "Builds LLM integrations and the evals that keep them honest: a tool-calling agent loop on the OpenAI API, retrieval and escalation evals that run on pull requests, and a failing LLM-judge gate traced to its root cause."
+    claims: [purvia-tool-calling-agent-loop, purvia-retrieval-golden-set, purvia-e7-escalation-eval, purvia-e7-offline-judge-root-cause]
+  - text: "Ships with AI coding agents under a written risk assessment on each change, backed by 10 years of validation engineering at Zebra Technologies, including C# test tooling and SDK validation."
+    claims: [reptoday-agent-directed-delivery, zebra-validation-ownership, zebra-csharp-automation, zebra-sdk-validation]
+
+experience:
+  - period: independent
+    bullets:
+      - label: Purvia
+        text: "Built a framework-free tool-calling agent loop on the OpenAI Chat Completions API with 4 tools (document search, web search, text-to-SQL, and a document sub-agent), capped at 5 iterations."
+        claims: [purvia-tool-calling-agent-loop]
+      - label: Purvia
+        text: "Built a 60-question retrieval test set scoring vector, keyword, and hybrid search on recall@k, MRR, and nDCG@5; a PR workflow posts the score change as a comment and flagged a -0.510 recall@5 drop on a deliberately broken PR."
+        claims: [purvia-retrieval-golden-set]
+      - label: Purvia
+        text: "Designed an escalation eval whose deterministic leak checks block merges and whose LLM-judged checks run on a schedule against a 5% false-resolve ceiling."
+        claims: [purvia-e7-escalation-eval]
+      - label: Purvia
+        text: "Traced that eval's four-run breach to the offline LLM judge, not the product, then compared five judge prompt and schema designs on replayed drafts and cut wrong verdicts from 38 of 280 to 0 of 300."
+        claims: [purvia-e7-offline-judge-root-cause]
+      - label: Purvia
+        text: "Tightened the live answer gate's judge rubric after measuring it pass a wrong-value reply 10 of 20 times; the shipped rubric sent 1 of 66 should-escalate drafts where a stronger model sent 15 of 66."
+        claims: [purvia-answer-gate-model-comparison]
+      - label: Rep Today
+        text: "Integrated OpenAI through a Cloudflare Worker proxy (store: false, capped output, 30-second timeout) with App Attest and subscription checks on the server; 477 proxy Vitest tests pass in CI."
+        claims: [reptoday-premium-coach-llm]
+      - label: Rep Today
+        text: "Directed development as 214 agent-authored pull requests, 195 with a written risk assessment; later ones separate scenarios validated live in the app from those covered only by tests."
+        claims: [reptoday-agent-directed-delivery]
+      - label: CreativeBridge
+        text: "Integrated OpenAI GPT-4o-mini story writing through Convex server actions and Replicate image generation that falls back from a Flux model to Stable Diffusion 3.5 on error or timeout."
+        claims: [creativebridge-openai-replicate-generation]
+
+  - period: omdena
+    bullets:
+      - text: "Fine-tuned LLaMA and Falcon, integrated ChatGPT into a chatbot, and iterated on prompts with an evaluation workflow."
+        claims: [omdena-llm-chatbot]
+
+  - period: career-break
+
+  - period: zebra
+    bullets:
+      - text: "Led validation testing for 6 shipped hardware products, writing test plans, procedures, acceptance criteria, and final reports."
+        claims: [zebra-validation-ownership]
+      - text: "Built C# validation tooling that replaced manual test workflows and cut regression test cycles by about 30%."
+        claims: [zebra-csharp-automation]
+      - text: "Isolated root causes of failures across hardware, firmware, software, and test infrastructure, and proved each fix."
+        claims: [zebra-failure-analysis]
+      - text: "Mentored 10 test technicians and set quality and lab process standards adopted across the products the team validated."
+        claims: [zebra-mentoring-standards]
+
+skills:
+  - label: LLM integration and agents
+    items: [OpenAI API, Anthropic API, Tool calling, Agent loops, Prompt engineering, RAG]
+  - label: Evals and testing
+    items: [LLM evaluation, LLM-as-judge, Retrieval metrics, Regression testing, GitHub Actions, CI/CD]
+  - label: Languages and platforms
+    items: [Python, FastAPI, TypeScript, JavaScript, PostgreSQL, Cloudflare Workers, Docker]
+  - label: AI-assisted engineering
+    items: [AI coding agents, Claude Code, Code review, Technical writing, Mentoring]
+
+education:
+  - text: "B.S., Electrical Engineering, California Polytechnic State University, San Luis Obispo"
+    claims: [degree-bs-ee]
+  - text: "FourthBrain ML Engineering bootcamp (2022); DeepLearning.AI deep learning and generative AI courses"
+    claims: [fourthbrain-mle-bootcamp, coursework-deeplearning-ai-early, coursework-deeplearning-ai-later]
+
+answers:
+  - field: "Why are you interested in this role? Please reference one specific area from the job description (e.g. building integrations against external APIs, owning the integration pipeline, or creating evals for agentic tool performance) and explain why it appeals to you."
+    limit_words: 150
+    text: |
+      Creating evals for agentic tool performance. It's the one I'd pick to do every day.
+      On Purvia, my open-source RAG app, I built a tool-calling agent loop on the OpenAI API with 4 tools and a 5-iteration cap, then the evals around it. A 60-question retrieval set runs on every pull request and posts the score change as a comment. An escalation eval's deterministic checks block merges.
+      I learned the most when the eval itself was wrong. It breached its 5% false-resolve ceiling four runs in a row, and the cause was the LLM judge, not the product. I compared five judge designs on replayed drafts and cut wrong verdicts from 38 of 280 to 0 of 300.
+      I'd tune North's tool descriptions the same way, one change at a time, each measured. Ten years of validation at Zebra taught me to check the test before trusting the result.
+    claims: [purvia-tool-calling-agent-loop, purvia-retrieval-golden-set, purvia-e7-escalation-eval, purvia-e7-offline-judge-root-cause, zebra-validation-ownership]
+
+gaps:
+  - gap: "\"You have shipped production code\": paid software time is 2.0 years of internal C# test tooling at Zebra (2016-08 to 2018-07); the projects have no external users, Purvia's backend has no live deployment, and Rep Today is in internal TestFlight only."
+    how_to_own_it: "Say it directly: the production code you shipped for pay was internal test tooling, and the recent work is solo, public, and tested but has not carried real user traffic. Then show the integration and eval work in the repos."
+  - gap: "\"Tool-description tuning\" is not in the profile. The closest evidence is the judge prompt and schema comparison and the answer-gate rubric, which tune LLM instructions against measured results."
+    how_to_own_it: "Say you have tuned judge prompts and rubrics against replayed data, not tool descriptions for a production agent, and that it is the same measure-and-compare loop."
+  - gap: "Enterprise integrations: OAuth connectors to third-party workplace tools, data-sync pipelines, and owning a pipeline other engineers use are not in evidence; all work is solo."
+    how_to_own_it: "Point to the integrations you have built (OpenAI, Anthropic, Replicate, StoreKit, Sign in with Apple, Supabase, Clerk JWTs into Convex) and say connector frameworks for enterprise data sources would be new."
+  - gap: "\"You enjoy helping other engineers succeed\": the evidence is mentoring 10 test technicians at Zebra, not engineers, and nothing since 2018."
+    how_to_own_it: "Use the Zebra standards work honestly: you set lab and quality standards others adopted. Do not call it engineering leadership."
+  - gap: "Purvia is public: its escalation eval breached its ceiling in four scheduled runs before the cause was found; the fix (PR #184, merged 2026-10-16) has only one-off runs so far, and the first scheduled run on it is 2026-11-01."
+    how_to_own_it: "Tell it as the story in the form answer: the judge, not the product, was wrong; replays show 0 of 300 wrong verdicts; the scheduled confirmation lands 2026-11-01. Check the 11-01 result before any interview."
+  - gap: "AI agents wrote most of the project code under your direction and review."
+    how_to_own_it: "Say it first; the posting asks you to use AI while staying accountable for quality, which is what the written risk assessments and evals show."
+  - gap: "You applied to Cohere's Forward Deployed Engineer, Agentic Platform (West Coast) on 2026-07-13, with no reply recorded."
+    how_to_own_it: "If asked, say this team's work (integrations plus evals) is a closer match than the forward deployed role."
+  - gap: "No paid work since 2018: a career break with ML retraining, volunteer Omdena work, then solo unpaid products since 2025."
+    how_to_own_it: "Name the sequence briefly and move to the eval and integration work in the public repos."
+  - gap: "The Omdena Claims have open questions in the profile: the months each project ran and whether the chatbot reached real users."
+    how_to_own_it: "Answer them before an interview; all Omdena work was unpaid volunteer work."
+  - gap: "Form questions you answer yourself: work authorization, sponsorship, and the Eastern-time overlap question."
+    how_to_own_it: "On overlap, a Pacific 9-to-5 day covers noon to 5 p.m. Eastern, which is 5 hours; answer yes if that schedule works for you."

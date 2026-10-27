@@ -1,0 +1,112 @@
+# Application packet source. Every line cites Master profile Claims; build_packet.py checks it.
+# Build: python3 ../build_packet.py .     Check only: python3 ../build_packet.py . --check
+
+role:
+  company: MiniMed
+  title: Software Development Engineer in Test II - Embedded Software/Firmware
+  url: https://mdtkangaroo.wd108.myworkdayjobs.com/MiniMedCareers/job/Northridge-California-United-States-of-America/Data-Scientist--Software-Engineer-II_R-801953
+  location: Northridge, CA; hybrid, 3-4 days in office (Workday field says On-Site)
+  compensation: $97,000-$165,000 (California range); Short Term Incentive eligible
+  fit: '4 (every required line is met: EE degree, 2.0 paid test-automation years against "0-2 years", embedded-product testing and hardware-to-software debugging at Zebra, Python test automation and Git CI at project scale; the must-have HIL/SIL benches and GitLab/Jenkins are missing; see scans/2026-10-27.md)'
+  closes: 2026-11-09
+
+status: submitted      # draft | approved | submitted | withdrawn
+submitted_on: 2026-10-27
+
+headline: "Software Test Engineer | Embedded Product Validation, Python Test Automation, and Root-Cause Analysis"
+
+summary:
+  - text: "Validation engineer with 10 years at Zebra Technologies testing embedded hardware products: test plans, procedures, acceptance criteria, and final reports for 6 shipped products, and root-cause isolation across hardware, firmware, and software."
+    claims: [zebra-validation-ownership, zebra-failure-analysis]
+  - text: "Builds and maintains automated tests in Python, Swift, and C#, with quality gates in GitHub Actions CI."
+    claims: [purvia-backend-test-suite, reptoday-unit-suite-growth, zebra-csharp-automation]
+  - text: "Directs AI coding agents that write code, tests, and failure diagnoses, with a written risk assessment on each change and CI checks that keep requirements traceable to test evidence."
+    claims: [reptoday-agent-directed-delivery, reptoday-ci-caught-platform-defects, immerse-traceability-release-guards]
+
+experience:
+  - period: independent
+    bullets:
+      - label: Purvia
+        text: "Wrote an offline Python test suite of 314 test functions that runs on every pull request with credentials stripped and network access blocked, plus integration tests against a local Supabase stack; 39 of 39 modules pass in CI."
+        claims: [purvia-backend-test-suite]
+      - label: Purvia
+        text: "Traced a failing LLM evaluation gate to the test's own judge rather than the product, then compared five judge designs on replayed outputs and cut wrong verdicts from 38 of 280 to 0 of 300."
+        claims: [purvia-e7-offline-judge-root-cause]
+      - label: Rep Today
+        text: "Grew the XCTest unit suite from 829 to 1,700 tests; CI runs 1,678 of them on both iOS 18 and iOS 26 with 0 failures."
+        claims: [reptoday-unit-suite-growth]
+      - label: Rep Today
+        text: "Found and fixed platform-specific defects through CI and cross-OS testing, including an iOS 18 layout feedback loop that hung the suite past the 45-minute job limit, closed with a regression test."
+        claims: [reptoday-ci-caught-platform-defects]
+      - label: Rep Today
+        text: "Directed development as 214 agent-authored pull requests, 195 with a written risk assessment; later ones separate scenarios validated live in the app from those covered only by tests."
+        claims: [reptoday-agent-directed-delivery]
+      - label: Immerse
+        text: "Added CI scripts that fail the build when the task tracker and the requirement evidence map disagree (154 requirements, 74 acceptance clauses, 9 invariants) or when a debug-only unlock reaches the release build."
+        claims: [immerse-traceability-release-guards]
+
+  - period: omdena
+    bullets:
+      - text: "Led a DeepLabV3+ cancer-cell segmentation pipeline: preprocessing, training, evaluation, and deployment."
+        claims: [omdena-histopathology-segmentation]
+      - text: "Fine-tuned LLaMA and Falcon, integrated ChatGPT into a chatbot, and iterated on prompts with an evaluation workflow."
+        claims: [omdena-llm-chatbot]
+      - text: "Containerized models with Docker for reproducible environments across volunteer teams in several time zones."
+        claims: [omdena-docker-collaboration]
+
+  - period: career-break
+
+  - period: zebra
+    bullets:
+      - text: "Led validation testing for 6 shipped hardware products, writing test plans, procedures, acceptance criteria, and final reports."
+        claims: [zebra-validation-ownership]
+      - text: "Isolated root causes of failures across hardware, firmware, software, and test infrastructure, and proved each fix."
+        claims: [zebra-failure-analysis]
+      - text: "Built C# validation tooling that replaced manual test workflows and cut regression test cycles by about 30%."
+        claims: [zebra-csharp-automation]
+      - text: "Owned SDK validation across Windows, macOS, and Linux: cross-platform compatibility, performance, and reliability."
+        claims: [zebra-sdk-validation]
+
+skills:
+  - label: Validation
+    items: [Test planning, Hardware validation, Failure analysis, Regression testing, Requirements traceability]
+  - label: Test automation and CI
+    items: [Python, JavaScript, C#, Swift, XCTest, GitHub Actions, CI/CD, Shell scripting, Flaky test diagnosis]
+  - label: AI-assisted testing
+    items: [AI coding agents, Claude Code, Code review, LLM evaluation, LLM-as-judge, Technical writing]
+
+education:
+  - text: "B.S., Electrical Engineering, California Polytechnic State University, San Luis Obispo"
+    claims: [degree-bs-ee]
+  - text: "FourthBrain ML Engineering bootcamp (2022); DeepLearning.AI deep learning and generative AI courses"
+    claims: [fourthbrain-mle-bootcamp, coursework-deeplearning-ai-early, coursework-deeplearning-ai-later]
+
+answers: []            # Workday hides the form and its screening questionnaire until sign-in (read 2026-10-27)
+
+gaps:
+  - gap: "You applied to MiniMed's Senior SDET, Embedded Software/Firmware (R-801917, Northridge) on 2026-10-20; this SDET II role describes the same embedded pump-firmware test work one level down, so the same recruiter may see both."
+    how_to_own_it: "Say it plainly if asked: you want the embedded test work and are open to either level. A shorter path is to ask the recruiter for R-801917 whether they want you considered for both before you submit this one."
+  - gap: "Hardware-in-the-loop and software-in-the-loop test benches are a must-have, and the profile has no Claim for benches, simulators, or automated fixtures."
+    how_to_own_it: "Zebra validation was hands-on lab work on shipped devices, but do not call it HIL or SIL unless you used or built benches there; if you did, add an attested Claim before you submit. Otherwise say it is new, and point to the offline test suite with network access blocked as the nearest software-side isolation work."
+  - gap: "Bluetooth Low Energy testing (pairing, reconnection, recovery, interoperability) is a listed duty and a nice-to-have, and no BLE, serial, or other device-interface testing is in the profile."
+    how_to_own_it: "If Zebra's product validation covered Bluetooth, USB, or serial interfaces, that is worth an attested Claim; until then, say it is new and that you would start with the pairing and recovery scenarios the posting lists."
+  - gap: "\"Hands-on experience with embedded systems and testing embedded firmware\": the Zebra Claims say hardware products and failure isolation across hardware, firmware, and software, not firmware test design by name."
+    how_to_own_it: "Describe what you actually did at Zebra on device firmware (validation runs, failure isolation, proving fixes) in your own words, and do not stretch it to writing firmware or reading C or C++ firmware code."
+  - gap: "CI/CD tools named are GitLab and Jenkins; all CI in the profile is GitHub Actions."
+    how_to_own_it: "Say the pipelines are GitHub Actions and the concepts carry over: jobs on every pull request, blocking gates, and diagnosing failures from logs."
+  - gap: "JavaScript test automation is project-scale and small next to Python; the posting asks \"JavaScript and/or Python\"."
+    how_to_own_it: "Lead with Python (the Purvia suite). If asked about JavaScript, say your JavaScript work is project-scale and that Python is your main test language."
+  - gap: "Level and pay: the posting asks 0-2 years, and 10 years of validation can read as overqualified for an SDET II; the California band is $97K-$165K."
+    how_to_own_it: "Say you want hands-on embedded test automation, that your paid software automation is 2.0 years of C# (2016-08 to 2018-07), and that you are applying at this level on purpose. Ask where in the band the role is calibrated before the final round."
+  - gap: "No paid work since 2018: a career break with ML retraining, volunteer Omdena work, then solo unpaid products since 2025, built by directing AI coding agents."
+    how_to_own_it: "Name the sequence briefly. Say agents wrote most of the project code under your direction and review, then move to what the test suites and CI gates show about current practice."
+  - gap: "Medical-device or other safety-critical experience is a nice-to-have, and there is none in the profile."
+    how_to_own_it: "Say it is new. The closest practice is Zebra's written procedures, acceptance criteria, and final reports, and the Immerse CI checks that keep requirements and test evidence in agreement."
+  - gap: "Purvia is public: its escalation eval breached its gate in four scheduled runs, and the fix (PR #184, merged 2026-10-16) has not been measured by a scheduled run yet; the first one is 2026-11-01."
+    how_to_own_it: "Tell it as the root-cause story in the resume bullet: the judge, not the product, was wrong, and the fix is merged with one-off runs showing 0 of 300 wrong verdicts. Say the scheduled confirmation is on 2026-11-01."
+  - gap: "The Omdena Claims have open questions in the profile: the months each project ran, whether you were the formal task lead on the histopathology project, its framework and where it was deployed, and whether the chatbot reached real users."
+    how_to_own_it: "Answer them before an interview so the dates and the word led hold up. All Omdena work was unpaid volunteer work; say so if asked."
+  - gap: "The form could not be read: Workday shows the application steps and a screening questionnaire only after sign-in."
+    how_to_own_it: "Upload the resume, check for text questions and a cover letter upload, and answer screening questions literally (for example, medical-device experience is no). Paste any text questions to Mandu for drafting."
+  - gap: "Hybrid in Northridge, 3-4 days a week in office (about 13 miles from Burbank); Workday's own field says On-Site."
+    how_to_own_it: "Confirm the in-office schedule in the first call."
