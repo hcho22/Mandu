@@ -474,12 +474,16 @@ def rename_step(args):
 
 
 def check_rename_target(target: dict, step: str, old) -> None:
-    """A name-only rerun works on the unfinished run's package and starts
-    only from its current brand, which may be the Product's own name: after a
-    rerun, the name the journal's `rerun_refusal` holds it to (the accepted
-    name once swapped in); before any, the name the naming decision proposes,
-    which it, the brand guidelines, and the landing page when there is one
-    each carry as a word of its own."""
+    """A name-only rerun works on the unfinished run's package. Before any
+    rerun, it starts from a name only when that name appears, spelled so, as a
+    word of its own (not inside a handle or domain) in the naming decision, the
+    brand guidelines, and the landing page when there is one; that may be the
+    Product's own name, and nothing here tells the proposed name from another
+    name all of them carry. After a rerun, the journal's `rerun_refusal` holds
+    it to the name the rerun left the package with (the accepted name once
+    swapped in). A rerun from a wrong name is undone from the copy of the whole
+    package the launcher keeps in the cache folder's `backups/` before it
+    changes anything."""
     if target["mode"] != "resume":
         raise RunError("a name-only rerun reworks an unfinished run's Candidate Package, and %s has none (%s would "
                        "start a new run); nothing was changed" % (target["product"], target["package_rel"]))
@@ -492,10 +496,10 @@ def check_rename_target(target: dict, step: str, old) -> None:
     missing = [f for f in files if not ((package / f).is_file()
                                         and rename.names_it((package / f).read_text(encoding="utf-8"), old))]
     if missing:
-        raise RunError("%s is not this package's current brand: the brand is the name its naming decision proposes, "
-                       "which %s each carry spelled so, as a word of its own (not inside a handle or domain), and %s "
-                       "does not; give that name exactly as the package spells it" % (
-                           old, ", ".join(files), ", ".join("%s/%s" % (target["package_rel"], f) for f in missing)))
+        raise RunError("%s does not appear as a word of its own, spelled so (not inside a handle or domain), in %s; a "
+                       "rerun starts only from a name that appears so in each of %s, so give the name the package "
+                       "proposes exactly as it spells it; nothing was changed" % (
+                           old, ", ".join("%s/%s" % (target["package_rel"], f) for f in missing), ", ".join(files)))
 
 
 def prepare(args) -> dict:

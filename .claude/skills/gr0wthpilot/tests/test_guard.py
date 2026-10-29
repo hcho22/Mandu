@@ -767,15 +767,18 @@ class NameRerunPrepTest(unittest.TestCase):
             handle.write("Fallback domains filmora.app and @filmora are held by others.\n")
         before = (self.pkg / gc.JOURNAL_NAME).read_text()
         for flags, message in (
-                ({"rename": "filmora"}, "and projects/Testprod/gtm/02-brand/naming-decision.md, "),
-                ({"rename": "Matinee"}, "and projects/Testprod/gtm/02-brand/brand-guidelines.md, "
-                                        "projects/Testprod/gtm/03-site/index.html does not"),
-                ({"rename": "Testprod"}, "Testprod is not this package's current brand"),
-                ({"rename": "test-prod"}, "is not this package's current brand"),
+                ({"rename": "filmora"}, "in projects/Testprod/gtm/02-brand/naming-decision.md, "
+                                        "projects/Testprod/gtm/02-brand/brand-guidelines.md, "
+                                        "projects/Testprod/gtm/03-site/index.html; a rerun"),
+                ({"rename": "Matinee"}, "Matinee does not appear as a word of its own, spelled so (not inside a "
+                                        "handle or domain), in projects/Testprod/gtm/02-brand/brand-guidelines.md, "
+                                        "projects/Testprod/gtm/03-site/index.html; a rerun"),
+                ({"rename": "Testprod"}, "in projects/Testprod/gtm/03-site/index.html; a rerun"),
+                ({"rename": "test-prod"}, "does not appear as a word of its own"),
                 ({"rename": "Filmora", "accept_name": "Cinewell"}, "give one of them"),
                 ({"rule_out": ["Shutterly"]}, "go with --rename"),
                 ({"rename": "Filmora", "rule_out_root": ["F"]}, "2 to 40 letters"),
-                ({"rename": "Flimora"}, "is not this package's current brand"),
+                ({"rename": "Flimora"}, "does not appear as a word of its own"),
                 ({"accept_name": "Cinewell"}, "no name-only rerun is waiting")):
             with self.assertRaises(gp_run.RunError) as raised:
                 self.prepare(**flags)
@@ -802,7 +805,7 @@ class NameRerunPrepTest(unittest.TestCase):
         (self.pkg / "03-site/index.html").write_text("<h1>Testprod</h1><p>Join at gettestprod.app</p>\n")
         with self.assertRaises(gp_run.RunError) as raised:
             self.prepare(rename="Filmora")
-        self.assertIn("Filmora is not this package's current brand", str(raised.exception))
+        self.assertIn("Filmora does not appear as a word of its own", str(raised.exception))
         cfg = self.prepare(rename="Testprod")
         self.assertEqual(cfg["rename_step"], "rerun")
         self.assertEqual(gc.read_json(self.pkg / gc.JOURNAL_NAME)["rename"]["rule_out"], ["Testprod"])

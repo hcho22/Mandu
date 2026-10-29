@@ -266,7 +266,9 @@ The positioning, the hero message, and the look stay as they are; only the name 
 
 1. `bin/gr0wthpilot <Product> --rename <refused name> [--rule-out <name>]... [--rule-out-root <root>]...` starts it.
    Before the session opens, the launcher copies the whole package into the cache folder's `backups/`, moves the earlier tournament to `02-brand/tournament-<refused name>/`, reopens the tournament gate and every later gate already passed, and records all of it in the journal as a send-back with the ruled-out names (the refused name always among them) and roots.
-   The launcher accepts only the package's current brand, which may be the Product's own name: after a swap, the accepted name; otherwise the name the naming decision proposes, which on a first rerun the naming decision, the brand guidelines, and the landing page (when there is one) each carry as a word of its own.
+   On a first rerun the launcher checks only that the name appears, spelled so, as a word of its own (not inside a handle or domain) in the naming decision, the brand guidelines, and the landing page when there is one; that may be the Product's own name, and a fallback or the Product's name that all of them carry passes too.
+   After a rerun, it takes only the name the rerun left the package with: the accepted name once swapped in.
+   A rerun started from the wrong name is undone by putting the copy the launcher kept before it changed anything (the cache folder's `backups/<time>-before-rerun-from-<name>/`, named in the journal) back in place of the package, then running `--rename` again with the right name.
    The preflight's `rename_step` is `rerun`.
 2. `bin/gr0wthpilot <Product> --accept-name "<name>"`, once App Store Connect accepts a shortlisted name, hands it over; a name not on the recorded shortlist is refused.
    Before the session opens, the launcher copies the package again, swaps the name through its deliverables (never its records, never a URL; the rules are at the top of `<skill>/scripts/rename.py`), and writes a review sheet into the cache folder; the gates step 1 reopened still wait to pass again.
