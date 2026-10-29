@@ -767,15 +767,15 @@ class NameRerunPrepTest(unittest.TestCase):
             handle.write("Fallback domains filmora.app and @filmora are held by others.\n")
         before = (self.pkg / gc.JOURNAL_NAME).read_text()
         for flags, message in (
-                ({"rename": "filmora"}, "does not stand as the brand in projects/Testprod/gtm/02-brand/naming"),
-                ({"rename": "Matinee"}, "does not stand as the brand in projects/Testprod/gtm/02-brand/brand-guidelines"
-                                        ".md, projects/Testprod/gtm/03-site/index.html:"),
-                ({"rename": "Testprod"}, "Testprod is the Product's own name (projects/Testprod)"),
-                ({"rename": "test-prod"}, "is the Product's own name"),
+                ({"rename": "filmora"}, "and projects/Testprod/gtm/02-brand/naming-decision.md, "),
+                ({"rename": "Matinee"}, "and projects/Testprod/gtm/02-brand/brand-guidelines.md, "
+                                        "projects/Testprod/gtm/03-site/index.html does not"),
+                ({"rename": "Testprod"}, "Testprod is not this package's current brand"),
+                ({"rename": "test-prod"}, "is not this package's current brand"),
                 ({"rename": "Filmora", "accept_name": "Cinewell"}, "give one of them"),
                 ({"rule_out": ["Shutterly"]}, "go with --rename"),
                 ({"rename": "Filmora", "rule_out_root": ["F"]}, "2 to 40 letters"),
-                ({"rename": "Flimora"}, "does not stand as the brand in"),
+                ({"rename": "Flimora"}, "is not this package's current brand"),
                 ({"accept_name": "Cinewell"}, "no name-only rerun is waiting")):
             with self.assertRaises(gp_run.RunError) as raised:
                 self.prepare(**flags)
@@ -794,6 +794,39 @@ class NameRerunPrepTest(unittest.TestCase):
             self.prepare(rename="Filmora")
         self.assertIn("reworks an unfinished run's Candidate Package", str(raised.exception))
         self.assertEqual(self.backups(), [])
+
+    def test_a_package_that_kept_the_product_name_reruns_from_it(self):
+        (self.pkg / "02-brand/naming-decision.md").write_text("# Naming\n\n## Name verdict: **Testprod stands**\n\n"
+                                                              "Fallbacks: Filmora. Clearance UNVERIFIED.\n")
+        (self.pkg / "02-brand/brand-guidelines.md").write_text("# Brand guidelines\n\nThe Testprod wordmark.\n")
+        (self.pkg / "03-site/index.html").write_text("<h1>Testprod</h1><p>Join at gettestprod.app</p>\n")
+        with self.assertRaises(gp_run.RunError) as raised:
+            self.prepare(rename="Filmora")
+        self.assertIn("Filmora is not this package's current brand", str(raised.exception))
+        cfg = self.prepare(rename="Testprod")
+        self.assertEqual(cfg["rename_step"], "rerun")
+        self.assertEqual(gc.read_json(self.pkg / gc.JOURNAL_NAME)["rename"]["rule_out"], ["Testprod"])
+
+    def test_a_rerun_after_a_swap_to_the_product_name_starts_from_it(self):
+        self.prepare(rename="Filmora")
+        data = gc.read_json(self.pkg / gc.JOURNAL_NAME)
+        data["gates"][2].pop("reopened_at")
+        data["rename"].update(shortlist="02-brand/name-shortlist.md", shortlist_names=["Testprod", "Rollbook"])
+        gc.write_json(self.pkg / gc.JOURNAL_NAME, data)
+        self.prepare(accept_name="Testprod")
+        self.assertEqual((self.pkg / "03-site/index.html").read_text(),
+                         "<h1>Testprod</h1><p>Join at gettestprod.app</p>\n")
+        for name in ("Filmora", "Rollbook"):
+            with self.assertRaises(gp_run.RunError) as raised:
+                self.prepare(rename=name)
+            self.assertIn("swapped out for Testprod, the name the package now carries", str(raised.exception))
+        cfg = self.prepare(rename="Testprod", rule_out_root=["Film"])
+        self.assertEqual(cfg["rename_step"], "rerun")
+        data = gc.read_json(self.pkg / gc.JOURNAL_NAME)
+        self.assertEqual((data["rename"]["stage"], data["rename"]["old_name"]), ("shortlist", "Testprod"))
+        self.assertEqual(data["rename"]["rule_out"], ["Testprod", "Filmora"])
+        self.assertEqual(data["rename"]["rule_out_roots"], ["Film"])
+        self.assertEqual([b["accepted_name"] for b in data["renames"]], ["Testprod"])
 
     def test_preflight_reports_the_rename(self):
         cfg = self.prepare(rename="Filmora")
