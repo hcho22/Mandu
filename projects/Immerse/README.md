@@ -4,7 +4,8 @@
 Instead of picking a vintage filter after unlimited capture, you choose a Camera, load a bounded Film, shoot within its capacity, and the result is revealed by that format's own rules.
 
 **Name:** "Immerse" is the repo name.
-The final product name is not selected (PRD open decision DEC-01), and the PRD uses the descriptive title "Film Camera Experience".
+On 2026-10-28 hcho chose Rewound as the name the app shows (PRD decision DEC-01), but App Store Connect then refused "Rewound" as already in use, so Rewound is out.
+A name-only rerun is pending, and until a name clears the app keeps showing Immerse; the PRD uses the descriptive title "Film Camera Experience".
 
 **Repo:** https://github.com/hcho22/Immerse (`main`). **GitHub reports it as PUBLIC** (re-verified 2026-10-26), although earlier Mandu records called it private.
 Its event history shows no visibility change, which is consistent with it having been public since creation on 2026-09-29; whether it should stay public is hcho's call.
@@ -31,14 +32,14 @@ _Last verified: 2026-10-26._
   An iPhone 11, a second iPhone, and a small iPhone are not available, so those scenarios cannot run.
 - **Go-to-market Candidate Package: `gtm/` in this folder, written by Gr0wthPilot run `immerse-20261025-043407` on 2026-10-25, untracked, unfinished, and not handed to gr0wthlab.**
   Front door `gtm/recap.html`; the Founder's ordered path is `gtm/launch-checklist.md`, and its first item is whether Immerse runs now or stays listening-only.
-  It proposes the name Rewound (clearance UNVERIFIED), $4.99 a month or $29.99 a year, kill criteria K1 to K8 with a hard park at Day 90, and a 14-day Test Kit plus a Beta Cohort; none of it is adopted.
+  It proposes the name Rewound (clearance UNVERIFIED), $4.99 a month or $29.99 a year, kill criteria K1 to K8 with a hard park at Day 90, and a 14-day Test Kit plus a Beta Cohort; hcho chose Rewound on 2026-10-28 and App Store Connect then refused it, and none of the rest is adopted.
   Gates are recorded through `critic-1` only; the site re-shoot failed because the run called `gp-chrome` by absolute path, which the sandbox does not exempt, not because Chrome broke (`log/2026-10-26.md`).
   gr0wthlab still lists Immerse as `listening-only`; Mandu never edits the run's output.
 - **CI: 11 of 16 `main` runs green since `4906054`, the last two clean, and no run since 2026-10-21**; only 8 were green at the first try (two passed through a permitted rerun, one on a second attempt).
   The five failures were four flaky tests, each followed by a fix PR, and one run that never got a Mac runner; clean runs take 49 to 74 minutes.
   `main` has no branch protection or rulesets.
 - **Decisions:** DEC-11 is checked; DEC-04 is decided in substance; DEC-05 has its rule but waits on hcho's seven sample shots; DEC-14 is "no analytics, learn from TestFlight interviews and Apple reports"; firstmate recorded the native stack (DEC-03) as answered on 2026-10-13, but the tracker box is unchecked.
-  DEC-01 (name) and DEC-02 (price) are open, and hcho has adopted no kill criteria or validation plan; the Candidate Package above proposes all four.
+  DEC-01 (name) is open again after App Store Connect refused Rewound on 2026-10-28, with a name-only rerun pending; DEC-02 (price) is open, and hcho has adopted no kill criteria or validation plan; the Candidate Package above proposes all four.
 - **Task tracker:** 253 items, 10 checked (5 discovery, 5 decisions), 135 v1 and 108 v2 items open; no implementation task is checked until a phone has run it.
   The PRD and tracker headers still describe a planning baseline.
 - **The repo is public**; since 10-12 that includes hcho's film-look calibration files and two boards that hotlink reference photos that are not openly licensed.
@@ -62,7 +63,7 @@ Product principles to remember: camera authenticity wins over convenience, a Fil
 
 ## Open questions
 
-- **No price or final brand** (DEC-01, DEC-02); the Candidate Package proposes Rewound and $4.99 a month or $29.99 a year, unadopted. firstmate recorded hcho's "1. fine" on the native stack (Swift/SwiftUI and eight flow choices) on 2026-10-13, though the storage library was not named to him and the tracker's DEC-03 box is unchecked. Pricing is deferred to before M2 billing work. Render and export sizes (DEC-04) were decided on 2026-10-13 except the Movie capture's native 4:3 size, which stays provisional. The platform and service boundary are settled: iOS 26, iPhone only, with no Immerse backend.
+- **No price or final brand** (DEC-01, DEC-02); Rewound was chosen on 2026-10-28 and then refused by App Store Connect, so the app shows Immerse until a rerun name clears; the Candidate Package's $4.99 a month or $29.99 a year is unadopted. firstmate recorded hcho's "1. fine" on the native stack (Swift/SwiftUI and eight flow choices) on 2026-10-13, though the storage library was not named to him and the tracker's DEC-03 box is unchecked. Pricing is deferred to before M2 billing work. Render and export sizes (DEC-04) were decided on 2026-10-13 except the Movie capture's native 4:3 size, which stays provisional. The platform and service boundary are settled: iOS 26, iPhone only, with no Immerse backend.
 - **Group Films are deferred.**
   Accountless participation, serialized Group Movie recording, Host Release, and shared privacy exits remain documented for v2 and should not shape the minimum v1 architecture.
 - **How it earns income is undecided.**
