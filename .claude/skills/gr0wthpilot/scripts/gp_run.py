@@ -16,8 +16,16 @@ The launcher (`bin/gr0wthpilot <Product>` at Mandu's root) calls `prepare`; the
 skill calls `preflight` as its first step, which fails unless this run's guard
 hook is live in the session.
 
+A name-only rerun takes two launcher steps, each on the unfinished run's
+package. `--rename OLD` starts it: the name App Store Connect refused, plus any
+further names (`--rule-out`) and roots (`--rule-out-root`) to rule out.
+`--accept-name NEW` hands over the name App Store Connect accepted, which is
+swapped through the package. Each copies the whole package into the cache
+folder's `backups/` before it changes a file, and the journal names the copy.
+
 Usage:
   gp_run.py prepare --mandu DIR --product NAME --cache DIR [--repo DIR] [--today YYYY-MM-DD]
+                    [--rename OLD [--rule-out NAME ...] [--rule-out-root ROOT ...] | --accept-name NEW]
   gp_run.py preflight [--config FILE]
 """
 
@@ -35,6 +43,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import gp_common as gc  # noqa: E402
+import journal as jr  # noqa: E402
+import rename  # noqa: E402
 
 PRODUCT_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,63}")
 CANDIDATE_PREFIX = "gtm-candidate-"
@@ -444,12 +454,50 @@ def sh_quote(text: str) -> str:
     return "'" + text.replace("'", "'\"'\"'") + "'"
 
 
+def rename_step(args):
+    """"rerun", "accept", or None, after checking the name arguments."""
+    names = list(getattr(args, "rule_out", None) or [])
+    roots = list(getattr(args, "rule_out_root", None) or [])
+    old, new = getattr(args, "rename", None), getattr(args, "accept_name", None)
+    if old and new:
+        raise RunError("--rename starts a name-only rerun and --accept-name ends one; give one of them")
+    if (names or roots) and not old:
+        raise RunError("--rule-out and --rule-out-root go with --rename")
+    for name in [n for n in [old, new] if n] + names:
+        why = rename.valid_name(name)
+        if why:
+            raise RunError(why)
+    for root in roots:
+        if not re.fullmatch(r"[A-Za-z0-9]{2,40}", root):
+            raise RunError("a root to rule out is 2 to 40 letters or digits: %r" % root)
+    return "rerun" if old else "accept" if new else None
+
+
+def check_rename_target(target: dict, step: str, old) -> None:
+    """A name-only rerun works on the unfinished run's package, which must
+    still hold the name it reruns from."""
+    if target["mode"] != "resume":
+        raise RunError("a name-only rerun reworks an unfinished run's Candidate Package, and %s has none (%s would "
+                       "start a new run); nothing was changed" % (target["product"], target["package_rel"]))
+    if step == "rerun":
+        package = Path(target["package"])
+        naming = package / "02-brand" / "naming-decision.md"
+        text = naming.read_text(encoding="utf-8") if naming.is_file() else ""
+        current = (gc.load_journal(package) or {}).get("rename") or {}
+        if old not in text and rename.slug(current.get("old_name")) != rename.slug(old):
+            raise RunError("%s does not appear in %s/02-brand/naming-decision.md, so it is not the name this package "
+                           "proposes; give the name exactly as the package spells it" % (old, target["package_rel"]))
+
+
 def prepare(args) -> dict:
     mandu = Path(args.mandu).resolve()
     product = args.product
+    step = rename_step(args)
     check_project_settings(mandu)
     check_claude_consent(mandu)
     target = resolve_target(mandu, product, today_arg(args.today), production_registry())
+    if step:
+        check_rename_target(target, step, getattr(args, "rename", None))
     cache = Path(args.cache).expanduser()
     work, state = cache / product, cache / (product + ".guard")
     for folder in (work, state):
@@ -463,6 +511,7 @@ def prepare(args) -> dict:
     for script in sorted((gc.SKILL_DIR / "workflows").glob("*.js")):
         shutil.copyfile(str(script), str(workflows / script.name))
     repo = find_repo(mandu, product, args.repo)
+    rename_info = rename_package(target, step, args, work) if step else None
     journal = start_journal(target, repo, mandu, gc.utc_now())
     cfg = {
         "version": 1,
@@ -491,6 +540,8 @@ def prepare(args) -> dict:
         "simulators": str(state / "simulators.json"),
         "config_path": str(state / "guard-config.json"),
         "profile_path": str(state / "profile.json"),
+        "rename_step": step,
+        "rename_summary": rename_info,
     }
     profile = build_profile(cfg)
     problems = validate_profile(profile)
@@ -499,6 +550,36 @@ def prepare(args) -> dict:
     gc.write_json(Path(cfg["config_path"]), cfg)
     gc.write_json(Path(cfg["profile_path"]), profile)
     return cfg
+
+
+def rename_package(target: dict, step: str, args, work: Path) -> str:
+    """Do the launcher's part of a name-only rerun step on the package, after
+    keeping a copy of it, and return one line saying what was done."""
+    package = Path(target["package"])
+    journal = gc.load_journal(package)
+    now = gc.utc_now()
+    stamp = gc.iso_z(now)
+    old, new = getattr(args, "rename", None), getattr(args, "accept_name", None)
+    why = jr.rerun_refusal(journal, old) if step == "rerun" else jr.accept_refusal(journal, new)
+    if why:
+        raise RunError("%s; nothing was changed" % why)
+    copy = None
+    try:
+        if step == "rerun":
+            copy = rename.backup(package, work, "before-rerun-from-%s" % rename.slug(old), now)
+            info = jr.begin_rerun(package, journal, old, args.rule_out or [], args.rule_out_root or [], copy, stamp)
+            line = "Name-only rerun from %s; ruled out: %s%s." % (old, ", ".join(info["rule_out"]), (
+                "; roots: " + ", ".join(info["rule_out_roots"])) if info["rule_out_roots"] else "")
+        else:
+            copy = rename.backup(package, work, "before-swap-to-%s" % rename.slug(new), now)
+            info = jr.accept_name(package, journal, new, work, copy, stamp)
+            line = "Name swap from %s to %s: %d lines in %d files; review sheet %s." % (
+                info["old_name"], new, info["swap"]["lines"], info["swap"]["files"], info["swap"]["review"])
+    except (ValueError, OSError) as exc:
+        raise RunError("%s; %s" % (exc, "the package as it was is kept in %s" % copy if copy
+                                   else "no copy was made and the package is unchanged"))
+    gc.write_json(package / gc.JOURNAL_NAME, journal)
+    return line + " Backup of the package before this step: %s." % copy
 
 
 def preflight(args) -> int:
@@ -539,7 +620,10 @@ def preflight(args) -> int:
         "workflows_dir": cfg.get("workflows_dir"),
         "protected": cfg.get("protected") or [],
         "run_id": journal.get("run_id"),
-        "gates_passed": [g.get("id") for g in journal.get("gates", [])],
+        "gates_passed": jr.passed_ids(journal),
+        "gates_reopened": jr.reopened_ids(journal),
+        "rename_step": cfg.get("rename_step"),
+        "rename": journal.get("rename"),
     }, indent=2))
     return 0
 
@@ -553,6 +637,10 @@ def main(argv=None) -> int:
     p.add_argument("--cache", required=True)
     p.add_argument("--repo")
     p.add_argument("--today")
+    p.add_argument("--rename", metavar="OLD")
+    p.add_argument("--rule-out", action="append", metavar="NAME")
+    p.add_argument("--rule-out-root", action="append", metavar="ROOT")
+    p.add_argument("--accept-name", metavar="NEW")
     f = sub.add_parser("preflight")
     f.add_argument("--config")
     args = parser.parse_args(argv)

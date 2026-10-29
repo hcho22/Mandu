@@ -6,6 +6,10 @@ A critic's report must be newer than the latest pass of each of the phase's work
 Re-passing a work gate re-runs its checks and records the time it passed again, so a fix re-gated after the critic ran makes that phase's critic gate fail until the critic runs again.
 The `package` gate re-checks the critics of phases 1 to 4 that way, and `journal.py complete` re-checks all five.
 
+A gate a later phase sends back is reopened (`journal.py reopen <gate> --reason "<why>"`): it keeps its record, counts as not passed, and passes again in order, with the same checks, before any later gate; reopening a work gate reopens its phase's critic too.
+A name-only rerun reopens the tournament and every later passed gate, and refuses every gate after the tournament until the Founder hands over an accepted name; the hand-over reopens each passed gate whose files the name swap changed, and `brand`.
+See "Name-only rerun" in `SKILL.md`.
+
 ## Read the product
 
 Gate `product-facts`: `01-research/product-facts-brief.md` exists and cites the repository with at least five `repo:` paths; `decisions-log.md` and `sources.md` exist.

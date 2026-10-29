@@ -15,6 +15,7 @@ Each layer was proven in live sessions; this page says what each one covers and,
 - `--permission-mode dontAsk`: anything the profile does not allow is refused without a prompt, so a run never waits on the Founder.
 - The session starts inside the Candidate Package, which is what the macOS sandbox lets shell commands write.
 - The launcher runs only `/gr0wthpilot <Product>`; it takes no other Claude Code arguments, so nothing on its command line can loosen the profile.
+  Its own options for a name-only rerun (`--rename`, `--rule-out`, `--rule-out-root`, `--accept-name`) reach only `gp_run.py prepare`, which, before the session opens and only on the unfinished run's own package, copies the package into the cache folder's `backups/`, then sets the earlier tournament aside or swaps the accepted name, and updates the journal; the session that follows runs under the same profile as any other.
 - `caffeinate -i -s -w <pid>` holds system sleep off (the display may still sleep) for exactly the life of the session's own process, and releases it when the session ends, however it ends.
 - The profile copies only `model` and `effortLevel` from the Founder's own settings, sets `workflowSizeGuideline` to `unrestricted` (Claude Code's default guideline is "medium", under 10 agents per workflow), and turns auto-memory off, since a run writes no memory.
 

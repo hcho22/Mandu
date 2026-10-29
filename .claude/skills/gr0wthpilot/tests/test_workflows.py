@@ -24,9 +24,11 @@ const fs = require('fs')
 const [script, argsJson, repliesJson] = process.argv.slice(2)
 const replies = JSON.parse(repliesJson)
 const labels = []
+const prompts = {}
 const agent = async (prompt, opts) => {
   const label = (opts && opts.label) || ''
   labels.push(label)
+  prompts[label] = prompt
   const key = Object.keys(replies).filter(k => label.startsWith(k)).sort((a, b) => b.length - a.length)[0]
   return key === undefined ? '' : replies[key]
 }
@@ -40,7 +42,7 @@ const body = fs.readFileSync(script, 'utf8').replace(/^export const meta/m, 'con
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
 new AsyncFunction('args', 'agent', 'parallel', 'pipeline', 'phase', 'log', body)(
   JSON.parse(argsJson), agent, parallel, pipeline, () => {}, () => {})
-  .then(result => console.log(JSON.stringify({ result, labels })))
+  .then(result => console.log(JSON.stringify({ result, labels, prompts })))
   .catch(err => { console.error(err.stack); process.exit(1) })
 """
 
@@ -95,6 +97,47 @@ class ResearchTest(unittest.TestCase):
                            replies)
         self.assertEqual([lane["lane"] for lane in out["result"]["lanes"]], ["L1"])
         self.assertEqual(out["result"]["dropped"], ["L2"])
+
+
+@unittest.skipUnless(shutil.which("node"), "node is not installed")
+class TournamentTest(unittest.TestCase):
+    ARGS = {"package": "/p", "product": "Testprod", "skill": "/s", "incumbent_name": "Testprod",
+            "pitchers": [{"id": "p%d" % i, "stance": "stance %d" % i} for i in range(4)],
+            "judges": [{"id": j, "rubric": "02-brand/tournament/rubric-%s.md" % j}
+                       for j in ("differentiation", "conversion", "defensibility")]}
+    REPLIES = {"pitch:": {"file": "/p/02-brand/tournament/pitch-1.md", "name": "N", "hero": "h", "one_line": "o",
+                          "names": ["Alpha", "Beta", "Gamma"]},
+               "collisions:": {"file": "/p/02-brand/tournament/collisions-1.md", "names": ["Alpha"]},
+               "judge:": {"file": "f", "scores": [], "name_verdict": "Alpha"}}
+
+    def test_a_full_tournament_checks_no_collisions(self):
+        out = run_workflow("tournament.js", self.ARGS, self.REPLIES)
+        self.assertFalse([label for label in out["labels"] if label.startswith("collisions:")])
+        self.assertNotIn("Ruled out", out["prompts"]["pitch:p0"])
+        self.assertIn("Pitch a complete positioning", out["prompts"]["pitch:p0"])
+
+    def test_a_name_only_tournament_gives_every_agent_the_ruled_out_names(self):
+        args = dict(self.ARGS, name_only={"old_name": "Rewound", "ruled_out": ["Rewound"],
+                                          "ruled_out_roots": ["Rewind"],
+                                          "fixed": "02-brand/tournament/fixed-inputs.md"})
+        out = run_workflow("tournament.js", args, self.REPLIES)
+        self.assertEqual(sorted(label for label in out["labels"] if label.startswith("collisions:")),
+                         ["collisions:p%d" % i for i in range(4)])
+        self.assertEqual(len(out["result"]["collisions"]), 4)
+        for label, prompt in out["prompts"].items():
+            self.assertIn("Ruled out, never pitched, and disqualified if pitched: Rewound", prompt, label)
+            self.assertIn('contains "Rewind" in any case or spacing', prompt, label)
+            self.assertIn("/p/02-brand/tournament/fixed-inputs.md", prompt, label)
+        self.assertIn("Pitch names only: 3 names", out["prompts"]["pitch:p0"])
+        self.assertIn("A ruled-out name scores zero", out["prompts"]["judge:conversion"])
+        self.assertIn("/p/02-brand/tournament/rubric-conversion.md", out["prompts"]["judge:conversion"])
+        self.assertIn("Alpha, Beta, Gamma", out["prompts"]["collisions:p0"])
+
+    def test_a_name_only_tournament_needs_its_fixed_inputs(self):
+        args = dict(self.ARGS, name_only={"old_name": "Rewound", "ruled_out": ["Rewound"]})
+        with self.assertRaises(AssertionError) as raised:
+            run_workflow("tournament.js", args, self.REPLIES)
+        self.assertIn("name_only.fixed", str(raised.exception))
 
 
 if __name__ == "__main__":
