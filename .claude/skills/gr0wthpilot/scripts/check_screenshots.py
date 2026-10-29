@@ -19,7 +19,7 @@ launch-set PACKAGE
   that size and not blank; each `size_source` is the http(s) URL of the
   platform page that gives the size; each of Instagram, X, and TikTok has a
   profile image and first-week posts. The result's `images` are the image
-  assets' paths.
+  assets' package paths.
 
 image FILE --size WIDTHxHEIGHT
   One image at one size.
@@ -227,7 +227,7 @@ def check_launch_set(pkg):
                 problems.append("manifest: %s is a %s, which must be a PNG, JPEG, or WebP image rendered at its "
                                 "size" % (asset.get("path"), kind))
             else:
-                images.append(path)
+                images.append(gc.rel(pkg, path))
                 try:
                     width, height = parse_size(asset.get("size"))
                     check_image(path, width, height, problems, scales=(1,))

@@ -1520,6 +1520,10 @@ class HandOverFreshnessTest(unittest.TestCase):
                          + ["video: 04-video/walkthrough.mp4"])
         for check in (journal.CHECKS["video"], journal.CHECKS["launch-set"], journal.all_checks):
             self.assertEqual(stale(check, -1), [])
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(check_screenshots.main(["launch-set", str(pkg), "--json"]), 0)
+        self.assertEqual(sorted(json.loads(out.getvalue())["images"]), [gc.rel(pkg, p) for p in images])
         data = load(pkg)
         data.pop("rename")
         save(pkg, data)

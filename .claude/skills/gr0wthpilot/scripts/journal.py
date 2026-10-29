@@ -146,15 +146,15 @@ def g_test_kit(pkg, cfg):
     return kit
 
 
-def older_than_hand_over(pkg, paths):
-    """Problems for each of these renders older than the Founder's name
-    hand-over (`rename.accepted_at`): after a name swap, each is rendered
-    again from its swapped source."""
+def older_than_hand_over(pkg, rels):
+    """Problems for each of these renders, by package path, older than the
+    Founder's name hand-over (`rename.accepted_at`): after a name swap, each is
+    rendered again from its swapped source."""
     at = gc.parse_iso_z(((gc.load_journal(pkg) or {}).get("rename") or {}).get("accepted_at") or "")
     if not at:
         return []
-    return ["%s is older than the name hand-over at %s; render it again from its swapped source"
-            % (gc.rel(pkg, p), gc.iso_z(at)) for p in paths if p.is_file() and p.stat().st_mtime < at.timestamp()]
+    return ["%s is older than the name hand-over at %s; render it again from its swapped source" % (rel, gc.iso_z(at))
+            for rel in rels if (pkg / rel).is_file() and (pkg / rel).stat().st_mtime < at.timestamp()]
 
 
 def launch_set_problems(pkg):
@@ -174,7 +174,8 @@ def g_video(pkg, cfg):
                 "\"min_seconds\": 15, \"max_seconds\": 120}"]
     video = pkg / "04-video" / spec.get("video", "walkthrough.mp4")
     return check_video.verify(video, spec.get("size", "1080x1920"), int(spec.get("min_seconds", 15)),
-                              int(spec.get("max_seconds", 120)))["problems"] + older_than_hand_over(pkg, [video])
+                              int(spec.get("max_seconds", 120)))["problems"] + older_than_hand_over(
+        pkg, [gc.rel(pkg, video)])
 
 
 def g_red_team(pkg, cfg):
