@@ -7,7 +7,7 @@ Re-passing a work gate re-runs its checks and records the time it passed again, 
 The `package` gate re-checks the critics of phases 1 to 4 that way, and `journal.py complete` re-checks all five.
 
 A gate a later phase sends back is reopened (`journal.py reopen <gate> --reason "<why>"`): it keeps its record, counts as not passed, and passes again in order, with the same checks, before any later gate; reopening a work gate reopens its phase's critic too.
-A name-only rerun reopens the tournament and every later passed gate, and refuses every gate after the tournament until the Founder hands over an accepted name; the hand-over reopens each passed gate whose files the name swap changed, and `brand`.
+A name-only rerun reopens the tournament and every later passed gate, and refuses every gate after the tournament until the Founder hands over a shortlisted name App Store Connect accepted; after the hand-over swaps it through the package, the reopened gates pass again in order.
 See "Name-only rerun" in `SKILL.md`.
 
 ## Read the product

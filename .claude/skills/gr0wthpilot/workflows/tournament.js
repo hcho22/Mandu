@@ -17,8 +17,7 @@ export const meta = {
 //   name_only: optional, for a name-only rerun (the launcher's --rename): {
 //     old_name: the name App Store Connect refused,
 //     ruled_out: [names], ruled_out_roots: [roots]   from the journal's rename block; old_name is among ruled_out,
-//     fixed: relative path of the file quoting the positioning, hero message, and look the rerun keeps,
-//     names_per_pitch: names each pitcher ranks (default 3)
+//     fixed: relative path of the file quoting the positioning, hero message, and look the rerun keeps
 //   }
 // }
 const A = args || {}
@@ -31,7 +30,6 @@ if (N && (!N.old_name || !N.fixed || !(N.ruled_out || []).length)) {
 }
 const P = A.package
 const T = `${P}/02-brand/tournament`
-const PER = N ? N.names_per_pitch || 3 : 1
 const RULED_OUT = N
   ? `
 Ruled out, never pitched, and disqualified if pitched: ${N.ruled_out.join(', ')}${(N.ruled_out_roots || []).length ? `, and every name that contains ${N.ruled_out_roots.map(r => `"${r}"`).join(' or ')} in any case or spacing` : ''}.
@@ -86,7 +84,7 @@ phase('Pitch')
 const pitchTask = (p, i) =>
   N
     ? `Read ${P}/${N.fixed}, ${P}/01-research/product-facts-brief.md, ${P}/01-research/name-collisions.md, and the research in ${P}/01-research/, and use the methods in ${A.skill}/marketingskills/marketing-psychology/SKILL.md and ${A.skill}/marketingskills/marketing-ideas/SKILL.md.
-Pitch names only: ${PER} names, ranked, your lead first. For each give the store title it would carry, how it carries the fixed positioning and hero message, what a stranger hears in it, and its weakest point.
+Pitch names only: 3 names, ranked, your lead first. For each give the store title it would carry, how it carries the fixed positioning and hero message, what a stranger hears in it, and its weakest point.
 Write it to ${T}/pitch-${i + 1}.md, starting with "# Pitch ${i + 1}" and never naming yourself.`
     : `Read ${P}/01-research/product-facts-brief.md and the research in ${P}/01-research/, and use the methods in ${A.skill}/marketingskills/marketing-psychology/SKILL.md, ${A.skill}/marketingskills/offers/SKILL.md, and ${A.skill}/marketingskills/marketing-ideas/SKILL.md.
 Pitch a complete positioning: the name (stress-test ${A.incumbent_name || 'the current working name'} and keep it or beat it; incumbency earns nothing), the category frame, the ideal customer in their own words, the hero message, three supporting messages, the enemy (what the customer is fighting, never the customer), and why this wins against the named competitors.
@@ -112,7 +110,7 @@ if (N) {
       agent(
         `You check name collisions for Gr0wthPilot's name-only tournament for ${A.product}, the way its research step does (${A.skill}/references/research.md, "Collisions").
 For every name in ${pitch.file} (${(pitch.names || []).join(', ')}): what the US App Store shows (WebSearch, then fetch each apps.apple.com listing you cite), what the web shows, and what registry lookups show for its likely domains (RDAP responses, such as https://pubapi.registry.google/rdap/domain/<name>.app and https://rdap.verisign.com/com/v1/domain/<name>.com).
-Write ${T}/collisions-${i + 1}.md with a "## <Name>" section per name holding three lines, "- App Store:", "- Web:", and "- Domains:", each citing the URLs it rests on, or saying "none seen" when a search showed nothing (an app a search did not show may still exist), and "Clearance: UNVERIFIED".
+Write ${T}/collisions-${i + 1}.md with a "## <Name>" section per name holding "- App Store:" and "- Web:" lines, each citing the URLs it rests on, or saying "none seen" when a search showed nothing (an app a search did not show may still exist); a "- Domains:" line with one entry per domain checked, separated by ";", each either the domain with the URL of the lookup that shows it registered, or "<domain>: no registration found, UNVERIFIED" with no URL when the lookup found none (that lookup answers 404, and a 404 is never cited); and "Clearance: UNVERIFIED".
 Record every URL you cite in ${P}/sources.d/tournament-collisions-${i + 1}.md.
 Never say a name is clear or available, and never judge it.
 ${RULES}`,

@@ -62,7 +62,7 @@ The positioning, hero message, and look are unchanged ([fixed inputs](tournament
 Scorecard rank 1 ([scorecard](tournament/scorecard.md)); why it carries the positioning, in one or two lines.
 - App Store: what search showed, with each listing's URL, or "none seen".
 - Web: what the web showed, with URLs, or "none seen".
-- Domains: each registry lookup, with its URL.
+- Domains: one entry per domain checked, separated by ";": a registered domain with the URL of the lookup that shows it, or "cineroll.app: no registration found, UNVERIFIED" with no URL when the lookup found none.
 - Clearance: trademark and App Store name clearance are UNVERIFIED and are the Founder's next action.
 
 ## 2. ...
@@ -72,5 +72,6 @@ Scorecard rank 1 ([scorecard](tournament/scorecard.md)); why it carries the posi
 Try these names in App Store Connect in this order, and run `bin/gr0wthpilot Immerse --accept-name "<name>"` from Mandu's root with the first one it accepts.
 ```
 
-The check wants 3 to 7 names under `## <rank>. <Name> [PROPOSAL]` headings, ranked 1, 2, 3, ... in order, none ruled out and none twice; in each section an `- App Store:` and a `- Web:` line citing a URL or saying "none seen", a `- Domains:` line citing a URL, and the word UNVERIFIED; and a `## Next step` section naming App Store Connect and the `--accept-name` command.
+The check wants 3 to 7 names under `## <rank>. <Name> [PROPOSAL]` headings, ranked 1, 2, 3, ... in order, none ruled out and none twice; in each section an `- App Store:` and a `- Web:` line citing a URL or saying "none seen", a `- Domains:` line whose every entry either cites a URL or names one domain with "no registration found" and UNVERIFIED, and the word UNVERIFIED; and a `## Next step` section naming App Store Connect and the `--accept-name` command.
 Every URL it cites must pass the source check, like any other.
+A lookup that found no registration answers 404, which is never cited as fetched, so it is recorded by the domain's name alone, UNVERIFIED; a domain reported as registered always cites the 2xx lookup that shows it.

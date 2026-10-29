@@ -18,9 +18,10 @@ noted in the journal as a send-back.
 
 A name-only rerun (the launcher's `--rename`) reopens the tournament and every
 gate after it, and the journal refuses every gate after the tournament until
-the Founder hands over the name App Store Connect accepted (`--accept-name`);
-the rerun ends at the shortlist `journal.py shortlist` records. The hand-over
-swaps the name through the package and reopens each gate whose files changed.
+the Founder hands over the name App Store Connect accepted (`--accept-name`),
+which must be on the shortlist `journal.py shortlist` records, where the rerun
+ends. The hand-over swaps the name through the package; the gates the rerun
+reopened then pass again in order.
 
 Usage:
   journal.py status [PACKAGE]
@@ -331,33 +332,6 @@ def waiting_for_name(journal, gate):
     return None
 
 
-# The package files each gate's checks read, by path prefix; "*" is every file.
-# A swap reopens each passed gate whose files it changed.
-GATE_FILES = {
-    "product-facts": ["01-research/product-facts-brief.md", "decisions-log.md", "sources.md"],
-    "research": ["01-research/", "sources.md"],
-    "tournament": [rename.TOURNAMENT + "/"],
-    "brand": ["02-brand/", "06-channels/channel-plan.md", "07-thesis/"],
-    "claims-1": "*",
-    "site": ["03-site/", "06-channels/event-metric-schema.md"],
-    "test-kit": ["05-social-pmf/", "09-extras/marketing-agent/", "launch-checklist.md",
-                 "08-redteam/pre-publication-checklist.md"],
-    "launch-set": ["10-launch-set/", "05-social-pmf/", "09-extras/marketing-agent/"],
-    "video": ["04-video/"],
-    "red-team": ["08-redteam/"],
-    "package": "*",
-}
-
-
-def gates_touching(changed):
-    """Work gates whose checks read any of these package paths."""
-    out = []
-    for gid, prefixes in GATE_FILES.items():
-        if changed and (prefixes == "*" or any(rel.startswith(p) for rel in changed for p in prefixes)):
-            out.append(gid)
-    return out
-
-
 def rerun_refusal(journal, old):
     """Why this run cannot start a name-only rerun from `old`, or None."""
     current = journal.get("rename") or {}
@@ -380,7 +354,16 @@ def accept_refusal(journal, new):
     if not current.get("shortlist"):
         return ("the name-only rerun has not recorded its shortlist yet; resume it with `bin/gr0wthpilot %s`"
                 % product)
-    return rename.valid_name(new) or rename.ruled_out(new, current["rule_out"], current["rule_out_roots"])
+    why = rename.valid_name(new)
+    if why:
+        return why
+    shortlist = current.get("shortlist_names", [])
+    if rename.slug(new) not in {rename.slug(n) for n in shortlist}:
+        return ("%s is not on the rerun's shortlist (%s), so the rerun never checked it; hand over a shortlisted name, "
+                "or, if App Store Connect refused them, start a new rerun with `bin/gr0wthpilot %s --rename \"%s\"` "
+                "and `--rule-out \"<name>\"` for each name it refused" % (new, ", ".join(shortlist), product,
+                                                                      current["old_name"]))
+    return None
 
 
 def begin_rerun(pkg, journal, old, names, roots, backup_dir, now):
@@ -422,12 +405,11 @@ def begin_rerun(pkg, journal, old, names, roots, backup_dir, now):
 
 
 def accept_name(pkg, journal, new, work, backup_dir, now):
-    """Swap `new`, the name App Store Connect accepted, through the package
-    in place of the rerun's earlier name, write the review sheet into the
-    cache folder, and reopen each recorded gate whose files the swap changed,
-    with the brand gate always (its naming decision is rewritten for the new
-    name). Raises ValueError when no rerun waits for a name, or the name is
-    ruled out."""
+    """Swap `new`, the shortlisted name App Store Connect accepted, through
+    the package in place of the rerun's earlier name, and write the review
+    sheet into the cache folder; the gates the rerun reopened then pass again
+    in order. Raises ValueError when no rerun waits for a name, or the name is
+    not on its shortlist."""
     why = accept_refusal(journal, new)
     if why:
         raise ValueError(why)
@@ -437,14 +419,12 @@ def accept_name(pkg, journal, new, work, backup_dir, now):
     report = rename.swap(pkg, old, new)
     review = rename.write_review(Path(work) / "rename" / ("%s-%s-review.md" % (now.replace(":", ""), rename.slug(new))),
                                  old, new, report, backup_dir, product)
-    reason = ("the Founder handed over %s, which App Store Connect accepted, with the launcher's --accept-name; the "
-              "launcher swapped it through the package in place of %s (%d lines in %d files); the review sheet is %s."
-              % (new, old, sum(report["files"].values()), len(report["files"]), review))
-    reopen(journal, ["brand"] + gates_touching(list(report["files"])), reason, now)
-    add_note(journal, "Name swap to %s: the package as it was before the swap is kept in %s." % (new, backup_dir), now)
+    add_note(journal, "Name swap to %s: the Founder handed over %s, which App Store Connect accepted, with the "
+             "launcher's --accept-name; the launcher swapped it through the package in place of %s (%d lines in %d "
+             "files); the review sheet is %s; the package as it was before the swap is kept in %s." % (
+                 new, new, old, sum(report["files"].values()), len(report["files"]), review, backup_dir), now)
     current.update({
         "stage": "swapped", "accepted_name": new, "accepted_at": now,
-        "on_shortlist": rename.slug(new) in {rename.slug(n) for n in current.get("shortlist_names", [])},
         "backups": current.get("backups", []) + [{"at": now, "before": "swap", "path": str(backup_dir)}],
         "swap": {"review": str(review), "files": len(report["files"]), "lines": sum(report["files"].values()),
                  "left": sum(len(v) for v in report["left"].values()), "svgs": report["svgs"],

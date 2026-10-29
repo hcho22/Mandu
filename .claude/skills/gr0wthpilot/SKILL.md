@@ -267,8 +267,8 @@ The positioning, the hero message, and the look stay as they are; only the name 
 1. `bin/gr0wthpilot <Product> --rename <refused name> [--rule-out <name>]... [--rule-out-root <root>]...` starts it.
    Before the session opens, the launcher copies the whole package into the cache folder's `backups/`, moves the earlier tournament to `02-brand/tournament-<refused name>/`, reopens the tournament gate and every later gate already passed, and records all of it in the journal as a send-back with the ruled-out names (the refused name always among them) and roots.
    The preflight's `rename_step` is `rerun`.
-2. `bin/gr0wthpilot <Product> --accept-name "<name>"`, once App Store Connect accepts a name, hands it over.
-   Before the session opens, the launcher copies the package again, swaps the name through its deliverables (never its records, never a URL; the rules are at the top of `<skill>/scripts/rename.py`), writes a review sheet into the cache folder, and reopens every passed gate whose files the swap changed, with `brand` always.
+2. `bin/gr0wthpilot <Product> --accept-name "<name>"`, once App Store Connect accepts a shortlisted name, hands it over; a name not on the recorded shortlist is refused.
+   Before the session opens, the launcher copies the package again, swaps the name through its deliverables (never its records, never a URL; the rules are at the top of `<skill>/scripts/rename.py`), and writes a review sheet into the cache folder; the gates step 1 reopened still wait to pass again.
    The preflight's `rename_step` is `accept`.
 
 The journal's `rename` block holds the state: `stage` (`shortlist`, then `swapped`), the earlier name, the ruled-out names and roots, every backup's path, the shortlist, and the swap's review sheet.
@@ -291,9 +291,9 @@ A run cannot see App Store Connect; that the Founder's step-2 name was accepted 
 ### After the swap
 
 1. Read the review sheet the status names (`rename.swap.review`, in the cache folder) whole.
-   If the accepted name is not on the shortlist, first run the names lane (`research.js`) for it and add its collisions to `01-research/name-collisions.md`.
 2. Work through every line of the review sheet, fanning out one agent per area folder through a Workflow script of your own in `<cache>/workflows/`.
    A line that states a fact about the earlier name (a collision, an app or domain someone else holds, a clearance step) gets the earlier name back, labeled as the earlier name; a line that reasons from what the earlier word means is rewritten or cut; each lowercase occurrence is decided by its sense.
+   A line marked URL names the earlier name inside a URL: a URL the package proposes for the Product (its planned site or a handle) is rewritten for the new name, with its `sources-exempt.md` entry to match, and a URL that cites a source stays as it is.
    A proposed domain or handle the swap derived from the new name is kept only when the shortlist's domain evidence supports proposing it, and its availability stays UNVERIFIED.
 3. Rewrite `02-brand/naming-decision.md` for the accepted name: the verdict, that the Founder reports App Store Connect accepted it (with the date he handed it over), trademark clearance UNVERIFIED and the Founder's next action, the shortlist, and the earlier name with why it was dropped.
 4. Draw the wordmark again, and every SVG the sheet lists that spells the name in shapes; render again every image the sheet lists that shows the name; rebuild the video; then run one more `brand-gate.js` round, with the swapped guidelines, so the new wordmark passes the fresh-agent gate.

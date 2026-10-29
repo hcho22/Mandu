@@ -1411,7 +1411,44 @@ class RenameTest(unittest.TestCase):
         self.assertEqual(lines[1], "Join at getwholeroll.app/tiktok or @wholeroll, second choice wholerollcamera.app.")
         self.assertEqual(lines[2:5], text.split("\n")[2:5])
         self.assertEqual([n for n, _ in changed], [1, 2])
-        self.assertEqual([n for n, _ in left], [3, 4, 6])
+        self.assertEqual([(n, in_url) for n, _, in_url in left], [(3, False), (4, True), (5, True), (6, False)])
+
+    def test_the_swap_never_swaps_the_name_it_just_put_in(self):
+        after, changed, left = rename.swap_text("Roll is here. ROLL. @roll getroll.app", "Roll", "Cineroll")
+        self.assertEqual(after, "Cineroll is here. CINEROLL. @cineroll getcineroll.app")
+        self.assertEqual((len(changed), left), (1, []))
+        after, _, left = rename.swap_text("Wound app; WOUND; getwound.app\nThe film is wound.", "Wound", "Rewound")
+        self.assertEqual(after, "Rewound app; REWOUND; getrewound.app\nThe film is wound.")
+        self.assertEqual([n for n, _, _ in left], [2])
+
+    def test_a_url_naming_the_earlier_name_is_kept_and_listed(self):
+        line = '<meta property="og:url" content="https://getrewound.app/">'
+        after, changed, left = rename.swap_text(line, "Rewound", "Cinewell")
+        self.assertEqual((after, changed, left), (line, [], [(1, line, True)]))
+        pkg = fixtures.package()
+        fixtures.write(pkg, "03-site/meta.html", line + "\n")
+        report = rename.swap(pkg, "Rewound", "Cinewell")
+        self.assertEqual((pkg / "03-site/meta.html").read_text(), line + "\n")
+        work = Path(tempfile.mkdtemp(prefix="gp-work-"))
+        sheet = rename.write_review(work / "review.md", "Rewound", "Cinewell", report, work / "b", "Testprod").read_text()
+        self.assertIn("### 03-site/meta.html\n\n- URL L1: %s" % line, sheet)
+
+    def test_the_swap_keeps_last30days_output_and_its_fetched_urls(self):
+        import hashlib
+        pkg = fixtures.package()
+        url = "https://www.reddit.com/r/film/comments/abc/"
+        raw = fixtures.write(pkg, "01-research/last30days/raw.md", "Filmora the roll first, says %s\n" % url)
+        fixtures.write(pkg, "01-research/pain-points-extra.md", "Filmora answers %s\n" % url)
+        with open(str(pkg / "sources.md"), "a") as handle:
+            handle.write("- %s - fetched 2026-10-24T11:00Z - a Reddit pain\n" % url)
+        log = pkg / "run-evidence" / "last30days-log.jsonl"
+        log.write_text(json.dumps({"files": [{"path": str(raw), "sha256": hashlib.sha256(raw.read_bytes()).hexdigest()}]}) + "\n")
+        self.assertEqual(check_sources.check(pkg)["problems"], [])
+        report = rename.swap(pkg, "Filmora", "Cinewell")
+        self.assertNotIn("01-research/last30days/raw.md", report["files"])
+        self.assertIn("01-research/pain-points-extra.md", report["files"])
+        self.assertEqual(raw.read_text(), "Filmora the roll first, says %s\n" % url)
+        self.assertEqual(check_sources.check(pkg)["problems"], [])
 
     def test_the_swap_skips_records_and_lists_what_to_review(self):
         pkg = fixtures.package()
@@ -1451,15 +1488,6 @@ class RenameTest(unittest.TestCase):
         originals = sorted(gc.rel(pkg, f) for f in pkg.rglob("*") if f.is_file())
         self.assertEqual(sorted(gc.rel(first, f) for f in first.rglob("*") if f.is_file()), originals)
         self.assertEqual((first / "run-journal.json").read_bytes(), (pkg / "run-journal.json").read_bytes())
-
-
-class GatesTouchingTest(unittest.TestCase):
-    def test_each_changed_path_reopens_the_gates_that_read_it(self):
-        self.assertEqual(journal.gates_touching([]), [])
-        self.assertEqual(journal.gates_touching(["03-site/index.html"]), ["claims-1", "site", "package"])
-        self.assertEqual(journal.gates_touching(["09-extras/marketing-agent/brand-rules.json"]),
-                         ["claims-1", "test-kit", "launch-set", "package"])
-        self.assertEqual(journal.gates_touching(["recap.html"]), ["claims-1", "package"])
 
 
 class JournalReopenTest(unittest.TestCase):
@@ -1586,13 +1614,38 @@ class NameRerunTest(unittest.TestCase):
         path.write_text(shortlist_md(["Cinewell", "Rollbook", "Halide Days"]).replace(
             "registry lookup %s" % fixtures.URLS["comp_a"], "not looked up", 1))
         problems, _ = journal.record_shortlist(self.pkg, load(self.pkg), self.now)
-        self.assertEqual(problems, ["Cinewell's Domains line cites no URL"])
+        self.assertEqual(len(problems), 1)
+        self.assertTrue(has(problems, r"Cinewell's Domains entry 'not looked up' cites no URL"))
         path.write_text(shortlist_md(["Cinewell", "Rollbook", "Halide Days"]))
         self.assertEqual(quiet(journal.main, ["shortlist", str(self.pkg)]), 0)
         info = load(self.pkg)["rename"]
         self.assertEqual((info["shortlist"], info["shortlist_names"]),
                          (rename.SHORTLIST, ["Cinewell", "Rollbook", "Halide Days"]))
         self.assertEqual(quiet(journal.main, ["pass", "brand", str(self.pkg)]), 1)
+
+    def test_a_domain_lookup_that_found_no_registration_is_recorded_unverified(self):
+        self.begin()
+        self.new_tournament()
+        self.assertEqual(quiet(journal.main, ["pass", "tournament", str(self.pkg)]), 0)
+        path = self.pkg / rename.SHORTLIST
+        registered = "registry lookup %s" % fixtures.URLS["comp_a"]
+
+        def domains(line):
+            path.write_text(shortlist_md(["Cinewell", "Rollbook", "Halide Days"]).replace(registered, line, 1))
+            return journal.record_shortlist(self.pkg, load(self.pkg), self.now)[0]
+
+        self.assertEqual(domains("cinewell.app: no registration found, UNVERIFIED; cinewell.com registered, lookup %s"
+                                 % fixtures.URLS["comp_a"]), [])
+        for line, entry in (("cinewell.app: registered to someone else, UNVERIFIED", "cinewell.app: registered"),
+                            ("cinewell.app: no registration found", "cinewell.app: no registration found'"),
+                            ("no registration found, UNVERIFIED", "no registration found, UNVERIFIED'"),
+                            ("cinewell.app and cinewell.com: no registration found, UNVERIFIED", "cinewell.app and")):
+            problems = domains(line)
+            self.assertEqual(len(problems), 1, line)
+            self.assertTrue(has(problems, r"Cinewell's Domains entry '%s" % re.escape(entry)), problems)
+        self.assertEqual(domains(""), ["Cinewell's Domains line names no domain"])
+        self.assertEqual(domains("cinewell.app: no registration found, UNVERIFIED"), [])
+        self.assertEqual(quiet(journal.main, ["shortlist", str(self.pkg)]), 0)
 
     def test_an_accepted_name_is_swapped_and_its_gates_reopened(self):
         self.begin(names=["Shutterly"])
@@ -1606,23 +1659,32 @@ class NameRerunTest(unittest.TestCase):
         data = load(self.pkg)
         with self.assertRaises(ValueError):
             journal.accept_name(self.pkg, data, "Filmwise", self.pkg.parent / "work", "/b2", self.now)
+        with self.assertRaises(ValueError) as raised:
+            journal.accept_name(self.pkg, data, "Shutterbox", self.pkg.parent / "work", "/b2", self.now)
+        self.assertIn("Shutterbox is not on the rerun's shortlist (Cinewell, Rollbook, Halide Days)",
+                      str(raised.exception))
+        self.assertIn('bin/gr0wthpilot Testprod --rename "Filmora"', str(raised.exception))
+        self.assertIn('--rule-out "<name>"', str(raised.exception))
+        self.assertEqual(data["rename"]["stage"], "shortlist")
         fixtures.write(self.pkg, "05-social-pmf/notes.md", "Filmora on TikTok, @filmora, getfilmora.app/tiktok.\n")
         edit(self.pkg / "01-research/pain-points.md", "# Pain points", "# Pain points Filmora answers")
         info = journal.accept_name(self.pkg, data, "Cinewell", self.pkg.parent / "work", "/b2", self.now)
         save(self.pkg, data)
         self.assertEqual(data["rename"]["backups"][-1], {"at": self.now, "before": "swap", "path": "/b2"})
-        self.assertEqual((info["stage"], info["accepted_name"], info["on_shortlist"]), ("swapped", "Cinewell", True))
+        self.assertEqual((info["stage"], info["accepted_name"]), ("swapped", "Cinewell"))
         self.assertEqual((self.pkg / "02-brand/positioning.md").read_text(), "# Positioning\n\nCinewell is for people who miss film.\n")
         self.assertEqual((self.pkg / "05-social-pmf/notes.md").read_text(),
                          "Cinewell on TikTok, @cinewell, getcinewell.app/tiktok.\n")
         self.assertIn("Propose Filmora.", (self.pkg / "02-brand/naming-decision.md").read_text())
         self.assertTrue(Path(info["swap"]["review"]).is_file())
-        self.assertEqual(journal.reopened_ids(data), ["research", "brand", "claims-1", "critic-1"])
-        self.assertEqual(journal.next_gate(data)[0], "research")
-        self.assertIn("Send-back: the Founder handed over Cinewell", data["notes"][-2]["text"])
-        self.assertIn("Reopened: research.", data["notes"][-2]["text"])
+        self.assertEqual(journal.reopened_ids(data), ["brand", "claims-1", "critic-1"])
+        self.assertEqual(journal.next_gate(data)[0], "brand")
+        self.assertIn("# Pain points Cinewell answers", (self.pkg / "01-research/pain-points.md").read_text())
         self.assertIsNone(journal.waiting_for_name(data, "brand"))
-        self.assertIn("Name swap to Cinewell", data["notes"][-1]["text"])
+        note = data["notes"][-1]["text"]
+        self.assertIn("Name swap to Cinewell: the Founder handed over Cinewell", note)
+        self.assertIn(info["swap"]["review"], note)
+        self.assertIn("/b2", note)
         with self.assertRaises(ValueError):
             journal.accept_name(self.pkg, data, "Rollbook", self.pkg.parent / "work", "/b3", self.now)
 

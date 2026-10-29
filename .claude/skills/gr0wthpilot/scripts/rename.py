@@ -17,8 +17,9 @@ A lowercase whole word is left alone, because it may be ordinary English ("the
 film is rewound"), and so is a bare domain such as `rewound.app`, which may be
 a fact about someone else's domain. Records (HISTORY below) say what was found,
 judged, or decided under the earlier name, and stay as written.
-Every line the swap changed, and every occurrence it left outside a record, is
-listed in a review sheet the run works through by hand.
+Every line the swap changed, and every line outside a record where the earlier
+name still stands, a URL included, is listed in a review sheet the run works
+through by hand.
 """
 
 from __future__ import annotations
@@ -40,7 +41,7 @@ TOURNAMENT = "02-brand/tournament"
 # covers everything it begins (so `02-brand/tournament-rewound/` too).
 HISTORY = (
     gc.JOURNAL_NAME, "decisions-log.md", "sources.md", "sources-exempt.md", "sources.d/", gc.AUDIT_NAME,
-    "run-evidence/", "01-research/name-collisions.md", "02-brand/naming-decision.md", SHORTLIST, TOURNAMENT,
+    "run-evidence/", "01-research/last30days/", "01-research/name-collisions.md", "02-brand/naming-decision.md", SHORTLIST, TOURNAMENT,
     "02-brand/gate-test-", "03-site/screenshot-gate.md", "04-video/gate-report.md", "08-redteam/",
 )
 # Deliverables inside a record folder, which the swap does change.
@@ -141,14 +142,17 @@ def _spans(line):
     return out
 
 
-def _patterns(old, new):
+def _swap_pattern(old, new):
+    """(pattern, replacements): one pattern over every form of `old` the swap
+    changes, its n-th group matching the form `replacements[n - 1]` replaces,
+    so one substitution never scans a form of `new` it just put in."""
     edge = r"(?<![A-Za-z0-9])%s(?![A-Za-z0-9])"
-    pairs = [(re.compile(edge % re.escape(old)), new)]
+    forms = [(edge % re.escape(old), new)]
     if old.upper() != old:
-        pairs.append((re.compile(edge % re.escape(old.upper())), new.upper()))
+        forms.append((edge % re.escape(old.upper()), new.upper()))
     low = re.escape(slug(old))
-    pairs.append((re.compile(r"(?<=[A-Za-z0-9@_])%s|%s(?=[A-Za-z0-9_])" % (low, low)), slug(new)))
-    return pairs
+    forms.append((r"(?<=[A-Za-z0-9@_])%s|%s(?=[A-Za-z0-9_])" % (low, low), slug(new)))
+    return re.compile("|".join("(%s)" % form for form, _ in forms)), [repl for _, repl in forms]
 
 
 def _leftover_re(old):
@@ -157,22 +161,26 @@ def _leftover_re(old):
 
 
 def swap_text(text, old, new):
-    """(new text, [(line number, line after)] changed, [(line number, line)]
-    still naming the earlier name outside a URL)."""
-    pairs, leftover = _patterns(old, new), _leftover_re(old)
+    """(new text, [(line number, line after)] changed, [(line number, line
+    after, in a URL)] still naming the earlier name, where `in a URL` says a
+    URL on the line names it)."""
+    (pattern, repls), leftover = _swap_pattern(old, new), _leftover_re(old)
     changed, left, out = [], [], []
     for number, line in enumerate(text.split("\n"), 1):
-        pieces = []
+        pieces, found = [], set()
         for piece, is_url in _spans(line):
             if not is_url:
-                for pattern, repl in pairs:
-                    piece = pattern.sub(repl, piece)
-            pieces.append(piece)
+                pieces.append(pattern.sub(lambda m: repls[m.lastindex - 1], piece))
+                piece = pattern.sub("\0", piece)
+            else:
+                pieces.append(piece)
+            if leftover.search(piece):
+                found.add(is_url)
         after = "".join(pieces)
         if after != line:
             changed.append((number, after))
-        if any(not is_url and leftover.search(piece) for piece, is_url in _spans(after)):
-            left.append((number, after))
+        if found:
+            left.append((number, after, True in found))
         out.append(after)
     return "\n".join(out), changed, left
 
@@ -254,13 +262,14 @@ def write_review(path, old, new, report, backup_dir, product):
         out.append("")
     out += ["## Not swapped (%d lines in %d files)" % (sum(len(v) for v in report["left"].values()),
                                                        len(report["left"])), "",
-            "Each still names %s outside a URL: a lowercase word (perhaps ordinary English), a bare domain, or a form "
-            "the swap does not touch. Decide each one." % old, ""]
+            "Each still names %s: a lowercase word (perhaps ordinary English), a bare domain, or a form the swap does "
+            "not touch; lines marked URL name it inside a URL, which the swap never changes (a planned site or handle "
+            "URL still names the earlier name). Decide each one." % old, ""]
     for rel in sorted(report["left"]):
         out.append("### %s" % rel)
         out.append("")
-        for number, line in report["left"][rel]:
-            out.append("- L%d: %s" % (number, line.strip()))
+        for number, line, in_url in report["left"][rel]:
+            out.append("- %sL%d: %s" % ("URL " if in_url else "", number, line.strip()))
         out.append("")
     out += ["## Drawn: SVGs the swap changed (%d)" % len(report["svgs"]), "",
             "Their text changed; any that spells %s in shapes (a wordmark) must be drawn again for %s." % (old, new), ""]
@@ -275,7 +284,32 @@ def write_review(path, old, new, report, backup_dir, product):
 
 SECTION_RE = re.compile(r"^## (.+?)\s*$", re.M)
 RANKED_RE = re.compile(r"^(\d+)\.\s+(.+?)\s+`?\[PROPOSAL\]`?$")
-EVIDENCE = (("App Store", True), ("Web", True), ("Domains", False))
+DOMAIN_RE = re.compile(r"\b[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)*\.[a-z]{2,}\b", re.I)
+NO_REGISTRATION_RE = re.compile(r"\bno registration found\b", re.I)
+
+
+def _evidence_problems(name, label, text):
+    """Problems of one evidence line: App Store and Web cite a URL or say
+    "none seen"; Domains holds one entry per domain, separated by ";", each
+    citing the URL that shows the domain registered, or, for a lookup that
+    found none, naming the one domain with "no registration found" and
+    UNVERIFIED and citing no URL."""
+    if label != "Domains":
+        if gc.find_urls(text) or re.search(r"\bnone seen\b", text, re.I):
+            return []
+        return ["%s's %s line cites no URL and does not say 'none seen'" % (name, label)]
+    entries = [e.strip() for e in text.split(";") if e.strip()]
+    if not entries:
+        return ["%s's Domains line names no domain" % name]
+    problems = []
+    for entry in entries:
+        if gc.find_urls(entry):
+            continue
+        if not (len(DOMAIN_RE.findall(entry)) == 1 and NO_REGISTRATION_RE.search(entry) and "UNVERIFIED" in entry):
+            problems.append("%s's Domains entry %r cites no URL; a registered domain cites the lookup that shows it, "
+                            "and a lookup that found none is '<domain>: no registration found, UNVERIFIED'"
+                            % (name, entry))
+    return problems
 
 
 def _sections(text):
@@ -308,14 +342,12 @@ def check_shortlist(path, product, names, roots):
         why = ruled_out(name, names, roots) or valid_name(name)
         if why:
             problems.append(why)
-        for label, absence_ok in EVIDENCE:
+        for label in ("App Store", "Web", "Domains"):
             line = re.search(r"^\s*[-*]\s*%s:(.*)$" % re.escape(label), body, re.M)
             if not line:
                 problems.append("%s has no '- %s:' line with its evidence" % (name, label))
-            elif not gc.find_urls(line.group(1)) and not (absence_ok and re.search(r"\bnone seen\b", line.group(1),
-                                                                                    re.I)):
-                problems.append("%s's %s line cites no URL%s" % (name, label, " and does not say 'none seen'"
-                                                                 if absence_ok else ""))
+            else:
+                problems += _evidence_problems(name, label, line.group(1))
         if "UNVERIFIED" not in body:
             problems.append("%s's section must say its trademark and App Store name clearance are UNVERIFIED" % name)
     if len({slug(n) for n in ranked}) != len(ranked):

@@ -49,9 +49,10 @@
 #                         --rule-out-root ROOT, in any case. The run reruns the
 #                         tournament for the name alone and ends at a ranked
 #                         shortlist, 02-brand/name-shortlist.md.
-#   --accept-name NEW     the first shortlisted name App Store Connect accepted;
-#                         the launcher swaps it through the package, and the run
-#                         reworks and re-passes every gate the swap touched.
+#   --accept-name NEW     the first shortlisted name App Store Connect accepted
+#                         (a name off the shortlist is refused); the launcher
+#                         swaps it through the package, and the run reworks it
+#                         and re-passes every gate the rerun reopened.
 # Before either step changes a file, the whole package is copied to
 # <cache root>/<Product>/backups/, and the run journal names the copy.
 set -euo pipefail
