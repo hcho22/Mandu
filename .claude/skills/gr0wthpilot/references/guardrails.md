@@ -110,6 +110,7 @@ These records the run could still alter, because a sandboxed command or the run 
 - `last30days-log.jsonl` in the cache folder, written by `gp-last30days` inside the sandbox, and the last30days output in the package whose SHA-256 it records; the hash proves a file is the one the wrapper saw only as far as the log itself is trusted.
 - The preflight receipt in the cache folder, which the guard writes and the sandboxed preflight deletes.
 - The workflow script copies, the scratch folder, and any result bundle in the cache folder.
+- The copies of the package in the cache folder's `backups/` and a name swap's review sheet in its `rename/`, which `gp_run.py prepare` writes before a name-only rerun's session opens; a package put back from a copy is only as sound as the run left that copy.
 - Everything in the package itself, including `run-evidence/` and `run-audit.md`, which `audit_run.py` copies and writes from the guard's records at the end of the run.
 
 ## What no layer covers
