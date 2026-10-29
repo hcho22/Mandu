@@ -1496,14 +1496,15 @@ class HandOverFreshnessTest(unittest.TestCase):
         patcher.start()
         self.addCleanup(patcher.stop)
 
-    def test_launch_set_images_and_the_video_must_follow_the_name_hand_over(self):
+    def test_brand_evidence_launch_set_images_and_the_video_must_follow_the_name_hand_over(self):
         import datetime as dt
         pkg = fixtures.package()
         cfg = {"product": fixtures.PRODUCT}
         video = pkg / "04-video/walkthrough.mp4"
         images = sorted(pkg.glob("10-launch-set/*/profile.png"))
+        brand = ["02-brand/gate-test-report.md", "02-brand/naming-decision.md"]
         rendered = time.time() - 3600
-        for path in [video] + images:
+        for path in [video] + images + [pkg / rel for rel in brand]:
             os.utime(str(path), (rendered, rendered))
 
         def stale(check, minutes):
@@ -1514,12 +1515,15 @@ class HandOverFreshnessTest(unittest.TestCase):
             save(pkg, data)
             return sorted(p.split(" is older than")[0] for p in check(pkg, cfg) if "older than the name hand-over" in p)
 
+        self.assertEqual(stale(journal.CHECKS["brand"], 1), brand)
         self.assertEqual(stale(journal.CHECKS["video"], 1), ["04-video/walkthrough.mp4"])
         self.assertEqual(stale(journal.CHECKS["launch-set"], 1), [gc.rel(pkg, p) for p in images])
         self.assertEqual(stale(journal.all_checks, 1), ["launch-set: " + gc.rel(pkg, p) for p in images]
                          + ["video: 04-video/walkthrough.mp4"])
-        for check in (journal.CHECKS["video"], journal.CHECKS["launch-set"], journal.all_checks):
+        for check in (journal.CHECKS["brand"], journal.CHECKS["video"], journal.CHECKS["launch-set"],
+                      journal.all_checks):
             self.assertEqual(stale(check, -1), [])
+        self.assertEqual(journal.CHECKS["brand"](pkg, cfg), [])
         out = io.StringIO()
         with contextlib.redirect_stdout(out):
             self.assertEqual(check_screenshots.main(["launch-set", str(pkg), "--json"]), 0)

@@ -128,7 +128,7 @@ def g_brand(pkg, cfg):
         problems.append("the fresh-agent brand gate has not passed (gate-test-report.md must end Verdict: PASS)")
     if not list(pkg.glob("02-brand/gate-test-asset*")):
         problems.append("the fresh agent's test asset is not in 02-brand/")
-    return problems
+    return problems + older_than_hand_over(pkg, ["02-brand/gate-test-report.md", "02-brand/naming-decision.md"])
 
 
 def g_claims(pkg, cfg):
@@ -147,13 +147,15 @@ def g_test_kit(pkg, cfg):
 
 
 def older_than_hand_over(pkg, rels):
-    """Problems for each of these renders, by package path, older than the
-    Founder's name hand-over (`rename.accepted_at`): after a name swap, each is
-    rendered again from its swapped source."""
+    """Problems for each of these files, by package path, older than the
+    Founder's name hand-over (`rename.accepted_at`): after a name swap, each
+    render is made again from its swapped source, the fresh-agent brand gate
+    runs again on the swapped guidelines, and the naming decision is rewritten
+    for the accepted name."""
     at = gc.parse_iso_z(((gc.load_journal(pkg) or {}).get("rename") or {}).get("accepted_at") or "")
     if not at:
         return []
-    return ["%s is older than the name hand-over at %s; render it again from its swapped source" % (rel, gc.iso_z(at))
+    return ["%s is older than the name hand-over at %s; make it again for the accepted name" % (rel, gc.iso_z(at))
             for rel in rels if (pkg / rel).is_file() and (pkg / rel).stat().st_mtime < at.timestamp()]
 
 
