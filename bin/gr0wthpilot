@@ -35,9 +35,26 @@
 #
 # Usage:
 #   bin/gr0wthpilot <Product> [--repo DIR]
+#   bin/gr0wthpilot <Product> --rename OLD [--rule-out NAME]... [--rule-out-root ROOT]...
+#   bin/gr0wthpilot <Product> --accept-name NEW
 # <Product> is its folder's name in projects/, exactly (Immerse, not immerse).
 # The cache root is ~/Library/Caches/Gr0wthPilot, or GR0WTHPILOT_WORK.
 # Starting it again for the same Product resumes the run from its last passed gate.
+#
+# A name-only rerun, for when App Store Connect refuses the package's proposed
+# name, keeps the positioning, hero message, and look, and takes two steps on
+# the unfinished run's package:
+#   --rename OLD          the refused name, as the package spells it; it is ruled
+#                         out, as is each --rule-out NAME and every name holding a
+#                         --rule-out-root ROOT, in any case. The run reruns the
+#                         tournament for the name alone and ends at a ranked
+#                         shortlist, 02-brand/name-shortlist.md.
+#   --accept-name NEW     the first shortlisted name App Store Connect accepted
+#                         (a name off the shortlist is refused); the launcher
+#                         swaps it through the package, and the run reworks it
+#                         and re-passes every gate the rerun reopened.
+# Before either step changes a file, the whole package is copied to
+# <cache root>/<Product>/backups/, and the run journal names the copy.
 set -euo pipefail
 
 usage() {
@@ -49,10 +66,11 @@ usage() {
 case "$1" in -h|--help) usage ;; esac
 PRODUCT="$1"
 shift
-REPO_ARG=()
+PREP_ARGS=()
 while [ $# -gt 0 ]; do
   case "$1" in
-    --repo) [ $# -ge 2 ] || usage; REPO_ARG=(--repo "$2"); shift 2 ;;
+    --repo|--rename|--rule-out|--rule-out-root|--accept-name)
+      [ $# -ge 2 ] || usage; PREP_ARGS+=("$1" "$2"); shift 2 ;;
     -h|--help) usage ;;
     *) echo "gr0wthpilot: unknown option $1" >&2; usage ;;
   esac
@@ -65,7 +83,7 @@ for tool in claude python3 caffeinate; do
 done
 
 CONFIG_JSON="$(python3 "$SKILL/scripts/gp_run.py" prepare --mandu "$MANDU" --product "$PRODUCT" \
-  --cache "${GR0WTHPILOT_WORK:-$HOME/Library/Caches/Gr0wthPilot}" ${REPO_ARG[@]+"${REPO_ARG[@]}"})"
+  --cache "${GR0WTHPILOT_WORK:-$HOME/Library/Caches/Gr0wthPilot}" ${PREP_ARGS[@]+"${PREP_ARGS[@]}"})"
 field() { python3 -c 'import json,sys; v=json.loads(sys.argv[1]).get(sys.argv[2]); print(v if v is not None else "")' "$CONFIG_JSON" "$1"; }
 PACKAGE="$(field package)"
 PACKAGE_REL="$(field package_rel)"
@@ -75,6 +93,7 @@ REPO="$(field repo)"
 WORK="$(field work)"
 PROFILE="$(field profile_path)"
 CONFIG="$(field config_path)"
+RENAME="$(field rename_summary)"
 
 export GR0WTHPILOT_CONFIG="$CONFIG"
 export PATH="$SKILL/bin:$PATH"
@@ -85,6 +104,7 @@ echo "Gr0wthPilot: $PRODUCT ($MODE run, $KIND)"
 echo "  Candidate Package: $PACKAGE_REL"
 echo "  Product repository (read only): ${REPO:-not found}"
 echo "  Run cache: $WORK"
+[ -z "$RENAME" ] || echo "  $RENAME"
 echo "  The Mac stays awake while this session runs."
 
 cd "$PACKAGE"

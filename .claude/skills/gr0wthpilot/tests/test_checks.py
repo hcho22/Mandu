@@ -29,6 +29,7 @@ import check_video
 import claim_audit
 import gp_common as gc
 import journal
+import rename
 
 FETCHED = fixtures.FETCHED
 REGISTRY = str(fixtures.SCRIPTS.parent / "references" / "registry-template.json")
@@ -1350,6 +1351,436 @@ class JournalTest(unittest.TestCase):
     def test_complete_refuses_before_the_last_gate(self):
         pkg = fixtures.package()
         self.assertEqual(quiet(journal.main, ["complete", str(pkg)]), 1)
+
+
+def pass_through(case, pkg, last):
+    """Pass every gate up to and including `last`, freshening each critic's report."""
+    for gate in journal.GATE_IDS[:journal.GATE_IDS.index(last) + 1]:
+        if gate.startswith("critic-"):
+            os.utime(str(pkg / "08-redteam" / ("critic-phase-%s.md" % gate[-1])), None)
+        case.assertEqual(quiet(journal.main, ["pass", gate, str(pkg)]), 0, gate)
+
+
+def load(pkg):
+    return json.loads((pkg / "run-journal.json").read_text())
+
+
+def save(pkg, data):
+    (pkg / "run-journal.json").write_text(json.dumps(data))
+
+
+def shortlist_md(names, product=fixtures.PRODUCT, next_step=True):
+    url = fixtures.URLS["comp_a"]
+    out = ["# Name shortlist: %s" % product, ""]
+    for rank, name in enumerate(names, 1):
+        out += ["## %d. %s `[PROPOSAL]`" % (rank, name), "",
+                "- App Store: none seen in a search; nearest listing %s" % url,
+                "- Web: none seen.",
+                "- Domains: registry lookup %s" % url,
+                "- Clearance: trademark and App Store name clearance are UNVERIFIED.", ""]
+    if next_step:
+        out += ["## Next step", "",
+                "Try the names in App Store Connect in this order, then run "
+                "`bin/gr0wthpilot %s --accept-name \"<name>\"` with the first one it accepts." % product, ""]
+    return "\n".join(out)
+
+
+class RenameTest(unittest.TestCase):
+    def test_ruled_out_names_and_roots_match_in_any_case_or_spacing(self):
+        self.assertIn("ruled out", rename.ruled_out("REWOUND", ["Rewound"], []))
+        self.assertIn("ruled out", rename.ruled_out("Re-wound", ["Rewound"], []))
+        self.assertIn("root Rewind", rename.ruled_out("Rewindpix", [], ["Rewind"]))
+        self.assertIn("root Rewind", rename.ruled_out("Un Re Wind", [], ["Rewind"]))
+        self.assertIsNone(rename.ruled_out("Cineroll", ["Rewound"], ["Rewind"]))
+        self.assertIsNone(rename.valid_name("Whole Roll"))
+        self.assertIsNotNone(rename.valid_name("--"))
+        self.assertIsNotNone(rename.valid_name("a/b"))
+
+    def test_the_swap_changes_the_brand_never_a_url_a_word_or_a_bare_domain(self):
+        text = "\n".join([
+            "Rewound is a camera app; REWOUND in caps; Rewound's roll.",
+            "Join at getrewound.app/tiktok or @rewound, second choice rewoundcamera.app.",
+            "The film is rewound before the camera is opened.",
+            "rewound.app is held by someone else (https://pubapi.registry.google/rdap/domain/rewound.app).",
+            "[IM]: https://imore.com/rewound-app-pulled",
+            "Rewoundish and preRewound stay.",
+        ])
+        after, changed, left = rename.swap_text(text, "Rewound", "Whole Roll")
+        lines = after.split("\n")
+        self.assertEqual(lines[0], "Whole Roll is a camera app; WHOLE ROLL in caps; Whole Roll's roll.")
+        self.assertEqual(lines[1], "Join at getwholeroll.app/tiktok or @wholeroll, second choice wholerollcamera.app.")
+        self.assertEqual(lines[2:5], text.split("\n")[2:5])
+        self.assertEqual([n for n, _ in changed], [1, 2])
+        self.assertEqual([(n, in_url) for n, _, in_url in left], [(3, False), (4, True), (5, True), (6, False)])
+
+    def test_the_swap_never_swaps_the_name_it_just_put_in(self):
+        after, changed, left = rename.swap_text("Roll is here. ROLL. @roll getroll.app", "Roll", "Cineroll")
+        self.assertEqual(after, "Cineroll is here. CINEROLL. @cineroll getcineroll.app")
+        self.assertEqual((len(changed), left), (1, []))
+        after, _, left = rename.swap_text("Wound app; WOUND; getwound.app\nThe film is wound.", "Wound", "Rewound")
+        self.assertEqual(after, "Rewound app; REWOUND; getrewound.app\nThe film is wound.")
+        self.assertEqual([n for n, _, _ in left], [2])
+
+    def test_a_url_naming_the_earlier_name_is_kept_and_listed(self):
+        line = '<meta property="og:url" content="https://getrewound.app/">'
+        after, changed, left = rename.swap_text(line, "Rewound", "Cinewell")
+        self.assertEqual((after, changed, left), (line, [], [(1, line, True)]))
+        pkg = fixtures.package()
+        fixtures.write(pkg, "03-site/meta.html", line + "\n")
+        report = rename.swap(pkg, "Rewound", "Cinewell")
+        self.assertEqual((pkg / "03-site/meta.html").read_text(), line + "\n")
+        work = Path(tempfile.mkdtemp(prefix="gp-work-"))
+        sheet = rename.write_review(work / "review.md", "Rewound", "Cinewell", report, work / "b", "Testprod").read_text()
+        self.assertIn("### 03-site/meta.html\n\n- URL L1: %s" % line, sheet)
+
+    def test_the_swap_keeps_last30days_output_and_its_fetched_urls(self):
+        import hashlib
+        pkg = fixtures.package()
+        url = "https://www.reddit.com/r/film/comments/abc/"
+        raw = fixtures.write(pkg, "01-research/last30days/raw.md", "Filmora the roll first, says %s\n" % url)
+        fixtures.write(pkg, "01-research/pain-points-extra.md", "Filmora answers %s\n" % url)
+        with open(str(pkg / "sources.md"), "a") as handle:
+            handle.write("- %s - fetched 2026-10-24T11:00Z - a Reddit pain\n" % url)
+        log = pkg / "run-evidence" / "last30days-log.jsonl"
+        log.write_text(json.dumps({"files": [{"path": str(raw), "sha256": hashlib.sha256(raw.read_bytes()).hexdigest()}]}) + "\n")
+        self.assertEqual(check_sources.check(pkg)["problems"], [])
+        report = rename.swap(pkg, "Filmora", "Cinewell")
+        self.assertNotIn("01-research/last30days/raw.md", report["files"])
+        self.assertIn("01-research/pain-points-extra.md", report["files"])
+        self.assertEqual(raw.read_text(), "Filmora the roll first, says %s\n" % url)
+        self.assertEqual(check_sources.check(pkg)["problems"], [])
+
+    def test_the_swap_skips_records_and_lists_what_to_review(self):
+        pkg = fixtures.package()
+        work = Path(tempfile.mkdtemp(prefix="gp-work-"))
+        for rel in ("03-site/index.html", "02-brand/tournament/judge-conversion.md", "decisions-log.md",
+                    "08-redteam/dossier.md", "08-redteam/pre-publication-checklist.md", "04-video/build/build.py",
+                    "02-brand/logo-wordmark.svg"):
+            path = pkg / rel
+            prefix = path.read_text(encoding="utf-8") if path.is_file() else ""
+            fixtures.write(pkg, rel, prefix + "\nFilmora collided with an app named Filmora.\n")
+        fixtures.png(pkg / "10-launch-set/x/post-1.png", "64x64")
+        before = {rel: (pkg / rel).read_text() for rel in ("02-brand/tournament/judge-conversion.md",
+                                                            "decisions-log.md", "08-redteam/dossier.md")}
+        report = rename.swap(pkg, "Filmora", "Cinewell")
+        self.assertEqual(sorted(report["files"]), ["02-brand/logo-wordmark.svg", "03-site/index.html",
+                                                   "04-video/build/build.py",
+                                                   "08-redteam/pre-publication-checklist.md"])
+        for rel, text in before.items():
+            self.assertEqual((pkg / rel).read_text(), text, rel)
+        self.assertIn("Cinewell collided with an app named Cinewell.", (pkg / "04-video/build/build.py").read_text())
+        self.assertEqual(report["svgs"], ["02-brand/logo-wordmark.svg"])
+        self.assertIn("10-launch-set/x/post-1.png", report["media"])
+        sheet = rename.write_review(work / "review.md", "Filmora", "Cinewell", report, work / "backups/x", "Testprod")
+        text = sheet.read_text()
+        self.assertIn("## Swapped lines (4 in 4 files)", text)
+        self.assertIn("- CHECK L", text)
+        self.assertIn("- 10-launch-set/x/post-1.png", text)
+
+    def test_the_backup_copies_the_whole_package(self):
+        pkg = fixtures.package()
+        work = Path(tempfile.mkdtemp(prefix="gp-work-"))
+        now = gc.utc_now()
+        first = rename.backup(pkg, work, "before-rerun-from-x", now)
+        second = rename.backup(pkg, work, "before-rerun-from-x", now)
+        self.assertNotEqual(first, second)
+        self.assertEqual(first.parent, work / "backups")
+        originals = sorted(gc.rel(pkg, f) for f in pkg.rglob("*") if f.is_file())
+        self.assertEqual(sorted(gc.rel(first, f) for f in first.rglob("*") if f.is_file()), originals)
+        self.assertEqual((first / "run-journal.json").read_bytes(), (pkg / "run-journal.json").read_bytes())
+
+
+class HandOverFreshnessTest(unittest.TestCase):
+    def setUp(self):
+        patcher = mock.patch.object(check_layout, "default_registries", lambda: [Path(REGISTRY)])
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_brand_evidence_launch_set_images_and_the_video_must_follow_the_name_hand_over(self):
+        import datetime as dt
+        pkg = fixtures.package()
+        cfg = {"product": fixtures.PRODUCT}
+        video = pkg / "04-video/walkthrough.mp4"
+        images = sorted(pkg.glob("10-launch-set/*/profile.png"))
+        brand = ["02-brand/gate-test-report.md", "02-brand/naming-decision.md"]
+        rendered = time.time() - 3600
+        for path in [video] + images + [pkg / rel for rel in brand]:
+            os.utime(str(path), (rendered, rendered))
+
+        def stale(check, minutes):
+            data = load(pkg)
+            data["rename"] = {"stage": "swapped", "accepted_name": "Cinewell",
+                              "accepted_at": gc.iso_z(dt.datetime.fromtimestamp(rendered + minutes * 60,
+                                                                                 dt.timezone.utc))}
+            save(pkg, data)
+            return sorted(p.split(" is older than")[0] for p in check(pkg, cfg) if "older than the name hand-over" in p)
+
+        self.assertEqual(stale(journal.CHECKS["brand"], 1), brand)
+        self.assertEqual(stale(journal.CHECKS["video"], 1), ["04-video/walkthrough.mp4"])
+        self.assertEqual(stale(journal.CHECKS["launch-set"], 1), [gc.rel(pkg, p) for p in images])
+        self.assertEqual(stale(journal.all_checks, 1), ["launch-set: " + gc.rel(pkg, p) for p in images]
+                         + ["video: 04-video/walkthrough.mp4"])
+        for check in (journal.CHECKS["brand"], journal.CHECKS["video"], journal.CHECKS["launch-set"],
+                      journal.all_checks):
+            self.assertEqual(stale(check, -1), [])
+        self.assertEqual(journal.CHECKS["brand"](pkg, cfg), [])
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(check_screenshots.main(["launch-set", str(pkg), "--json"]), 0)
+        self.assertEqual(sorted(json.loads(out.getvalue())["images"]), [gc.rel(pkg, p) for p in images])
+        data = load(pkg)
+        data.pop("rename")
+        save(pkg, data)
+        self.assertEqual([p for p in journal.CHECKS["video"](pkg, cfg) if "hand-over" in p], [])
+
+
+class JournalReopenTest(unittest.TestCase):
+    def setUp(self):
+        for patcher in (mock.patch.object(check_layout, "default_registries", lambda: [Path(REGISTRY)]),
+                        mock.patch.dict(os.environ)):
+            patcher.start()
+            self.addCleanup(patcher.stop)
+        os.environ.pop("GR0WTHPILOT_CONFIG", None)
+
+    def test_a_reopened_gate_passes_again_in_order_with_its_critic(self):
+        pkg = fixtures.package()
+        pass_through(self, pkg, "critic-1")
+        self.assertEqual(quiet(journal.main, ["reopen", "claims-1", "--reason", "the lawyer found a claim.",
+                                              "--package", str(pkg)]), 0)
+        data = load(pkg)
+        self.assertEqual(journal.reopened_ids(data), ["claims-1", "critic-1"])
+        self.assertEqual(journal.next_gate(data)[0], "claims-1")
+        self.assertIn("Send-back: the lawyer found a claim. Reopened: claims-1, critic-1.", data["notes"][-1]["text"])
+        self.assertEqual(quiet(journal.main, ["pass", "critic-1", str(pkg)]), 1)
+        self.assertEqual(quiet(journal.main, ["complete", str(pkg)]), 1)
+        self.assertEqual(quiet(journal.main, ["pass", "claims-1", str(pkg)]), 0)
+        entry = journal.recorded(load(pkg))["claims-1"]
+        self.assertNotIn("reopened_at", entry)
+        self.assertEqual(entry["reopens"][0]["reason"], "the lawyer found a claim.")
+        self.assertEqual(entry["repassed_at"], entry["reopens"][0]["repassed_at"])
+        report = pkg / "08-redteam/critic-phase-1.md"
+        os.utime(str(report), (time.time() - 600,) * 2)
+        self.assertEqual(quiet(journal.main, ["pass", "critic-1", str(pkg)]), 1)
+        os.utime(str(report), None)
+        self.assertEqual(quiet(journal.main, ["pass", "critic-1", str(pkg)]), 0)
+        self.assertEqual(journal.reopened_ids(load(pkg)), [])
+        self.assertEqual([g["id"] for g in load(pkg)["gates"]], journal.GATE_IDS[:6])
+
+    def test_reopen_refuses_a_gate_never_passed(self):
+        pkg = fixtures.package()
+        pass_through(self, pkg, "research")
+        self.assertEqual(quiet(journal.main, ["reopen", "brand", "--reason", "x", "--package", str(pkg)]), 1)
+        self.assertEqual(journal.reopened_ids(load(pkg)), [])
+        self.assertEqual(load(pkg)["notes"], [])
+
+
+class NameRerunTest(unittest.TestCase):
+    def setUp(self):
+        for patcher in (mock.patch.object(check_layout, "default_registries", lambda: [Path(REGISTRY)]),
+                        mock.patch.dict(os.environ)):
+            patcher.start()
+            self.addCleanup(patcher.stop)
+        os.environ.pop("GR0WTHPILOT_CONFIG", None)
+        self.pkg = fixtures.package()
+        pass_through(self, self.pkg, "critic-1")
+        edit(self.pkg / "02-brand/naming-decision.md", "Testprod.", "Propose Filmora.")
+        edit(self.pkg / "02-brand/positioning.md", "For people", "Filmora is for people")
+        self.now = "2026-10-28T12:00:00Z"
+
+    def begin(self, names=(), roots=("Film",)):
+        data = load(self.pkg)
+        info = journal.begin_rerun(self.pkg, data, "Filmora", list(names), list(roots), "/cache/backups/one", self.now)
+        save(self.pkg, data)
+        return info
+
+    def new_tournament(self):
+        t = self.pkg / "02-brand/tournament"
+        for i in range(1, 5):
+            fixtures.write(t, "pitch-%d.md" % i, "# Pitch %d\n\nNames.\n" % i)
+        for j in ("differentiation", "conversion", "defensibility"):
+            fixtures.write(t, "rubric-%s.md" % j, "# Rubric\n\nA ruled-out name scores zero.\n")
+            fixtures.write(t, "judge-%s.md" % j, "# Judge\n")
+        fixtures.write(t, "scorecard.md", "# Scorecard\n\nMargin: 0.4.\n")
+
+    def test_a_rerun_reopens_the_tournament_and_every_later_gate(self):
+        info = self.begin(names=["Shutterly"])
+        data = load(self.pkg)
+        self.assertEqual(journal.reopened_ids(data), ["tournament", "brand", "claims-1", "critic-1"])
+        self.assertEqual(journal.passed_ids(data), ["product-facts", "research"])
+        self.assertEqual((info["stage"], info["rule_out"], info["rule_out_roots"]),
+                         ("shortlist", ["Filmora", "Shutterly"], ["Film"]))
+        self.assertEqual(info["earlier_tournament"], "02-brand/tournament-filmora")
+        self.assertTrue((self.pkg / "02-brand/tournament-filmora/scorecard.md").is_file())
+        self.assertFalse((self.pkg / "02-brand/tournament").exists())
+        self.assertIn("Send-back: name-only rerun from Filmora", data["notes"][-2]["text"])
+        self.assertIn("/cache/backups/one", data["notes"][-1]["text"])
+        self.assertEqual(quiet(journal.main, ["pass", "tournament", str(self.pkg)]), 1)
+        self.new_tournament()
+        self.assertEqual(quiet(journal.main, ["pass", "tournament", str(self.pkg)]), 0)
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(journal.main(["pass", "brand", str(self.pkg)]), 1)
+        self.assertIn("waits for the name App Store Connect accepts", out.getvalue())
+        with contextlib.redirect_stdout(out):
+            journal.main(["status", str(self.pkg)])
+        self.assertTrue(json.loads(out.getvalue()[out.getvalue().index("{"):])["waiting_for_name"])
+
+    def test_a_second_rerun_adds_its_names_and_keeps_both_tournaments(self):
+        self.begin(names=["Shutterly"])
+        self.new_tournament()
+        info = self.begin(names=["Grainly"], roots=["Grain"])
+        self.assertEqual(info["rule_out"], ["Filmora", "Shutterly", "Grainly"])
+        self.assertEqual(info["rule_out_roots"], ["Film", "Grain"])
+        self.assertEqual(len(info["backups"]), 2)
+        self.assertTrue((self.pkg / "02-brand/tournament-filmora-2/scorecard.md").is_file())
+        for other in ("Other", "filmora"):
+            with self.assertRaises(ValueError) as raised:
+                journal.begin_rerun(self.pkg, load(self.pkg), other, [], [], "/b", self.now)
+            self.assertIn("rerun from Filmora, spelled so", str(raised.exception))
+
+    def test_after_the_swap_a_rerun_starts_from_the_new_name_and_keeps_every_rule_out(self):
+        self.begin(names=["Shutterly"])
+        self.new_tournament()
+        self.assertEqual(quiet(journal.main, ["pass", "tournament", str(self.pkg)]), 0)
+        (self.pkg / rename.SHORTLIST).write_text(shortlist_md(["Cinewell", "Rollbook", "Halide Days"]))
+        self.assertEqual(quiet(journal.main, ["shortlist", str(self.pkg)]), 0)
+        data = load(self.pkg)
+        journal.accept_name(self.pkg, data, "Cinewell", self.pkg.parent / "work", "/b2", self.now)
+        save(self.pkg, data)
+        with self.assertRaises(ValueError) as raised:
+            journal.accept_name(self.pkg, data, "Cinewell", self.pkg.parent / "work", "/b3", self.now)
+        self.assertIn("Cinewell was already handed over and swapped through the package in place of Filmora; resume "
+                      "the run with `bin/gr0wthpilot Testprod`", str(raised.exception))
+        for old in ("Filmora", "cinewell"):
+            with self.assertRaises(ValueError) as raised:
+                journal.begin_rerun(self.pkg, load(self.pkg), old, [], [], "/b3", self.now)
+            self.assertIn('Filmora was already swapped out for Cinewell, the name the package now carries; a rerun '
+                          'starts from it: `bin/gr0wthpilot Testprod --rename "Cinewell"`', str(raised.exception))
+        self.assertEqual(load(self.pkg)["rename"]["stage"], "swapped")
+        self.assertFalse((self.pkg / "02-brand/tournament-filmora-2").exists())
+        data = load(self.pkg)
+        info = journal.begin_rerun(self.pkg, data, "Cinewell", ["Rollbook"], ["Cine"], "/b3", self.now)
+        save(self.pkg, data)
+        self.assertEqual(info["rule_out"], ["Cinewell", "Filmora", "Shutterly", "Rollbook"])
+        self.assertEqual(info["rule_out_roots"], ["Film", "Cine"])
+        self.assertEqual([b["accepted_name"] for b in data["renames"]], ["Cinewell"])
+        self.assertTrue((self.pkg / "02-brand/tournament-cinewell/scorecard.md").is_file())
+        self.new_tournament()
+        self.assertEqual(quiet(journal.main, ["pass", "tournament", str(self.pkg)]), 0)
+        (self.pkg / rename.SHORTLIST).write_text(shortlist_md(["Filmora", "Filmlight", "Shutterly", "Halide Days"]))
+        problems = journal.record_shortlist(self.pkg, load(self.pkg), self.now)[0]
+        for refusal in ("Filmora is ruled out", "Filmlight shares the ruled-out root Film", "Shutterly is ruled out"):
+            self.assertTrue(has(problems, re.escape(refusal)), problems)
+
+    def test_the_shortlist_is_checked_then_recorded(self):
+        self.begin(names=["Shutterly"])
+        path = self.pkg / rename.SHORTLIST
+        path.write_text(shortlist_md(["Cinewell", "Rollbook", "Halide Days"]))
+        problems, _ = journal.record_shortlist(self.pkg, load(self.pkg), self.now)
+        self.assertTrue(has(problems, r"pass the rerun's tournament first"))
+        self.new_tournament()
+        self.assertEqual(quiet(journal.main, ["pass", "tournament", str(self.pkg)]), 0)
+        path.write_text(shortlist_md(["Cinewell", "Filmwise", "shutterly"]))
+        problems, _ = journal.record_shortlist(self.pkg, load(self.pkg), self.now)
+        self.assertTrue(has(problems, r"Filmwise shares the ruled-out root Film"))
+        self.assertTrue(has(problems, r"shutterly is ruled out"))
+        path.write_text(shortlist_md(["Cinewell", "Rollbook"], next_step=False))
+        problems, _ = journal.record_shortlist(self.pkg, load(self.pkg), self.now)
+        self.assertTrue(has(problems, r"ranks 2 names"))
+        self.assertTrue(has(problems, r"no '## Next step' section"))
+        path.write_text(shortlist_md(["Cinewell", "Rollbook", "Halide Days"]).replace("- Web: none seen.\n", "", 1))
+        problems, _ = journal.record_shortlist(self.pkg, load(self.pkg), self.now)
+        self.assertEqual(problems, ["Cinewell has no '- Web:' line with its evidence"])
+        path.write_text(shortlist_md(["Cinewell", "Rollbook", "Halide Days"]).replace(
+            "registry lookup %s" % fixtures.URLS["comp_a"], "not looked up", 1))
+        problems, _ = journal.record_shortlist(self.pkg, load(self.pkg), self.now)
+        self.assertEqual(len(problems), 1)
+        self.assertTrue(has(problems, r"Cinewell's Domains entry 'not looked up' cites no URL"))
+        path.write_text(shortlist_md(["Cinewell", "Rollbook", "Halide Days"]))
+        self.assertEqual(quiet(journal.main, ["shortlist", str(self.pkg)]), 0)
+        info = load(self.pkg)["rename"]
+        self.assertEqual((info["shortlist"], info["shortlist_names"]),
+                         (rename.SHORTLIST, ["Cinewell", "Rollbook", "Halide Days"]))
+        self.assertEqual(quiet(journal.main, ["pass", "brand", str(self.pkg)]), 1)
+
+    def test_a_domain_lookup_that_found_no_registration_is_recorded_unverified(self):
+        self.begin()
+        self.new_tournament()
+        self.assertEqual(quiet(journal.main, ["pass", "tournament", str(self.pkg)]), 0)
+        path = self.pkg / rename.SHORTLIST
+        registered = "registry lookup %s" % fixtures.URLS["comp_a"]
+
+        def domains(line):
+            path.write_text(shortlist_md(["Cinewell", "Rollbook", "Halide Days"]).replace(registered, line, 1))
+            return journal.record_shortlist(self.pkg, load(self.pkg), self.now)[0]
+
+        self.assertEqual(domains("cinewell.app: no registration found, UNVERIFIED; cinewell.com registered, lookup %s"
+                                 % fixtures.URLS["comp_a"]), [])
+        for line, entry in (("cinewell.app: registered to someone else, UNVERIFIED", "cinewell.app: registered"),
+                            ("cinewell.app: no registration found", "cinewell.app: no registration found'"),
+                            ("no registration found, UNVERIFIED", "no registration found, UNVERIFIED'"),
+                            ("cinewell.app and cinewell.com: no registration found, UNVERIFIED", "cinewell.app and")):
+            problems = domains(line)
+            self.assertEqual(len(problems), 1, line)
+            self.assertTrue(has(problems, r"Cinewell's Domains entry '%s" % re.escape(entry)), problems)
+        self.assertEqual(domains(""), ["Cinewell's Domains line names no domain"])
+        clearance = "- Clearance: trademark and App Store name clearance are UNVERIFIED.\n"
+        for without in ("", "- Clearance: trademark and App Store name clearance are pending.\n"):
+            path.write_text(shortlist_md(["Cinewell", "Rollbook", "Halide Days"]).replace(
+                registered, "cinewell.app: no registration found, UNVERIFIED", 1).replace(clearance, without, 1))
+            self.assertEqual(journal.record_shortlist(self.pkg, load(self.pkg), self.now)[0],
+                             ["Cinewell has no '- Clearance:' line saying its trademark and App Store name clearance "
+                              "are UNVERIFIED"])
+        self.assertEqual(domains("cinewell.app: no registration found, UNVERIFIED"), [])
+        self.assertEqual(quiet(journal.main, ["shortlist", str(self.pkg)]), 0)
+
+    def test_an_accepted_name_is_swapped_and_its_gates_reopened(self):
+        self.begin(names=["Shutterly"])
+        self.new_tournament()
+        quiet(journal.main, ["pass", "tournament", str(self.pkg)])
+        data = load(self.pkg)
+        with self.assertRaises(ValueError):
+            journal.accept_name(self.pkg, data, "Cinewell", self.pkg.parent / "work", "/b2", self.now)
+        (self.pkg / rename.SHORTLIST).write_text(shortlist_md(["Cinewell", "Rollbook", "Halide Days"]))
+        self.assertEqual(quiet(journal.main, ["shortlist", str(self.pkg)]), 0)
+        data = load(self.pkg)
+        with self.assertRaises(ValueError):
+            journal.accept_name(self.pkg, data, "Filmwise", self.pkg.parent / "work", "/b2", self.now)
+        with self.assertRaises(ValueError) as raised:
+            journal.accept_name(self.pkg, data, "Shutterbox", self.pkg.parent / "work", "/b2", self.now)
+        self.assertIn("Shutterbox is not on the rerun's shortlist (Cinewell, Rollbook, Halide Days)",
+                      str(raised.exception))
+        self.assertIn('bin/gr0wthpilot Testprod --rename "Filmora"', str(raised.exception))
+        self.assertIn('--rule-out "<name>"', str(raised.exception))
+        for spelling, shortlisted in (("cinewell", "Cinewell"), ("Halide-Days", "Halide Days")):
+            with self.assertRaises(ValueError) as raised:
+                journal.accept_name(self.pkg, data, spelling, self.pkg.parent / "work", "/b2", self.now)
+            self.assertIn("which spells it %s;" % shortlisted, str(raised.exception))
+            self.assertIn('--accept-name "%s"' % shortlisted, str(raised.exception))
+        self.assertEqual(data["rename"]["stage"], "shortlist")
+        self.assertEqual((self.pkg / "02-brand/positioning.md").read_text(),
+                         "# Positioning\n\nFilmora is for people who miss film.\n")
+        fixtures.write(self.pkg, "05-social-pmf/notes.md", "Filmora on TikTok, @filmora, getfilmora.app/tiktok.\n")
+        edit(self.pkg / "01-research/pain-points.md", "# Pain points", "# Pain points Filmora answers")
+        info = journal.accept_name(self.pkg, data, "Cinewell", self.pkg.parent / "work", "/b2", self.now)
+        save(self.pkg, data)
+        self.assertEqual(data["rename"]["backups"][-1], {"at": self.now, "before": "swap", "path": "/b2"})
+        self.assertEqual((info["stage"], info["accepted_name"]), ("swapped", "Cinewell"))
+        self.assertEqual((self.pkg / "02-brand/positioning.md").read_text(), "# Positioning\n\nCinewell is for people who miss film.\n")
+        self.assertEqual((self.pkg / "05-social-pmf/notes.md").read_text(),
+                         "Cinewell on TikTok, @cinewell, getcinewell.app/tiktok.\n")
+        self.assertIn("Propose Filmora.", (self.pkg / "02-brand/naming-decision.md").read_text())
+        self.assertTrue(Path(info["swap"]["review"]).is_file())
+        self.assertEqual(journal.reopened_ids(data), ["brand", "claims-1", "critic-1"])
+        self.assertEqual(journal.next_gate(data)[0], "brand")
+        self.assertIn("# Pain points Cinewell answers", (self.pkg / "01-research/pain-points.md").read_text())
+        self.assertIsNone(journal.waiting_for_name(data, "brand"))
+        note = data["notes"][-1]["text"]
+        self.assertIn("Name swap to Cinewell: the Founder handed over Cinewell", note)
+        self.assertIn(info["swap"]["review"], note)
+        self.assertIn("/b2", note)
+        with self.assertRaises(ValueError):
+            journal.accept_name(self.pkg, data, "Rollbook", self.pkg.parent / "work", "/b3", self.now)
 
 
 if __name__ == "__main__":

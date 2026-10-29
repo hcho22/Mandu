@@ -31,6 +31,7 @@ import fixtures
 import gp_common as gc
 import gp_run
 import guard
+import journal
 
 
 def load_wrapper(name):
@@ -656,6 +657,267 @@ class RunPrepTest(unittest.TestCase):
                 self.assertEqual(gp_run.preflight(args), 0)
         finally:
             del os.environ["GP_PREFLIGHT"]
+
+
+def consent_file(mandu):
+    path = Path(tempfile.mkdtemp(prefix="gp-claude-")) / ".claude.json"
+    gc.write_json(path, {"projects": {str(Path(mandu).resolve()): {"hasTrustDialogAccepted": True,
+                                                                   "hasClaudeMdExternalIncludesApproved": True}}})
+    return path
+
+
+def renamable_mandu():
+    """A Mandu whose Testprod package is an unfinished run past critic-1 that
+    proposes the name Filmora."""
+    mandu = make_mandu(("Testprod",))
+    pkg = mandu / "projects/Testprod/gtm"
+    fixtures.build(pkg, video=False)
+    data = gc.read_json(pkg / gc.JOURNAL_NAME)
+    data["gates"] = [{"id": g, "passed_at": "2026-10-25T05:00:00Z"} for g in journal.GATE_IDS[:6]]
+    gc.write_json(pkg / gc.JOURNAL_NAME, data)
+    (pkg / "02-brand/naming-decision.md").write_text("# Naming\n\nPropose Filmora. Clearance UNVERIFIED.\n"
+                                                     "Fallbacks: Matinee and Cineroll. Testprod is the Product.\n")
+    (pkg / "02-brand/brand-guidelines.md").write_text("# Brand guidelines\n\nThe Filmora wordmark for Testprod. "
+                                                      "Palette #111111.\n")
+    (pkg / "03-site/index.html").write_text("<h1>Filmora</h1><p>Join at getfilmora.app</p>\n")
+    return mandu, pkg
+
+
+class NameRerunPrepTest(unittest.TestCase):
+    def setUp(self):
+        patcher = mock.patch.dict(os.environ)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        for key in ("GR0WTHPILOT_REPO", "GR0WTHPILOT_CONFIG"):
+            os.environ.pop(key, None)
+        os.environ["GR0WTHLAB_DIR"] = str(registry().parent.parent)
+        self.mandu, self.pkg = renamable_mandu()
+        os.environ["CLAUDE_CONFIG_DIR"] = str(consent_file(self.mandu).parent)
+        self.cache = Path(tempfile.mkdtemp(prefix="gp-cache-")).resolve()
+
+    def prepare(self, **flags):
+        fields = {"mandu": str(self.mandu), "product": "Testprod", "cache": str(self.cache), "repo": None,
+                  "today": "2026-10-28", "rename": None, "rule_out": None, "rule_out_root": None,
+                  "accept_name": None}
+        fields.update(flags)
+        return gp_run.prepare(type("A", (), fields))
+
+    def backups(self):
+        folder = self.cache / "Testprod" / "backups"
+        return sorted(p.name for p in folder.iterdir()) if folder.is_dir() else []
+
+    def test_rerun_then_accept_keep_a_copy_before_each_change(self):
+        before = (self.pkg / gc.JOURNAL_NAME).read_text()
+        cfg = self.prepare(rename="Filmora", rule_out=["Shutterly"], rule_out_root=["Film"])
+        self.assertEqual((cfg["mode"], cfg["rename_step"]), ("resume", "rerun"))
+        self.assertIn("Name-only rerun from Filmora; ruled out: Filmora, Shutterly; roots: Film.", cfg["rename_summary"])
+        copies = self.backups()
+        self.assertEqual(len(copies), 1)
+        self.assertTrue(copies[0].endswith("-before-rerun-from-filmora"))
+        copy = self.cache / "Testprod" / "backups" / copies[0]
+        self.assertEqual((copy / gc.JOURNAL_NAME).read_text(), before)
+        self.assertTrue((copy / "02-brand/tournament/scorecard.md").is_file())
+        self.assertIn(str(copy), cfg["rename_summary"])
+        data = gc.read_json(self.pkg / gc.JOURNAL_NAME)
+        self.assertEqual(journal.reopened_ids(data), ["tournament", "brand", "claims-1", "critic-1"])
+        self.assertEqual(data["rename"]["backups"][0]["path"], str(copy))
+        self.assertTrue(any(str(copy) in n["text"] for n in data["notes"]))
+        self.assertEqual(len(data["sessions"]), 1)
+        self.assertTrue((self.pkg / "02-brand/tournament-filmora/scorecard.md").is_file())
+
+        with self.assertRaises(gp_run.RunError) as raised:
+            self.prepare(accept_name="Cinewell")
+        self.assertIn("has not recorded its shortlist", str(raised.exception))
+        self.assertEqual(len(self.backups()), 1)
+
+        data["gates"][2].pop("reopened_at")
+        data["rename"].update(shortlist="02-brand/name-shortlist.md", shortlist_names=["Cinewell", "Rollbook"])
+        gc.write_json(self.pkg / gc.JOURNAL_NAME, data)
+        for name in ("Filmwise", "shutterly"):
+            with self.assertRaises(gp_run.RunError):
+                self.prepare(accept_name=name)
+        self.assertEqual(len(self.backups()), 1)
+        cfg = self.prepare(accept_name="Cinewell")
+        self.assertEqual(cfg["rename_step"], "accept")
+        self.assertEqual(len(self.backups()), 2)
+        self.assertIn("<h1>Filmora</h1>", (self.cache / "Testprod/backups" / self.backups()[1] / "03-site/index.html")
+                      .read_text())
+        self.assertEqual((self.pkg / "03-site/index.html").read_text(), "<h1>Cinewell</h1><p>Join at getcinewell.app</p>\n")
+        data = gc.read_json(self.pkg / gc.JOURNAL_NAME)
+        self.assertEqual(data["rename"]["stage"], "swapped")
+        self.assertTrue(Path(data["rename"]["swap"]["review"]).is_file())
+        self.assertTrue(guard.under(data["rename"]["swap"]["review"], self.cache / "Testprod"))
+        self.assertEqual(journal.next_gate(data)[0], "brand")
+
+        for flags, message in (({"rename": "Filmora"}, "Filmora was already swapped out for Cinewell"),
+                               ({"accept_name": "Cinewell"}, "Cinewell was already handed over")):
+            with self.assertRaises(gp_run.RunError) as raised:
+                self.prepare(**flags)
+            self.assertIn(message, str(raised.exception))
+        self.assertEqual(len(self.backups()), 2)
+        self.assertEqual(gc.read_json(self.pkg / gc.JOURNAL_NAME)["rename"], data["rename"])
+
+        resumed = self.prepare()
+        self.assertEqual((resumed["mode"], resumed["rename_step"], resumed["rename_summary"]), ("resume", None, None))
+        self.assertEqual(len(self.backups()), 2)
+        self.assertEqual(gc.read_json(self.pkg / gc.JOURNAL_NAME)["rename"], data["rename"])
+
+    def test_rerun_refusals_change_nothing(self):
+        with open(str(self.pkg / "02-brand/naming-decision.md"), "a") as handle:
+            handle.write("Fallback domains filmora.app and @filmora are held by others.\n")
+        before = (self.pkg / gc.JOURNAL_NAME).read_text()
+        for flags, message in (
+                ({"rename": "filmora"}, "in projects/Testprod/gtm/02-brand/naming-decision.md, "
+                                        "projects/Testprod/gtm/02-brand/brand-guidelines.md, "
+                                        "projects/Testprod/gtm/03-site/index.html; a rerun"),
+                ({"rename": "Matinee"}, "Matinee does not appear as a word of its own, spelled so (not inside a "
+                                        "handle or domain), in projects/Testprod/gtm/02-brand/brand-guidelines.md, "
+                                        "projects/Testprod/gtm/03-site/index.html; a rerun"),
+                ({"rename": "Testprod"}, "in projects/Testprod/gtm/03-site/index.html; a rerun"),
+                ({"rename": "test-prod"}, "does not appear as a word of its own"),
+                ({"rename": "Filmora", "accept_name": "Cinewell"}, "give one of them"),
+                ({"rule_out": ["Shutterly"]}, "go with --rename"),
+                ({"rename": "Filmora", "rule_out_root": ["F"]}, "2 to 40 letters"),
+                ({"rename": "Flimora"}, "does not appear as a word of its own"),
+                ({"accept_name": "Cinewell"}, "no name-only rerun is waiting")):
+            with self.assertRaises(gp_run.RunError) as raised:
+                self.prepare(**flags)
+            self.assertIn(message, str(raised.exception), flags)
+        self.assertEqual((self.pkg / gc.JOURNAL_NAME).read_text(), before)
+        self.assertEqual(self.backups(), [])
+        data = gc.read_json(self.pkg / gc.JOURNAL_NAME)
+        data["gates"] = data["gates"][:2]
+        gc.write_json(self.pkg / gc.JOURNAL_NAME, data)
+        with self.assertRaises(gp_run.RunError) as raised:
+            self.prepare(rename="Filmora")
+        self.assertIn("has not passed its tournament", str(raised.exception))
+        data["status"] = "complete"
+        gc.write_json(self.pkg / gc.JOURNAL_NAME, data)
+        with self.assertRaises(gp_run.RunError) as raised:
+            self.prepare(rename="Filmora")
+        self.assertIn("reworks an unfinished run's Candidate Package", str(raised.exception))
+        self.assertEqual(self.backups(), [])
+
+    def test_a_package_that_kept_the_product_name_reruns_from_it(self):
+        (self.pkg / "02-brand/naming-decision.md").write_text("# Naming\n\n## Name verdict: **Testprod stands**\n\n"
+                                                              "Fallbacks: Filmora. Clearance UNVERIFIED.\n")
+        (self.pkg / "02-brand/brand-guidelines.md").write_text("# Brand guidelines\n\nThe Testprod wordmark.\n")
+        (self.pkg / "03-site/index.html").write_text("<h1>Testprod</h1><p>Join at gettestprod.app</p>\n")
+        with self.assertRaises(gp_run.RunError) as raised:
+            self.prepare(rename="Filmora")
+        self.assertIn("Filmora does not appear as a word of its own", str(raised.exception))
+        cfg = self.prepare(rename="Testprod")
+        self.assertEqual(cfg["rename_step"], "rerun")
+        self.assertEqual(gc.read_json(self.pkg / gc.JOURNAL_NAME)["rename"]["rule_out"], ["Testprod"])
+
+    def test_a_rerun_after_a_swap_to_the_product_name_starts_from_it(self):
+        self.prepare(rename="Filmora")
+        data = gc.read_json(self.pkg / gc.JOURNAL_NAME)
+        data["gates"][2].pop("reopened_at")
+        data["rename"].update(shortlist="02-brand/name-shortlist.md", shortlist_names=["Testprod", "Rollbook"])
+        gc.write_json(self.pkg / gc.JOURNAL_NAME, data)
+        self.prepare(accept_name="Testprod")
+        self.assertEqual((self.pkg / "03-site/index.html").read_text(),
+                         "<h1>Testprod</h1><p>Join at gettestprod.app</p>\n")
+        for name in ("Filmora", "Rollbook"):
+            with self.assertRaises(gp_run.RunError) as raised:
+                self.prepare(rename=name)
+            self.assertIn("swapped out for Testprod, the name the package now carries", str(raised.exception))
+        cfg = self.prepare(rename="Testprod", rule_out_root=["Film"])
+        self.assertEqual(cfg["rename_step"], "rerun")
+        data = gc.read_json(self.pkg / gc.JOURNAL_NAME)
+        self.assertEqual((data["rename"]["stage"], data["rename"]["old_name"]), ("shortlist", "Testprod"))
+        self.assertEqual(data["rename"]["rule_out"], ["Testprod", "Filmora"])
+        self.assertEqual(data["rename"]["rule_out_roots"], ["Film"])
+        self.assertEqual([b["accepted_name"] for b in data["renames"]], ["Testprod"])
+
+    def test_preflight_reports_the_rename(self):
+        cfg = self.prepare(rename="Filmora")
+        os.environ["GP_PREFLIGHT"] = "abcdef123456"
+        (Path(cfg["work"]) / "guard-receipt-abcdef123456").write_text("seen")
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(gp_run.preflight(type("A", (), {"config": cfg["config_path"]})), 0)
+        report = json.loads(out.getvalue())
+        self.assertEqual((report["rename_step"], report["rename"]["stage"]), ("rerun", "shortlist"))
+        self.assertEqual(report["gates_passed"], ["product-facts", "research"])
+        self.assertEqual(report["gates_reopened"], ["tournament", "brand", "claims-1", "critic-1"])
+
+
+class LauncherTest(unittest.TestCase):
+    """bin/gr0wthpilot itself, with stand-ins for claude and caffeinate."""
+
+    def setUp(self):
+        self.mandu, self.pkg = renamable_mandu()
+        self.mandu = self.mandu.resolve()
+        (self.mandu / "bin").mkdir()
+        shutil.copy(str(fixtures.SCRIPTS.parent.parent.parent.parent / "bin" / "gr0wthpilot"), str(self.mandu / "bin"))
+        (self.mandu / ".claude" / "skills").mkdir(parents=True)
+        os.symlink(str(fixtures.SCRIPTS.parent), str(self.mandu / ".claude/skills/gr0wthpilot"))
+        stubs = Path(tempfile.mkdtemp(prefix="gp-stubs-"))
+        self.calls = stubs / "claude-calls.txt"
+        (stubs / "claude").write_text('#!/bin/sh\nprintf "%%s\\n" "$PWD" "$GR0WTHPILOT_CONFIG" "$@" > %s\n' % self.calls)
+        (stubs / "caffeinate").write_text("#!/bin/sh\nexit 0\n")
+        for stub in ("claude", "caffeinate"):
+            os.chmod(str(stubs / stub), 0o755)
+        self.cache = Path(tempfile.mkdtemp(prefix="gp-cache-"))
+        self.env = {k: v for k, v in os.environ.items() if k not in ("GR0WTHPILOT_REPO", "GR0WTHPILOT_CONFIG")}
+        self.env.update(PATH="%s:%s" % (stubs, os.environ["PATH"]), GR0WTHPILOT_WORK=str(self.cache),
+                        GR0WTHLAB_DIR=str(registry().parent.parent),
+                        CLAUDE_CONFIG_DIR=str(consent_file(self.mandu).parent))
+
+    def launch(self, *args):
+        return subprocess.run([str(self.mandu / "bin" / "gr0wthpilot")] + list(args), env=self.env,
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, timeout=60)
+
+    def test_rename_and_accept_reach_prepare_and_open_the_same_session(self):
+        out = self.launch("Testprod", "--rename", "Filmora", "--rule-out", "Shutterly", "--rule-out-root", "Film")
+        self.assertEqual(out.returncode, 0, out.stderr)
+        self.assertIn("Name-only rerun from Filmora; ruled out: Filmora, Shutterly; roots: Film.", out.stdout)
+        called = self.calls.read_text().splitlines()
+        self.assertEqual(Path(called[0]).resolve(), self.pkg.resolve())
+        self.assertEqual(called[-1], "/gr0wthpilot Testprod")
+        self.assertIn("dontAsk", called)
+        self.assertEqual(gc.read_json(Path(called[1]))["rename_step"], "rerun")
+        self.assertEqual(gc.read_json(self.pkg / gc.JOURNAL_NAME)["rename"]["stage"], "shortlist")
+
+        out = self.launch("Testprod", "--accept-name", "Cinewell")
+        self.assertEqual(out.returncode, 2)
+        self.assertIn("has not recorded its shortlist yet", out.stderr)
+
+    def test_plain_resume_is_unchanged(self):
+        out = self.launch("Testprod")
+        self.assertEqual(out.returncode, 0, out.stderr)
+        self.assertIn("Gr0wthPilot: Testprod (resume run, first-package)", out.stdout)
+        self.assertNotIn("Name", out.stdout)
+        cfg = gc.read_json(Path(self.calls.read_text().splitlines()[1]))
+        self.assertIsNone(cfg["rename_step"])
+        self.assertNotIn("rename", gc.read_json(self.pkg / gc.JOURNAL_NAME))
+        self.assertFalse((self.cache / "Testprod" / "backups").exists())
+
+    def test_bad_arguments_stop_before_anything_runs(self):
+        for args, message in ((["Testprod", "--rename"], "Usage:"),
+                              (["Testprod", "--bogus"], "unknown option --bogus"),
+                              (["Testprod", "--rename", "Filmora", "--accept-name", "X"], "give one of them")):
+            out = self.launch(*args)
+            self.assertEqual(out.returncode, 2, args)
+            self.assertIn(message, out.stdout + out.stderr, args)
+        self.assertFalse(self.calls.exists())
+        self.assertFalse((self.cache / "Testprod" / "backups").exists())
+
+
+class SessionStartTest(unittest.TestCase):
+    def test_reopened_gates_are_not_listed_as_passed(self):
+        cfg = config()
+        gates = [{"id": g, "passed_at": "2026-10-25T05:00:00Z"} for g in journal.GATE_IDS[:6]]
+        for entry in gates[2:]:
+            entry["reopened_at"] = "2026-10-28T12:00:00Z"
+        gc.write_json(Path(cfg["package"]) / gc.JOURNAL_NAME, {"gates": gates})
+        context = guard.run_session_start(cfg, {"source": "startup"})["hookSpecificOutput"]["additionalContext"]
+        self.assertIn("gates passed so far: product-facts, research.", context)
+        gc.write_json(Path(cfg["package"]) / gc.JOURNAL_NAME, {"gates": gates[2:]})
+        context = guard.run_session_start(cfg, {"source": "startup"})["hookSpecificOutput"]["additionalContext"]
+        self.assertIn("gates passed so far: none.", context)
 
 
 class WrapperRulesTest(unittest.TestCase):

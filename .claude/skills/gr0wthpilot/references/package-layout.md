@@ -27,6 +27,9 @@ One path differs from RepToday's: the launch checklist is `launch-checklist.md` 
                            channel-evidence.md, creator-landscape.md, name-collisions.md, last30days/
   02-brand/                positioning.md, naming-decision.md, brand-guidelines.md, logo SVGs,
                            tournament/ (rubric-*, pitch-*, judge-*, scorecard.md),
+                           after a name-only rerun: tournament-<earlier name>/ (the earlier
+                           tournament), tournament/fixed-inputs.md and collisions-*.md,
+                           and name-shortlist.md,
                            gate-test-asset*.html|png, gate-test-report.md, screens/
   03-site/                 index.html, index-b.html, assets, screenshots/, screenshot-gate.md,
                            cro-review.md, ai-seo-review.md

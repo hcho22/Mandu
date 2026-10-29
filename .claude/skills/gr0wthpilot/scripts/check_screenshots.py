@@ -18,7 +18,8 @@ launch-set PACKAGE
   text (`first-week-posts` or `bio`) is a PNG, JPEG, or WebP image at exactly
   that size and not blank; each `size_source` is the http(s) URL of the
   platform page that gives the size; each of Instagram, X, and TikTok has a
-  profile image and first-week posts.
+  profile image and first-week posts. The result's `images` are the image
+  assets' package paths.
 
 image FILE --size WIDTHxHEIGHT
   One image at one size.
@@ -209,9 +210,10 @@ def check_launch_set(pkg):
     try:
         manifest = gc.read_json(manifest_path)
     except (OSError, ValueError) as exc:
-        return {"assets": 0, "problems": ["10-launch-set/manifest.json is missing or invalid: %s" % exc]}
+        return {"assets": 0, "images": [], "problems": ["10-launch-set/manifest.json is missing or invalid: %s" % exc]}
     assets = manifest.get("assets") or []
     kinds = {p: set() for p in LAUNCH_PLATFORMS}
+    images = []
     for asset in assets:
         platform = str(asset.get("platform", "")).lower()
         kind = str(asset.get("kind", ""))
@@ -225,6 +227,7 @@ def check_launch_set(pkg):
                 problems.append("manifest: %s is a %s, which must be a PNG, JPEG, or WebP image rendered at its "
                                 "size" % (asset.get("path"), kind))
             else:
+                images.append(gc.rel(pkg, path))
                 try:
                     width, height = parse_size(asset.get("size"))
                     check_image(path, width, height, problems, scales=(1,))
@@ -239,7 +242,7 @@ def check_launch_set(pkg):
         for needed in ("profile-image", "first-week-posts"):
             if needed not in found:
                 problems.append("Launch Set for %s has no %s" % (platform, needed))
-    return {"assets": len(assets), "problems": problems}
+    return {"assets": len(assets), "images": images, "problems": problems}
 
 
 def main(argv=None):

@@ -45,3 +45,33 @@ Every Angle in the Test Kit traces to one of these pains by its URL.
 
 `01-research/name-collisions.md` lists, for the current name and each candidate, what store search, the web, and domain lookups show, with URLs.
 It never says a name is clear: trademark and App Store name clearance are UNVERIFIED and are the Founder's next action.
+
+## Shortlist
+
+A name-only rerun ends at `02-brand/name-shortlist.md`, which `journal.py shortlist` checks:
+
+```
+# Name shortlist: Immerse
+
+Name-only rerun from Rewound, which App Store Connect refused, run `immerse-20261025-043407`, written 2026-10-28 UTC.
+Ruled out: Rewound, and every name holding "Rewind".
+The positioning, hero message, and look are unchanged ([fixed inputs](tournament/fixed-inputs.md)).
+
+## 1. Cineroll `[PROPOSAL]`
+
+Scorecard rank 1 ([scorecard](tournament/scorecard.md)); why it carries the positioning, in one or two lines.
+- App Store: what search showed, with each listing's URL, or "none seen".
+- Web: what the web showed, with URLs, or "none seen".
+- Domains: one entry per domain checked, separated by ";": a registered domain with the URL of the lookup that shows it, or "cineroll.app: no registration found, UNVERIFIED" with no URL when the lookup found none.
+- Clearance: trademark and App Store name clearance are UNVERIFIED and are the Founder's next action.
+
+## 2. ...
+
+## Next step
+
+Try these names in App Store Connect in this order, and run `bin/gr0wthpilot Immerse --accept-name "<name>"` from Mandu's root with the first one it accepts.
+```
+
+The check wants 3 to 7 names under `## <rank>. <Name> [PROPOSAL]` headings, ranked 1, 2, 3, ... in order, none ruled out and none twice; in each section an `- App Store:` and a `- Web:` line citing a URL or saying "none seen", a `- Domains:` line whose every entry either cites a URL or names one domain with "no registration found" and UNVERIFIED, and a `- Clearance:` line saying UNVERIFIED; and a `## Next step` section naming App Store Connect and the `--accept-name` command.
+Every URL it cites must pass the source check, like any other.
+A lookup that found no registration answers 404, which is never cited as fetched, so it is recorded by the domain's name alone, UNVERIFIED; a domain reported as registered always cites the 2xx lookup that shows it.

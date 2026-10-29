@@ -31,7 +31,8 @@ Do these before anything else, in order.
 4. Run `python3 <skill>/scripts/journal.py status`.
    With no gate passed, this is a new run: start at "Read the product".
    With gates passed, this is a resumed run, usually after a session limit: read the journal's notes, `decisions-log.md`, and the files behind the passed gates, then continue at the next gate.
-   Never redo a passed gate unless a later phase sends it back, and say so in the journal with `journal.py note`.
+   Never redo a passed gate unless a later phase sends it back; a send-back is `journal.py reopen <gate> --reason "<why>"`, which notes it in the journal and makes the gate, and its phase's critic, pass again in order.
+   When the preflight's `rename_step` is set, or the status shows a `rename` block whose stage is `shortlist` or whose swap the run has not finished, follow "Name-only rerun" below instead of the arc until it says to return.
 5. The preflight's `kind` says what this package is and `kind_reason` says why; a Product is handed off only when gr0wthlab's product list names a `go_to_market_package` for it.
    - `first-package`: the package is `gtm/`, and no live package sits beside it.
      An unfinished run in `gtm/` resumes even when gr0wthlab's product list cannot be read, because a package cannot be handed off before its recap is finished.
@@ -257,6 +258,51 @@ Always write:
 - `self-grade.md`: every item in `references/phase-gates.md` "Self-grade", honestly, including what failed and why you did not fix it.
 
 Then run `python3 <skill>/scripts/audit_run.py`, which copies the guard's logs into `run-evidence/` and writes `run-audit.md`; run `gp-sim cleanup`; pass gates `package` and `critic-5`; and finish with `python3 <skill>/scripts/journal.py complete`.
+
+## Name-only rerun
+
+When App Store Connect refuses the package's proposed name, the Founder reruns the naming alone, in two launcher steps, each one command from Mandu's root.
+The positioning, the hero message, and the look stay as they are; only the name changes.
+
+1. `bin/gr0wthpilot <Product> --rename <refused name> [--rule-out <name>]... [--rule-out-root <root>]...` starts it.
+   Before the session opens, the launcher copies the whole package into the cache folder's `backups/`, moves the earlier tournament to `02-brand/tournament-<refused name>/`, reopens the tournament gate and every later gate already passed, and records all of it in the journal as a send-back with the ruled-out names (the refused name always among them) and roots.
+   On a first rerun the launcher checks only that the name appears, spelled so, as a word of its own (not inside a handle or domain) in the naming decision, the brand guidelines, and the landing page when there is one; that may be the Product's own name, and a fallback or the Product's name that all of them carry passes too.
+   After a rerun, it takes only the name the rerun left the package with: the accepted name once swapped in.
+   A rerun started from the wrong name is undone by putting the copy the launcher kept before it changed anything (the cache folder's `backups/<time>-before-rerun-from-<name>/`, named in the journal) back in place of the package, then running `--rename` again with the right name.
+   The preflight's `rename_step` is `rerun`.
+2. `bin/gr0wthpilot <Product> --accept-name "<name>"`, once App Store Connect accepts a shortlisted name, hands it over; a name not on the recorded shortlist is refused.
+   Before the session opens, the launcher copies the package again, swaps the name through its deliverables (never its records, never a URL; the rules are at the top of `<skill>/scripts/rename.py`), and writes a review sheet into the cache folder; the gates step 1 reopened still wait to pass again.
+   The preflight's `rename_step` is `accept`.
+
+A later rerun, when the swapped-in name is refused too, starts from that name with `--rename` and keeps every name and root ruled out before.
+The journal's `rename` block holds the state: `stage` (`shortlist`, then `swapped`), the earlier name, the ruled-out names and roots, every backup's path, the shortlist, and the swap's review sheet.
+A run cannot see App Store Connect; that the Founder's step-2 name was accepted there is his word, recorded by his command.
+
+### The rerun, to a shortlist
+
+1. Write `02-brand/tournament/fixed-inputs.md`: the positioning line, the hero message of each variant, and the look (palette, the mark, the type), each quoted word for word with the file and section it comes from, and the line "These are fixed inputs; only the name is pitched."
+2. Write three or more differing rubrics for a name-only judging in `02-brand/tournament/rubric-<id>.md` (differentiation, conversion, defensibility with the collision evidence, and product truth when the earlier tournament had it), each saying a ruled-out name scores zero.
+3. Run `tournament.js` with `name_only` (see `references/orchestration.md`): every pitcher, collision checker, judge, and the scorecard are given the ruled-out names and the fixed inputs, and one checker per pitch gathers store, web, and domain evidence for each pitched name.
+   Merge sources, then pass the reopened gate: `journal.py pass tournament`.
+4. Add a `## <Name>` section to `01-research/name-collisions.md` for every name the shortlist will carry, from the checkers' files, in that file's own format.
+5. Write `02-brand/name-shortlist.md` (format: "Shortlist" in `references/research.md`): about five names, ranked by the scorecard's overall rank, leaving out a name whose evidence shows an app of the same name on the US App Store; each with its evidence lines and clearance UNVERIFIED, and the next step.
+   If `gp-chrome` cannot render a page in this session, add to the next step that after the swap the run will stop at the `site` gate until it can.
+6. Record it: `journal.py shortlist`, which checks the format, the ruled-out names, and every source, and refuses every gate after the tournament until a name is handed over.
+7. End the run.
+   The last message gives the shortlist's path, the names in order, and the next step word for word: try them in App Store Connect in that order, and run `bin/gr0wthpilot <Product> --accept-name "<name>"` with the first one it accepts.
+   A session that resumes with the shortlist already recorded ends at once with that same message.
+
+### After the swap
+
+1. Read the review sheet the status names (`rename.swap.review`, in the cache folder) whole.
+2. Work through every line of the review sheet, fanning out one agent per area folder through a Workflow script of your own in `<cache>/workflows/`.
+   A line that states a fact about the earlier name (a collision, an app or domain someone else holds, a clearance step) gets the earlier name back, labeled as the earlier name; a line that reasons from what the earlier word means is rewritten or cut; each lowercase occurrence is decided by its sense.
+   A line marked URL names the earlier name inside a URL: a URL the package proposes for the Product (its planned site or a handle) is rewritten for the new name, with its `sources-exempt.md` entry to match, and a URL that cites a source stays as it is.
+   A proposed domain or handle the swap derived from the new name is kept only when the shortlist's domain evidence supports proposing it, and its availability stays UNVERIFIED.
+3. Rewrite `02-brand/naming-decision.md` for the accepted name: the verdict, that the Founder reports App Store Connect accepted it (with the date he handed it over), trademark clearance UNVERIFIED and the Founder's next action, the shortlist, and the earlier name with why it was dropped.
+4. Draw the wordmark again, and every SVG the sheet lists that spells the name in shapes; render again every image the sheet lists that shows the name; rebuild the video; then run one more `brand-gate.js` round, with the swapped guidelines, so the new wordmark passes the fresh-agent gate.
+5. Log each choice in `decisions-log.md`, re-run the skeptics on every claim the swap or the review touched, and pass the reopened gates in order, each with its critic as the arc says.
+6. Then go on as an ordinary resumed run from the journal's next gate.
 
 ## Output layout
 

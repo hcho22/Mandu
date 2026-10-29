@@ -15,6 +15,7 @@ Each layer was proven in live sessions; this page says what each one covers and,
 - `--permission-mode dontAsk`: anything the profile does not allow is refused without a prompt, so a run never waits on the Founder.
 - The session starts inside the Candidate Package, which is what the macOS sandbox lets shell commands write.
 - The launcher runs only `/gr0wthpilot <Product>`; it takes no other Claude Code arguments, so nothing on its command line can loosen the profile.
+  Its own options for a name-only rerun (`--rename`, `--rule-out`, `--rule-out-root`, `--accept-name`) reach only `gp_run.py prepare`, which, before the session opens and only on the unfinished run's own package, copies the package into the cache folder's `backups/`, then sets the earlier tournament aside or swaps the accepted name, and updates the journal; the session that follows runs under the same profile as any other.
 - `caffeinate -i -s -w <pid>` holds system sleep off (the display may still sleep) for exactly the life of the session's own process, and releases it when the session ends, however it ends.
 - The profile copies only `model` and `effortLevel` from the Founder's own settings, sets `workflowSizeGuideline` to `unrestricted` (Claude Code's default guideline is "medium", under 10 agents per workflow), and turns auto-memory off, since a run writes no memory.
 
@@ -109,6 +110,7 @@ These records the run could still alter, because a sandboxed command or the run 
 - `last30days-log.jsonl` in the cache folder, written by `gp-last30days` inside the sandbox, and the last30days output in the package whose SHA-256 it records; the hash proves a file is the one the wrapper saw only as far as the log itself is trusted.
 - The preflight receipt in the cache folder, which the guard writes and the sandboxed preflight deletes.
 - The workflow script copies, the scratch folder, and any result bundle in the cache folder.
+- The copies of the package in the cache folder's `backups/` and a name swap's review sheet in its `rename/`, which `gp_run.py prepare` writes before a name-only rerun's session opens; a package put back from a copy is only as sound as the run left that copy.
 - Everything in the package itself, including `run-evidence/` and `run-audit.md`, which `audit_run.py` copies and writes from the guard's records at the end of the run.
 
 ## What no layer covers

@@ -43,6 +43,10 @@ Write each judge's rubric to `02-brand/tournament/rubric-<id>.md` before the run
 The floor: four pitchers, one arguing against the brief's riskiest lead; judges `differentiation`, `conversion`, and `defensibility` (legal and clearance risk included).
 The script writes `pitch-<n>.md`, `judge-<id>.md`, and `scorecard.md` in `02-brand/tournament/`.
 
+A name-only rerun adds `name_only: {old_name, ruled_out, ruled_out_roots, fixed}`: the refused name, the ruled-out names and roots copied from the journal's `rename` block, and the package path of `02-brand/tournament/fixed-inputs.md`.
+Every agent's prompt then carries the ruled-out names and the fixed inputs; pitchers pitch three names each, ranked, a Collisions phase checks each pitch's names (`collisions-<n>.md`, with `sources.d/tournament-collisions-<n>.md`), judges score names with that evidence and disqualify ruled-out ones, and the scorecard ranks every name with its margins.
+The pitchers' stances still differ, and one still argues against the riskiest lead the earlier tournament's judges named for a name.
+
 ## skeptics.js
 
 `{package, product, claims: [{id, claim, source, where}]}`: every load-bearing claim from the research results, the tournament winner, the channel plan, the thesis, and later the red team's fixes.

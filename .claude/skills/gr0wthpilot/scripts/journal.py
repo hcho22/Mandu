@@ -11,9 +11,23 @@ work gates, its first pass or a later re-pass, so a fix re-gated after the
 critic ran sends the critic round again. The `package` gate re-checks every
 earlier phase's critic that way, and `complete` re-checks all five.
 
+A later phase that sends a gate back reopens it: the gate keeps its record but
+counts as not passed, so the run passes it again, in order, before any later
+gate. Reopening a work gate reopens its phase's critic too, and every reopen is
+noted in the journal as a send-back.
+
+A name-only rerun (the launcher's `--rename`) reopens the tournament and every
+gate after it, and the journal refuses every gate after the tournament until
+the Founder hands over the name App Store Connect accepted (`--accept-name`),
+which must be on the shortlist `journal.py shortlist` records, where the rerun
+ends. The hand-over swaps the name through the package; the gates the rerun
+reopened then pass again in order.
+
 Usage:
   journal.py status [PACKAGE]
   journal.py pass GATE [PACKAGE]     (a gate passed earlier is checked again, not recorded again)
+  journal.py reopen GATE [GATE ...] --reason TEXT [--package PACKAGE]
+  journal.py shortlist [PACKAGE]     (a name-only rerun's ranked shortlist, checked and recorded)
   journal.py workflow --phase PHASE --name NAME [--run-id ID] [--agents N] [PACKAGE]
   journal.py note TEXT [PACKAGE]
   journal.py complete [PACKAGE]
@@ -38,6 +52,7 @@ import check_screenshots  # noqa: E402
 import check_sources  # noqa: E402
 import check_video  # noqa: E402
 import claim_audit  # noqa: E402
+import rename  # noqa: E402
 
 # (gate id, phase, what passing it means). The checks are in CHECKS below; the
 # full exit criteria each critic applies are in references/phase-gates.md.
@@ -113,7 +128,7 @@ def g_brand(pkg, cfg):
         problems.append("the fresh-agent brand gate has not passed (gate-test-report.md must end Verdict: PASS)")
     if not list(pkg.glob("02-brand/gate-test-asset*")):
         problems.append("the fresh agent's test asset is not in 02-brand/")
-    return problems
+    return problems + older_than_hand_over(pkg, ["02-brand/gate-test-report.md", "02-brand/naming-decision.md"])
 
 
 def g_claims(pkg, cfg):
@@ -131,8 +146,26 @@ def g_test_kit(pkg, cfg):
     return kit
 
 
+def older_than_hand_over(pkg, rels):
+    """Problems for each of these files, by package path, older than the
+    Founder's name hand-over (`rename.accepted_at`): after a name swap, each
+    render is made again from its swapped source, the fresh-agent brand gate
+    runs again on the swapped guidelines, and the naming decision is rewritten
+    for the accepted name."""
+    at = gc.parse_iso_z(((gc.load_journal(pkg) or {}).get("rename") or {}).get("accepted_at") or "")
+    if not at:
+        return []
+    return ["%s is older than the name hand-over at %s; make it again for the accepted name" % (rel, gc.iso_z(at))
+            for rel in rels if (pkg / rel).is_file() and (pkg / rel).stat().st_mtime < at.timestamp()]
+
+
+def launch_set_problems(pkg):
+    result = check_screenshots.check_launch_set(pkg)
+    return result["problems"] + older_than_hand_over(pkg, result["images"])
+
+
 def g_launch_set(pkg, cfg):
-    return check_screenshots.check_launch_set(pkg)["problems"] + brand_lint.check(pkg)["problems"]
+    return launch_set_problems(pkg) + brand_lint.check(pkg)["problems"]
 
 
 def g_video(pkg, cfg):
@@ -141,8 +174,10 @@ def g_video(pkg, cfg):
     except (OSError, ValueError):
         return ["04-video/gate.json is missing: {\"video\": \"walkthrough.mp4\", \"size\": \"1080x1920\", "
                 "\"min_seconds\": 15, \"max_seconds\": 120}"]
-    return check_video.verify(pkg / "04-video" / spec.get("video", "walkthrough.mp4"), spec.get("size", "1080x1920"),
-                              int(spec.get("min_seconds", 15)), int(spec.get("max_seconds", 120)))["problems"]
+    video = pkg / "04-video" / spec.get("video", "walkthrough.mp4")
+    return check_video.verify(video, spec.get("size", "1080x1920"), int(spec.get("min_seconds", 15)),
+                              int(spec.get("max_seconds", 120)))["problems"] + older_than_hand_over(
+        pkg, [gc.rel(pkg, video)])
 
 
 def g_red_team(pkg, cfg):
@@ -169,7 +204,7 @@ def all_checks(pkg, cfg):
     problems += ["layout: " + p for p in layout["problems"]]
     problems += ["brand: " + p for p in brand_lint.check(pkg)["problems"]]
     problems += ["site: " + p for p in check_screenshots.check_site(pkg)["problems"]]
-    problems += ["launch-set: " + p for p in check_screenshots.check_launch_set(pkg)["problems"]]
+    problems += ["launch-set: " + p for p in launch_set_problems(pkg)]
     problems += ["video: " + p for p in g_video(pkg, cfg)]
     problems += ["recap: " + p for p in check_recap.check(pkg, cfg["product"])["problems"]]
     return problems
@@ -230,7 +265,7 @@ def critic(phase):
 
 def stale_critics(pkg, phases):
     """Problems of each recorded critic gate of these phases, checked again."""
-    passed = {g["id"] for g in (gc.load_journal(pkg) or {}).get("gates", [])}
+    passed = set(passed_ids(gc.load_journal(pkg) or {}))
     problems = []
     for phase in phases:
         if "critic-" + phase in passed:
@@ -258,12 +293,207 @@ def resolve(args_pkg):
     return pkg, journal, cfg
 
 
+def recorded(journal):
+    """Each recorded gate's entry, by id."""
+    return {g["id"]: g for g in journal.get("gates", [])}
+
+
+def passed_ids(journal):
+    """Recorded gates that are not reopened, in the order they were recorded."""
+    return [g["id"] for g in journal.get("gates", []) if not g.get("reopened_at")]
+
+
+def reopened_ids(journal):
+    return [gid for gid in GATE_IDS if recorded(journal).get(gid, {}).get("reopened_at")]
+
+
 def next_gate(journal):
-    passed = {g["id"] for g in journal.get("gates", [])}
+    passed = set(passed_ids(journal))
     for gid, phase, meaning in GATES:
         if gid not in passed:
             return gid, phase, meaning
     return None
+
+
+def phase_of(gid):
+    return next(ph for g, ph, _ in GATES if g == gid)
+
+
+def add_note(journal, text, now):
+    journal.setdefault("notes", []).append({"at": now, "text": text})
+
+
+def reopen(journal, gate_ids, reason, now):
+    """Reopen these recorded gates, and the critic of each work gate's phase,
+    so each must pass again, in order. Returns the gates newly reopened; a gate
+    never passed, or already reopened, is left as it is. Notes the send-back."""
+    wanted = set(gate_ids)
+    wanted |= {"critic-" + phase_of(g) for g in gate_ids if not g.startswith("critic-")}
+    entries, out = recorded(journal), []
+    for gid in GATE_IDS:
+        entry = entries.get(gid)
+        if gid in wanted and entry and not entry.get("reopened_at"):
+            entry["reopened_at"] = now
+            entry["reopen_reason"] = reason
+            out.append(gid)
+    if out:
+        add_note(journal, "Send-back: %s Reopened: %s." % (reason, ", ".join(out)), now)
+    return out
+
+
+def waiting_for_name(journal, gate):
+    """Why a name-only rerun refuses this gate, or None: every gate after the
+    tournament waits until the Founder hands over an accepted name."""
+    stage = (journal.get("rename") or {}).get("stage")
+    if stage == "shortlist" and GATE_IDS.index(gate) > GATE_IDS.index("tournament"):
+        return ("gate %s waits for the name App Store Connect accepts: this name-only rerun ends at its shortlist "
+                "(journal.py shortlist), and the Founder hands the accepted name over with `bin/gr0wthpilot %s "
+                "--accept-name \"<name>\"`" % (gate, journal.get("product")))
+    return None
+
+
+def current_name(journal):
+    """The name a name-only rerun left the package with: the accepted name
+    once swapped in, the earlier name while the rerun waits at its shortlist,
+    or None when no rerun ran."""
+    current = journal.get("rename") or {}
+    return current.get("accepted_name") if current.get("stage") == "swapped" else current.get("old_name")
+
+
+def rerun_refusal(journal, old):
+    """Why this run cannot start a name-only rerun from `old`, or None."""
+    current = journal.get("rename") or {}
+    product = journal.get("product")
+    if "tournament" not in recorded(journal):
+        return ("the run has not passed its tournament yet, so there is no name to rerun; resume it with "
+                "`bin/gr0wthpilot %s`" % product)
+    name = current_name(journal)
+    if name and old != name and current.get("stage") == "swapped":
+        return ("%s was already swapped out for %s, the name the package now carries; a rerun starts from it: "
+                "`bin/gr0wthpilot %s --rename \"%s\"`" % (current["old_name"], name, product, name))
+    if name and old != name:
+        return ("a name-only rerun from %s is already waiting for its accepted name; hand one over with "
+                "--accept-name, or rerun from %s, spelled so" % (name, name))
+    return None
+
+
+def accept_refusal(journal, new):
+    """Why `new` cannot be handed over now, or None."""
+    current = journal.get("rename") or {}
+    product = journal.get("product")
+    if current.get("stage") == "swapped":
+        return ("%s was already handed over and swapped through the package in place of %s; resume the run with "
+                "`bin/gr0wthpilot %s`" % (current["accepted_name"], current["old_name"], product))
+    if current.get("stage") != "shortlist":
+        return ("no name-only rerun is waiting for an accepted name; start one with `bin/gr0wthpilot %s --rename "
+                "<the name App Store Connect refused>`" % product)
+    if not current.get("shortlist"):
+        return ("the name-only rerun has not recorded its shortlist yet; resume it with `bin/gr0wthpilot %s`"
+                % product)
+    shortlist = current.get("shortlist_names", [])
+    if new in shortlist:
+        return None
+    for name in shortlist:
+        if rename.slug(name) == rename.slug(new):
+            return ("%s is not spelled as on the rerun's shortlist, which spells it %s; hand it over as "
+                    "`bin/gr0wthpilot %s --accept-name \"%s\"`, the spelling the swap writes"
+                    % (new, name, product, name))
+    return ("%s is not on the rerun's shortlist (%s), so the rerun never checked it; hand over a shortlisted name, "
+            "or, if App Store Connect refused them, start a new rerun with `bin/gr0wthpilot %s --rename \"%s\"` "
+            "and `--rule-out \"<name>\"` for each name it refused"
+            % (new, ", ".join(shortlist), product, current["old_name"]))
+
+
+def begin_rerun(pkg, journal, old, names, roots, backup_dir, now):
+    """Start a name-only rerun from `old`, the name App Store Connect refused.
+
+    Sets the earlier tournament aside in the package, reopens the tournament
+    and every later recorded gate, and records the rerun in the journal's
+    `rename` block with the ruled-out names, which always include `old`. A
+    rerun keeps every name and root an earlier rerun ruled out: one still
+    waiting for its accepted name gets this one's added, and one whose name
+    was swapped in moves to the journal's `renames`. Raises ValueError when
+    the run cannot rerun its name."""
+    why = rerun_refusal(journal, old)
+    if why:
+        raise ValueError(why)
+    current = journal.get("rename") or {}
+    if current and current.get("stage") != "shortlist":
+        journal.setdefault("renames", []).append(current)
+        current = {}
+    earlier = journal.get("renames", []) + [current]
+    names = unique([old] + [n for block in earlier for n in block.get("rule_out", [])] + list(names))
+    roots = unique([r for block in earlier for r in block.get("rule_out_roots", [])] + list(roots))
+    moved = rename.set_aside_tournament(pkg, old)
+    later = GATE_IDS[GATE_IDS.index("tournament"):]
+    reason = ("name-only rerun from %s, which App Store Connect refused; the Founder started it with the launcher's "
+              "--rename. Ruled out: %s%s. The positioning, hero message, and look stay as they are." % (
+                  old, ", ".join(names), ", and every name holding the root " + " or ".join(roots) if roots else ""))
+    reopen(journal, later, reason, now)
+    add_note(journal, "Name-only rerun from %s: the package as it was before the rerun is kept in %s; the earlier "
+             "tournament is %s." % (old, backup_dir, moved or "absent"), now)
+    journal["rename"] = {
+        "stage": "shortlist", "old_name": old, "rule_out": names, "rule_out_roots": roots,
+        "started_at": now, "earlier_tournament": moved,
+        "backups": current.get("backups", []) + [{"at": now, "before": "rerun", "path": str(backup_dir)}],
+        "shortlist": None, "shortlist_names": [], "accepted_name": None,
+    }
+    return journal["rename"]
+
+
+def accept_name(pkg, journal, new, work, backup_dir, now):
+    """Swap `new`, the shortlisted name App Store Connect accepted, through
+    the package in place of the rerun's earlier name, and write the review
+    sheet into the cache folder; the gates the rerun reopened then pass again
+    in order. Raises ValueError when no rerun waits for a name, or the name is
+    not on its shortlist."""
+    why = accept_refusal(journal, new)
+    if why:
+        raise ValueError(why)
+    current = journal["rename"]
+    product = journal.get("product")
+    old = current["old_name"]
+    report = rename.swap(pkg, old, new)
+    review = rename.write_review(Path(work) / "rename" / ("%s-%s-review.md" % (now.replace(":", ""), rename.slug(new))),
+                                 old, new, report, backup_dir, product)
+    add_note(journal, "Name swap to %s: the Founder handed over %s, which App Store Connect accepted, with the "
+             "launcher's --accept-name; the launcher swapped it through the package in place of %s (%d lines in %d "
+             "files); the review sheet is %s; the package as it was before the swap is kept in %s." % (
+                 new, new, old, sum(report["files"].values()), len(report["files"]), review, backup_dir), now)
+    current.update({
+        "stage": "swapped", "accepted_name": new, "accepted_at": now,
+        "backups": current.get("backups", []) + [{"at": now, "before": "swap", "path": str(backup_dir)}],
+        "swap": {"review": str(review), "files": len(report["files"]), "lines": sum(report["files"].values()),
+                 "left": sum(len(v) for v in report["left"].values()), "svgs": report["svgs"],
+                 "media": len(report["media"])},
+    })
+    return current
+
+
+def record_shortlist(pkg, journal, now):
+    """(problems, names): check a rerun's shortlist and, when it passes,
+    record it, which ends the rerun until the Founder hands a name over."""
+    current = journal.get("rename") or {}
+    if current.get("stage") != "shortlist":
+        return ["no name-only rerun is open; the shortlist belongs to one (the launcher's --rename)"], []
+    if "tournament" not in passed_ids(journal):
+        return ["pass the rerun's tournament first (journal.py pass tournament)"], []
+    problems, names = rename.check_shortlist(pkg / rename.SHORTLIST, journal.get("product"),
+                                             current["rule_out"], current["rule_out_roots"])
+    problems += ["sources: " + p for p in check_sources.check(pkg)["problems"]]
+    if not problems:
+        current.update(shortlist=rename.SHORTLIST, shortlist_at=now, shortlist_names=names)
+        add_note(journal, "Name-only rerun from %s ended at its shortlist (%s): %s. The Founder tries them in App Store "
+                 "Connect in that order." % (current["old_name"], rename.SHORTLIST, ", ".join(names)), now)
+    return problems, names
+
+
+def unique(items):
+    out = []
+    for item in items:
+        if item and rename.slug(item) not in {rename.slug(i) for i in out}:
+            out.append(item)
+    return out
 
 
 def save(pkg, journal):
@@ -278,6 +508,12 @@ def main(argv=None):
     p = sub.add_parser("pass")
     p.add_argument("gate", choices=GATE_IDS)
     p.add_argument("package", nargs="?")
+    r = sub.add_parser("reopen")
+    r.add_argument("gates", nargs="+", choices=GATE_IDS, metavar="GATE")
+    r.add_argument("--reason", required=True)
+    r.add_argument("--package")
+    sl = sub.add_parser("shortlist")
+    sl.add_argument("package", nargs="?")
     w = sub.add_parser("workflow")
     w.add_argument("--phase", required=True)
     w.add_argument("--name", required=True)
@@ -299,8 +535,10 @@ def main(argv=None):
         nxt = next_gate(journal)
         print(json.dumps({
             "run_id": journal.get("run_id"), "status": journal.get("status"), "package": str(pkg),
-            "passed": [g["id"] for g in journal.get("gates", [])],
+            "passed": passed_ids(journal), "reopened": reopened_ids(journal),
             "next_gate": {"id": nxt[0], "phase": nxt[1], "means": nxt[2]} if nxt else None,
+            "waiting_for_name": bool(nxt and waiting_for_name(journal, nxt[0])),
+            "rename": journal.get("rename"),
             "workflows": len(journal.get("workflows", [])), "sessions": len(journal.get("sessions", [])),
         }, indent=2))
         return 0
@@ -309,7 +547,11 @@ def main(argv=None):
         return 1
     if args.cmd == "pass":
         nxt = next_gate(journal)
-        passed = [g["id"] for g in journal.get("gates", [])]
+        passed = passed_ids(journal)
+        waiting = waiting_for_name(journal, args.gate)
+        if waiting:
+            print("FAIL " + waiting)
+            return 1
         if args.gate in passed:
             problems = CHECKS[args.gate](pkg, cfg)
             for problem in problems:
@@ -318,9 +560,9 @@ def main(argv=None):
                 print("FAIL: gate %s passed earlier, but its checks fail now (%d problem(s)); fix them"
                       % (args.gate, len(problems)))
                 return 1
-            phase = next(ph for gid, ph, _ in GATES if gid == args.gate)
+            phase = phase_of(args.gate)
             if args.gate in WORK_GATES.get(phase, []):
-                entry = [g for g in journal["gates"] if g["id"] == args.gate][-1]
+                entry = recorded(journal)[args.gate]
                 entry["repassed_at"] = now
                 save(pkg, journal)
                 if "critic-" + phase in passed:
@@ -337,10 +579,42 @@ def main(argv=None):
                 print("FAIL " + problem)
             print("FAIL: gate %s not passed (%d problem(s))" % (args.gate, len(problems)))
             return 1
-        journal.setdefault("gates", []).append({"id": args.gate, "passed_at": now})
+        entry = recorded(journal).get(args.gate)
+        if entry:
+            entry.setdefault("reopens", []).append({"reopened_at": entry.pop("reopened_at"),
+                                                    "reason": entry.pop("reopen_reason", None), "repassed_at": now})
+            entry["repassed_at"] = now
+            verb = "passed again after its send-back"
+        else:
+            journal.setdefault("gates", []).append({"id": args.gate, "passed_at": now})
+            verb = "recorded"
         save(pkg, journal)
         nxt = next_gate(journal)
-        print("PASS: gate %s recorded; next: %s" % (args.gate, nxt[0] if nxt else "journal.py complete"))
+        print("PASS: gate %s %s; next: %s" % (args.gate, verb, nxt[0] if nxt else "journal.py complete"))
+        if nxt and waiting_for_name(journal, nxt[0]):
+            print("NOTE: the next gate waits for the Founder's accepted name; write the shortlist and record it with "
+                  "journal.py shortlist")
+        return 0
+    if args.cmd == "reopen":
+        unknown = [g for g in args.gates if g not in recorded(journal)]
+        if unknown:
+            print("FAIL gate(s) never passed, so there is nothing to send back: %s" % ", ".join(unknown))
+            return 1
+        reopened = reopen(journal, args.gates, args.reason, now)
+        save(pkg, journal)
+        print("reopened: %s; next: %s" % (", ".join(reopened) or "nothing new", next_gate(journal)[0]))
+        return 0
+    if args.cmd == "shortlist":
+        problems, names = record_shortlist(pkg, journal, now)
+        if problems:
+            for problem in problems:
+                print("FAIL " + problem)
+            print("FAIL: shortlist not recorded (%d problem(s))" % len(problems))
+            return 1
+        save(pkg, journal)
+        print("PASS: shortlist recorded: %s. The rerun ends here: tell the Founder to try them in App Store Connect "
+              "in that order and to run `bin/gr0wthpilot %s --accept-name \"<name>\"` with the first one it "
+              "accepts." % (", ".join(names), journal.get("product")))
         return 0
     if args.cmd == "workflow":
         journal.setdefault("workflows", []).append({"phase": args.phase, "name": args.name, "run_id": args.run_id,
@@ -349,7 +623,7 @@ def main(argv=None):
         print("recorded workflow %s" % args.name)
         return 0
     if args.cmd == "note":
-        journal.setdefault("notes", []).append({"at": now, "text": args.text})
+        add_note(journal, args.text, now)
         save(pkg, journal)
         print("noted")
         return 0

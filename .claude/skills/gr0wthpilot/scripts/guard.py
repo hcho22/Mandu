@@ -1173,7 +1173,7 @@ def run_post(cfg, data):
 
 def run_session_start(cfg, data):
     journal = gc.load_journal(Path(cfg["package"])) or {}
-    passed = [g.get("id") for g in journal.get("gates", [])]
+    passed = [g.get("id") for g in journal.get("gates", []) if not g.get("reopened_at")]
     lines = [
         "Gr0wthPilot run for %s, under the launcher's guarded profile." % cfg["product"],
         "Candidate Package (the only place this run writes, besides its cache folder %s): %s"
