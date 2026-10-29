@@ -73,6 +73,12 @@ def valid_name(name):
     return None
 
 
+def names_it(text, name):
+    """Whether `text` holds `name` spelled exactly so, as a word of its own,
+    not inside a handle or a domain."""
+    return bool(re.search(r"(?<![A-Za-z0-9@_.])%s(?![A-Za-z0-9_]|\.[A-Za-z0-9])" % re.escape(name), text))
+
+
 def ruled_out(name, names, roots):
     """Why a name is ruled out, or None: it is one of `names` in any case or
     spacing, or contains one of `roots` in any case or spacing."""

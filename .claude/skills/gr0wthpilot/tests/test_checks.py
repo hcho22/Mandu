@@ -1490,6 +1490,42 @@ class RenameTest(unittest.TestCase):
         self.assertEqual((first / "run-journal.json").read_bytes(), (pkg / "run-journal.json").read_bytes())
 
 
+class HandOverFreshnessTest(unittest.TestCase):
+    def setUp(self):
+        patcher = mock.patch.object(check_layout, "default_registries", lambda: [Path(REGISTRY)])
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_launch_set_images_and_the_video_must_follow_the_name_hand_over(self):
+        import datetime as dt
+        pkg = fixtures.package()
+        cfg = {"product": fixtures.PRODUCT}
+        video = pkg / "04-video/walkthrough.mp4"
+        images = sorted(pkg.glob("10-launch-set/*/profile.png"))
+        rendered = time.time() - 3600
+        for path in [video] + images:
+            os.utime(str(path), (rendered, rendered))
+
+        def stale(check, minutes):
+            data = load(pkg)
+            data["rename"] = {"stage": "swapped", "accepted_name": "Cinewell",
+                              "accepted_at": gc.iso_z(dt.datetime.fromtimestamp(rendered + minutes * 60,
+                                                                                 dt.timezone.utc))}
+            save(pkg, data)
+            return sorted(p.split(" is older than")[0] for p in check(pkg, cfg) if "older than the name hand-over" in p)
+
+        self.assertEqual(stale(journal.CHECKS["video"], 1), ["04-video/walkthrough.mp4"])
+        self.assertEqual(stale(journal.CHECKS["launch-set"], 1), [gc.rel(pkg, p) for p in images])
+        self.assertEqual(stale(journal.all_checks, 1), ["launch-set: " + gc.rel(pkg, p) for p in images]
+                         + ["video: 04-video/walkthrough.mp4"])
+        for check in (journal.CHECKS["video"], journal.CHECKS["launch-set"], journal.all_checks):
+            self.assertEqual(stale(check, -1), [])
+        data = load(pkg)
+        data.pop("rename")
+        save(pkg, data)
+        self.assertEqual([p for p in journal.CHECKS["video"](pkg, cfg) if "hand-over" in p], [])
+
+
 class JournalReopenTest(unittest.TestCase):
     def setUp(self):
         for patcher in (mock.patch.object(check_layout, "default_registries", lambda: [Path(REGISTRY)]),
@@ -1589,8 +1625,44 @@ class NameRerunTest(unittest.TestCase):
         self.assertEqual(info["rule_out_roots"], ["Film", "Grain"])
         self.assertEqual(len(info["backups"]), 2)
         self.assertTrue((self.pkg / "02-brand/tournament-filmora-2/scorecard.md").is_file())
-        with self.assertRaises(ValueError):
-            journal.begin_rerun(self.pkg, load(self.pkg), "Other", [], [], "/b", self.now)
+        for other in ("Other", "filmora"):
+            with self.assertRaises(ValueError) as raised:
+                journal.begin_rerun(self.pkg, load(self.pkg), other, [], [], "/b", self.now)
+            self.assertIn("rerun from Filmora, spelled so", str(raised.exception))
+
+    def test_after_the_swap_a_rerun_starts_from_the_new_name_and_keeps_every_rule_out(self):
+        self.begin(names=["Shutterly"])
+        self.new_tournament()
+        self.assertEqual(quiet(journal.main, ["pass", "tournament", str(self.pkg)]), 0)
+        (self.pkg / rename.SHORTLIST).write_text(shortlist_md(["Cinewell", "Rollbook", "Halide Days"]))
+        self.assertEqual(quiet(journal.main, ["shortlist", str(self.pkg)]), 0)
+        data = load(self.pkg)
+        journal.accept_name(self.pkg, data, "Cinewell", self.pkg.parent / "work", "/b2", self.now)
+        save(self.pkg, data)
+        with self.assertRaises(ValueError) as raised:
+            journal.accept_name(self.pkg, data, "Cinewell", self.pkg.parent / "work", "/b3", self.now)
+        self.assertIn("Cinewell was already handed over and swapped through the package in place of Filmora; resume "
+                      "the run with `bin/gr0wthpilot Testprod`", str(raised.exception))
+        for old in ("Filmora", "cinewell"):
+            with self.assertRaises(ValueError) as raised:
+                journal.begin_rerun(self.pkg, load(self.pkg), old, [], [], "/b3", self.now)
+            self.assertIn('Filmora was already swapped out for Cinewell, the name the package now carries; a rerun '
+                          'starts from it: `bin/gr0wthpilot Testprod --rename "Cinewell"`', str(raised.exception))
+        self.assertEqual(load(self.pkg)["rename"]["stage"], "swapped")
+        self.assertFalse((self.pkg / "02-brand/tournament-filmora-2").exists())
+        data = load(self.pkg)
+        info = journal.begin_rerun(self.pkg, data, "Cinewell", ["Rollbook"], ["Cine"], "/b3", self.now)
+        save(self.pkg, data)
+        self.assertEqual(info["rule_out"], ["Cinewell", "Filmora", "Shutterly", "Rollbook"])
+        self.assertEqual(info["rule_out_roots"], ["Film", "Cine"])
+        self.assertEqual([b["accepted_name"] for b in data["renames"]], ["Cinewell"])
+        self.assertTrue((self.pkg / "02-brand/tournament-cinewell/scorecard.md").is_file())
+        self.new_tournament()
+        self.assertEqual(quiet(journal.main, ["pass", "tournament", str(self.pkg)]), 0)
+        (self.pkg / rename.SHORTLIST).write_text(shortlist_md(["Filmora", "Filmlight", "Shutterly", "Halide Days"]))
+        problems = journal.record_shortlist(self.pkg, load(self.pkg), self.now)[0]
+        for refusal in ("Filmora is ruled out", "Filmlight shares the ruled-out root Film", "Shutterly is ruled out"):
+            self.assertTrue(has(problems, re.escape(refusal)), problems)
 
     def test_the_shortlist_is_checked_then_recorded(self):
         self.begin(names=["Shutterly"])

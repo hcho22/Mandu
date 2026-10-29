@@ -8,6 +8,8 @@ The `package` gate re-checks the critics of phases 1 to 4 that way, and `journal
 
 A gate a later phase sends back is reopened (`journal.py reopen <gate> --reason "<why>"`): it keeps its record, counts as not passed, and passes again in order, with the same checks, before any later gate; reopening a work gate reopens its phase's critic too.
 A name-only rerun reopens the tournament and every later passed gate, and refuses every gate after the tournament until the Founder hands over a shortlisted name App Store Connect accepted; after the hand-over swaps it through the package, the reopened gates pass again in order.
+After the swap (the journal's `rename.stage` is `swapped`), add this criterion to every phase's list: the phase fails while any of its deliverables or renders, or the naming decision, still presents the earlier name as the brand; a record of what was found, judged, or decided under the earlier name (the records `scripts/rename.py` lists, the naming decision aside) may still name it, as the earlier name.
+The `launch-set` and `video` gates also refuse any Launch Set image, and the walkthrough video, older than the hand-over (`rename.accepted_at`).
 See "Name-only rerun" in `SKILL.md`.
 
 ## Read the product

@@ -475,7 +475,9 @@ def rename_step(args):
 
 def check_rename_target(target: dict, step: str, old) -> None:
     """A name-only rerun works on the unfinished run's package, which must
-    still hold the name it reruns from."""
+    still hold the name it reruns from: before any rerun, the naming decision
+    names it as a word of its own; after one, the journal's `rerun_refusal`
+    holds it to the name the rerun left the package with."""
     if target["mode"] != "resume":
         raise RunError("a name-only rerun reworks an unfinished run's Candidate Package, and %s has none (%s would "
                        "start a new run); nothing was changed" % (target["product"], target["package_rel"]))
@@ -483,10 +485,10 @@ def check_rename_target(target: dict, step: str, old) -> None:
         package = Path(target["package"])
         naming = package / "02-brand" / "naming-decision.md"
         text = naming.read_text(encoding="utf-8") if naming.is_file() else ""
-        current = (gc.load_journal(package) or {}).get("rename") or {}
-        if old not in text and rename.slug(current.get("old_name")) != rename.slug(old):
-            raise RunError("%s does not appear in %s/02-brand/naming-decision.md, so it is not the name this package "
-                           "proposes; give the name exactly as the package spells it" % (old, target["package_rel"]))
+        if jr.current_name(gc.load_journal(package) or {}) is None and not rename.names_it(text, old):
+            raise RunError("%s does not appear in %s/02-brand/naming-decision.md spelled so, as a word of its own (not "
+                           "inside a handle or domain), so it is not the name this package proposes; give the name "
+                           "exactly as the package spells it" % (old, target["package_rel"]))
 
 
 def prepare(args) -> dict:

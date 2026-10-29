@@ -271,6 +271,7 @@ The positioning, the hero message, and the look stay as they are; only the name 
    Before the session opens, the launcher copies the package again, swaps the name through its deliverables (never its records, never a URL; the rules are at the top of `<skill>/scripts/rename.py`), and writes a review sheet into the cache folder; the gates step 1 reopened still wait to pass again.
    The preflight's `rename_step` is `accept`.
 
+A later rerun, when the swapped-in name is refused too, starts from that name with `--rename` and keeps every name and root ruled out before.
 The journal's `rename` block holds the state: `stage` (`shortlist`, then `swapped`), the earlier name, the ruled-out names and roots, every backup's path, the shortlist, and the swap's review sheet.
 A run cannot see App Store Connect; that the Founder's step-2 name was accepted there is his word, recorded by his command.
 

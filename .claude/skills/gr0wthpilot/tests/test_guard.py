@@ -746,14 +746,25 @@ class NameRerunPrepTest(unittest.TestCase):
         self.assertTrue(guard.under(data["rename"]["swap"]["review"], self.cache / "Testprod"))
         self.assertEqual(journal.next_gate(data)[0], "brand")
 
+        for flags, message in (({"rename": "Filmora"}, "Filmora was already swapped out for Cinewell"),
+                               ({"accept_name": "Cinewell"}, "Cinewell was already handed over")):
+            with self.assertRaises(gp_run.RunError) as raised:
+                self.prepare(**flags)
+            self.assertIn(message, str(raised.exception))
+        self.assertEqual(len(self.backups()), 2)
+        self.assertEqual(gc.read_json(self.pkg / gc.JOURNAL_NAME)["rename"], data["rename"])
+
         resumed = self.prepare()
         self.assertEqual((resumed["mode"], resumed["rename_step"], resumed["rename_summary"]), ("resume", None, None))
         self.assertEqual(len(self.backups()), 2)
         self.assertEqual(gc.read_json(self.pkg / gc.JOURNAL_NAME)["rename"], data["rename"])
 
     def test_rerun_refusals_change_nothing(self):
+        with open(str(self.pkg / "02-brand/naming-decision.md"), "a") as handle:
+            handle.write("Fallback domains filmora.app and @filmora are held by others.\n")
         before = (self.pkg / gc.JOURNAL_NAME).read_text()
         for flags, message in (
+                ({"rename": "filmora"}, "does not appear in"),
                 ({"rename": "Filmora", "accept_name": "Cinewell"}, "give one of them"),
                 ({"rule_out": ["Shutterly"]}, "go with --rename"),
                 ({"rename": "Filmora", "rule_out_root": ["F"]}, "2 to 40 letters"),
@@ -850,6 +861,20 @@ class LauncherTest(unittest.TestCase):
             self.assertIn(message, out.stdout + out.stderr, args)
         self.assertFalse(self.calls.exists())
         self.assertFalse((self.cache / "Testprod" / "backups").exists())
+
+
+class SessionStartTest(unittest.TestCase):
+    def test_reopened_gates_are_not_listed_as_passed(self):
+        cfg = config()
+        gates = [{"id": g, "passed_at": "2026-10-25T05:00:00Z"} for g in journal.GATE_IDS[:6]]
+        for entry in gates[2:]:
+            entry["reopened_at"] = "2026-10-28T12:00:00Z"
+        gc.write_json(Path(cfg["package"]) / gc.JOURNAL_NAME, {"gates": gates})
+        context = guard.run_session_start(cfg, {"source": "startup"})["hookSpecificOutput"]["additionalContext"]
+        self.assertIn("gates passed so far: product-facts, research.", context)
+        gc.write_json(Path(cfg["package"]) / gc.JOURNAL_NAME, {"gates": gates[2:]})
+        context = guard.run_session_start(cfg, {"source": "startup"})["hookSpecificOutput"]["additionalContext"]
+        self.assertIn("gates passed so far: none.", context)
 
 
 class WrapperRulesTest(unittest.TestCase):

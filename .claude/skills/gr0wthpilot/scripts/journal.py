@@ -146,8 +146,24 @@ def g_test_kit(pkg, cfg):
     return kit
 
 
+def older_than_hand_over(pkg, paths):
+    """Problems for each of these renders older than the Founder's name
+    hand-over (`rename.accepted_at`): after a name swap, each is rendered
+    again from its swapped source."""
+    at = gc.parse_iso_z(((gc.load_journal(pkg) or {}).get("rename") or {}).get("accepted_at") or "")
+    if not at:
+        return []
+    return ["%s is older than the name hand-over at %s; render it again from its swapped source"
+            % (gc.rel(pkg, p), gc.iso_z(at)) for p in paths if p.is_file() and p.stat().st_mtime < at.timestamp()]
+
+
+def launch_set_problems(pkg):
+    result = check_screenshots.check_launch_set(pkg)
+    return result["problems"] + older_than_hand_over(pkg, result["images"])
+
+
 def g_launch_set(pkg, cfg):
-    return check_screenshots.check_launch_set(pkg)["problems"] + brand_lint.check(pkg)["problems"]
+    return launch_set_problems(pkg) + brand_lint.check(pkg)["problems"]
 
 
 def g_video(pkg, cfg):
@@ -156,8 +172,9 @@ def g_video(pkg, cfg):
     except (OSError, ValueError):
         return ["04-video/gate.json is missing: {\"video\": \"walkthrough.mp4\", \"size\": \"1080x1920\", "
                 "\"min_seconds\": 15, \"max_seconds\": 120}"]
-    return check_video.verify(pkg / "04-video" / spec.get("video", "walkthrough.mp4"), spec.get("size", "1080x1920"),
-                              int(spec.get("min_seconds", 15)), int(spec.get("max_seconds", 120)))["problems"]
+    video = pkg / "04-video" / spec.get("video", "walkthrough.mp4")
+    return check_video.verify(video, spec.get("size", "1080x1920"), int(spec.get("min_seconds", 15)),
+                              int(spec.get("max_seconds", 120)))["problems"] + older_than_hand_over(pkg, [video])
 
 
 def g_red_team(pkg, cfg):
@@ -184,7 +201,7 @@ def all_checks(pkg, cfg):
     problems += ["layout: " + p for p in layout["problems"]]
     problems += ["brand: " + p for p in brand_lint.check(pkg)["problems"]]
     problems += ["site: " + p for p in check_screenshots.check_site(pkg)["problems"]]
-    problems += ["launch-set: " + p for p in check_screenshots.check_launch_set(pkg)["problems"]]
+    problems += ["launch-set: " + p for p in launch_set_problems(pkg)]
     problems += ["video: " + p for p in g_video(pkg, cfg)]
     problems += ["recap: " + p for p in check_recap.check(pkg, cfg["product"])["problems"]]
     return problems
@@ -332,15 +349,28 @@ def waiting_for_name(journal, gate):
     return None
 
 
+def current_name(journal):
+    """The name a name-only rerun left the package with: the accepted name
+    once swapped in, the earlier name while the rerun waits at its shortlist,
+    or None when no rerun ran."""
+    current = journal.get("rename") or {}
+    return current.get("accepted_name") if current.get("stage") == "swapped" else current.get("old_name")
+
+
 def rerun_refusal(journal, old):
     """Why this run cannot start a name-only rerun from `old`, or None."""
     current = journal.get("rename") or {}
+    product = journal.get("product")
     if "tournament" not in recorded(journal):
         return ("the run has not passed its tournament yet, so there is no name to rerun; resume it with "
-                "`bin/gr0wthpilot %s`" % journal.get("product"))
-    if current.get("stage") == "shortlist" and rename.slug(current.get("old_name")) != rename.slug(old):
+                "`bin/gr0wthpilot %s`" % product)
+    name = current_name(journal)
+    if name and old != name and current.get("stage") == "swapped":
+        return ("%s was already swapped out for %s, the name the package now carries; a rerun starts from it: "
+                "`bin/gr0wthpilot %s --rename \"%s\"`" % (current["old_name"], name, product, name))
+    if name and old != name:
         return ("a name-only rerun from %s is already waiting for its accepted name; hand one over with "
-                "--accept-name, or rerun from %s" % (current["old_name"], current["old_name"]))
+                "--accept-name, or rerun from %s, spelled so" % (name, name))
     return None
 
 
@@ -348,6 +378,9 @@ def accept_refusal(journal, new):
     """Why `new` cannot be handed over now, or None."""
     current = journal.get("rename") or {}
     product = journal.get("product")
+    if current.get("stage") == "swapped":
+        return ("%s was already handed over and swapped through the package in place of %s; resume the run with "
+                "`bin/gr0wthpilot %s`" % (current["accepted_name"], current["old_name"], product))
     if current.get("stage") != "shortlist":
         return ("no name-only rerun is waiting for an accepted name; start one with `bin/gr0wthpilot %s --rename "
                 "<the name App Store Connect refused>`" % product)
@@ -374,21 +407,20 @@ def begin_rerun(pkg, journal, old, names, roots, backup_dir, now):
     Sets the earlier tournament aside in the package, reopens the tournament
     and every later recorded gate, and records the rerun in the journal's
     `rename` block with the ruled-out names, which always include `old`. A
-    second rerun from the same name while the first waits for its accepted
-    name adds its ruled-out names to the first's. Raises ValueError when the
-    run cannot rerun its name."""
+    rerun keeps every name and root an earlier rerun ruled out: one still
+    waiting for its accepted name gets this one's added, and one whose name
+    was swapped in moves to the journal's `renames`. Raises ValueError when
+    the run cannot rerun its name."""
     why = rerun_refusal(journal, old)
     if why:
         raise ValueError(why)
     current = journal.get("rename") or {}
-    if current.get("stage") == "shortlist":
-        names = current.get("rule_out", []) + list(names)
-        roots = current.get("rule_out_roots", []) + list(roots)
-    elif current:
+    if current and current.get("stage") != "shortlist":
         journal.setdefault("renames", []).append(current)
         current = {}
-    names = unique([old] + list(names))
-    roots = unique(roots)
+    earlier = journal.get("renames", []) + [current]
+    names = unique([old] + [n for block in earlier for n in block.get("rule_out", [])] + list(names))
+    roots = unique([r for block in earlier for r in block.get("rule_out_roots", [])] + list(roots))
     moved = rename.set_aside_tournament(pkg, old)
     later = GATE_IDS[GATE_IDS.index("tournament"):]
     reason = ("name-only rerun from %s, which App Store Connect refused; the Founder started it with the launcher's "
