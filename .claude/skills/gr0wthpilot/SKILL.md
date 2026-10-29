@@ -266,6 +266,7 @@ The positioning, the hero message, and the look stay as they are; only the name 
 
 1. `bin/gr0wthpilot <Product> --rename <refused name> [--rule-out <name>]... [--rule-out-root <root>]...` starts it.
    Before the session opens, the launcher copies the whole package into the cache folder's `backups/`, moves the earlier tournament to `02-brand/tournament-<refused name>/`, reopens the tournament gate and every later gate already passed, and records all of it in the journal as a send-back with the ruled-out names (the refused name always among them) and roots.
+   The launcher refuses the Product's own name, and, on a first rerun, any name the naming decision, the brand guidelines, and the landing page (when there is one) do not each carry as a word of its own.
    The preflight's `rename_step` is `rerun`.
 2. `bin/gr0wthpilot <Product> --accept-name "<name>"`, once App Store Connect accepts a shortlisted name, hands it over; a name not on the recorded shortlist is refused.
    Before the session opens, the launcher copies the package again, swaps the name through its deliverables (never its records, never a URL; the rules are at the top of `<skill>/scripts/rename.py`), and writes a review sheet into the cache folder; the gates step 1 reopened still wait to pass again.

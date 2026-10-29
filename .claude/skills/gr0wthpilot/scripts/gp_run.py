@@ -475,20 +475,32 @@ def rename_step(args):
 
 def check_rename_target(target: dict, step: str, old) -> None:
     """A name-only rerun works on the unfinished run's package, which must
-    still hold the name it reruns from: before any rerun, the naming decision
-    names it as a word of its own; after one, the journal's `rerun_refusal`
-    holds it to the name the rerun left the package with."""
+    still carry the name it reruns from as its brand, never the Product's own
+    name: before any rerun, the naming decision, the brand guidelines, and the
+    landing page when there is one each name it as a word of its own; after
+    one, the journal's `rerun_refusal` holds it to the name the rerun left the
+    package with."""
     if target["mode"] != "resume":
         raise RunError("a name-only rerun reworks an unfinished run's Candidate Package, and %s has none (%s would "
                        "start a new run); nothing was changed" % (target["product"], target["package_rel"]))
-    if step == "rerun":
-        package = Path(target["package"])
-        naming = package / "02-brand" / "naming-decision.md"
-        text = naming.read_text(encoding="utf-8") if naming.is_file() else ""
-        if jr.current_name(gc.load_journal(package) or {}) is None and not rename.names_it(text, old):
-            raise RunError("%s does not appear in %s/02-brand/naming-decision.md spelled so, as a word of its own (not "
-                           "inside a handle or domain), so it is not the name this package proposes; give the name "
-                           "exactly as the package spells it" % (old, target["package_rel"]))
+    if step != "rerun":
+        return
+    if rename.slug(old) == rename.slug(target["product"]):
+        raise RunError("%s is the Product's own name (projects/%s), never the name its package proposes; give the "
+                       "proposed name App Store Connect refused" % (old, target["product"]))
+    package = Path(target["package"])
+    if jr.current_name(gc.load_journal(package) or {}) is not None:
+        return
+    files = ["02-brand/naming-decision.md", "02-brand/brand-guidelines.md"]
+    if (package / "03-site/index.html").is_file():
+        files.append("03-site/index.html")
+    missing = [f for f in files if not ((package / f).is_file()
+                                        and rename.names_it((package / f).read_text(encoding="utf-8"), old))]
+    if missing:
+        raise RunError("%s does not stand as the brand in %s: %s must each name it, spelled so, as a word of its own "
+                       "(not inside a handle or domain), so it is not the name this package proposes; give the name "
+                       "exactly as the package spells it" % (old, ", ".join("%s/%s" % (target["package_rel"], f)
+                                                                            for f in missing), " and ".join(files)))
 
 
 def prepare(args) -> dict:

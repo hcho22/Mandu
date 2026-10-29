@@ -675,7 +675,10 @@ def renamable_mandu():
     data = gc.read_json(pkg / gc.JOURNAL_NAME)
     data["gates"] = [{"id": g, "passed_at": "2026-10-25T05:00:00Z"} for g in journal.GATE_IDS[:6]]
     gc.write_json(pkg / gc.JOURNAL_NAME, data)
-    (pkg / "02-brand/naming-decision.md").write_text("# Naming\n\nPropose Filmora. Clearance UNVERIFIED.\n")
+    (pkg / "02-brand/naming-decision.md").write_text("# Naming\n\nPropose Filmora. Clearance UNVERIFIED.\n"
+                                                     "Fallbacks: Matinee and Cineroll. Testprod is the Product.\n")
+    (pkg / "02-brand/brand-guidelines.md").write_text("# Brand guidelines\n\nThe Filmora wordmark for Testprod. "
+                                                      "Palette #111111.\n")
     (pkg / "03-site/index.html").write_text("<h1>Filmora</h1><p>Join at getfilmora.app</p>\n")
     return mandu, pkg
 
@@ -764,11 +767,15 @@ class NameRerunPrepTest(unittest.TestCase):
             handle.write("Fallback domains filmora.app and @filmora are held by others.\n")
         before = (self.pkg / gc.JOURNAL_NAME).read_text()
         for flags, message in (
-                ({"rename": "filmora"}, "does not appear in"),
+                ({"rename": "filmora"}, "does not stand as the brand in projects/Testprod/gtm/02-brand/naming"),
+                ({"rename": "Matinee"}, "does not stand as the brand in projects/Testprod/gtm/02-brand/brand-guidelines"
+                                        ".md, projects/Testprod/gtm/03-site/index.html:"),
+                ({"rename": "Testprod"}, "Testprod is the Product's own name (projects/Testprod)"),
+                ({"rename": "test-prod"}, "is the Product's own name"),
                 ({"rename": "Filmora", "accept_name": "Cinewell"}, "give one of them"),
                 ({"rule_out": ["Shutterly"]}, "go with --rename"),
                 ({"rename": "Filmora", "rule_out_root": ["F"]}, "2 to 40 letters"),
-                ({"rename": "Flimora"}, "does not appear in"),
+                ({"rename": "Flimora"}, "does not stand as the brand in"),
                 ({"accept_name": "Cinewell"}, "no name-only rerun is waiting")):
             with self.assertRaises(gp_run.RunError) as raised:
                 self.prepare(**flags)
