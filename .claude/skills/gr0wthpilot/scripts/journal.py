@@ -354,16 +354,18 @@ def accept_refusal(journal, new):
     if not current.get("shortlist"):
         return ("the name-only rerun has not recorded its shortlist yet; resume it with `bin/gr0wthpilot %s`"
                 % product)
-    why = rename.valid_name(new)
-    if why:
-        return why
     shortlist = current.get("shortlist_names", [])
-    if rename.slug(new) not in {rename.slug(n) for n in shortlist}:
-        return ("%s is not on the rerun's shortlist (%s), so the rerun never checked it; hand over a shortlisted name, "
-                "or, if App Store Connect refused them, start a new rerun with `bin/gr0wthpilot %s --rename \"%s\"` "
-                "and `--rule-out \"<name>\"` for each name it refused" % (new, ", ".join(shortlist), product,
-                                                                      current["old_name"]))
-    return None
+    if new in shortlist:
+        return None
+    for name in shortlist:
+        if rename.slug(name) == rename.slug(new):
+            return ("%s is not spelled as on the rerun's shortlist, which spells it %s; hand it over as "
+                    "`bin/gr0wthpilot %s --accept-name \"%s\"`, the spelling the swap writes"
+                    % (new, name, product, name))
+    return ("%s is not on the rerun's shortlist (%s), so the rerun never checked it; hand over a shortlisted name, "
+            "or, if App Store Connect refused them, start a new rerun with `bin/gr0wthpilot %s --rename \"%s\"` "
+            "and `--rule-out \"<name>\"` for each name it refused"
+            % (new, ", ".join(shortlist), product, current["old_name"]))
 
 
 def begin_rerun(pkg, journal, old, names, roots, backup_dir, now):

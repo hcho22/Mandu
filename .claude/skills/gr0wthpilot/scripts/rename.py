@@ -312,6 +312,12 @@ def _evidence_problems(name, label, text):
     return problems
 
 
+def _line(body, label):
+    """The text after `- <label>:` on its line in a section, or None."""
+    m = re.search(r"^\s*[-*]\s*%s:(.*)$" % re.escape(label), body, re.M)
+    return m.group(1) if m else None
+
+
 def _sections(text):
     marks = list(SECTION_RE.finditer(text))
     for i, m in enumerate(marks):
@@ -343,13 +349,14 @@ def check_shortlist(path, product, names, roots):
         if why:
             problems.append(why)
         for label in ("App Store", "Web", "Domains"):
-            line = re.search(r"^\s*[-*]\s*%s:(.*)$" % re.escape(label), body, re.M)
-            if not line:
+            line = _line(body, label)
+            if line is None:
                 problems.append("%s has no '- %s:' line with its evidence" % (name, label))
             else:
-                problems += _evidence_problems(name, label, line.group(1))
-        if "UNVERIFIED" not in body:
-            problems.append("%s's section must say its trademark and App Store name clearance are UNVERIFIED" % name)
+                problems += _evidence_problems(name, label, line)
+        if "UNVERIFIED" not in (_line(body, "Clearance") or ""):
+            problems.append("%s has no '- Clearance:' line saying its trademark and App Store name clearance are "
+                            "UNVERIFIED" % name)
     if len({slug(n) for n in ranked}) != len(ranked):
         problems.append("a name appears twice in the shortlist")
     if not 3 <= len(ranked) <= 7:

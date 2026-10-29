@@ -1644,6 +1644,13 @@ class NameRerunTest(unittest.TestCase):
             self.assertEqual(len(problems), 1, line)
             self.assertTrue(has(problems, r"Cinewell's Domains entry '%s" % re.escape(entry)), problems)
         self.assertEqual(domains(""), ["Cinewell's Domains line names no domain"])
+        clearance = "- Clearance: trademark and App Store name clearance are UNVERIFIED.\n"
+        for without in ("", "- Clearance: trademark and App Store name clearance are pending.\n"):
+            path.write_text(shortlist_md(["Cinewell", "Rollbook", "Halide Days"]).replace(
+                registered, "cinewell.app: no registration found, UNVERIFIED", 1).replace(clearance, without, 1))
+            self.assertEqual(journal.record_shortlist(self.pkg, load(self.pkg), self.now)[0],
+                             ["Cinewell has no '- Clearance:' line saying its trademark and App Store name clearance "
+                              "are UNVERIFIED"])
         self.assertEqual(domains("cinewell.app: no registration found, UNVERIFIED"), [])
         self.assertEqual(quiet(journal.main, ["shortlist", str(self.pkg)]), 0)
 
@@ -1665,7 +1672,14 @@ class NameRerunTest(unittest.TestCase):
                       str(raised.exception))
         self.assertIn('bin/gr0wthpilot Testprod --rename "Filmora"', str(raised.exception))
         self.assertIn('--rule-out "<name>"', str(raised.exception))
+        for spelling, shortlisted in (("cinewell", "Cinewell"), ("Halide-Days", "Halide Days")):
+            with self.assertRaises(ValueError) as raised:
+                journal.accept_name(self.pkg, data, spelling, self.pkg.parent / "work", "/b2", self.now)
+            self.assertIn("which spells it %s;" % shortlisted, str(raised.exception))
+            self.assertIn('--accept-name "%s"' % shortlisted, str(raised.exception))
         self.assertEqual(data["rename"]["stage"], "shortlist")
+        self.assertEqual((self.pkg / "02-brand/positioning.md").read_text(),
+                         "# Positioning\n\nFilmora is for people who miss film.\n")
         fixtures.write(self.pkg, "05-social-pmf/notes.md", "Filmora on TikTok, @filmora, getfilmora.app/tiktok.\n")
         edit(self.pkg / "01-research/pain-points.md", "# Pain points", "# Pain points Filmora answers")
         info = journal.accept_name(self.pkg, data, "Cinewell", self.pkg.parent / "work", "/b2", self.now)
