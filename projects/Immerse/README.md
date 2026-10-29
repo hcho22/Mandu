@@ -4,7 +4,8 @@
 Instead of picking a vintage filter after unlimited capture, you choose a Camera, load a bounded Film, shoot within its capacity, and the result is revealed by that format's own rules.
 
 **Name:** "Immerse" is the repo name.
-The final product name is not selected (PRD open decision DEC-01), and the PRD uses the descriptive title "Film Camera Experience".
+On 2026-10-28 hcho chose Rewound as the name the app shows, but App Store Connect then refused "Rewound" as already in use, so Rewound is out.
+The final product name is still not selected (PRD open decision DEC-01): a name-only rerun is pending, until a name clears the app keeps showing Immerse, and the PRD uses the descriptive title "Film Camera Experience".
 
 **Repo:** https://github.com/hcho22/Immerse (`main`). **GitHub reports it as PUBLIC** (re-verified 2026-10-26), although earlier Mandu records called it private.
 Its event history shows no visibility change, which is consistent with it having been public since creation on 2026-09-29; whether it should stay public is hcho's call.
