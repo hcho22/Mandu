@@ -54,6 +54,7 @@ Active skills:
 - `influencer-marketing`: vets and re-picks the creators gr0wthlab writes to, from the product's Go-To-Market Package; drafts only, never pays, gifts, or sends (copied from coreyhaines31/marketingskills, MIT).
 - `customer-research`: turns reviews and threads hcho copied by hand into sourced, confidence-labeled quotes for the package's research files (copied from coreyhaines31/marketingskills, MIT).
 - `gr0wthpilot`: hcho starts it with `bin/gr0wthpilot <Product>`; a multi-agent run writes that Product's Candidate Package (research, brand, landing page, Test Kit, Launch Set, walkthrough video, red team, recap) into `projects/<Product>/`, never asks, publishes, or spends, and ends with the line that hands it to gr0wthlab.
+- `growth-teardown`: reverse engineers how a company or app grows at $0 (App Store listing and ratings history, its growth stack through REA's browser capture, its Google ads, public profiles, job openings, and screenshots hcho takes of platforms that refuse automated readers) and writes a playbook of ten plays with paste-ready prompts into `projects/<Product>/teardowns/`; never writes a Go-To-Market Package or gr0wthlab (adapted from superdesigndev/treg's `rea-growth`, Apache 2.0 with Additional Terms).
 - `ingest`: files one learning source into the right wiki, updating every page it touches in a single pass. Run with no path, it takes the sole pending file in `inbox/`.
 
 Each skill folder also carries a `MEMORY.md` it reads at the start of each run and appends to only on explicit hcho feedback (kept under 100 lines).

@@ -1,0 +1,24 @@
+{
+  "months": 35,
+  "ratings_points": 25,
+  "trends_terms": [],
+  "inflection": {
+    "month": "2026-05",
+    "before": 174.64,
+    "after": 461.58,
+    "step": 286.94,
+    "ratio": 2.64,
+    "key": "ratings_per_day",
+    "before_months": [
+      "2026-02",
+      "2026-03",
+      "2026-04"
+    ],
+    "after_months": [
+      "2026-05",
+      "2026-06",
+      "2026-07"
+    ]
+  },
+  "computed_at": "2026-10-30T23:14:13Z"
+}

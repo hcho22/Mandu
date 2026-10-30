@@ -1,0 +1,22 @@
+channel,lag_months,months,moves,rho,note
+ads,0,24,3,,too few months or moves to call a correlation
+ads,1,24,3,,too few months or moves to call a correlation
+ads,2,24,3,,too few months or moves to call a correlation
+aso,0,24,3,,too few months or moves to call a correlation
+aso,1,24,3,,too few months or moves to call a correlation
+aso,2,24,3,,too few months or moves to call a correlation
+celebrity,0,24,1,,too few months or moves to call a correlation
+celebrity,1,24,1,,too few months or moves to call a correlation
+celebrity,2,24,1,,too few months or moves to call a correlation
+funding,0,24,2,,too few months or moves to call a correlation
+funding,1,24,2,,too few months or moves to call a correlation
+funding,2,24,2,,too few months or moves to call a correlation
+hiring,0,24,1,,too few months or moves to call a correlation
+hiring,1,24,1,,too few months or moves to call a correlation
+hiring,2,24,1,,too few months or moves to call a correlation
+offline,0,24,1,,too few months or moves to call a correlation
+offline,1,24,1,,too few months or moves to call a correlation
+offline,2,24,1,,too few months or moves to call a correlation
+product,0,24,3,,too few months or moves to call a correlation
+product,1,24,3,,too few months or moves to call a correlation
+product,2,24,3,,too few months or moves to call a correlation

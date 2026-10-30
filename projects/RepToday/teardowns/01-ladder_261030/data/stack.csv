@@ -1,0 +1,14 @@
+category,name,ids,requests,pages,sources,example
+tag manager,Google Tag Manager,GTM-NWJCL3B,1,home pricing,rea,https://www.googletagmanager.com/gtm.js
+tag manager,Google tag (gtag.js),AW-10851135234 G-RMS4YL1RPR G-VYDGLRB4M6 UA-147635647,4,home pricing,rea,https://www.googletagmanager.com/gtag/js
+analytics,Google Analytics 4,G-RMS4YL1RPR G-VYDGLRB4M6,2,home pricing,rea,https://analytics.google.com/g/collect
+customer data,Segment,9AXppxupYYlAb8xFD1CbnAVVRYmqJcR4,11,home pricing,rea,https://cdn.segment.com/analytics.js/v1/9AXppxupYYlAb8xFD1CbnAVVRYmqJcR4/analytics.min.js
+error monitoring,Sentry,458855,1,home pricing quiz,rea,https://o458855.ingest.us.sentry.io/api/6271383/envelope/
+ad pixel,AppLovin Axon,,8,home pricing,rea,https://s.axon.ai/pixel.js
+ad pixel,Google Ads,10851135234,4,home pricing,rea,https://www.google.com/ccm/collect
+ad pixel,Google Campaign Manager / Floodlight,,1,home pricing,rea,https://ad.doubleclick.net/ccm/s/collect
+ad pixel,Google remarketing audiences,,5,home pricing,rea,https://stats.g.doubleclick.net/g/collect
+ad pixel,Meta Pixel,120204865154143 2199559587058620,3,home pricing,rea,https://connect.facebook.net/en_US/fbevents.js
+ad pixel,TikTok Pixel,C97L7M3C77U37LFVKAFG,12,home pricing,rea,https://analytics.tiktok.com/i18n/pixel/events.js
+site builder,Next.js,,77,home pricing quiz,rea,https://www.joinladder.com/_next/static/media/SFPro_Display_Regular-s.p.3e004b3f.woff2
+media,imgix,,8,home,rea,https://ladderteams.imgix.net/website/marketing-images/hilary/hilary-hero-desktop-v6.jpg

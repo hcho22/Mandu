@@ -1,0 +1,59 @@
+{
+  "url": "https://joinladder.com/apple-app-site-association",
+  "paths": [
+    {
+      "app_ids": "47C67EY3XL.com.ladder.bootcamp.beta 47C67EY3XL.com.ladder.bootcamp",
+      "path": "/stripe/*",
+      "query": "",
+      "exclude": true,
+      "comment": "exclude all paths under /stripe"
+    },
+    {
+      "app_ids": "47C67EY3XL.com.ladder.bootcamp.beta 47C67EY3XL.com.ladder.bootcamp",
+      "path": "/_/*",
+      "query": "",
+      "exclude": true,
+      "comment": "exclude all paths under /_"
+    },
+    {
+      "app_ids": "47C67EY3XL.com.ladder.bootcamp.beta 47C67EY3XL.com.ladder.bootcamp",
+      "path": "/app/auth",
+      "query": "",
+      "exclude": true,
+      "comment": "exclude /app/auth"
+    },
+    {
+      "app_ids": "47C67EY3XL.com.ladder.bootcamp.beta 47C67EY3XL.com.ladder.bootcamp",
+      "path": "/ladder-shop-claim",
+      "query": "",
+      "exclude": true,
+      "comment": "exclude /ladder-shop-claim"
+    },
+    {
+      "app_ids": "47C67EY3XL.com.ladder.bootcamp.beta 47C67EY3XL.com.ladder.bootcamp",
+      "path": "/ladder-shop-claim/*",
+      "query": "",
+      "exclude": true,
+      "comment": "exclude all paths under /ladder-shop-claim"
+    },
+    {
+      "app_ids": "47C67EY3XL.com.ladder.bootcamp.beta 47C67EY3XL.com.ladder.bootcamp",
+      "path": "/app/support/*",
+      "query": "",
+      "exclude": true,
+      "comment": "explicitly disable the Smart App Banner on support pages"
+    },
+    {
+      "app_ids": "47C67EY3XL.com.ladder.bootcamp.beta 47C67EY3XL.com.ladder.bootcamp",
+      "path": "/*",
+      "query": "",
+      "exclude": false,
+      "comment": "allow all other paths"
+    }
+  ],
+  "webcredentials": [],
+  "appclips": [
+    "47C67EY3XL.com.ladder.bootcamp.beta.WorkoutAppClip",
+    "47C67EY3XL.com.ladder.bootcamp.WorkoutAppClip"
+  ]
+}

@@ -1,0 +1,178 @@
+{
+  "subtitle": "Fitness Workouts at Home & Gym",
+  "in_app_purchases": [
+    {
+      "name": "PRO",
+      "price": "$29.99"
+    },
+    {
+      "name": "PRO Annual",
+      "price": "$179.99"
+    },
+    {
+      "name": "PRO+",
+      "price": "$34.99"
+    },
+    {
+      "name": "PRO Annual",
+      "price": "$179.99"
+    },
+    {
+      "name": "ELITE",
+      "price": "$44.99"
+    },
+    {
+      "name": "ELITE+",
+      "price": "$49.99"
+    },
+    {
+      "name": "ELITE+ Annual",
+      "price": "$479.99"
+    },
+    {
+      "name": "PRO+ (Annual)",
+      "price": "$329.99"
+    },
+    {
+      "name": "ELITE Annual",
+      "price": "$449.99"
+    }
+  ],
+  "facts": {
+    "Seller": "Ladder Technologies, Inc.",
+    "Size": "253.4 MB",
+    "Category": "Health & Fitness",
+    "Compatibility": "Requires iOS 18.0 or later.",
+    "Languages": "English",
+    "Age Rating": "9+",
+    "Copyright": "© 2026 Ladder Technologies, Inc."
+  },
+  "versions": [
+    {
+      "version": "4.16.1",
+      "date": "2026-10-30",
+      "notes": "• Introducing an expanded edit workout. Now you can fully customize your workout before it begins. Are you regularly doing the same block, create your own block and save it to quickly readd it your next workout. • Not only do we want you to get the best workout, but let's have a little fun. Introducing Ladder Pumpkin Carving. Share your best pumpkin during SPOOKY Season. Love Ladder Teams? We woul"
+    },
+    {
+      "version": "4.16.0",
+      "date": "2026-10-30",
+      "notes": "• Introducing an expanded edit workout. Now you can fully customize your workout before it begins. Are you regularly doing the same block, create your own block and save it to quickly readd it your next workout. • Not only do we want you to get the best workout, but let's have a little fun. Introducing Ladder Pumpkin Carving. Share your best pumpkin during SPOOKY Season. Love Ladder Teams? We woul"
+    },
+    {
+      "version": "4.15.0",
+      "date": "2026-10-22",
+      "notes": "• Ladder's been hitting the gym, getting BIGGER and is now fitting just right on your iPad. Love Ladder Teams? We would love to hear from you! Rate and review us in the App Store or drop us a note at hello@joinladder.com!"
+    },
+    {
+      "version": "4.14.0",
+      "date": "2026-10-06",
+      "notes": "• Introducing an all new settings view, complete with notification preferences and meal time reminders. Love Ladder Teams? We would love to hear from you! Rate and review us in the App Store or drop us a note at hello@joinladder.com!"
+    },
+    {
+      "version": "4.13.1",
+      "date": "2026-09-29",
+      "notes": "• We're updating the drop time from 8PM local to 9 AM local on Sunday. Now with the weekly plan you can get your plan set Sunday morning and be ready to go Monday morning. Love Ladder Teams? We would love to hear from you! Rate and review us in the App Store or drop us a note at hello@joinladder.com!"
+    },
+    {
+      "version": "4.13.0",
+      "date": "2026-09-12",
+      "notes": "• Workout dates are back above the title — programming looks like a week again, not a video library. • Log weigh-ins for past days when you miss a morning on the scale. • Intro & outro videos remember your mute preference (no more surprise audio every open/finish). • Strava: better local start times + selfie/photo uploads. • Coach audio comes back after a phone call mid-workout. • Fixed a crash wh"
+    },
+    {
+      "version": "4.12.2",
+      "date": "2026-09-04",
+      "notes": "- Improvements and fixes to the weekly plan Love Ladder Teams? We would love to hear from you! Rate and review us in the App Store or drop us a note at hello@joinladder.com!"
+    },
+    {
+      "version": "4.12.1",
+      "date": "2026-08-30",
+      "notes": "- An all new weekly plan, let your life dictate your plan. Need a rest day Wednesday, make it so. Doing two a days, your plan can do it. Love Ladder Teams? We would love to hear from you! Rate and review us in the App Store or drop us a note at hello@joinladder.com!"
+    },
+    {
+      "version": "4.12.0",
+      "date": "2026-08-29",
+      "notes": "- An all new weekly plan, let your life dictate your plan. Need a rest day Wednesday, make it so. Doing two a days, your plan can do it. Love Ladder Teams? We would love to hear from you! Rate and review us in the App Store or drop us a note at hello@joinladder.com!"
+    },
+    {
+      "version": "4.11.1",
+      "date": "2026-08-21",
+      "notes": "- Updates to your Food Library to get things working a bit smoother Love Ladder Teams? We would love to hear from you! Rate and review us in the App Store or drop us a note at hello@joinladder.com!"
+    },
+    {
+      "version": "4.11.0",
+      "date": "2026-08-10",
+      "notes": "- Just in time for back to school, Ladder introduces your library, now including your foods, meals, and favorites. Create meals from your existing entries to make logging those consistent items faster and easier. Favorite your recipes or foods to make them easier to access. Check out your foods for times our library is missing something of you just want to get something just right. - Lots of littl"
+    },
+    {
+      "version": "4.10.2",
+      "date": "2026-07-17",
+      "notes": "- Some updates to your movement history and other little bug fixes to improve your experience. Love Ladder Teams? We would love to hear from you! Rate and review us in the App Store or drop us a note at hello@joinladder.com!"
+    },
+    {
+      "version": "4.10.1",
+      "date": "2026-07-08",
+      "notes": "- Introducing workout plateaus, we'll proactively let you know when it seems like you've hit a plateau with a movement to see if you can push just that little bit more. You also have the freedom to mute/unmute them as you see fit. - Lot of other little updates to your workout experience. The music button is now always present, you can full screen the workout preview to see closed captions, a new s"
+    },
+    {
+      "version": "4.10.0",
+      "date": "2026-07-06",
+      "notes": "- Introducing workout plateaus, we'll proactively let you know when it seems like you've hit a plateau with a movement to see if you can push just that little bit more. You also have the freedom to mute/unmute them as you see fit. - Lot of other little updates to your workout experience. The music button is now always present, you can full screen the workout preview to see closed captions, a new s"
+    },
+    {
+      "version": "4.9.2",
+      "date": "2026-06-20",
+      "notes": "- Our biggest update to Flex workouts yet. Filter and sort them in the list view or just search for your ideal workout with vibe search. Love Ladder Teams? We would love to hear from you! Rate and review us in the App Store or drop us a note at hello@joinladder.com!"
+    },
+    {
+      "version": "4.9.1",
+      "date": "2026-06-19",
+      "notes": "- Our biggest update to Flex workouts yet. Filter and sort them in the list view or just search for your ideal workout with vibe search. Love Ladder Teams? We would love to hear from you! Rate and review us in the App Store or drop us a note at hello@joinladder.com!"
+    },
+    {
+      "version": "4.9.0",
+      "date": "2026-06-17",
+      "notes": "- Our biggest update to Flex workouts yet. Filter and sort them in the list view or just search for your ideal workout with vibe search. Love Ladder Teams? We would love to hear from you! Rate and review us in the App Store or drop us a note at hello@joinladder.com!"
+    },
+    {
+      "version": "4.8.0",
+      "date": "2026-06-01",
+      "notes": "- A whole new smart log in nutrition. Quickly provide all the context we need to be able to track your macros and get you back to your life. - A bunch of other fixes and improvements Love Ladder Teams? We would love to hear from you! Rate and review us in the App Store or drop us a note at hello@joinladder.com!"
+    },
+    {
+      "version": "4.7.1",
+      "date": "2026-05-08",
+      "notes": "- Introducing improved support for tracking workouts from your non Apple wearables into Ladder. Now after you complete a workout you can import an existing workout from Apple Health, share a photo of proof of how many calories you burned or just manually enter your heart rate and calories burned. We'll add it to your workout session, and track it with your strength series stats. Love Ladder Teams?"
+    },
+    {
+      "version": "4.7.0",
+      "date": "2026-05-07",
+      "notes": "- Introducing improved support for tracking workouts from your non Apple wearables into Ladder. Now after you complete a workout you can import an existing workout from Apple Health, share a photo of proof of how many calories you burned or just manually enter your heart rate and calories burned. We'll add it to your workout session, and track it with your strength series stats. Love Ladder Teams?"
+    },
+    {
+      "version": "4.6.2",
+      "date": "2026-04-25",
+      "notes": "- Improvements to your nutrition experience e.g. improved animations when adding your weight or water, logging macros to Apple Health) Love Ladder Teams? We would love to hear from you! Rate and review us in the App Store or drop us a note at hello@joinladder.com!"
+    },
+    {
+      "version": "4.6.1",
+      "date": "2026-04-16",
+      "notes": "- Improvements to our new nutrition widgets Love Ladder Teams? We would love to hear from you! Rate and review us in the App Store or drop us a note at hello@joinladder.com!"
+    },
+    {
+      "version": "4.6.0",
+      "date": "2026-04-11",
+      "notes": "- Water Widget - Bottle-style Home Screen widget (small + medium) — pick your bottle size, log water with a tap, undo accidental logs - Macros Widget - Daily macro progress (protein, carbs, fat) from your Home Screen in small or medium sizes - Steps Widget & In-App - Track daily step count from Home Screen or in-app, configurable like weight and water Love Ladder Teams? We would love to hear from "
+    },
+    {
+      "version": "4.5.3",
+      "date": "2026-04-01",
+      "notes": "- Just the standard bug fixes and improvements this time around. Love Ladder Teams? We would love to hear from you! Rate and review us in the App Store or drop us a note at hello@joinladder.com!"
+    },
+    {
+      "version": "4.5.2",
+      "date": "2026-03-31",
+      "notes": "- A quick fix for editing your journal after completing your workout and having made a swap. Love Ladder Teams? We would love to hear from you! Rate and review us in the App Store or drop us a note at hello@joinladder.com!"
+    }
+  ],
+  "url": "https://apps.apple.com/us/app/ladder-strength-training-plans/id1502936453"
+}
