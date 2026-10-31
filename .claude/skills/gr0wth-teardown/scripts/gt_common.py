@@ -1,4 +1,4 @@
-"""Shared helpers for growth-teardown: the run folder, the robots.txt gate, the
+"""Shared helpers for gr0wth-teardown: the run folder, the robots.txt gate, the
 logged and cached fetcher, and small CSV and date helpers.
 
 Standard library only, and Python 3.7 compatible, because the Mac's default
@@ -33,7 +33,7 @@ from pathlib import Path
 SKILL_DIR = Path(__file__).resolve().parent.parent
 MANDU = SKILL_DIR.parents[2]
 
-TOOL_TOKEN = "Mandu-growth-teardown"
+TOOL_TOKEN = "Mandu-gr0wth-teardown"
 TOOL_VERSION = "1.0"
 # A browser-like string so sites serve their normal public page, with this
 # tool's product token appended so a site owner can see who read it.
@@ -202,7 +202,7 @@ def load_run(run) -> dict:
     run = Path(run)
     meta = run / "run.json"
     if not meta.exists():
-        raise SystemExit("%s is not a growth-teardown run folder (no run.json); start one with `gt.py init`." % run)
+        raise SystemExit("%s is not a gr0wth-teardown run folder (no run.json); start one with `gt.py init`." % run)
     data = read_json(meta)
     data["dir"] = run
     return data

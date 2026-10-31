@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""growth-teardown's command line: every free data pull, the analysis, the render,
+"""gr0wth-teardown's command line: every free data pull, the analysis, the render,
 and the check, each writing into one run folder.
 
-    python3 .claude/skills/growth-teardown/scripts/gt.py <command> ...
+    python3 .claude/skills/gr0wth-teardown/scripts/gt.py <command> ...
 
 Run `gt.py -h` or `gt.py <command> -h` for the arguments. Commands print a short
 summary and the files they wrote; the data itself is in the run's data/ folder.

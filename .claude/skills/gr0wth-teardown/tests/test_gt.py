@@ -1,8 +1,8 @@
-"""Tests for growth-teardown's scripts: the robots.txt gate, the fetcher, every
+"""Tests for gr0wth-teardown's scripts: the robots.txt gate, the fetcher, every
 parser (on fixtures shaped like the real responses read on 2026-10-30), the
 arithmetic, the renderer, and the run check. No test touches the network.
 
-Run from Mandu's root: python3 -m unittest discover -s .claude/skills/growth-teardown/tests
+Run from Mandu's root: python3 -m unittest discover -s .claude/skills/gr0wth-teardown/tests
 """
 
 from __future__ import annotations
@@ -82,7 +82,7 @@ Disallow: /WebObjects/*
         self.assertTrue(self.verdict(text, "/feed.json?x=1"))
 
     def test_the_tool_group_beats_star_and_an_empty_disallow_allows(self):
-        text = "User-agent: *\nDisallow: /\n\nUser-agent: Mandu-growth-teardown\nDisallow:\n"
+        text = "User-agent: *\nDisallow: /\n\nUser-agent: Mandu-gr0wth-teardown\nDisallow:\n"
         self.assertTrue(self.verdict(text, "/anything"))
         self.assertFalse(self.verdict(text, "/anything", token="otherbot"))
 

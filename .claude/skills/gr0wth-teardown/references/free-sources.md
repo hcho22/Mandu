@@ -1,7 +1,7 @@
 # Free sources: how each paid call upstream is replaced
 
 Upstream `rea-growth` buys its data through treg's catalog, with a default cap of $3 a run.
-This table maps each of its paid calls to the route growth-teardown uses at no cost.
+This table maps each of its paid calls to the route gr0wth-teardown uses at no cost.
 The robots.txt verdicts were read with `gt robots` on 2026-10-30, for this tool's product token and for `*`; re-check any that a run depends on, since sites change them.
 
 | Upstream step and paid call | Free route here | robots.txt (2026-10-30) |

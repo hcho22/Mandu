@@ -561,9 +561,9 @@ def render(run, source_name=None, link_images=False):
             "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
             "<title>%s</title><style>%s</style></head><body><div class=\"wrap\">"
             "<header class=\"top\"><div>%s</div><button class=\"theme\" type=\"button\">Dark</button></header>%s%s"
-            "<footer>growth-teardown run %s for %s. Generated from %s; every count is dated in the run's data files.</footer>"
+            "<footer>gr0wth-teardown run %s for %s. Generated from %s; every count is dated in the run's data files.</footer>"
             "</div><script>%s</script></body></html>") % (
-        html.escape(title or "Growth teardown"), CSS, heading, toc_html, body, html.escape(run.name),
+        html.escape(title or "Gr0wth teardown"), CSS, heading, toc_html, body, html.escape(run.name),
         html.escape(meta.get("product", "")), html.escape(source.name), JS)
     out = source.with_suffix(".html")
     out.write_text(page, encoding="utf-8")

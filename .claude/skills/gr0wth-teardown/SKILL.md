@@ -1,16 +1,16 @@
 ---
-name: growth-teardown
+name: gr0wth-teardown
 description: Reverse engineer how a company or app grows, at zero cost, and turn it into a playbook for one of hcho's Products. Reads the target's App Store listing and ratings history, its site and growth stack (through REA's browser capture), its Google ads, its public profiles, its job openings, and the screenshots hcho takes of platforms that refuse automated readers; ends with ten plays, each with a paste-ready prompt. Use when hcho asks "how does X grow", "how did X get its users", "teardown of X", "reverse engineer X's marketing", "what should I copy from X", "what content works for X" (titles, thumbnails, covers, captions), or names a competitor to study for RepToday, Immerse, or another Product. Never pays, signs up, posts, or contacts anyone, and never writes a Go-To-Market Package or gr0wthlab.
 ---
 
-# Growth teardown
+# Gr0wth teardown
 
 A target in, a playbook out: when it grew, which moves it made, how its content is made on each channel and what wins there, and ten plays hcho can copy for his Product, each with a ready prompt.
 It is a zero-cost rebuild of the `rea-growth` skill in [superdesigndev/treg](https://github.com/superdesigndev/treg/tree/main/skills/rea-growth) (license and changes in `LICENSE.md`).
 That skill buys its data through treg's paid catalog; this one reads free official endpoints, pages whose robots.txt allows a reader, REA's browser capture, and screenshots hcho takes himself.
 `references/free-sources.md` maps every paid call upstream to the free route used here.
 
-`<skill>` below is `.claude/skills/growth-teardown/` in Mandu, and `gt` means `python3 <skill>/scripts/gt.py`, run from Mandu's root.
+`<skill>` below is `.claude/skills/gr0wth-teardown/` in Mandu, and `gt` means `python3 <skill>/scripts/gt.py`, run from Mandu's root.
 `<run>` is the run folder `gt init` prints: `projects/<Product>/teardowns/NN-<target>_YYMMDD/`.
 
 ## Memory

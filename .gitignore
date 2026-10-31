@@ -12,7 +12,7 @@ projects/RepToday/repo/
 # Founder raw footage folders, one per 14-day window; read by gr0wthlab from disk, kept out of Mandu history.
 projects/RepToday/window-*/
 
-# growth-teardown read caches: rebuilt by rerunning `gt`; every body's SHA-256 stays in the run's sources.csv.
+# gr0wth-teardown read caches: rebuilt by rerunning `gt`; every body's SHA-256 stays in the run's sources.csv.
 projects/*/teardowns/*/data/raw/
 projects/*/teardowns/*/data/rea/
 projects/*/teardowns/*/data/robots/
